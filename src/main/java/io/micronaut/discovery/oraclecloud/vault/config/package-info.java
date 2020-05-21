@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 /**
- * Discovery client classes.
+ *  Classes related to using Oracle Cloud Vault as a distributed configuration client.
  *
- * @author graemerocher
- * @since 1.0
+ *  @author toddsharp
+ *  @since 2.0.0
  */
+@Requires(property = ConfigurationClient.ENABLED, value = "true", defaultValue = "false")
+@Requires(property = OracleCloudVaultClientConfiguration.PREFIX + "." + ConfigDiscoveryConfiguration.PREFIX + ".enabled", value = "true")
 @Configuration
-package io.micronaut.discovery.client;
+package io.micronaut.discovery.oraclecloud.vault.config;
 
 import io.micronaut.context.annotation.Configuration;
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.discovery.config.ConfigDiscoveryConfiguration;
+import io.micronaut.discovery.config.ConfigurationClient;
