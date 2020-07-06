@@ -1,3 +1,3 @@
-rootProject.name = 'xxx'
+rootProject.name = 'discovery-client'
 
-include 'xxx'
+include 'discovery-client'
