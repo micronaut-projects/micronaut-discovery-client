@@ -145,7 +145,7 @@ public class OracleCloudVaultClientConfiguration {
     }
 
     /**
-     * An Oracle Cloud Vault
+     * An Oracle Cloud Vault.
      */
     @EachProperty(value = "vaults", list = true)
     @BootstrapContextCompatible
@@ -163,7 +163,7 @@ public class OracleCloudVaultClientConfiguration {
         }
 
         /**
-         * Sets the OCID of the vault that contains secrets that will be retrieved, decoded and set as config vars
+         * Sets the OCID of the vault that contains secrets that will be retrieved, decoded and set as config vars.
          *
          * @param ocid the ocid of the vault
          */
