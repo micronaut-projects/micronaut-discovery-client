@@ -11,7 +11,7 @@ buildscript {
 }
 
 subprojects { Project subproject ->
-    group "io.micronaut"
+    group "io.micronaut.discovery"
 
     apply plugin: "io.micronaut.build.common"
     apply plugin: "io.micronaut.build.dependency-updates"
