@@ -1,1 +1,1 @@
-TODO
+Documentation is available in the https://docs.micronaut.io/latest/guide/index.html#serviceDiscovery[Service Discovery] section of the Micronaut documentation.
