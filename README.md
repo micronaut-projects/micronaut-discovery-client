@@ -1,6 +1,6 @@
 # Micronaut Discovery Client
 
-[![Maven Central](https://img.shields.io/maven-central/v/io.micronaut.discovery/micronaut-discovery-client.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.micronaut.discovery%22%20AND%20a:%22micronaut-discovery-client%22)
+[![Maven Central](https://img.shields.io/maven-central/v/io.micronaut/micronaut-discovery-client.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.micronaut%22%20AND%20a:%22micronaut-discovery-client%22)
 [![Build Status](https://github.com/micronaut-projects/micronaut-discovery-client/workflows/Java%20CI/badge.svg)](https://github.com/micronaut-projects/micronaut-discovery-client/actions)
 
 This module integrates Micronaut with Service Discovery systems such as Eureka and Consul.
