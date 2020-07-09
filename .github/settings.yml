@@ -20,6 +20,6 @@ _extends: .github
 
 # Branch protection is enabled by default. Uncomment to disable
 
-#branches:
-#  - name: master
-#    protection: null
+branches:
+  - name: master
+    protection: null
