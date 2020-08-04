@@ -1,4 +1,4 @@
-https://www.consul.io[Consul] is a popular Service Discovery and Distributed Configuration server provided by HashiCorp. Micronaut features a native non-blocking api:discovery.consul.client.v1.ConsulClient[] that is built using Micronaut's support for <<clientAnnotation, Declarative HTTP Clients>>.
+https://www.consul.io[Consul] is a popular Service Discovery and Distributed Configuration server provided by HashiCorp. Micronaut features a native non-blocking api:discovery.consul.client.v1.ConsulClient[] that is built using Micronaut's support for https://docs.micronaut.io/latest/guide/index.html#clientAnnotation[Declarative HTTP Clients].
 
 == Starting Consul
 
@@ -55,7 +55,7 @@ micronaut:
 
 The api:discovery.consul.ConsulConfiguration[] class features a range of customization options for altering how an instance registers with Consul. You can customize the tags, the retry attempts, the fail fast behaviour and so on.
 
-Notice too that `ConsulConfiguration` extends api:discovery.client.DiscoveryClientConfiguration[]  which in turn extends api:http.client.HttpClientConfiguration[] allowing you to customize the settings for the Consul client, including read timeout, proxy configuration and so on.
+Notice too that `ConsulConfiguration` extends api:discovery.client.DiscoveryClientConfiguration[]  which in turn extends link:{micronautapi}http/client/HttpClientConfiguration[HttpClientConfiguration] allowing you to customize the settings for the Consul client, including read timeout, proxy configuration and so on.
 
 For example:
 
@@ -86,7 +86,7 @@ consul:
 
 == Discovery Services from Consul
 
-To discovery other services you could manually interact with the api:discovery.DiscoveryClient[], however typically instead you use the <<clientAnnotation, Client Annotation>> to declare how an HTTP client maps to a service.
+To discovery other services you could manually interact with the link:{micronautapi}discovery/DiscoveryClient[DiscoveryClient], however typically instead you use the https://docs.micronaut.io/latest/guide/index.html#clientAnnotation[Client Annotation] to declare how an HTTP client maps to a service.
 
 For example the configuration in the previous section declared a value for `micronaut.application.name` of `hello-world`. This is the value that will be used as the service ID when registering with Consul.
 
@@ -101,7 +101,7 @@ interface HelloClient{
 }
 ----
 
-Alternatively you can also use ann:http.client.annotation.Client[] as a qualifier to `@Inject` an instance of api:http.client.HttpClient[]:
+Alternatively you can also use link:{micronautapi}http/client/annotation/Client[@Client] as a qualifier to `@Inject` an instance of link:{micronautapi}http/client/HttpClient[HttpClient]:
 
 .Using @Client to Discover Services
 [source,java]
@@ -115,7 +115,7 @@ RxHttpClient httpClient;
 
 By default when registering with Consul Micronaut will register a https://www.consul.io/docs/agent/checks.html[TTL check]. A TTL check basically means that if the application does not send a heartbeat back to Consul after a period of time the service is put in a failing state.
 
-Micronaut applications feature a api:health.HeartbeatConfiguration[] which starts a thread using api:health.HeartbeatTask[] that fires api:health.HeartbeatEvent[] instances.
+Micronaut applications feature a link:{micronautapi}health/HeartbeatConfiguration[HeartbeatConfiguration] which starts a thread using link:{micronautapi}health/HeartbeatTask[HeartbeatTask] that fires link:{micronautapi}health/HeartbeatEvent[HeartbeatEvent] instances.
 
 The api:discovery.consul.registration.ConsulAutoRegistration[] class listens for these events and sends a callback to the https://www.consul.io/api/agent/check.html[/agent/check/pass/:check_id] endpoint provided by Consul, effectively keeping the service alive.
 
@@ -133,7 +133,7 @@ consul:
          http: true
 ----
 
-With this configuration option in place Consul will assume responsibility of invoking the Micronaut applications <<healthEndpoint, Health Endpoint>>.
+With this configuration option in place Consul will assume responsibility of invoking the Micronaut applications https://docs.micronaut.io/latest/guide/index.html#healthEndpoint[Health Endpoint].
 
 == Controlling IP/Host Registration
 

@@ -24,16 +24,16 @@ To include Service Discovery in your application simply the first step is to add
 
 dependency:micronaut-discovery-client[]
 
-The `discovery-client` dependency provides implementations of the api:discovery.DiscoveryClient[] interface.
+The `discovery-client` dependency provides implementations of the link:{micronautapi}discovery/DiscoveryClient[DiscoveryClient] interface.
 
-The api:discovery.DiscoveryClient[] is fairly simple and provides two main entry points:
+The link:{micronautapi}discovery/DiscoveryClient[DiscoveryClient] is fairly simple and provides two main entry points:
 
-* api:discovery.DiscoveryClient.getServiceIds()[] - Returns all discovered service IDs
-* api:discovery.DiscoveryClient.getInstances(java.lang.String)[] - Returns all the api:discovery.ServiceInstance[] objects for a given service ID
+* link:{micronautapi}discovery/DiscoveryClient.html#getServiceIds--[DiscoveryClient.getServiceIds()] - Returns all discovered service IDs
+* link:{micronautapi}discovery/DiscoveryClient.html#getInstances-java.lang.String-[DiscoveryClient.getInstances(java.lang.String)] - Returns all the link:{micronautapi}discovery/ServiceInstance[ServiceInstance] objects for a given service ID
 
 Both methods return rs:Publisher[] instances since the operation to retrieve service ID information may result in a blocking network call depending on the underlying implementation.
 
-If you are using Micronaut's cache module, the default implementation of the `DiscoveryClient` interface is api:discovery.client.CachingCompositeDiscoveryClient[] which merges all other `DiscoveryClient` beans into a single bean and provides caching of the results of the methods. The default behaviour is to cache for 30 seconds. This cache can be disabled in application configuration:
+If you are using Micronaut's cache module, the default implementation of the `DiscoveryClient` interface is link:{cacheapi}cache/discovery/CachingCompositeDiscoveryClient[CachingCompositeDiscoveryClient] which merges all other `DiscoveryClient` beans into a single bean and provides caching of the results of the methods. The default behaviour is to cache for 30 seconds. This cache can be disabled in application configuration:
 
 .Disabling the Discovery Client Cache
 [source,yaml]
@@ -55,4 +55,4 @@ micronaut:
       expire-after-access: 60s
 ----
 
-See the api:discovery.client.DiscoveryClientCacheConfiguration[] class for available configuration options.
+See the link:{cacheapi}cache/discovery/DiscoveryClientCacheConfiguration[DiscoveryClientCacheConfiguration] class for available configuration options.
