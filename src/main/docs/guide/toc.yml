@@ -1,4 +1,5 @@
 introduction:
   title: Introduction
-
+  serviceDiscoveryConsul: Consul Support
+  serviceDiscoveryEureka: Eureka Support
 
