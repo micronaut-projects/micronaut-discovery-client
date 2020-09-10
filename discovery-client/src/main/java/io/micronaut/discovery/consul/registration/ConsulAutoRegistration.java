@@ -123,9 +123,8 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
                             }
                         });
 
-                        String errorMessage = getErrorMessage(throwable, "Error reporting passing state to Consul: ");
                         if (LOG.isErrorEnabled()) {
-                            LOG.error(errorMessage, throwable);
+                            LOG.error(getErrorMessage(throwable, "Error reporting passing state to Consul: "), throwable);
                         }
                     }
                 });
@@ -138,9 +137,8 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
                             LOG.debug("Successfully reported failure state to Consul");
                         }
                     } else {
-                        String errorMessage = getErrorMessage(throwable, "Error reporting failure state to Consul: ");
                         if (LOG.isErrorEnabled()) {
-                            LOG.error(errorMessage, throwable);
+                            LOG.error(getErrorMessage(throwable, "Error reporting failure state to Consul: "), throwable);
                         }
                     }
                 });
