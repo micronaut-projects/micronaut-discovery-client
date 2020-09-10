@@ -232,8 +232,8 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
                                 try {
                                     serverURL = new URL(embeddedServer.getURL().getProtocol(), address, embeddedServer.getPort(), embeddedServer.getURL().getPath());
                                 } catch (MalformedURLException e) {
-                                    if (LOG.isDebugEnabled()) {
                                         LOG.error("invalid url for health check:" + embeddedServer.getURL().getProtocol() + address + ":" + embeddedServer.getPort() + "/" + embeddedServer.getURL().getPath());
+                                    if (LOG.isErrorEnabled()) {
                                     }
                                     throw new DiscoveryException("Invalid health path configured: " + registration.getHealthPath());
                                 }
