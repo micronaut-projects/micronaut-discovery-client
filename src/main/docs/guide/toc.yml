@@ -1,5 +1,5 @@
-introduction:
-  title: Introduction
-  serviceDiscoveryConsul: Consul Support
-  serviceDiscoveryEureka: Eureka Support
+introduction: Introduction
+releaseHistory: Release History
+serviceDiscoveryConsul: Consul Support
+serviceDiscoveryEureka: Eureka Support
 repository: Repository
