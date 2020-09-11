@@ -3,7 +3,19 @@
 [![Maven Central](https://img.shields.io/maven-central/v/io.micronaut/micronaut-discovery-client.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.micronaut%22%20AND%20a:%22micronaut-discovery-client%22)
 [![Build Status](https://github.com/micronaut-projects/micronaut-discovery-client/workflows/Java%20CI/badge.svg)](https://github.com/micronaut-projects/micronaut-discovery-client/actions)
 
-This module integrates Micronaut with Service Discovery systems such as Eureka and Consul.
+This module integrates Micronaut with Service Discovery and Distributed Configuration systems.
+
+The implementation currently includes Service Discovery support for:
+
+* [HashiCorp Consul](https://www.consul.io/)
+* [Eureka](https://github.com/Netflix/eureka)
+
+As well as Distributed Configuration support for:
+
+* [HashiCorp Consul](https://www.consul.io/)
+* [HashiCorp Vault](https://www.vaultproject.io/)
+* [Oracle Cloud Vault](https://docs.cloud.oracle.com/en-us/iaas/Content/KeyManagement/Concepts/keyoverview.htm)
+* [Spring Cloud Config Server](https://cloud.spring.io/spring-cloud-config/reference/html/#_spring_cloud_config_server)
 
 ## Documentation
 
