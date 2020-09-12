@@ -43,7 +43,7 @@ public interface VaultConfigHttpClientV1 extends VaultConfigHttpClient<VaultResp
     String CLIENT_DESCRIPTION = "vault-config-client-v1";
 
     /**
-     * Reads an application configuration from Spring Config Server.
+     * Reads an application configuration from Vault.
      *
      * @param token             Vault authentication token
      * @param backend           The name of the secret engine in Vault
