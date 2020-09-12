@@ -10,7 +10,7 @@ The implementation currently includes Service Discovery support for:
 * [HashiCorp Consul](https://www.consul.io/)
 * [Eureka](https://github.com/Netflix/eureka)
 
-As well as Distributed Configuration support for:
+As well as [Distributed Configuration](https://docs.micronaut.io/latest/guide/index.html#distributedConfiguration) support for:
 
 * [HashiCorp Consul](https://www.consul.io/)
 * [HashiCorp Vault](https://www.vaultproject.io/)
