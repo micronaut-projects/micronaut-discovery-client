@@ -21,7 +21,6 @@ import io.micronaut.context.env.Environment
 import io.micronaut.discovery.cloud.oraclecloud.OracleCloudInstanceMetadata
 import io.micronaut.discovery.cloud.oraclecloud.OracleCloudMetadataConfiguration
 import io.micronaut.discovery.cloud.oraclecloud.OracleCloudMetadataResolver
-import io.micronaut.discovery.cloud.oraclecloud.OracleCloudNetworkInterface
 import spock.lang.Specification
 
 import java.nio.file.Paths

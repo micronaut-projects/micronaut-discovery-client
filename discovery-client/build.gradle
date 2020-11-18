@@ -23,6 +23,9 @@ dependencies {
 
     testImplementation "io.micronaut:micronaut-management"
     testImplementation "io.micronaut:micronaut-http-server-netty"
+    testImplementation "io.micronaut.aws:micronaut-aws-common"
+    testImplementation "io.micronaut.oraclecloud:micronaut-oraclecloud-common"
+    testImplementation "io.micronaut.gcp:micronaut-gcp-common"
 
     testCompileOnly "io.micronaut:micronaut-inject-groovy"
 }
