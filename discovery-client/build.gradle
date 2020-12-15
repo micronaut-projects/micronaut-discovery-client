@@ -1,4 +1,5 @@
 dependencies {
+    implementation platform("io.micronaut:micronaut-bom:${micronautVersion}")
     annotationProcessor "io.micronaut:micronaut-inject-java"
     annotationProcessor "io.micronaut.docs:micronaut-docs-asciidoc-config-props:$micronautDocsVersion"
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"
