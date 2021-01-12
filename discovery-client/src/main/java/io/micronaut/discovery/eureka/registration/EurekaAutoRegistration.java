@@ -29,6 +29,7 @@ import io.micronaut.health.HeartbeatConfiguration;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.runtime.ApplicationConfiguration;
+import io.micronaut.runtime.server.EmbeddedServer;
 import io.reactivex.Single;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -46,7 +47,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @since 1.0
  */
 @Singleton
-@Requires(beans = EurekaClient.class)
+@Requires(beans = {EurekaClient.class, EmbeddedServer.class})
 @Requires(property = ApplicationConfiguration.APPLICATION_NAME)
 public class EurekaAutoRegistration extends DiscoveryServiceAutoRegistration {
 
