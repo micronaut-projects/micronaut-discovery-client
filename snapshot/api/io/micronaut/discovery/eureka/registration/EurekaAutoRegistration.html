@@ -122,7 +122,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>@Singleton
- @Requires(beans=<a href="../../../../../io/micronaut/discovery/eureka/client/v2/EurekaClient.html" title="interface in io.micronaut.discovery.eureka.client.v2">EurekaClient.class</a>) @Requires(property="micronaut.application.name")
+ @Requires(beans={<a href="../../../../../io/micronaut/discovery/eureka/client/v2/EurekaClient.html" title="interface in io.micronaut.discovery.eureka.client.v2">EurekaClient.class</a>,io.micronaut.runtime.server.EmbeddedServer.class}) @Requires(property="micronaut.application.name")
 public class <span class="typeNameLabel">EurekaAutoRegistration</span>
 extends <a href="../../../../../io/micronaut/discovery/client/registration/DiscoveryServiceAutoRegistration.html" title="class in io.micronaut.discovery.client.registration">DiscoveryServiceAutoRegistration</a></pre>
 <div class="block">A <code>AutoRegistration</code> that registers with Eureka.</div>
