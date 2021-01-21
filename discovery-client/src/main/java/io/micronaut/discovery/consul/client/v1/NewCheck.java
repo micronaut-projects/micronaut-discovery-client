@@ -70,7 +70,7 @@ public abstract class NewCheck implements Check {
      * @return A unique ID for the check
      */
     @Override
-    @JsonProperty("ID")
+    @JsonProperty("CheckID")
     public String getID() {
         return ID;
     }
