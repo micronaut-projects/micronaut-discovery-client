@@ -240,4 +240,39 @@ class ConsulAutoRegistrationSpec extends Specification {
         cleanup:
         embeddedServer.stop()
     }
+
+    void "test auto-registration with checks"() {
+        when: "A new server is bootstrapped"
+        String serviceId = 'myService'
+        EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer,
+                ['micronaut.application.name'     : serviceId,
+                 'consul.client.registration.tags': ['default'],
+                 'consul.client.registration.deregister': true,
+                 'consul.client.registration.prefer-ip-address': true,
+                 'consul.client.registration.ip-addr': '${SERVICE_ADDRESS:}',
+                 'consul.client.registration.health-path': '/health',
+                 'consul.client.registration.check': [id: UUID.randomUUID().toString(), enabled: true, interval: '15s', 'deregister-critical-service-after': '60s', http: true],
+                 'consul.client.host'        : consulHost,
+                 'consul.client.port'        : consulPort]
+        )
+        Map discoveryClientMap = ['consul.client.host'                       : consulHost,
+                                  'consul.client.port'                       : consulPort,
+                                  "micronaut.caches.discovery-client.enabled": false]
+        DiscoveryClient discoveryClient = ApplicationContext.builder(discoveryClientMap)
+                .build()
+                .start()
+                .getBean(DiscoveryClient)
+
+        PollingConditions conditions = new PollingConditions(timeout: 3)
+
+        then:
+        conditions.eventually {
+            List<ServiceInstance> instances = Flowable.fromPublisher(discoveryClient.getInstances(serviceId)).blockingFirst()
+            instances.size() == 1
+        }
+
+        cleanup:
+        embeddedServer.stop()
+        discoveryClient.close()
+    }
 }
