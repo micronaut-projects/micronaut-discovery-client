@@ -17,6 +17,7 @@ package io.micronaut.discovery.vault.config;
 
 import io.micronaut.context.annotation.BootstrapContextCompatible;
 import io.micronaut.context.annotation.ConfigurationProperties;
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.discovery.config.ConfigDiscoveryConfiguration;
 import io.micronaut.http.client.HttpClientConfiguration;
 import io.micronaut.runtime.ApplicationConfiguration;
@@ -31,6 +32,7 @@ import javax.inject.Inject;
  */
 @ConfigurationProperties(VaultClientConfiguration.PREFIX)
 @BootstrapContextCompatible
+@Requires(property = VaultClientConfiguration.PREFIX)
 public class VaultClientConfiguration extends HttpClientConfiguration {
 
     public static final String PREFIX = "vault.client";
@@ -167,6 +169,7 @@ public class VaultClientConfiguration extends HttpClientConfiguration {
      */
     @ConfigurationProperties(ConnectionPoolConfiguration.PREFIX)
     @BootstrapContextCompatible
+    @Requires(property = VaultClientConfiguration.PREFIX)
     public static class VaultClientConnectionPoolConfiguration extends ConnectionPoolConfiguration { }
 
     /**
@@ -174,6 +177,7 @@ public class VaultClientConfiguration extends HttpClientConfiguration {
      */
     @ConfigurationProperties(ConfigDiscoveryConfiguration.PREFIX)
     @BootstrapContextCompatible
+    @Requires(property = VaultClientConfiguration.PREFIX)
     public static class VaultClientDiscoveryConfiguration extends ConfigDiscoveryConfiguration {
 
         public static final String PREFIX = VaultClientConfiguration.PREFIX + "." + ConfigDiscoveryConfiguration.PREFIX;
