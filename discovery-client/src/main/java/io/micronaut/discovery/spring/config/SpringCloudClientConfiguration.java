@@ -17,6 +17,8 @@ package io.micronaut.discovery.spring.config;
 
 import io.micronaut.context.annotation.BootstrapContextCompatible;
 import io.micronaut.context.annotation.ConfigurationProperties;
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.config.ConfigDiscoveryConfiguration;
 import io.micronaut.http.client.HttpClientConfiguration;
 import io.micronaut.runtime.ApplicationConfiguration;
@@ -34,6 +36,7 @@ import java.util.Optional;
  */
 @ConfigurationProperties(SpringCloudClientConfiguration.PREFIX)
 @BootstrapContextCompatible
+@Requires(property = "spring.cloud.config.enabled", value = StringUtils.TRUE, defaultValue = StringUtils.FALSE)
 public class SpringCloudClientConfiguration extends HttpClientConfiguration {
 
     public static final String PREFIX = "spring.cloud.config";

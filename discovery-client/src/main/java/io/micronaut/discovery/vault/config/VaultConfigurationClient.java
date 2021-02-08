@@ -16,6 +16,7 @@
 package io.micronaut.discovery.vault.config;
 
 import io.micronaut.context.annotation.BootstrapContextCompatible;
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
 import io.micronaut.context.env.EnvironmentPropertySource;
 import io.micronaut.context.env.PropertySource;
@@ -46,6 +47,7 @@ import java.util.concurrent.ExecutorService;
  */
 @Singleton
 @BootstrapContextCompatible
+@Requires(beans = VaultClientConfiguration.class)
 public class VaultConfigurationClient implements ConfigurationClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(VaultConfigurationClient.class);
