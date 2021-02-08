@@ -112,7 +112,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>@Singleton
- @Requires(classes={com.oracle.bmc.secrets.SecretsClient.class,com.oracle.bmc.vault.VaultsClient.class,com.oracle.bmc.auth.InstancePrincipalsAuthenticationDetailsProvider.class,com.oracle.bmc.auth.ConfigFileAuthenticationDetailsProvider.class})
+ @Requires(classes={com.oracle.bmc.secrets.SecretsClient.class,com.oracle.bmc.vault.VaultsClient.class,com.oracle.bmc.auth.InstancePrincipalsAuthenticationDetailsProvider.class,com.oracle.bmc.auth.ConfigFileAuthenticationDetailsProvider.class}) @Requires(beans=<a href="../../../../../../io/micronaut/discovery/oraclecloud/vault/config/OracleCloudVaultClientConfiguration.html" title="class in io.micronaut.discovery.oraclecloud.vault.config">OracleCloudVaultClientConfiguration.class</a>)
 public class <span class="typeNameLabel">OracleCloudVaultConfigurationClient</span>
 extends java.lang.Object
 implements io.micronaut.discovery.config.ConfigurationClient</pre>

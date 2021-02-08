@@ -113,6 +113,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>@ConfigurationProperties(value="vault.client")
+ @Requires(property="vault.client")
 public class <span class="typeNameLabel">VaultClientConfiguration</span>
 extends io.micronaut.http.client.HttpClientConfiguration</pre>
 <div class="block">A <code>HttpClientConfiguration</code> for Vault Client.</div>

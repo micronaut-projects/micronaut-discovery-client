@@ -121,7 +121,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>@ConfigurationProperties(value="registration")
- @Requires(property="micronaut.application.name")
+ @Requires(property="micronaut.application.name") @Requires(property="eureka.client")
 public static class <span class="typeNameLabel">EurekaConfiguration.EurekaRegistrationConfiguration</span>
 extends io.micronaut.discovery.registration.RegistrationConfiguration</pre>
 <div class="block">Configuration properties for Eureka client registration.</div>

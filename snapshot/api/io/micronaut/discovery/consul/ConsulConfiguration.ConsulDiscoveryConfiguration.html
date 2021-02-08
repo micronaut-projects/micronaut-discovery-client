@@ -121,6 +121,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>@ConfigurationProperties(value="discovery")
+ @Requires(property="consul.client")
 public static class <span class="typeNameLabel">ConsulConfiguration.ConsulDiscoveryConfiguration</span>
 extends io.micronaut.discovery.DiscoveryConfiguration</pre>
 <div class="block">Configuration class for Consul client discovery.</div>

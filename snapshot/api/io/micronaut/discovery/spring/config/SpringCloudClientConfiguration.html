@@ -113,6 +113,9 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>@ConfigurationProperties(value="spring.cloud.config")
+ @Requires(property="spring.cloud.config.enabled",
+          value="true",
+          defaultValue="false")
 public class <span class="typeNameLabel">SpringCloudClientConfiguration</span>
 extends io.micronaut.http.client.HttpClientConfiguration</pre>
 <div class="block">A <code>HttpClientConfiguration</code> for Spring Cloud Config.</div>

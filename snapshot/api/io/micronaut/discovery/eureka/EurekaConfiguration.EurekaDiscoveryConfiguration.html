@@ -121,6 +121,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>@ConfigurationProperties(value="discovery")
+ @Requires(property="eureka.client")
 public static class <span class="typeNameLabel">EurekaConfiguration.EurekaDiscoveryConfiguration</span>
 extends io.micronaut.discovery.DiscoveryConfiguration</pre>
 <div class="block">Configuration properties for Eureka client discovery.</div>

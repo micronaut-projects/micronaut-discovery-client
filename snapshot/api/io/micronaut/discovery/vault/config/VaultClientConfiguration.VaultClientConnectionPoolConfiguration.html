@@ -115,6 +115,7 @@
 <hr>
 <br>
 <pre>@ConfigurationProperties(value="pool")
+ @Requires(property="vault.client")
 public static class <span class="typeNameLabel">VaultClientConfiguration.VaultClientConnectionPoolConfiguration</span>
 extends io.micronaut.http.client.HttpClientConfiguration.ConnectionPoolConfiguration</pre>
 <div class="block">The Http Pool Connection Configuration class for Vault.</div>
