@@ -9,7 +9,7 @@ dependencies {
 
     compileOnly "io.micronaut:micronaut-management"
     // used by OracleCloudVaultConfigurationClient
-    compileOnly 'com.oracle.oci.sdk:oci-java-sdk-vault:1.31.0'
+    compileOnly 'com.oracle.oci.sdk:oci-java-sdk-vault:1.32.1'
     compileOnly 'com.oracle.oci.sdk:oci-java-sdk-secrets:1.31.0'
     compileOnly 'com.oracle.oci.sdk:oci-java-sdk-common:1.31.0'
 
