@@ -43,6 +43,7 @@ import java.net.UnknownHostException;
  * @since 1.0
  */
 @ConfigurationProperties(EurekaConfiguration.PREFIX)
+@Requires(property = EurekaConfiguration.PREFIX)
 public class EurekaConfiguration extends DiscoveryClientConfiguration {
 
     /**
@@ -149,6 +150,7 @@ public class EurekaConfiguration extends DiscoveryClientConfiguration {
      * Configuration properties for Eureka client discovery.
      */
     @ConfigurationProperties(DiscoveryConfiguration.PREFIX)
+    @Requires(property = EurekaConfiguration.PREFIX)
     public static class EurekaDiscoveryConfiguration extends DiscoveryConfiguration {
 
         private boolean useSecurePort;
@@ -175,6 +177,7 @@ public class EurekaConfiguration extends DiscoveryClientConfiguration {
      */
     @ConfigurationProperties(RegistrationConfiguration.PREFIX)
     @Requires(property = ApplicationConfiguration.APPLICATION_NAME)
+    @Requires(property = EurekaConfiguration.PREFIX)
     public static class EurekaRegistrationConfiguration extends RegistrationConfiguration {
 
         /**

@@ -16,6 +16,7 @@
 package io.micronaut.discovery.spring.config.client;
 
 import io.micronaut.context.annotation.BootstrapContextCompatible;
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.discovery.spring.config.SpringCloudClientConfiguration;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Produces;
@@ -34,6 +35,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  */
 @Client(value = SpringCloudClientConfiguration.SPRING_CLOUD_CONFIG_ENDPOINT, configuration = SpringCloudClientConfiguration.class)
 @BootstrapContextCompatible
+@Requires(beans = SpringCloudClientConfiguration.class)
 public interface SpringCloudConfigClient {
 
     String CLIENT_DESCRIPTION = "spring-cloud-config-client";

@@ -62,6 +62,7 @@ import java.util.concurrent.ExecutorService;
         InstancePrincipalsAuthenticationDetailsProvider.class,
         ConfigFileAuthenticationDetailsProvider.class
 })
+@Requires(beans = OracleCloudVaultClientConfiguration.class)
 @BootstrapContextCompatible
 public class OracleCloudVaultConfigurationClient implements ConfigurationClient {
 

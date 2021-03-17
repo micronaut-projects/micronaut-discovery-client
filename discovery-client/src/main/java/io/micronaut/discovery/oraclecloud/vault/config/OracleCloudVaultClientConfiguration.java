@@ -18,6 +18,7 @@ package io.micronaut.discovery.oraclecloud.vault.config;
 import io.micronaut.context.annotation.BootstrapContextCompatible;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.EachProperty;
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.discovery.config.ConfigDiscoveryConfiguration;
 
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.List;
  */
 @ConfigurationProperties(OracleCloudVaultClientConfiguration.PREFIX)
 @BootstrapContextCompatible
+@Requires(property = OracleCloudVaultClientConfiguration.PREFIX)
 public class OracleCloudVaultClientConfiguration {
 
     public static final String PREFIX = "oraclecloud.vault";
