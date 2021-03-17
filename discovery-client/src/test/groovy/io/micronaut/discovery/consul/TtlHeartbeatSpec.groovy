@@ -20,6 +20,7 @@ import io.reactivex.Flowable
 import io.micronaut.context.ApplicationContext
 import io.micronaut.discovery.DiscoveryClient
 import io.micronaut.runtime.server.EmbeddedServer
+import spock.lang.Retry
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
@@ -64,6 +65,7 @@ class TtlHeartbeatSpec extends Specification implements MockConsulSpec {
         consulServer?.stop()
     }
 
+    @Retry
     void "test that if the consul server goes down and comes back up the application re-registers"() {
         given:
         EmbeddedServer consulServer = ApplicationContext.run(EmbeddedServer,
