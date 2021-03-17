@@ -20,6 +20,7 @@ import io.micronaut.context.env.Environment;
 import io.micronaut.core.convert.value.ConvertibleMultiValues;
 import io.micronaut.core.convert.value.ConvertibleValues;
 import io.micronaut.core.util.StringUtils;
+import io.micronaut.discovery.EmbeddedServerInstance;
 import io.micronaut.discovery.ServiceInstance;
 import io.micronaut.discovery.ServiceInstanceIdGenerator;
 import io.micronaut.discovery.client.registration.DiscoveryServiceAutoRegistration;
@@ -37,7 +38,6 @@ import io.micronaut.health.HeartbeatConfiguration;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.runtime.ApplicationConfiguration;
 import io.micronaut.runtime.server.EmbeddedServer;
-import io.micronaut.runtime.server.EmbeddedServerInstance;
 import io.reactivex.Single;
 import org.reactivestreams.Publisher;
 
