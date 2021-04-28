@@ -20,6 +20,8 @@ import io.reactivex.Flowable
 import io.micronaut.context.ApplicationContext
 import io.micronaut.discovery.DiscoveryClient
 import io.micronaut.runtime.server.EmbeddedServer
+import spock.lang.Ignore
+import spock.lang.PendingFeature
 import spock.lang.Retry
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
@@ -66,6 +68,7 @@ class TtlHeartbeatSpec extends Specification implements MockConsulSpec {
     }
 
     @Retry
+    @PendingFeature(reason = "Returning Publisher<HttpStatus> from a controller method")
     void "test that if the consul server goes down and comes back up the application re-registers"() {
         given:
         EmbeddedServer consulServer = ApplicationContext.run(EmbeddedServer,
