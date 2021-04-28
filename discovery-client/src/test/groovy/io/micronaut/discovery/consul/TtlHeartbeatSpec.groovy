@@ -67,8 +67,8 @@ class TtlHeartbeatSpec extends Specification implements MockConsulSpec {
         consulServer?.stop()
     }
 
-    @Retry
-    @PendingFeature(reason = "Returning Publisher<HttpStatus> from a controller method")
+    //@Retry
+    @Ignore("Returning Publisher<HttpStatus> from a controller method")
     void "test that if the consul server goes down and comes back up the application re-registers"() {
         given:
         EmbeddedServer consulServer = ApplicationContext.run(EmbeddedServer,
