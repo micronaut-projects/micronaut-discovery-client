@@ -15,12 +15,12 @@
  */
 package io.micronaut.discovery.client.registration;
 
+import io.micronaut.discovery.EmbeddedServerInstance;
 import io.micronaut.discovery.ServiceInstance;
 import io.micronaut.discovery.registration.AutoRegistration;
 import io.micronaut.discovery.registration.RegistrationConfiguration;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import io.micronaut.runtime.server.EmbeddedServerInstance;
 import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;

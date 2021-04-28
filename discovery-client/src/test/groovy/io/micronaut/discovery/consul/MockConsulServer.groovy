@@ -16,6 +16,7 @@
 package io.micronaut.discovery.consul
 
 import io.micronaut.context.annotation.Requires
+import io.micronaut.core.annotation.Nullable
 import io.micronaut.core.async.annotation.SingleResult
 import io.micronaut.core.async.publisher.Publishers
 import io.micronaut.core.util.StringUtils
@@ -29,7 +30,6 @@ import io.micronaut.runtime.server.EmbeddedServer
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
 
-import javax.annotation.Nullable
 import javax.validation.constraints.NotNull
 import java.util.concurrent.ConcurrentHashMap
 import java.util.stream.Collectors
@@ -118,8 +118,8 @@ class MockConsulServer implements ConsulOperations {
     @Override
     @SingleResult
     Flowable<List<KeyValue>> readValues(String key,
-                                    @Nullable @QueryValue("dc") String datacenter,
-                                    @Nullable Boolean raw, @Nullable String seperator) {
+                                        @Nullable @QueryValue("dc") String datacenter,
+                                        @Nullable Boolean raw, @Nullable String seperator) {
         return readValues(key)
     }
 

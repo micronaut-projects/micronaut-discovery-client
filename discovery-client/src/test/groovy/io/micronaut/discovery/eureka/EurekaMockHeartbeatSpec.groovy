@@ -53,7 +53,8 @@ class EurekaMockHeartbeatSpec extends Specification {
         )
 
         DiscoveryClient discoveryClient = application.applicationContext.getBean(EurekaClient)
-        PollingConditions conditions = new PollingConditions(timeout: 5)
+        PollingConditions conditions = new PollingConditions(timeout: 10)
+
 
         then: "The application is registered"
         conditions.eventually {
