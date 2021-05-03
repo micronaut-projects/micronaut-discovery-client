@@ -49,6 +49,7 @@ public class SpringCloudClientConfiguration extends HttpClientConfiguration {
     private String uri = DEFAULT_URI;
     private String label;
     private boolean failFast = DEFAULT_FAIL_FAST;
+    private String name;
 
     private final SpringCloudConnectionPoolConfiguration springCloudConnectionPoolConfiguration;
     private final SpringConfigDiscoveryConfiguration springConfigDiscoveryConfiguration = new SpringConfigDiscoveryConfiguration();
@@ -106,6 +107,13 @@ public class SpringCloudClientConfiguration extends HttpClientConfiguration {
     }
 
     /**
+     * @return The spring cloud config server name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
      *
      * @return Flag to indicate that failure to connect to Spring Cloud Config is fatal (default false).
      */
@@ -131,6 +139,15 @@ public class SpringCloudClientConfiguration extends HttpClientConfiguration {
      */
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    /**
+     * Set the Spring Cloud config server name.
+     *
+     * @param name Spring Cloud config server name
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**

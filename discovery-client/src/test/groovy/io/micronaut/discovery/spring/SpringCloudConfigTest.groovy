@@ -54,4 +54,23 @@ class SpringCloudConfigTest extends Specification {
         context.stop()
     }
 
+    void "test spring name configuration field"() {
+        given:
+        System.setProperty(Environment.BOOTSTRAP_CONTEXT_PROPERTY, "true")
+        ApplicationContext context = ApplicationContext.run([
+                (MockSpringCloudConfigServer.ENABLED): true,
+                "micronaut.application.name": "myapp",
+                "micronaut.config-client.enabled": true,
+                "spring.cloud.config.enabled": true,
+                "spring.cloud.config.name": "myapp-from-spring",
+                "spring.cloud.config.uri": embeddedServer.getURL().toString()
+        ], "first", "second")
+
+        expect:
+        "myapp-from-spring" == context.getRequiredProperty("app-name-from-spring-config", String.class)
+
+        cleanup:
+        context.stop()
+    }
+
 }
