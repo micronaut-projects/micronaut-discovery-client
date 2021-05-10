@@ -10,7 +10,7 @@ dependencies {
     compileOnly "io.micronaut:micronaut-management"
     // used by OracleCloudVaultConfigurationClient
     compileOnly 'com.oracle.oci.sdk:oci-java-sdk-vault:1.36.1'
-    compileOnly 'com.oracle.oci.sdk:oci-java-sdk-secrets:1.36.1'
+    compileOnly 'com.oracle.oci.sdk:oci-java-sdk-secrets:1.36.3'
     compileOnly 'com.oracle.oci.sdk:oci-java-sdk-common:1.36.1'
 
     testImplementation "org.testcontainers:spock:1.15.2"
@@ -18,7 +18,7 @@ dependencies {
     testImplementation 'com.oracle.oci.sdk:oci-java-sdk-vault:1.33.2'
     //overriding the old version brought in by oci-java-sdk-vault
     testImplementation "com.fasterxml.jackson.module:jackson-module-jaxb-annotations"
-    testImplementation 'com.oracle.oci.sdk:oci-java-sdk-secrets:1.33.2'
+    testImplementation 'com.oracle.oci.sdk:oci-java-sdk-secrets:1.36.3'
     testImplementation 'com.oracle.oci.sdk:oci-java-sdk-common:1.33.2'
 
     testImplementation "io.micronaut:micronaut-management"
