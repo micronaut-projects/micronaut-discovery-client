@@ -11,7 +11,7 @@ dependencies {
     // used by OracleCloudVaultConfigurationClient
     compileOnly 'com.oracle.oci.sdk:oci-java-sdk-vault:1.36.5'
     compileOnly 'com.oracle.oci.sdk:oci-java-sdk-secrets:1.36.5'
-    compileOnly 'com.oracle.oci.sdk:oci-java-sdk-common:1.36.5'
+    compileOnly 'com.oracle.oci.sdk:oci-java-sdk-common:1.37.0'
 
     testImplementation "org.testcontainers:spock:1.15.3"
 
