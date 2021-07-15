@@ -25,14 +25,13 @@ import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.annotation.Blocking;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.config.ConfigurationClient;
-import io.reactivex.Flowable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
 
 import javax.inject.Singleton;
 import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -73,11 +72,11 @@ public class DistributedPropertySourceLocator implements BootstrapPropertySource
             LOG.debug("Resolving configuration sources from client: {}", configurationClient);
         }
         try {
-            Flowable<PropertySource> propertySourceFlowable = Flowable.fromPublisher(configurationClient.getPropertySources(environment));
-            List<PropertySource> propertySources = propertySourceFlowable.timeout(
-                readTimeout.toMillis(),
-                TimeUnit.MILLISECONDS
-            ).toList().blockingGet();
+            Flux<PropertySource> propertySourceFlowable = Flux.from(configurationClient.getPropertySources(environment));
+            List<PropertySource> propertySources = propertySourceFlowable
+                    .timeout(Duration.ofMillis(readTimeout.toMillis()))
+                    .collectList()
+                    .block();
             if (LOG.isInfoEnabled()) {
                 LOG.info("Resolved {} configuration sources from client: {}", propertySources.size(), configurationClient);
             }

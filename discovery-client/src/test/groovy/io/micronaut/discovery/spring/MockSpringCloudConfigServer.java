@@ -15,10 +15,9 @@
  */
 package io.micronaut.discovery.spring;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.discovery.spring.config.client.ConfigServerPropertySource;
 import io.micronaut.discovery.spring.config.client.ConfigServerResponse;
@@ -29,8 +28,6 @@ import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.*;
 
 @Controller("/")

@@ -20,7 +20,7 @@ import io.micronaut.context.env.Environment
 import io.micronaut.discovery.config.ConfigurationClient
 import io.micronaut.discovery.consul.client.v1.ConsulClient
 import io.micronaut.runtime.server.EmbeddedServer
-import io.reactivex.Flowable
+import reactor.core.publisher.Flux
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
@@ -161,6 +161,6 @@ class MockConfigurationDiscoverySpec extends Specification {
     }
 
     private void writeValue(String env, String name, String value) {
-        Flowable.fromPublisher(client.putValue("/config/$env/$name", value)).blockingFirst()
+        Flux.from(client.putValue("/config/$env/$name", value)).blockFirst()
     }
 }

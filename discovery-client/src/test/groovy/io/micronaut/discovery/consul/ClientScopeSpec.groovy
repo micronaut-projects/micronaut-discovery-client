@@ -18,8 +18,8 @@ package io.micronaut.discovery.consul
 import io.micronaut.context.ApplicationContext
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
+import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
-import io.micronaut.http.client.RxHttpClient
 import io.micronaut.runtime.server.EmbeddedServer
 import spock.lang.IgnoreIf
 import spock.lang.Specification
@@ -90,10 +90,10 @@ class ClientScopeSpec extends Specification implements MockConsulSpec  {
 
 
     static class MessageService {
-        @Inject @Client('messageService') RxHttpClient client
+        @Inject @Client('messageService') HttpClient client
 
         String getMessage() {
-            client.retrieve('/message/value').blockingFirst()
+            client.toBlocking().retrieve('/message/value')
         }
     }
 

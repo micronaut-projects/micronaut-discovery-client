@@ -20,11 +20,10 @@ import io.micronaut.context.env.Environment
 import io.micronaut.discovery.DiscoveryClient
 import io.micronaut.discovery.ServiceInstance
 import io.micronaut.discovery.consul.client.v1.ConsulClient
-import io.micronaut.discovery.eureka.EurekaConfiguration
 import io.micronaut.discovery.eureka.client.v2.EurekaClient
 import io.micronaut.runtime.server.EmbeddedServer
-import io.reactivex.Flowable
 import org.testcontainers.containers.GenericContainer
+import reactor.core.publisher.Flux
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
@@ -72,7 +71,7 @@ class ConsulAutoRegistrationSpec extends Specification {
 
         then: "the server is registered with Consul"
         conditions.eventually {
-            List<ServiceInstance> instances = Flowable.fromPublisher(discoveryClient.getInstances('test-auto-reg')).blockingFirst()
+            List<ServiceInstance> instances = Flux.from(discoveryClient.getInstances('test-auto-reg')).blockFirst()
             instances.size() == 1
             instances[0].port == embeddedServer.getPort()
             instances[0].host == embeddedServer.getHost()
@@ -84,7 +83,7 @@ class ConsulAutoRegistrationSpec extends Specification {
         then: 'the client is deregistered'
 
         conditions.eventually {
-            List<ServiceInstance> instances = Flowable.fromPublisher(discoveryClient.getInstances('test-auto-reg')).blockingFirst()
+            List<ServiceInstance> instances = Flux.from(discoveryClient.getInstances('test-auto-reg')).blockFirst()
             instances.size() == 0
         }
     }
@@ -112,7 +111,7 @@ class ConsulAutoRegistrationSpec extends Specification {
 
         then: "the server is registered with Consul"
         conditions.eventually {
-            List<ServiceInstance> instances = Flowable.fromPublisher(discoveryClient.getInstances('test-auto-reg')).blockingFirst()
+            List<ServiceInstance> instances = Flux.from(discoveryClient.getInstances('test-auto-reg')).blockFirst()
             instances.size() == 1
             instances[0].port == embeddedServer.getPort()
             instances[0].host == embeddedServer.getHost()
@@ -124,7 +123,7 @@ class ConsulAutoRegistrationSpec extends Specification {
         then: 'the client is deregistered'
 
         conditions.eventually {
-            List<ServiceInstance> instances = Flowable.fromPublisher(discoveryClient.getInstances('test-auto-reg')).blockingFirst()
+            List<ServiceInstance> instances = Flux.from(discoveryClient.getInstances('test-auto-reg')).blockFirst()
             instances.size() == 0
         }
     }
@@ -159,14 +158,14 @@ class ConsulAutoRegistrationSpec extends Specification {
 
         then: "the server is registered with Consul"
         conditions.eventually {
-            List<ServiceInstance> instances = Flowable.fromPublisher(discoveryClient.getInstances(serviceId)).blockingFirst()
+            List<ServiceInstance> instances = Flux.from(discoveryClient.getInstances(serviceId)).blockFirst()
             instances.size() == 1
             instances[0].port == embeddedServer.getPort()
             instances[0].host == embeddedServer.getHost()
         }
 
         when: "another client is is queried that specifies tags"
-        List<ServiceInstance> otherInstances = Flowable.fromPublisher(anotherClient.getInstances(serviceId)).blockingFirst()
+        List<ServiceInstance> otherInstances = Flux.from(anotherClient.getInstances(serviceId)).blockFirst()
 
         then: "The instances are not returned"
         otherInstances.size() == 0
@@ -177,7 +176,7 @@ class ConsulAutoRegistrationSpec extends Specification {
 
         then: 'the service is deregistered'
         conditions.eventually {
-            List<ServiceInstance> instances = Flowable.fromPublisher(discoveryClient.getInstances(serviceId)).blockingFirst()
+            List<ServiceInstance> instances = Flux.from(discoveryClient.getInstances(serviceId)).blockFirst()
             instances.size() == 0
         }
 
@@ -207,7 +206,7 @@ class ConsulAutoRegistrationSpec extends Specification {
 
         then: "the server is registered with Consul and includes the meta data"
         conditions.eventually {
-            List<ServiceInstance> instances = Flowable.fromPublisher(discoveryClient.getInstances(serviceId)).blockingFirst()
+            List<ServiceInstance> instances = Flux.from(discoveryClient.getInstances(serviceId)).blockFirst()
             instances.size() == 1
             instances[0].port == embeddedServer.getPort()
             instances[0].metadata.contains('foo')
@@ -267,7 +266,7 @@ class ConsulAutoRegistrationSpec extends Specification {
 
         then:
         conditions.eventually {
-            List<ServiceInstance> instances = Flowable.fromPublisher(discoveryClient.getInstances(serviceId)).blockingFirst()
+            List<ServiceInstance> instances = Flux.from(discoveryClient.getInstances(serviceId)).blockFirst()
             instances.size() == 1
         }
 

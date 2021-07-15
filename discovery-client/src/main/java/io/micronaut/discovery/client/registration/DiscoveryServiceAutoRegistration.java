@@ -21,10 +21,10 @@ import io.micronaut.discovery.registration.AutoRegistration;
 import io.micronaut.discovery.registration.RegistrationConfiguration;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
+import reactor.core.publisher.Flux;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
@@ -58,10 +58,10 @@ public abstract class DiscoveryServiceAutoRegistration extends AutoRegistration 
         ServiceInstance instance,
         Publisher<HttpStatus> registrationObservable) {
 
-        Flowable<HttpStatus> registrationFlowable = Flowable.fromPublisher(registrationObservable);
+        Flux<HttpStatus> registrationFlowable = Flux.from(registrationObservable);
         final Duration timeout = registration.getTimeout().orElse(null);
         if (timeout != null) {
-            registrationFlowable = registrationFlowable.timeout(timeout.toMillis(), TimeUnit.MILLISECONDS);
+            registrationFlowable = registrationFlowable.timeout(Duration.ofMillis(timeout.toMillis()));
         }
 
         registrationFlowable.subscribe(new Subscriber<HttpStatus>() {
@@ -124,19 +124,15 @@ public abstract class DiscoveryServiceAutoRegistration extends AutoRegistration 
      * @param applicationName     The application name to de-register
      */
     protected void performDeregistration(String discoveryService, RegistrationConfiguration registration, Publisher<HttpStatus> deregisterPublisher, String applicationName) {
-        Flowable<HttpStatus> deregisterFlowable = Flowable.fromPublisher(deregisterPublisher);
+        Flux<HttpStatus> deregisterFlowable = Flux.from(deregisterPublisher);
         final Duration timeout = registration.getTimeout().orElse(null);
         if (timeout != null) {
-            deregisterFlowable = deregisterFlowable.timeout(
-                    timeout.toMillis(),
-                    TimeUnit.MILLISECONDS
-            );
+            deregisterFlowable = deregisterFlowable.timeout(Duration.ofMillis(timeout.toMillis()));
         }
         if (registration.isFailFast()) {
 
             try {
-                deregisterFlowable
-                        .blockingFirst();
+                deregisterFlowable.blockFirst();
                 if (LOG.isInfoEnabled()) {
                     LOG.info("De-registered service [{}] with {}", applicationName, discoveryService);
                 }

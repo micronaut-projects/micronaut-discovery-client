@@ -15,10 +15,9 @@
  */
 package io.micronaut.discovery.vault.config;
 
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.annotation.Header;
 import org.reactivestreams.Publisher;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A contract for an HTTP client to read configuration from Vault.
@@ -27,7 +26,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * @author James Kleeh
  * @since 1.2.0
  */
-public interface VaultConfigHttpClient<T extends AbstractVaultResponse> {
+public interface VaultConfigHttpClient<T extends AbstractVaultResponse<?>> {
 
     /**
      * @return The client description

@@ -24,7 +24,7 @@ import io.micronaut.discovery.config.ConfigurationClient
 import io.micronaut.discovery.consul.client.v1.ConsulClient
 import io.micronaut.discovery.consul.config.ConsulConfigurationClient
 import io.micronaut.runtime.server.EmbeddedServer
-import io.reactivex.Flowable
+import reactor.core.publisher.Flux
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
@@ -78,7 +78,7 @@ class ConsulMockConfigurationClientJsonSpec extends Specification {
         when:
         def env = Mock(Environment)
         env.getActiveNames() >> (['test'] as Set)
-        List<PropertySource> propertySources = Flowable.fromPublisher(configClient.getPropertySources(env)).toList().blockingGet()
+        List<PropertySource> propertySources = Flux.from(configClient.getPropertySources(env)).collectList().block()
 
         then: "verify property source characteristics"
         propertySources.size() == 2
@@ -102,7 +102,7 @@ class ConsulMockConfigurationClientJsonSpec extends Specification {
         when:
         def env = Mock(Environment)
         env.getActiveNames() >> (['test'] as Set)
-        List<PropertySource> propertySources = Flowable.fromPublisher(configClient.getPropertySources(env)).toList().blockingGet()
+        List<PropertySource> propertySources = Flux.from(configClient.getPropertySources(env)).collectList().block()
 
         then: "verify property source characteristics"
         def e = thrown(ConfigurationException)
@@ -112,6 +112,6 @@ class ConsulMockConfigurationClientJsonSpec extends Specification {
 
 
     private void writeValue(String name, String value) {
-        Flowable.fromPublisher(client.putValue("config/$name", value)).blockingFirst()
+        Flux.from(client.putValue("config/$name", value)).blockFirst()
     }
 }

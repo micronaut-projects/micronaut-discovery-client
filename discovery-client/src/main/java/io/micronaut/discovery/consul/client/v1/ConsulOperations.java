@@ -15,6 +15,7 @@
  */
 package io.micronaut.discovery.consul.client.v1;
 
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
@@ -24,7 +25,6 @@ import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.retry.annotation.Retryable;
 import org.reactivestreams.Publisher;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;

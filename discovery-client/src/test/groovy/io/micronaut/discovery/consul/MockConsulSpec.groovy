@@ -16,7 +16,7 @@
 package io.micronaut.discovery.consul
 
 import io.micronaut.runtime.server.EmbeddedServer
-import io.reactivex.Flowable
+import reactor.core.publisher.Flux
 
 trait MockConsulSpec {
 
@@ -34,7 +34,7 @@ trait MockConsulSpec {
     void waitForService(EmbeddedServer consulServer, String serviceName) {
         MockConsulServer consul = consulServer.applicationContext.getBean(MockConsulServer)
         int attempts = 0
-        while (!Flowable.fromPublisher(consul.getServices()).blockingFirst().containsKey(serviceName)) {
+        while (!Flux.from(consul.getServices()).blockFirst().containsKey(serviceName)) {
             Thread.sleep(500)
             attempts++
             if (attempts > 5) {

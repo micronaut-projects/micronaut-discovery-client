@@ -21,6 +21,8 @@ import io.micronaut.context.env.Environment;
 import io.micronaut.context.env.EnvironmentPropertySource;
 import io.micronaut.context.env.PropertySource;
 import io.micronaut.context.exceptions.ConfigurationException;
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.config.ConfigurationClient;
@@ -31,15 +33,14 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.runtime.ApplicationConfiguration;
 import io.micronaut.scheduling.TaskExecutors;
-import io.reactivex.Flowable;
-import io.reactivex.schedulers.Schedulers;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 
@@ -82,12 +83,12 @@ public class SpringCloudConfigurationClient implements ConfigurationClient {
     @Override
     public Publisher<PropertySource> getPropertySources(Environment environment) {
         if (!springCloudConfiguration.getConfiguration().isEnabled()) {
-            return Flowable.empty();
+            return Flux.empty();
         }
 
         Optional<String> configuredApplicationName = applicationConfiguration.getName();
         if (!configuredApplicationName.isPresent()) {
-            return Flowable.empty();
+            return Flux.empty();
         } else {
             String applicationName = configuredApplicationName.get();
             Set<String> activeNames = environment.getActiveNames();
@@ -105,25 +106,25 @@ public class SpringCloudConfigurationClient implements ConfigurationClient {
                     springCloudConfigClient.readValues(applicationName,
                             profiles, springCloudConfiguration.getLabel());
 
-            Flowable<PropertySource> configurationValues = Flowable.fromPublisher(responsePublisher)
-                    .onErrorResumeNext(throwable -> {
+            Flux<PropertySource> configurationValues = Flux.from(responsePublisher)
+                    .onErrorResume(throwable -> {
                         if (throwable instanceof HttpClientResponseException) {
                             HttpClientResponseException httpClientResponseException = (HttpClientResponseException) throwable;
                             if (httpClientResponseException.getStatus() == HttpStatus.NOT_FOUND) {
                                 if (springCloudConfiguration.isFailFast()) {
-                                    return Flowable.error(
+                                    return Flux.error(
                                         new ConfigurationException("Could not locate PropertySource and the fail fast property is set", throwable));
                                 } else {
-                                    return Flowable.empty();
+                                    return Flux.empty();
                                 }
                             }
                         }
-                        return Flowable.error(new ConfigurationException("Error reading distributed configuration from Spring Cloud: " + throwable.getMessage(), throwable));
+                        return Flux.error(new ConfigurationException("Error reading distributed configuration from Spring Cloud: " + throwable.getMessage(), throwable));
                     })
                     .flatMap(response -> {
                         List<ConfigServerPropertySource> springSources = response.getPropertySources();
                         if (CollectionUtils.isEmpty(springSources)) {
-                            return Flowable.empty();
+                            return Flux.empty();
                         }
                         int baseOrder = EnvironmentPropertySource.POSITION + 100;
                         List<PropertySource> propertySources = new ArrayList<>(springSources.size());
@@ -135,11 +136,11 @@ public class SpringCloudConfigurationClient implements ConfigurationClient {
                             propertySources.add(PropertySource.of(springSource.getName(), springSource.getSource(), ++baseOrder));
                         }
 
-                        return Flowable.fromIterable(propertySources);
+                        return Flux.fromIterable(propertySources);
                     });
 
             if (executionService != null) {
-                return configurationValues.subscribeOn(Schedulers.from(executionService));
+                return configurationValues.subscribeOn(Schedulers.fromExecutor(executionService));
             } else {
                 return configurationValues;
             }
@@ -147,7 +148,7 @@ public class SpringCloudConfigurationClient implements ConfigurationClient {
     }
 
     @Override
-    public final String getDescription() {
+    public final @NonNull String getDescription() {
         return io.micronaut.discovery.spring.config.client.SpringCloudConfigClient.CLIENT_DESCRIPTION;
     }
 

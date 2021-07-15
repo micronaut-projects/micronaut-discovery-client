@@ -17,20 +17,21 @@ package io.micronaut.discovery.consul.client.v1;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.annotation.ReflectiveAccess;
 import io.micronaut.core.util.StringUtils;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.Locale;
 
 /**
  * @author graemerocher
  * @since 1.0
  */
-@JsonNaming(PropertyNamingStrategy.UpperCamelCaseStrategy.class)
+@JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 @Introspected
 public class CheckEntry implements Check {
 

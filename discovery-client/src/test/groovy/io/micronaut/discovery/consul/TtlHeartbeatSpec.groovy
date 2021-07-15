@@ -16,13 +16,11 @@
 package io.micronaut.discovery.consul
 
 import io.micronaut.core.naming.NameUtils
-import io.reactivex.Flowable
 import io.micronaut.context.ApplicationContext
 import io.micronaut.discovery.DiscoveryClient
 import io.micronaut.runtime.server.EmbeddedServer
+import reactor.core.publisher.Flux
 import spock.lang.Ignore
-import spock.lang.PendingFeature
-import spock.lang.Retry
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
@@ -57,8 +55,8 @@ class TtlHeartbeatSpec extends Specification implements MockConsulSpec {
 
         then:"The heart beat is received"
         conditions.eventually {
-            Flowable.fromPublisher(discoveryClient.getInstances(serviceId)).blockingFirst().size() == 1
-            Flowable.fromPublisher(discoveryClient.getInstances(serviceId)).blockingFirst().size() == 1
+            Flux.from(discoveryClient.getInstances(serviceId)).blockFirst().size() == 1
+            Flux.from(discoveryClient.getInstances(serviceId)).blockFirst().size() == 1
             MockConsulServer.passingReports.find { it.contains(NameUtils.hyphenate(serviceId))} != null
         }
 
@@ -93,7 +91,7 @@ class TtlHeartbeatSpec extends Specification implements MockConsulSpec {
 
         then:"The heart beat is received"
         conditions.eventually {
-            Flowable.fromPublisher(discoveryClient.getInstances(serviceId)).blockingFirst().size() == 1
+            Flux.from(discoveryClient.getInstances(serviceId)).blockFirst().size() == 1
             MockConsulServer.passingReports.find { it.contains(NameUtils.hyphenate(serviceId))} != null
         }
 
@@ -101,11 +99,11 @@ class TtlHeartbeatSpec extends Specification implements MockConsulSpec {
         consulServer.applicationContext.getBean(MockConsulServer).reset()
 
         then:"There are no services"
-        Flowable.fromPublisher(discoveryClient.getInstances(serviceId)).blockingFirst().size() == 0
+        Flux.from(discoveryClient.getInstances(serviceId)).blockFirst().size() == 0
 
         and:"eventually the service comes back"
         conditions.eventually {
-            Flowable.fromPublisher(discoveryClient.getInstances(serviceId)).blockingFirst().size() == 1
+            Flux.from(discoveryClient.getInstances(serviceId)).blockFirst().size() == 1
             MockConsulServer.passingReports.find { it.contains(NameUtils.hyphenate(serviceId))} != null
         }
 

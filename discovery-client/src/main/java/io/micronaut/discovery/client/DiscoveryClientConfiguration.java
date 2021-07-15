@@ -17,6 +17,8 @@ package io.micronaut.discovery.client;
 
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.annotation.Experimental;
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.io.socket.SocketUtils;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.DiscoveryConfiguration;
@@ -25,8 +27,6 @@ import io.micronaut.discovery.registration.RegistrationConfiguration;
 import io.micronaut.http.client.HttpClientConfiguration;
 import io.micronaut.runtime.ApplicationConfiguration;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;

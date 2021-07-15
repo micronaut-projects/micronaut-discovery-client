@@ -16,6 +16,7 @@
 package io.micronaut.discovery.vault.config.v1;
 
 import io.micronaut.context.annotation.BootstrapContextCompatible;
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.discovery.vault.config.VaultClientConfiguration;
 import io.micronaut.discovery.vault.config.VaultConfigHttpClient;
 import io.micronaut.http.annotation.Get;
@@ -24,8 +25,6 @@ import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.retry.annotation.Retryable;
 import org.reactivestreams.Publisher;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  *  A non-blocking HTTP client for Vault - KV v2.

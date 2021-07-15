@@ -27,8 +27,8 @@ import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.QueryValue
 import io.micronaut.runtime.server.EmbeddedServer
-import io.reactivex.Flowable
 import org.reactivestreams.Publisher
+import reactor.core.publisher.Flux
 
 import javax.validation.constraints.NotNull
 import java.util.concurrent.ConcurrentHashMap
@@ -88,17 +88,17 @@ class MockConsulServer implements ConsulOperations {
             List<KeyValue> list = keyvalues.computeIfAbsent(folder, { String k -> []})
             list.add(new KeyValue(key, Base64.getEncoder().encodeToString(value.bytes)))
         }
-        return Flowable.just(true)
+        return Flux.just(true)
     }
 
     @Override
     @Get("/kv/{+key}")
     @SingleResult
-    Flowable<List<KeyValue>> readValues(String key) {
+    Publisher<List<KeyValue>> readValues(String key) {
         key = URLDecoder.decode(key, "UTF-8")
         Map<String, List<KeyValue>> found = keyvalues.findAll { entry -> entry.key.startsWith(key)}
         if(found) {
-            return Flowable.just(found.values().stream().flatMap({ values -> values.stream() })
+            return Flux.just(found.values().stream().flatMap({ values -> values.stream() })
                                    .collect(Collectors.toList()))
         }
         else {
@@ -108,16 +108,16 @@ class MockConsulServer implements ConsulOperations {
 
                 List<KeyValue> values = keyvalues.get(prefix)
                 if(values) {
-                    return Flowable.just(values.findAll({it.key.startsWith(key)}))
+                    return Flux.just(values.findAll({it.key.startsWith(key)}))
                 }
             }
         }
-        return Flowable.just(Collections.emptyList())
+        return Flux.just(Collections.emptyList())
     }
 
     @Override
     @SingleResult
-    Flowable<List<KeyValue>> readValues(String key,
+    Publisher<List<KeyValue>> readValues(String key,
                                         @Nullable @QueryValue("dc") String datacenter,
                                         @Nullable Boolean raw, @Nullable String seperator) {
         return readValues(key)

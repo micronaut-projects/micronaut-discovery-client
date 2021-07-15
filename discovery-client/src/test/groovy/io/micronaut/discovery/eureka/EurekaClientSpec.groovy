@@ -16,7 +16,6 @@
 package io.micronaut.discovery.eureka
 
 import io.micronaut.context.env.Environment
-import io.reactivex.Flowable
 import io.micronaut.context.ApplicationContext
 import io.micronaut.discovery.CompositeDiscoveryClient
 import io.micronaut.discovery.DiscoveryClient
@@ -27,6 +26,7 @@ import io.micronaut.http.HttpStatus
 import io.micronaut.runtime.server.EmbeddedServer
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy
+import reactor.core.publisher.Flux
 import spock.lang.Retry
 import spock.lang.Specification
 import spock.lang.Stepwise
@@ -85,11 +85,11 @@ class EurekaClientSpec extends Specification {
         embeddedServer.applicationContext.getBean(EurekaConfiguration).readTimeout.isPresent()
         embeddedServer.applicationContext.getBean(EurekaConfiguration).readTimeout.get().getSeconds() == 5
     }
-    
+
     void "test validation"() {
         when:
         client.register("", null)
-        
+
         then:
         thrown(ConstraintViolationException)
 
@@ -110,7 +110,7 @@ class EurekaClientSpec extends Specification {
         when:
         def instanceId = "myapp-1"
         def appId = "myapp"
-        HttpStatus status = Flowable.fromPublisher(client.register(appId, new InstanceInfo("localhost", appId, instanceId))).blockingFirst()
+        HttpStatus status = Flux.from(client.register(appId, new InstanceInfo("localhost", appId, instanceId))).blockFirst()
 
         then:
         status == HttpStatus.NO_CONTENT
@@ -118,9 +118,9 @@ class EurekaClientSpec extends Specification {
         // NOTE: Eureka is eventually consistent so this sometimes fails due to the timeout in PollingConditions not being met
         conditions.eventually {
 
-            ApplicationInfo applicationInfo = Flowable.fromPublisher(client.getApplicationInfo(appId)).blockingFirst()
+            ApplicationInfo applicationInfo = Flux.from(client.getApplicationInfo(appId)).blockFirst()
 
-            InstanceInfo instanceInfo = Flowable.fromPublisher(client.getInstanceInfo(appId, instanceId)).blockingFirst()
+            InstanceInfo instanceInfo = Flux.from(client.getInstanceInfo(appId, instanceId)).blockFirst()
 
             applicationInfo.name == appId.toUpperCase()
             applicationInfo.instances.size() == 1
@@ -130,7 +130,7 @@ class EurekaClientSpec extends Specification {
         }
 
         when:
-        status = Flowable.fromPublisher(client.deregister(appId, instanceId)).blockingFirst()
+        status = Flux.from(client.deregister(appId, instanceId)).blockFirst()
 
         then:
         status == HttpStatus.OK

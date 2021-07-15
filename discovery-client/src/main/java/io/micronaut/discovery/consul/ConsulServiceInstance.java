@@ -15,6 +15,8 @@
  */
 package io.micronaut.discovery.consul;
 
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.value.ConvertibleValues;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.core.util.StringUtils;
@@ -26,8 +28,6 @@ import io.micronaut.discovery.consul.client.v1.ServiceEntry;
 import io.micronaut.discovery.exceptions.DiscoveryException;
 import io.micronaut.health.HealthStatus;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;

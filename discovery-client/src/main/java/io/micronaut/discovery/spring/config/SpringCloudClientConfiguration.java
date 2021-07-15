@@ -18,12 +18,12 @@ package io.micronaut.discovery.spring.config;
 import io.micronaut.context.annotation.BootstrapContextCompatible;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.config.ConfigDiscoveryConfiguration;
 import io.micronaut.http.client.HttpClientConfiguration;
 import io.micronaut.runtime.ApplicationConfiguration;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.inject.Inject;
 import java.util.Optional;
 

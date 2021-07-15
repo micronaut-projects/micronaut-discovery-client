@@ -1,15 +1,14 @@
 package io.micronaut.discovery.composite
 
 import io.micronaut.context.ApplicationContext
-import io.micronaut.context.annotation.Replaces
 import io.micronaut.context.annotation.Requires
 import io.micronaut.core.async.publisher.Publishers
 import io.micronaut.discovery.DiscoveryClient
 import io.micronaut.discovery.ServiceInstance
 import io.micronaut.discovery.consul.MockConsulServer
 import io.micronaut.runtime.server.EmbeddedServer
-import io.reactivex.Flowable
 import org.reactivestreams.Publisher
+import reactor.core.publisher.Flux
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
@@ -41,7 +40,7 @@ class CompositeDiscoverySpec extends Specification {
 
         expect:
         conditions.eventually {
-            List<ServiceInstance> instances = Flowable.fromPublisher(discoveryClient.getInstances('foo')).blockingFirst()
+            List<ServiceInstance> instances = Flux.from(discoveryClient.getInstances('foo')).blockFirst()
             instances.size() == 2
             instances.stream().anyMatch({ instance -> instance.host == "foo" && instance.port == 8443 })
             instances.stream().anyMatch({ instance -> instance.host == "localhost" && instance.port == embeddedServer.getPort() })

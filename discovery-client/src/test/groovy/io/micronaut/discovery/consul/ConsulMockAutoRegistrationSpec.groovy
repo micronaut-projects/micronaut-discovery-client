@@ -15,7 +15,6 @@
  */
 package io.micronaut.discovery.consul
 
-import io.reactivex.Flowable
 import io.micronaut.context.ApplicationContext
 import io.micronaut.discovery.DiscoveryClient
 import io.micronaut.discovery.ServiceInstance
@@ -28,6 +27,7 @@ import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
+import reactor.core.publisher.Flux
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
@@ -64,12 +64,12 @@ class ConsulMockAutoRegistrationSpec extends Specification {
 
     void 'test mock server'() {
         when:
-        def status = Flowable.fromPublisher(client.register(new NewServiceEntry("test-service"))).blockingFirst()
+        def status = Flux.from(client.register(new NewServiceEntry("test-service"))).blockFirst()
         then:
         status
-        Flowable.fromPublisher(client.services).blockingFirst()
-        Flowable.fromPublisher(discoveryClient.getInstances('test-service')).blockingFirst()
-        Flowable.fromPublisher(client.deregister('test-service')).blockingFirst()
+        Flux.from(client.services).blockFirst()
+        Flux.from(discoveryClient.getInstances('test-service')).blockFirst()
+        Flux.from(client.deregister('test-service')).blockFirst()
     }
 
     void 'test that the service is automatically registered with Consul'() {
@@ -79,7 +79,7 @@ class ConsulMockAutoRegistrationSpec extends Specification {
 
         expect:
         conditions.eventually {
-            List<ServiceInstance> instances = Flowable.fromPublisher(discoveryClient.getInstances('test-auto-reg')).blockingFirst()
+            List<ServiceInstance> instances = Flux.from(discoveryClient.getInstances('test-auto-reg')).blockFirst()
             instances.size() == 1
             instances[0].id.contains('test-auto-reg')
             instances[0].port == embeddedServer.getPort()
@@ -99,7 +99,7 @@ class ConsulMockAutoRegistrationSpec extends Specification {
 
         then:
         conditions.eventually {
-            List<ServiceInstance> instances = Flowable.fromPublisher(discoveryClient.getInstances(serviceName)).blockingFirst()
+            List<ServiceInstance> instances = Flux.from(discoveryClient.getInstances(serviceName)).blockFirst()
             instances.size() == 1
             instances[0].id.contains(serviceName)
             instances[0].port == anotherServer.getPort()
@@ -115,7 +115,7 @@ class ConsulMockAutoRegistrationSpec extends Specification {
 
         then:
         conditions.eventually {
-            List<ServiceInstance> instances = Flowable.fromPublisher(discoveryClient.getInstances(serviceName)).blockingFirst()
+            List<ServiceInstance> instances = Flux.from(discoveryClient.getInstances(serviceName)).blockFirst()
             instances.size() == 0
             !instances.find { it.id == serviceName }
         }
@@ -133,7 +133,7 @@ class ConsulMockAutoRegistrationSpec extends Specification {
 
         then:
         conditions.eventually {
-            List<HealthEntry> entry = Flowable.fromPublisher(client.getHealthyServices(serviceName)).blockingFirst()
+            List<HealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
             entry.size() == 1
             entry[0].service.tags == ['foo', 'bar']
         }
@@ -155,7 +155,7 @@ class ConsulMockAutoRegistrationSpec extends Specification {
         then:
         Thread.sleep(30000)
         conditions.eventually {
-            List<HealthEntry> entry = Flowable.fromPublisher(client.getHealthyServices(serviceName)).blockingFirst()
+            List<HealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
             entry.size() == 1
             entry[0].service.meta == [foo:'bar',  key:'value']
         }
@@ -179,7 +179,7 @@ class ConsulMockAutoRegistrationSpec extends Specification {
         then:
 
         conditions.eventually {
-            List<HealthEntry> entry = Flowable.fromPublisher(client.getHealthyServices(serviceName)).blockingFirst()
+            List<HealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
             entry.size() == 1
             entry[0].service.tags == ['foo', 'bar']
             MockConsulServer.newEntries.get(serviceName).checks.size() == 1
@@ -210,7 +210,7 @@ class ConsulMockAutoRegistrationSpec extends Specification {
         then:
 
         conditions.eventually {
-            List<HealthEntry> entry = Flowable.fromPublisher(client.getHealthyServices(serviceName)).blockingFirst()
+            List<HealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
             entry.size() == 1
             entry[0].service.tags == ['foo', 'bar']
             MockConsulServer.newEntries.get(serviceName).checks.size() == 1
@@ -243,7 +243,7 @@ class ConsulMockAutoRegistrationSpec extends Specification {
 
         then:
         conditions.eventually {
-            List<HealthEntry> entry = Flowable.fromPublisher(client.getHealthyServices(serviceName)).blockingFirst()
+            List<HealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
             entry.size() == 1
             entry[0].service.tags == ['foo', 'bar']
             MockConsulServer.newEntries.get(serviceName).checks.size() == 1
@@ -275,7 +275,7 @@ class ConsulMockAutoRegistrationSpec extends Specification {
         then:
 
         conditions.eventually {
-            List<HealthEntry> entry = Flowable.fromPublisher(client.getHealthyServices(serviceName)).blockingFirst()
+            List<HealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
             entry.size() == 1
             entry[0].service.tags == ['foo', 'bar']
             MockConsulServer.newEntries.get(serviceName).checks.size() == 1
@@ -306,7 +306,7 @@ class ConsulMockAutoRegistrationSpec extends Specification {
 
         then:
         conditions.eventually {
-            List<HealthEntry> entry = Flowable.fromPublisher(consulClient.getHealthyServices(serviceName)).blockingFirst()
+            List<HealthEntry> entry = Flux.from(consulClient.getHealthyServices(serviceName)).blockFirst()
             entry.size() == 1
         }
 
