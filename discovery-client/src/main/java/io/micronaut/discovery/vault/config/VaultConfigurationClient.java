@@ -107,9 +107,7 @@ public class VaultConfigurationClient implements ConfigurationClient {
                     configHttpClient.readConfigurationValues(token, engine, value))
                     .filter(data -> !data.getSecrets().isEmpty())
                     .map(data -> PropertySource.of(value, data.getSecrets(), key))
-                    .onErrorResume(throwable -> {
-                        //TODO: Discover why the below hack is necessary
-                        Throwable t = (Throwable) throwable;
+                    .onErrorResume(t -> {
                         if (t instanceof HttpClientResponseException) {
                             if (((HttpClientResponseException) t).getStatus() == HttpStatus.NOT_FOUND) {
                                 if (vaultClientConfiguration.isFailFast()) {

@@ -27,7 +27,6 @@ import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Abstract class for {@link AutoRegistration} with discovery services.
