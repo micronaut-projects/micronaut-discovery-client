@@ -17,13 +17,13 @@ package io.micronaut.discovery.consul
 
 import io.micronaut.discovery.DiscoveryClient
 import io.micronaut.discovery.ServiceInstance
-import io.reactivex.Flowable
 import io.micronaut.context.ApplicationContext
 import io.micronaut.discovery.consul.client.v1.ConsulClient
 import io.micronaut.health.HealthStatus
 import io.micronaut.http.HttpStatus
 import io.micronaut.runtime.server.EmbeddedServer
 import org.testcontainers.containers.GenericContainer
+import reactor.core.publisher.Flux
 import spock.lang.AutoCleanup
 import spock.lang.Ignore
 import spock.lang.IgnoreIf
@@ -74,7 +74,7 @@ class ConsulHealthStatusSpec extends Specification {
 
         then:
         conditions.eventually {
-            List<ServiceInstance> instances = Flowable.fromPublisher(discoveryClient.getInstances(serviceId)).blockingFirst()
+            List<ServiceInstance> instances = Flux.from(discoveryClient.getInstances(serviceId)).blockFirst()
             instances.size() == 1
             instances[0].port == embeddedServer.getPort()
             instances[0].host == embeddedServer.getHost()
@@ -82,13 +82,13 @@ class ConsulHealthStatusSpec extends Specification {
 
         when:"An application is set to fail"
         ConsulClient consulClient = embeddedServer.getApplicationContext().getBean(ConsulClient)
-        HttpStatus status = Flowable.fromPublisher(consulClient.fail("service:$serviceId:${embeddedServer.port}")).blockingFirst()
+        HttpStatus status = Flux.from(consulClient.fail("service:$serviceId:${embeddedServer.port}")).blockFirst()
 
         then:"The status is ok"
         status == HttpStatus.OK
 
         when:"The service is retrieved"
-        def services = Flowable.fromPublisher(consulClient.getInstances(serviceId)).blockingFirst()
+        def services = Flux.from(consulClient.getInstances(serviceId)).blockFirst()
 
         then:"The service is down"
         services.size() == 1

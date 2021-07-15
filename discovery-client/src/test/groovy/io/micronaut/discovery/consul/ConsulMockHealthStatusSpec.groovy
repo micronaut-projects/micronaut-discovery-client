@@ -15,12 +15,12 @@
  */
 package io.micronaut.discovery.consul
 
-import io.reactivex.Flowable
 import io.micronaut.context.ApplicationContext
 import io.micronaut.discovery.consul.client.v1.ConsulClient
 import io.micronaut.health.HealthStatus
 import io.micronaut.http.HttpStatus
 import io.micronaut.runtime.server.EmbeddedServer
+import reactor.core.publisher.Flux
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
@@ -49,18 +49,18 @@ class ConsulMockHealthStatusSpec extends Specification {
 
         then:
         conditions.eventually {
-            Flowable.fromPublisher(consulClient.getInstances(serviceId)).blockingFirst().size() == 1
+            Flux.from(consulClient.getInstances(serviceId)).blockFirst().size() == 1
         }
 
         when:"An application is set to fail"
 
-        HttpStatus status = Flowable.fromPublisher(consulClient.fail("service:my-service:${application.port}")).blockingFirst()
+        HttpStatus status = Flux.from(consulClient.fail("service:my-service:${application.port}")).blockFirst()
 
         then:"The status is ok"
         status == HttpStatus.OK
 
         when:"The service is retrieved"
-        def services = Flowable.fromPublisher(consulClient.getInstances(serviceId)).blockingFirst()
+        def services = Flux.from(consulClient.getInstances(serviceId)).blockFirst()
 
         then:"The service is down"
         services.size() == 1

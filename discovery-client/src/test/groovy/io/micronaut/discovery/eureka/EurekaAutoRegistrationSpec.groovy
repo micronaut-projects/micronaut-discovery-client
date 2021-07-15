@@ -16,12 +16,12 @@
 package io.micronaut.discovery.eureka
 
 import io.micronaut.core.naming.NameUtils
-import io.reactivex.Flowable
 import io.micronaut.context.ApplicationContext
 import io.micronaut.discovery.eureka.client.v2.EurekaClient
 import io.micronaut.runtime.server.EmbeddedServer
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy
+import reactor.core.publisher.Flux
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
@@ -88,9 +88,9 @@ class EurekaAutoRegistrationSpec extends Specification{
 
         then: "The application is registered"
         conditions.eventually {
-            Flowable.fromPublisher(eurekaClient.getInstances(serviceId)).timeout(60, TimeUnit.SECONDS).blockingFirst().size() == 1
+            Flux.from(eurekaClient.getInstances(serviceId)).timeout(Duration.ofSeconds(60)).blockFirst().size() == 1
             // Eureka uses upper case for application names
-            Flowable.fromPublisher(eurekaClient.getServiceIds()).timeout(60, TimeUnit.SECONDS).blockingFirst().contains(
+            Flux.from(eurekaClient.getServiceIds()).timeout(Duration.ofSeconds(60)).blockFirst().contains(
                     NameUtils.hyphenate(serviceId).toUpperCase()
             )
         }

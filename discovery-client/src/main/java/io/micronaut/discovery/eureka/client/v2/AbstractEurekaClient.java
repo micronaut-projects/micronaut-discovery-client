@@ -23,6 +23,7 @@ import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_SINGLE_E
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.core.naming.NameUtils;
 import io.micronaut.discovery.ServiceInstance;
@@ -37,8 +38,8 @@ import io.micronaut.http.client.exceptions.HttpClientException;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.jackson.annotation.JacksonFeatures;
 import io.micronaut.validation.Validated;
-import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
 
 import java.util.Collections;
 import java.util.List;
@@ -75,14 +76,14 @@ abstract class AbstractEurekaClient implements EurekaClient {
     }
 
     @Override
-    public String getDescription() {
+    public @NonNull String getDescription() {
         return EurekaClient.SERVICE_ID;
     }
 
     @Override
     public Publisher<List<ServiceInstance>> getInstances(String serviceId) {
         serviceId = NameUtils.hyphenate(serviceId);
-        Flowable<List<ServiceInstance>> flowable = Flowable.fromPublisher(getApplicationInfo(serviceId)).map(applicationInfo -> {
+        Flux<List<ServiceInstance>> flowable = Flux.from(getApplicationInfo(serviceId)).map(applicationInfo -> {
             List<InstanceInfo> instances = applicationInfo.getInstances();
             return instances.stream()
                 .map(ii -> {
@@ -94,18 +95,18 @@ abstract class AbstractEurekaClient implements EurekaClient {
                 .collect(Collectors.toList());
         });
 
-        return flowable.onErrorReturn(throwable -> {
+        return flowable.onErrorResume(throwable -> {
             // Translate 404 into empty list
             if (throwable instanceof HttpClientResponseException) {
                 HttpClientResponseException hcre = (HttpClientResponseException) throwable;
                 if (hcre.getStatus() == HttpStatus.NOT_FOUND) {
-                    return Collections.emptyList();
+                    return Flux.just(Collections.emptyList());
                 }
             }
             if (throwable instanceof Exception) {
-                throw (Exception) throwable;
+                return Flux.error(throwable);
             } else {
-                throw new HttpClientException("Internal Client Error: " + throwable.getMessage(), throwable);
+                return Flux.error(new HttpClientException("Internal Client Error: " + throwable.getMessage(), throwable));
             }
         });
     }

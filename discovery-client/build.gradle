@@ -7,6 +7,8 @@ dependencies {
     api "io.micronaut:micronaut-http-client"
     api "io.micronaut:micronaut-validation"
 
+    implementation "io.projectreactor:reactor-core"
+
     compileOnly "io.micronaut:micronaut-management"
     // used by OracleCloudVaultConfigurationClient
     compileOnly 'com.oracle.oci.sdk:oci-java-sdk-vault:1.36.5'

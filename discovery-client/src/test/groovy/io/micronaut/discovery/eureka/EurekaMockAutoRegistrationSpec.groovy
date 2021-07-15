@@ -25,7 +25,7 @@ import io.micronaut.discovery.eureka.client.v2.InstanceInfo
 import io.micronaut.health.HealthStatus
 import io.micronaut.health.HeartbeatEvent
 import io.micronaut.runtime.server.EmbeddedServer
-import io.reactivex.Flowable
+import reactor.core.publisher.Flux
 import spock.lang.Specification
 import spock.lang.Stepwise
 import spock.lang.Unroll
@@ -67,16 +67,15 @@ class EurekaMockAutoRegistrationSpec extends Specification {
 
         then: "The application is registered"
         conditions.eventually {
-            Flowable.fromPublisher(eurekaClient.applicationInfos).blockingFirst().size() == 2
-            Flowable.fromPublisher(eurekaClient.getApplicationVips(NameUtils.hyphenate(serviceId))).blockingFirst().size() == 2
-            Flowable.fromPublisher(eurekaClient.getInstances(NameUtils.hyphenate(serviceId))).blockingFirst().size() == 1
-            Flowable.fromPublisher(eurekaClient.getServiceIds()).blockingFirst().contains(NameUtils.hyphenate(serviceId))
+            Flux.from(eurekaClient.applicationInfos).blockFirst().size() == 2
+            Flux.from(eurekaClient.getApplicationVips(NameUtils.hyphenate(serviceId))).blockFirst().size() == 2
+            Flux.from(eurekaClient.getInstances(NameUtils.hyphenate(serviceId))).blockFirst().size() == 1
+            Flux.from(eurekaClient.getServiceIds()).blockFirst().contains(NameUtils.hyphenate(serviceId))
             MockEurekaServer.instances[NameUtils.hyphenate(serviceId)].size() == 1
 
             InstanceInfo instanceInfo = MockEurekaServer.instances[NameUtils.hyphenate(serviceId)].values().first()
             instanceInfo.status == InstanceInfo.Status.UP
         }
-
 
         cleanup:
         application1?.stop()
@@ -108,10 +107,10 @@ class EurekaMockAutoRegistrationSpec extends Specification {
 
         then: "The application is registered"
         conditions.eventually {
-            Flowable.fromPublisher(eurekaClient.applicationInfos).blockingFirst().size() == 1
-            Flowable.fromPublisher(eurekaClient.getApplicationVips(NameUtils.hyphenate(serviceId))).blockingFirst().size() == 1
-            Flowable.fromPublisher(eurekaClient.getInstances(NameUtils.hyphenate(serviceId))).blockingFirst().size() == 1
-            Flowable.fromPublisher(eurekaClient.getServiceIds()).blockingFirst().contains(NameUtils.hyphenate(serviceId))
+            Flux.from(eurekaClient.applicationInfos).blockFirst().size() == 1
+            Flux.from(eurekaClient.getApplicationVips(NameUtils.hyphenate(serviceId))).blockFirst().size() == 1
+            Flux.from(eurekaClient.getInstances(NameUtils.hyphenate(serviceId))).blockFirst().size() == 1
+            Flux.from(eurekaClient.getServiceIds()).blockFirst().contains(NameUtils.hyphenate(serviceId))
             MockEurekaServer.instances[NameUtils.hyphenate(serviceId)].size() == 1
 
             InstanceInfo instanceInfo = MockEurekaServer.instances[NameUtils.hyphenate(serviceId)].values().first()
@@ -185,7 +184,7 @@ class EurekaMockAutoRegistrationSpec extends Specification {
 
         expect: "The metadata is correct"
         conditions.eventually {
-            Flowable.fromPublisher(discoveryClient.getInstances(serviceId)).blockingFirst().size() == 1
+            Flux.from(discoveryClient.getInstances(serviceId)).blockFirst().size() == 1
             MockEurekaServer.instances[NameUtils.hyphenate(serviceId)].size() == 1
 
             InstanceInfo instanceInfo = MockEurekaServer.instances[NameUtils.hyphenate(serviceId)].values().first()

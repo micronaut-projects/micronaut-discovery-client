@@ -21,6 +21,7 @@ import io.micronaut.discovery.eureka.MockEurekaServer
 import io.micronaut.health.HealthStatus
 import io.micronaut.management.health.indicator.HealthResult
 import io.micronaut.runtime.server.EmbeddedServer
+import reactor.core.publisher.Mono
 import spock.lang.Specification
 
 /**
@@ -43,7 +44,7 @@ class EurekaHealthIndicatorSpec extends Specification {
         EurekaHealthIndicator healthIndicator = applicationContext.getBean(EurekaHealthIndicator)
 
         when:
-        HealthResult healthResult = healthIndicator.result.blockingFirst()
+        HealthResult healthResult = Mono.from(healthIndicator.result).block()
 
         then:
         healthResult.status == HealthStatus.UP

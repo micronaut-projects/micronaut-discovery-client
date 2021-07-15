@@ -21,7 +21,7 @@ import io.micronaut.discovery.DiscoveryClient
 import io.micronaut.discovery.eureka.client.v2.EurekaClient
 import io.micronaut.discovery.eureka.client.v2.InstanceInfo
 import io.micronaut.runtime.server.EmbeddedServer
-import io.reactivex.Flowable
+import reactor.core.publisher.Flux
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
@@ -55,7 +55,7 @@ class EurekaContextPathSpec extends Specification {
 
         then: "The application is registered"
         conditions.eventually {
-            Flowable.fromPublisher(discoveryClient.getInstances(serviceId)).blockingFirst().size() == 1
+            Flux.from(discoveryClient.getInstances(serviceId)).blockFirst().size() == 1
             MockEurekaServer.instances[NameUtils.hyphenate(serviceId)].size() == 1
 
             InstanceInfo instanceInfo = MockEurekaServer.instances[NameUtils.hyphenate(serviceId)].values().first()

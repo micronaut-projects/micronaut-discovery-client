@@ -20,6 +20,8 @@ import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.DiscoveryConfiguration;
 import io.micronaut.discovery.client.DiscoveryClientConfiguration;
@@ -30,9 +32,8 @@ import io.micronaut.discovery.eureka.client.v2.LeaseInfo;
 import io.micronaut.discovery.registration.RegistrationConfiguration;
 import io.micronaut.runtime.ApplicationConfiguration;
 import io.micronaut.runtime.server.EmbeddedServer;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 

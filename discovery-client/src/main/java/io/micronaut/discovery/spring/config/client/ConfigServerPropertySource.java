@@ -18,8 +18,8 @@ package io.micronaut.discovery.spring.config.client;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.annotation.NonNull;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.annotation.concurrent.Immutable;
 import java.util.Collections;
 import java.util.Map;

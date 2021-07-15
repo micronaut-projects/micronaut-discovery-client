@@ -22,10 +22,10 @@ import io.micronaut.discovery.consul.client.v1.ConsulClient;
 import io.micronaut.health.HealthStatus;
 import io.micronaut.management.health.indicator.HealthIndicator;
 import io.micronaut.management.health.indicator.HealthResult;
-import io.reactivex.Flowable;
+import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
 
-import javax.inject.Singleton;
 import java.util.Collections;
 
 /**
@@ -51,16 +51,16 @@ public class ConsulHealthIndicator implements HealthIndicator {
 
     @Override
     public Publisher<HealthResult> getResult() {
-        Flowable<String> statusFlowable = Flowable.fromPublisher(client.status());
+        Flux<String> statusFlowable = Flux.from(client.status());
 
         return statusFlowable.map(s -> {
             HealthResult.Builder builder = HealthResult.builder(ConsulClient.SERVICE_ID, HealthStatus.UP);
             builder.details(Collections.singletonMap("leader", s));
             return builder.build();
-        }).onErrorReturn(throwable -> {
+        }).onErrorResume(throwable -> {
             HealthResult.Builder builder = HealthResult.builder(ConsulClient.SERVICE_ID, HealthStatus.DOWN);
             builder.exception(throwable);
-            return builder.build();
+            return Flux.just(builder.build());
         });
     }
 }

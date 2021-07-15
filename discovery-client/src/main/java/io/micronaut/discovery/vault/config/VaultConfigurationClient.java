@@ -21,21 +21,23 @@ import io.micronaut.context.env.Environment;
 import io.micronaut.context.env.EnvironmentPropertySource;
 import io.micronaut.context.env.PropertySource;
 import io.micronaut.context.exceptions.ConfigurationException;
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.discovery.config.ConfigurationClient;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.runtime.ApplicationConfiguration;
 import io.micronaut.scheduling.TaskExecutors;
-import io.reactivex.Flowable;
-import io.reactivex.Scheduler;
-import io.reactivex.schedulers.Schedulers;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
+
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 
@@ -79,7 +81,7 @@ public class VaultConfigurationClient implements ConfigurationClient {
     @Override
     public Publisher<PropertySource> getPropertySources(Environment environment) {
         if (!vaultClientConfiguration.getDiscoveryConfiguration().isEnabled()) {
-            return Flowable.empty();
+            return Flux.empty();
         }
 
         final String applicationName = applicationConfiguration.getName().orElse(null);
@@ -93,31 +95,29 @@ public class VaultConfigurationClient implements ConfigurationClient {
             LOG.debug("Application name: {}, application profiles: {}", applicationName, activeNames);
         }
 
-        List<Flowable<PropertySource>> propertySources = new ArrayList<>();
+        List<Flux<PropertySource>> propertySources = new ArrayList<>();
 
         String token = vaultClientConfiguration.getToken();
         String engine = vaultClientConfiguration.getSecretEngineName();
 
-        Scheduler scheduler = executorService != null ? Schedulers.from(executorService) : null;
+        Scheduler scheduler = executorService != null ? Schedulers.fromExecutor(executorService) : null;
 
         buildVaultKeys(applicationName, activeNames).forEach((key, value) -> {
-            Flowable<PropertySource> propertySourceFlowable = Flowable.fromPublisher(
+            Flux<PropertySource> propertySourceFlowable = Flux.from(
                     configHttpClient.readConfigurationValues(token, engine, value))
                     .filter(data -> !data.getSecrets().isEmpty())
                     .map(data -> PropertySource.of(value, data.getSecrets(), key))
-                    .onErrorResumeNext(throwable -> {
-                        //TODO: Discover why the below hack is necessary
-                        Throwable t = (Throwable) throwable;
+                    .onErrorResume(t -> {
                         if (t instanceof HttpClientResponseException) {
                             if (((HttpClientResponseException) t).getStatus() == HttpStatus.NOT_FOUND) {
                                 if (vaultClientConfiguration.isFailFast()) {
-                                    return Flowable.error(new ConfigurationException(
+                                    return Flux.error(new ConfigurationException(
                                             "Could not locate PropertySource and the fail fast property is set", t));
                                 }
                             }
-                            return Flowable.empty();
+                            return Flux.empty();
                         }
-                        return Flowable.error(new ConfigurationException("Error reading distributed configuration from Vault: " + t.getMessage(), t));
+                        return Flux.error(new ConfigurationException("Error reading distributed configuration from Vault: " + t.getMessage(), t));
                     });
             if (scheduler != null) {
                 propertySourceFlowable = propertySourceFlowable.subscribeOn(scheduler);
@@ -125,7 +125,7 @@ public class VaultConfigurationClient implements ConfigurationClient {
             propertySources.add(propertySourceFlowable);
         });
 
-        return Flowable.merge(propertySources);
+        return Flux.merge(propertySources);
     }
 
     /**
@@ -156,7 +156,7 @@ public class VaultConfigurationClient implements ConfigurationClient {
     }
 
     @Override
-    public String getDescription() {
+    public @NonNull String getDescription() {
         return configHttpClient.getDescription();
     }
 }

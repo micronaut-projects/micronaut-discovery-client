@@ -38,10 +38,10 @@ import io.micronaut.health.HeartbeatConfiguration;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.runtime.ApplicationConfiguration;
 import io.micronaut.runtime.server.EmbeddedServer;
-import io.reactivex.Single;
+import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
 
-import javax.inject.Singleton;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -102,44 +102,38 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
 
             if (status.equals(HealthStatus.UP)) {
                 // send a request to /agent/check/pass/:check_id
-                Single<HttpStatus> passPublisher = Single.fromPublisher(consulClient.pass(checkId));
-                passPublisher.subscribe((httpStatus, throwable) -> {
-                    if (throwable == null) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Successfully reported passing state to Consul");
-                        }
-                    } else {
-                        // check if the service is still registered with Consul
+                Mono<HttpStatus> passPublisher = Mono.from(consulClient.pass(checkId));
+                passPublisher.subscribe((httpStatus) -> {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Successfully reported passing state to Consul");
+                    }
+                }, (throwable) -> {
 
-                        Single.fromPublisher(consulClient.getServiceIds()).subscribe((serviceIds, throwable1) -> {
-                            if (throwable1 == null) {
-                                String serviceId = idGenerator.generateId(environment, instance);
-                                if (!serviceIds.contains(serviceId)) {
-                                    if (LOG.isInfoEnabled()) {
-                                        LOG.info("Instance [{}] no longer registered with Consul. Attempting re-registration.", instance.getId());
-                                    }
-                                    register(instance);
+                        // check if the service is still registered with Consul
+                        Mono.from(consulClient.getServiceIds()).subscribe((serviceIds) -> {
+                            String serviceId = idGenerator.generateId(environment, instance);
+                            if (!serviceIds.contains(serviceId)) {
+                                if (LOG.isInfoEnabled()) {
+                                    LOG.info("Instance [{}] no longer registered with Consul. Attempting re-registration.", instance.getId());
                                 }
+                                register(instance);
                             }
                         });
 
                         if (LOG.isErrorEnabled()) {
                             LOG.error(getErrorMessage(throwable, "Error reporting passing state to Consul: "), throwable);
                         }
-                    }
-                });
+                    });
             } else {
                 // send a request to /agent/check/fail/:check_id
-                Single<HttpStatus> failPublisher = Single.fromPublisher(consulClient.fail(checkId, status.getDescription().orElse(null)));
-                failPublisher.subscribe((httpStatus, throwable) -> {
-                    if (throwable == null) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Successfully reported failure state to Consul");
-                        }
-                    } else {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error(getErrorMessage(throwable, "Error reporting failure state to Consul: "), throwable);
-                        }
+                Mono<HttpStatus> failPublisher = Mono.from(consulClient.fail(checkId, status.getDescription().orElse(null)));
+                failPublisher.subscribe((httpStatus) -> {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Successfully reported failure state to Consul");
+                    }
+                }, (throwable) -> {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error(getErrorMessage(throwable, "Error reporting failure state to Consul: "), throwable);
                     }
                 });
             }

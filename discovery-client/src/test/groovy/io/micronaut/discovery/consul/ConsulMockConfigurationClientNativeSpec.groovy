@@ -24,7 +24,7 @@ import io.micronaut.discovery.consul.client.v1.ConsulClient
 import io.micronaut.discovery.consul.config.ConsulConfigurationClient
 import io.micronaut.discovery.consul.client.v1.KeyValue
 import io.micronaut.runtime.server.EmbeddedServer
-import io.reactivex.Flowable
+import reactor.core.publisher.Flux
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
@@ -59,15 +59,15 @@ class ConsulMockConfigurationClientNativeSpec extends Specification {
 
     void "test read and write key values with ConsulClient"() {
         when:"A property is written"
-        def result = Flowable.fromPublisher(client.putValue("config/application/datasource.url", "mysql://blah")).blockingFirst()
+        def result = Flux.from(client.putValue("config/application/datasource.url", "mysql://blah")).blockFirst()
 
         then:"The operation was successful"
         result
 
         when:"Properties are read"
-        Flowable.fromPublisher(client.putValue("config/application/datasource.driver", "java.SomeDriver")).blockingFirst()
+        Flux.from(client.putValue("config/application/datasource.driver", "java.SomeDriver")).blockFirst()
 
-        List<KeyValue> keyValues = Flowable.fromPublisher(client.readValues("config")).blockingFirst()
+        List<KeyValue> keyValues = Flux.from(client.readValues("config")).blockFirst()
 
         then:
         keyValues.size() == 2
@@ -83,7 +83,7 @@ class ConsulMockConfigurationClientNativeSpec extends Specification {
         when:
         def env = Mock(Environment)
         env.getActiveNames() >> (['test'] as Set)
-        List<PropertySource> propertySources = Flowable.fromPublisher(configClient.getPropertySources(env)).toList().blockingGet()
+        List<PropertySource> propertySources = Flux.from(configClient.getPropertySources(env)).collectList().block()
 
         then:"verify property source characteristics"
         propertySources.size() == 2
@@ -98,6 +98,6 @@ class ConsulMockConfigurationClientNativeSpec extends Specification {
     }
 
     private void writeValue(String env, String name, String value) {
-        Flowable.fromPublisher(client.putValue("config/$env/$name", value)).blockingFirst()
+        Flux.from(client.putValue("config/$env/$name", value)).blockFirst()
     }
 }

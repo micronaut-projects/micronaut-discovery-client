@@ -15,13 +15,13 @@
  */
 package io.micronaut.discovery.eureka
 
-import io.reactivex.Flowable
 import io.micronaut.context.ApplicationContext
 import io.micronaut.discovery.eureka.client.v2.EurekaClient
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.runtime.server.EmbeddedServer
+import reactor.core.publisher.Flux
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
@@ -56,7 +56,7 @@ class EurekaMockBasicAuthSpec extends Specification {
 
         then:"the authorized app is registered"
         conditions.eventually {
-            Flowable.fromPublisher(eurekaClient.getServiceIds()).blockingFirst().contains(serviceName)
+            Flux.from(eurekaClient.getServiceIds()).blockFirst().contains(serviceName)
         }
 
         when:"The unauthorized client is used"

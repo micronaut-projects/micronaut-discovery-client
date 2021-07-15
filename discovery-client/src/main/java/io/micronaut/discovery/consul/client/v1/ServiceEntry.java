@@ -17,16 +17,16 @@ package io.micronaut.discovery.consul.client.v1;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import io.micronaut.core.annotation.Nullable;
 
 /**
  * @author graemerocher
  * @since 1.0
  */
-@JsonNaming(PropertyNamingStrategy.UpperCamelCaseStrategy.class)
+@JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class ServiceEntry extends AbstractServiceEntry {
 
     /**

@@ -16,7 +16,6 @@
 package io.micronaut.discovery.consul
 
 import io.micronaut.context.env.Environment
-import io.reactivex.Flowable
 import io.micronaut.context.ApplicationContext
 import io.micronaut.discovery.CompositeDiscoveryClient
 import io.micronaut.discovery.DiscoveryClient
@@ -27,6 +26,7 @@ import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.runtime.server.EmbeddedServer
 import org.testcontainers.containers.GenericContainer
+import reactor.core.publisher.Flux
 import spock.lang.AutoCleanup
 import spock.lang.IgnoreIf
 import spock.lang.Retry
@@ -81,38 +81,38 @@ class ConsulClientSpec extends Specification {
         client instanceof DiscoveryClient
         embeddedServer.applicationContext.getBean(ConsulConfiguration).readTimeout.isPresent()
         embeddedServer.applicationContext.getBean(ConsulConfiguration).readTimeout.get().getSeconds() == 5
-        Flowable.fromPublisher(discoveryClient.serviceIds).blockingFirst().contains('consul')
-        Flowable.fromPublisher(((DiscoveryClient)client).serviceIds).blockingFirst().contains('consul')
+        Flux.from(discoveryClient.serviceIds).blockFirst().contains('consul')
+        Flux.from(((DiscoveryClient)client).serviceIds).blockFirst().contains('consul')
     }
 
     void "test list services"() {
 
         when:
-        Map serviceNames = Flowable.fromPublisher(client.serviceNames).blockingFirst()
+        Map serviceNames = Flux.from(client.serviceNames).blockFirst()
 
         then:
         serviceNames
         serviceNames.containsKey("consul")
     }
-    
+
     void "test register and deregister catalog entry"() {
         when:
         def url = embeddedServer.getURL()
         def entry = new CatalogEntry("test-node", InetAddress.getByName(url.host))
-        boolean result = Flowable.fromPublisher(client.register(entry)).blockingFirst()
+        boolean result = Flux.from(client.register(entry)).blockFirst()
 
         then:
         result
-        
+
         when:
-        List<CatalogEntry> entries = Flowable.fromPublisher(client.getNodes()).blockingFirst()
-        
+        List<CatalogEntry> entries = Flux.from(client.getNodes()).blockFirst()
+
         then:
         entries.size() == 2
 
         when:
-        result = Flowable.fromPublisher(client.deregister(entry)).blockingFirst()
-        entries = Flowable.fromPublisher(client.getNodes()).blockingFirst()
+        result = Flux.from(client.deregister(entry)).blockFirst()
+        entries = Flux.from(client.getNodes()).blockFirst()
 
         then:
         result
@@ -122,15 +122,15 @@ class ConsulClientSpec extends Specification {
 
     void "test register and deregister service entry"() {
         setup:
-        Flowable.fromPublisher(client.deregister('xxxxxxxx')).blockingFirst()
+        Flux.from(client.deregister('xxxxxxxx')).blockFirst()
 
         when:
-        int oldSize = Flowable.fromPublisher(client.getServices()).blockingFirst().size()
+        int oldSize = Flux.from(client.getServices()).blockFirst().size()
         def entry = new NewServiceEntry("test-service")
                             .address(embeddedServer.getHost())
                             .port(embeddedServer.getPort())
-        Flowable.fromPublisher(client.register(entry)).blockingFirst()
-        Map<String, ServiceEntry> entries = Flowable.fromPublisher(client.getServices()).blockingFirst()
+        Flux.from(client.register(entry)).blockFirst()
+        Map<String, ServiceEntry> entries = Flux.from(client.getServices()).blockFirst()
 
         then:
         entries.size() == oldSize + 1
@@ -138,8 +138,8 @@ class ConsulClientSpec extends Specification {
 
         when:
         oldSize = entries.size()
-        HttpStatus result = Flowable.fromPublisher(client.deregister('test-service')).blockingFirst()
-        entries = Flowable.fromPublisher(client.getServices()).blockingFirst()
+        HttpStatus result = Flux.from(client.deregister('test-service')).blockFirst()
+        entries = Flux.from(client.getServices()).blockFirst()
 
         then:
         result == HttpStatus.OK
@@ -159,7 +159,7 @@ class ConsulClientSpec extends Specification {
                 .port(embeddedServer.getPort())
                 .check(check)
                 .id('xxxxxxxx')
-        Flowable.fromPublisher(client.register(entry)).blockingFirst()
+        Flux.from(client.register(entry)).blockFirst()
 
         then:
         entry.checks.size() == 1
@@ -167,7 +167,7 @@ class ConsulClientSpec extends Specification {
         entry.checks.first().deregisterCriticalServiceAfter.get() =='90m'
 
         when:
-        List<HealthEntry> entries = Flowable.fromPublisher(client.getHealthyServices('test-service')).blockingFirst()
+        List<HealthEntry> entries = Flux.from(client.getHealthyServices('test-service')).blockFirst()
 
         then:
         entries.size() == 1
@@ -184,7 +184,7 @@ class ConsulClientSpec extends Specification {
         service.ID.get() == 'xxxxxxxx'
 
         when:
-        List<ServiceInstance> services = Flowable.fromPublisher(discoveryClient.getInstances('test-service')).blockingFirst()
+        List<ServiceInstance> services = Flux.from(discoveryClient.getInstances('test-service')).blockFirst()
 
         then:
         services.size() == 1
@@ -194,14 +194,14 @@ class ConsulClientSpec extends Specification {
         services[0].URI == embeddedServer.getURI()
 
         when:
-        HttpStatus result = Flowable.fromPublisher(client.deregister('test-service')).blockingFirst()
+        HttpStatus result = Flux.from(client.deregister('test-service')).blockFirst()
 
         then:
         result == HttpStatus.OK
 
 
         when:
-        result = Flowable.fromPublisher(client.deregister('xxxxxxxx')).blockingFirst()
+        result = Flux.from(client.deregister('xxxxxxxx')).blockFirst()
 
         then:
         result == HttpStatus.OK
@@ -210,7 +210,7 @@ class ConsulClientSpec extends Specification {
 
     void "test list members"() {
         when:
-        List<MemberEntry> members = Flowable.fromPublisher(client.members).blockingFirst()
+        List<MemberEntry> members = Flux.from(client.members).blockFirst()
 
         then:
         members
@@ -219,7 +219,7 @@ class ConsulClientSpec extends Specification {
 
     void "test get self"() {
         when:
-        LocalAgentConfiguration self = Flowable.fromPublisher(client.self).blockingFirst()
+        LocalAgentConfiguration self = Flux.from(client.self).blockFirst()
 
         then:
         self

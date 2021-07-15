@@ -20,9 +20,10 @@ import io.micronaut.discovery.eureka.client.v2.EurekaClient;
 import io.micronaut.health.HealthStatus;
 import io.micronaut.management.health.indicator.HealthIndicator;
 import io.micronaut.management.health.indicator.HealthResult;
-import io.reactivex.Flowable;
+import jakarta.inject.Singleton;
+import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
 
-import javax.inject.Singleton;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,15 +47,15 @@ public class EurekaHealthIndicator implements HealthIndicator {
     }
 
     @Override
-    public Flowable<HealthResult> getResult() {
-        Flowable<List<String>> serviceIds = Flowable.fromPublisher(eurekaClient.getServiceIds());
+    public Publisher<HealthResult> getResult() {
+        Flux<List<String>> serviceIds = Flux.from(eurekaClient.getServiceIds());
         return serviceIds.map(ids -> {
             HealthResult.Builder builder = HealthResult.builder(EurekaClient.SERVICE_ID, HealthStatus.UP);
             return builder.details(Collections.singletonMap("available-services", ids)).build();
-        }).onErrorReturn(throwable -> {
+        }).onErrorResume(throwable -> {
             HealthResult.Builder builder = HealthResult.builder(EurekaClient.SERVICE_ID, HealthStatus.DOWN);
             builder.exception(throwable);
-            return builder.build();
+            return Flux.just(builder.build());
         });
     }
 }

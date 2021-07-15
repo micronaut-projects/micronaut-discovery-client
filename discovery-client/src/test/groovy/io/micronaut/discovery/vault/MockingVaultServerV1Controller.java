@@ -16,13 +16,13 @@
 package io.micronaut.discovery.vault;
 
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.discovery.vault.config.v1.VaultResponseV1;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,7 +71,7 @@ public class MockingVaultServerV1Controller {
             properties.put("v1-secret-5", 2);
             properties.put("v1-secret-6", 1);
         } else {
-            return Flowable.empty();
+            return Publishers.empty();
         }
 
         VaultResponseV1 response = new VaultResponseV1(properties,
@@ -82,7 +82,7 @@ public class MockingVaultServerV1Controller {
                 false,
                 Collections.emptyList());
 
-        return Flowable.just(response);
+        return Publishers.just(response);
     }
 
 }

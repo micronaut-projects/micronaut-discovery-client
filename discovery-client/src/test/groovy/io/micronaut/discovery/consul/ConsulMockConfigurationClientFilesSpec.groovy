@@ -21,7 +21,7 @@ import io.micronaut.context.env.PropertySource
 import io.micronaut.discovery.config.ConfigurationClient
 import io.micronaut.discovery.consul.client.v1.ConsulClient
 import io.micronaut.runtime.server.EmbeddedServer
-import io.reactivex.Flowable
+import reactor.core.publisher.Flux
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
@@ -100,19 +100,19 @@ not:
                         'consul.client.host': 'localhost',
                         'consul.client.port': consulServer.getPort()]
         )
-        ConfigurationClient configurationClient = applicationContext.getBean(ConfigurationClient)
+        ConfigurationClient configClient = applicationContext.getBean(ConfigurationClient)
 
         when:
-        def mockEnv = Mock(Environment)
-        mockEnv.getActiveNames() >> (['test'] as Set)
-        List<PropertySource> propertySources = Flowable.fromPublisher(configurationClient.getPropertySources(mockEnv)).toList().blockingGet()
+        def env = Mock(Environment)
+        env.getActiveNames() >> (['test'] as Set)
+        List<PropertySource> propertySources = Flux.from(configClient.getPropertySources(env)).collectList().block()
 
         then: "verify property source characteristics"
         propertySources.size() == 3
 
 
         when:"The real environment is obtained"
-        Environment env = applicationContext.getEnvironment()
+        env = applicationContext.getEnvironment()
 
         then:"The environment is correct"
         env.getRequiredProperty('some', String) == 'value'
@@ -124,6 +124,6 @@ not:
 
 
     private void writeValue(String name, String value) {
-        Flowable.fromPublisher(client.putValue("some-path/config/$name", value)).blockingFirst()
+        Flux.from(client.putValue("some-path/config/$name", value)).blockFirst()
     }
 }

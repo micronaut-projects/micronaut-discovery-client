@@ -24,6 +24,7 @@ import io.micronaut.context.env.PropertySource;
 import io.micronaut.context.env.PropertySourceLoader;
 import io.micronaut.context.env.yaml.YamlPropertySourceLoader;
 import io.micronaut.context.exceptions.ConfigurationException;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.client.ClientUtil;
@@ -37,20 +38,19 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.jackson.env.JsonPropertySourceLoader;
 import io.micronaut.scheduling.TaskExecutors;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
-import io.reactivex.Scheduler;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
+import java.util.function.Function;
 
 /**
  * A {@link ConfigurationClient} for Consul.
@@ -95,7 +95,7 @@ public class ConsulConfigurationClient implements ConfigurationClient {
     @Override
     public Publisher<PropertySource> getPropertySources(Environment environment) {
         if (!consulConfiguration.getConfiguration().isEnabled()) {
-            return Flowable.empty();
+            return Flux.empty();
         }
 
         List<String> activeNames = new ArrayList<>(environment.getActiveNames());
@@ -117,32 +117,32 @@ public class ConsulConfigurationClient implements ConfigurationClient {
 
         Scheduler scheduler = null;
         if (executionService != null) {
-            scheduler = Schedulers.from(executionService);
+            scheduler = Schedulers.fromExecutor(executionService);
         }
-        List<Flowable<List<KeyValue>>> keyValueFlowables = new ArrayList<>();
+        List<Flux<List<KeyValue>>> keyValueFlowables = new ArrayList<>();
 
         Function<Throwable, Publisher<? extends List<KeyValue>>> errorHandler = throwable -> {
             if (throwable instanceof HttpClientResponseException) {
                 HttpClientResponseException httpClientResponseException = (HttpClientResponseException) throwable;
                 if (httpClientResponseException.getStatus() == HttpStatus.NOT_FOUND) {
-                    return Flowable.empty();
+                    return Flux.empty();
                 }
             }
-            return Flowable.error(new ConfigurationException("Error reading distributed configuration from Consul: " + throwable.getMessage(), throwable));
+            return Flux.error(new ConfigurationException("Error reading distributed configuration from Consul: " + throwable.getMessage(), throwable));
         };
 
-        Flowable<List<KeyValue>> applicationConfig = Flowable.fromPublisher(
+        Flux<List<KeyValue>> applicationConfig = Flux.from(
                 consulClient.readValues(commonConfigPath, dc, null, null))
-                .onErrorResumeNext(errorHandler);
+                .onErrorResume(errorHandler);
         if (scheduler != null) {
             applicationConfig = applicationConfig.subscribeOn(scheduler);
         }
         keyValueFlowables.add(applicationConfig);
 
         if (hasApplicationSpecificConfig) {
-            Flowable<List<KeyValue>> appSpecificConfig = Flowable.fromPublisher(
+            Flux<List<KeyValue>> appSpecificConfig = Flux.from(
                     consulClient.readValues(applicationSpecificPath, dc, null, null))
-                    .onErrorResumeNext(errorHandler);
+                    .onErrorResume(errorHandler);
             if (scheduler != null) {
                 appSpecificConfig = appSpecificConfig.subscribeOn(scheduler);
             }
@@ -152,9 +152,9 @@ public class ConsulConfigurationClient implements ConfigurationClient {
         int basePriority = EnvironmentPropertySource.POSITION + 100;
         int envBasePriority = basePriority + 50;
 
-        return Flowable.merge(keyValueFlowables).flatMap(keyValues -> Flowable.create(emitter -> {
+        return Flux.merge(keyValueFlowables).flatMap(keyValues -> Flux.create(emitter -> {
             if (CollectionUtils.isEmpty(keyValues)) {
-                emitter.onComplete();
+                emitter.complete();
             } else {
                 Map<String, LocalSource> propertySources = new HashMap<>();
                 Base64.Decoder base64Decoder = Base64.getDecoder();
@@ -224,7 +224,7 @@ public class ConsulConfigurationClient implements ConfigurationClient {
                                     PropertySourceLoader propertySourceLoader = resolveLoader(formatName);
 
                                     if (propertySourceLoader == null) {
-                                        emitter.onError(new ConfigurationException("No PropertySourceLoader found for format [" + format + "]. Ensure ConfigurationClient is running within Micronaut container."));
+                                        emitter.error(new ConfigurationException("No PropertySourceLoader found for format [" + format + "]. Ensure ConfigurationClient is running within Micronaut container."));
                                         return;
                                     } else {
                                         if (propertySourceLoader.isEnabled()) {
@@ -255,11 +255,11 @@ public class ConsulConfigurationClient implements ConfigurationClient {
                     if (localSource.appSpecific) {
                         priority++;
                     }
-                    emitter.onNext(PropertySource.of(ConsulClient.SERVICE_ID + '-' + localSource.name, localSource.values, priority));
+                    emitter.next(PropertySource.of(ConsulClient.SERVICE_ID + '-' + localSource.name, localSource.values, priority));
                 }
-                emitter.onComplete();
+                emitter.complete();
             }
-        }, BackpressureStrategy.ERROR));
+        }, FluxSink.OverflowStrategy.ERROR));
     }
 
     private String resolvePropertySourceName(String rootName, String fileName, List<String> activeNames) {
