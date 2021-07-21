@@ -26,7 +26,7 @@ import io.micronaut.discovery.consul.ConsulServiceInstance;
 import io.micronaut.http.client.annotation.Client;
 import org.reactivestreams.Publisher;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

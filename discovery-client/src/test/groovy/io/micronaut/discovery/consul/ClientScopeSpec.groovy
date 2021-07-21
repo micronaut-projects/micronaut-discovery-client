@@ -24,7 +24,7 @@ import io.micronaut.runtime.server.EmbeddedServer
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 /**
  * @author graemerocher

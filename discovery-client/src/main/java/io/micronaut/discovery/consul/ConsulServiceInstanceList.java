@@ -21,7 +21,7 @@ import io.micronaut.discovery.consul.client.v1.ConsulClient;
 import io.micronaut.discovery.consul.condition.RequiresConsul;
 import io.micronaut.runtime.ApplicationConfiguration;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 /**
  * <p>A {@link io.micronaut.discovery.ServiceInstanceList} for Consul which reads from the
