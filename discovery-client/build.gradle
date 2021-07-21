@@ -10,14 +10,8 @@ dependencies {
     implementation "io.projectreactor:reactor-core"
 
     compileOnly "io.micronaut:micronaut-management"
-    // used by OracleCloudVaultConfigurationClient
-    compileOnly 'com.oracle.oci.sdk:oci-java-sdk-secrets:2.1.1'
-    compileOnly 'com.oracle.oci.sdk:oci-java-sdk-common:2.3.0'
 
     testImplementation "org.testcontainers:spock:1.15.3"
-
-    //overriding the old version brought in by oci-java-sdk-vault
-    testImplementation "com.fasterxml.jackson.module:jackson-module-jaxb-annotations"
 
     testImplementation "io.micronaut:micronaut-management"
     testImplementation "io.micronaut:micronaut-http-server-netty"
