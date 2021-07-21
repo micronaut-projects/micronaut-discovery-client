@@ -21,7 +21,6 @@ import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.discovery.vault.config.AbstractVaultResponse;
 
-import javax.annotation.concurrent.Immutable;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +30,6 @@ import java.util.Map;
  *  @author thiagolocatelli
  *  @since 1.2.0
  */
-@Immutable
 @Introspected
 public class VaultResponseV1 extends AbstractVaultResponse<Map<String, Object>> {
 

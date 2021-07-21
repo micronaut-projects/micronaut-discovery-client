@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Introspected;
 
-import javax.annotation.concurrent.Immutable;
 import java.util.Collections;
 import java.util.Map;
 
@@ -30,7 +29,6 @@ import java.util.Map;
  *  @author thiagolocatelli
  *  @since 1.2.0
  */
-@Immutable
 @Introspected
 public class VaultResponseData {
 
