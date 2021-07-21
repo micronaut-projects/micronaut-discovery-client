@@ -28,7 +28,7 @@ import io.micronaut.discovery.registration.RegistrationConfiguration;
 import io.micronaut.http.HttpMethod;
 import io.micronaut.runtime.ApplicationConfiguration;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;

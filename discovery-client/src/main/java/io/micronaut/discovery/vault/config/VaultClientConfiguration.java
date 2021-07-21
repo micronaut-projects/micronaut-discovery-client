@@ -22,7 +22,7 @@ import io.micronaut.discovery.config.ConfigDiscoveryConfiguration;
 import io.micronaut.http.client.HttpClientConfiguration;
 import io.micronaut.runtime.ApplicationConfiguration;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  *  A {@link HttpClientConfiguration} for Vault Client.

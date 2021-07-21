@@ -20,8 +20,8 @@ import io.micronaut.discovery.eureka.client.v2.EurekaClient;
 import io.micronaut.discovery.eureka.condition.RequiresEureka;
 import io.micronaut.runtime.ApplicationConfiguration;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 /**
  * <p>A {@link io.micronaut.discovery.ServiceInstanceList} for Consul which reads from the {@link EurekaConfiguration}.</p>
