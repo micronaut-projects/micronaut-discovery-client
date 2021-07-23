@@ -16,9 +16,10 @@
 package io.micronaut.discovery.consul.client.v1;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.ReflectiveAccess;
 
 import java.util.Map;
 
@@ -27,8 +28,9 @@ import java.util.Map;
  * Configuration and member information of the local agent. See https://www.consul.io/api/agent.html
  * @author Álvaro Sánchez-Mariscal
  */
-@JsonNaming(PropertyNamingStrategy.UpperCamelCaseStrategy.class)
+@JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 @Introspected
+@ReflectiveAccess
 public class LocalAgentConfiguration {
 
     private Map<String, String> configuration;
