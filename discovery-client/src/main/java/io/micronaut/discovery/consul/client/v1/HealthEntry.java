@@ -15,7 +15,7 @@
  */
 package io.micronaut.discovery.consul.client.v1;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.micronaut.core.annotation.Introspected;
@@ -30,8 +30,9 @@ import java.util.List;
  * @author graemerocher
  * @since 1.0
  */
-@JsonNaming(PropertyNamingStrategy.UpperCamelCaseStrategy.class)
+@JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 @Introspected
+@ReflectiveAccess
 public class HealthEntry {
 
     private NodeEntry node;
