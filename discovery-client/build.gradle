@@ -11,7 +11,7 @@ dependencies {
 
     compileOnly "io.micronaut:micronaut-management"
 
-    testImplementation "org.testcontainers:spock:1.15.3"
+    testImplementation "org.testcontainers:spock:1.16.0"
 
     testImplementation "io.micronaut:micronaut-management"
     testImplementation "io.micronaut:micronaut-http-server-netty"
