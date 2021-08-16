@@ -107,10 +107,10 @@ public class SpringCloudClientConfiguration extends HttpClientConfiguration {
     }
 
     /**
-     * @return The spring cloud config server name
+     * @return The spring cloud config server name. Default value is read from micronaut.application.name
      */
-    public String getName() {
-        return name;
+    public Optional<String> getName() {
+        return name != null ? Optional.of(name) : Optional.empty();
     }
 
     /**
