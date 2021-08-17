@@ -125,6 +125,14 @@ public class MockSpringCloudConfigServer {
             configServerResponse.getPropertySources().add(configServerPropertySourceDev);
         }
 
+        if (applicationName.equals("myapp-from-spring")) {
+            Map<String, Object> properties = new HashMap<>();
+            properties.put("app-name-from-spring-config", applicationName);
+            ConfigServerPropertySource configServerPropertySourceDev = new ConfigServerPropertySource(applicationName, properties){
+            };
+            configServerResponse.getPropertySources().add(configServerPropertySourceDev);
+        }
+
         return Publishers.just(configServerResponse);
     }
 }

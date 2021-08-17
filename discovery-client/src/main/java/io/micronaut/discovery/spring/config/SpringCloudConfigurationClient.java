@@ -90,7 +90,7 @@ public class SpringCloudConfigurationClient implements ConfigurationClient {
         if (!configuredApplicationName.isPresent()) {
             return Flux.empty();
         } else {
-            String applicationName = configuredApplicationName.get();
+            String applicationName = springCloudConfiguration.getName().orElse(configuredApplicationName.get());
             Set<String> activeNames = environment.getActiveNames();
             String profiles = StringUtils.trimToNull(String.join(",", activeNames));
 
