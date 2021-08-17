@@ -51,7 +51,9 @@
                                 
                                 <div class="toc-item" style="margin-left:0"><a href="#serviceDiscoveryEureka"><strong>4</strong><span>Eureka Support</span></a></div>
                                 
-                                <div class="toc-item" style="margin-left:0"><a href="#repository"><strong>5</strong><span>Repository</span></a></div>
+                                <div class="toc-item" style="margin-left:0"><a href="#springCloudConfigServer"><strong>5</strong><span>Spring Cloud Config Server Support</span></a></div>
+                                
+                                <div class="toc-item" style="margin-left:0"><a href="#repository"><strong>6</strong><span>Repository</span></a></div>
                                 
                             </div>
                         </div>
@@ -90,7 +92,9 @@
         
         <div class="toc-item" style="margin-left:0px" id="toc-item-serviceDiscoveryEureka"><a href="#serviceDiscoveryEureka"><strong>4</strong><span>Eureka Support</span></a></div>
         
-        <div class="toc-item" style="margin-left:0px" id="toc-item-repository"><a href="#repository"><strong>5</strong><span>Repository</span></a></div>
+        <div class="toc-item" style="margin-left:0px" id="toc-item-springCloudConfigServer"><a href="#springCloudConfigServer"><strong>5</strong><span>Spring Cloud Config Server Support</span></a></div>
+        
+        <div class="toc-item" style="margin-left:0px" id="toc-item-repository"><a href="#repository"><strong>6</strong><span>Repository</span></a></div>
         
         </div>
     </div>
@@ -100,7 +104,7 @@
         <h1>Micronaut Discovery Client</h1>
         <p></p>
         <p>Adds Service Discovery Features for Eureka and Consul</p>
-        <p><strong>Version:</strong> <select style='max-width: 200px' onChange='window.document.location.href=this.options[this.selectedIndex].value;'><option value='https://micronaut-projects.github.io/micronaut-discovery-client/snapshot/guide/index.html'>SNAPSHOT</option><option selected='selected' value='https://micronaut-projects.github.io/micronaut-discovery-client/2.5.0/guide/index.html'>2.5.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.4.0/guide/index.html'>2.4.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.3.0/guide/index.html'>2.3.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.4/guide/index.html'>2.2.4</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.3/guide/index.html'>2.2.3</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.2/guide/index.html'>2.2.2</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.1/guide/index.html'>2.2.1</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.0/guide/index.html'>2.2.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.1.0/guide/index.html'>2.1.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.0.1/guide/index.html'>2.0.1</option></select></p>
+        <p><strong>Version:</strong> <select style='max-width: 200px' onChange='window.document.location.href=this.options[this.selectedIndex].value;'><option value='https://micronaut-projects.github.io/micronaut-discovery-client/snapshot/guide/index.html'>SNAPSHOT</option><option selected='selected' value='https://micronaut-projects.github.io/micronaut-discovery-client/3.0.0/guide/index.html'>3.0.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/3.0.0-M2/guide/index.html'>3.0.0-M2</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/3.0.0-M1/guide/index.html'>3.0.0-M1</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.5.0/guide/index.html'>2.5.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.4.0/guide/index.html'>2.4.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.3.0/guide/index.html'>2.3.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.4/guide/index.html'>2.2.4</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.3/guide/index.html'>2.2.3</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.2/guide/index.html'>2.2.2</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.1/guide/index.html'>2.2.1</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.0/guide/index.html'>2.2.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.1.0/guide/index.html'>2.1.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.0.1/guide/index.html'>2.0.1</option></select></p>
     </div>
     
 <h1 id="introduction"><a class="anchor" href="#introduction"></a>1 Introduction</h1>
@@ -637,7 +641,58 @@ eureka:
 </div>
 </div>
 
-<h1 id="repository"><a class="anchor" href="#repository"></a>5 Repository</h1>
+<h1 id="springCloudConfigServer"><a class="anchor" href="#springCloudConfigServer"></a>5 Spring Cloud Config Server Support</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/master/src/main/docs/guide/springCloudConfigServer.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p><a href="https://github.com/spring-cloud/spring-cloud-config">Spring Cloud Config Server</a> Spring Cloud Config provides server-side and client-side support for externalized configuration in a distributed system. With the Config Server, you have a central place to manage external properties for applications across all environments.</p>
+</div>
+<div class="paragraph">
+<p>A Micronaut application can be a Spring Cloud Config client to consume Spring Cloud Config Server configurations.</p>
+</div>
+<div class="sect1">
+<h2 id="_setup">Setup</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The quickest way to start a Spring Cloud Config Server is to use to use <a href="https://github.com/spring-cloud/spring-cloud-config#quick-start">Spring Boot&#8217;s Quick Start</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_loading_configurations_from_config_server">Loading configurations from config server</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The process to consume configurations in a Micronaut application from a Spring Cloud Config Server is very strait forward, simply add the necessary configurations. A complete example can be seen below:</p>
+</div>
+<div class="listingblock">
+<div class="title">Registering your application as a Spring Cloud Config client  (application.yml)</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
+  application:
+    name: hello-world
+  config-client:
+    enabled: true
+spring:
+  cloud:
+    config:
+      enabled: true
+      uri: "http://configserver:9000"
+      name: filename1,filename2</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The field name is optional, if it&#8217;s not informed, the value in micronaut.application.name will be used.</p>
+</div>
+</div>
+</div>
+
+<h1 id="repository"><a class="anchor" href="#repository"></a>6 Repository</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/master/src/main/docs/guide/repository.adoc"'>
