@@ -45,6 +45,7 @@ public class VaultClientConfiguration extends HttpClientConfiguration {
     private static final String DEFAULT_URI = "http://locahost:8200";
     private static final Boolean DEFAULT_FAIL_FAST = false;
     private static final String DEFAULT_SECRET_ENGINE = "secret";
+    private static final String DEFAULT_PATH_PREFIX = "";
     private static final VaultKvVersion DEFAULT_KV_VERSION = VaultKvVersion.V2;
 
     /**
@@ -59,6 +60,7 @@ public class VaultClientConfiguration extends HttpClientConfiguration {
     private String token;
     private VaultKvVersion kvVersion = DEFAULT_KV_VERSION;
     private String secretEngineName = DEFAULT_SECRET_ENGINE;
+    private String pathPrefix = DEFAULT_PATH_PREFIX;
     private boolean failFast = DEFAULT_FAIL_FAST;
 
     /**
@@ -145,6 +147,22 @@ public class VaultClientConfiguration extends HttpClientConfiguration {
      */
     public void setSecretEngineName(String secretEngineName) {
         this.secretEngineName = secretEngineName;
+    }
+
+    /**
+     * @return The prefix for the keys used to get vault properties
+     */
+    public String getPathPrefix() {
+        return pathPrefix;
+    }
+
+    /**
+     * Set the prefix for the keys used to get vault properties. Default value is empty string
+     *
+     * @param pathPrefix path which prefixes keys.
+     */
+    public void setPathPrefix(String pathPrefix) {
+        this.pathPrefix = pathPrefix;
     }
 
     /**

@@ -32,6 +32,7 @@ class VaultClientV1ConfigTest extends Specification {
                 "vault.client.kv-version": "V1",
                 "vault.client.token": "testtoken",
                 "vault.client.secret-engine-name": "backendv1",
+                "vault.client.path-prefix": MockingVaultServerV1Controller.PATH_PREFIX,
                 "vault.client.uri": embeddedServer.getURL().toString()
         ], "first", "second")
 

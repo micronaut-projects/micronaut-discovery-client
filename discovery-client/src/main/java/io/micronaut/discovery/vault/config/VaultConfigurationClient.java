@@ -41,6 +41,8 @@ import reactor.core.scheduler.Schedulers;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 
+import static java.util.stream.Collectors.toMap;
+
 /**
  *  A {@link ConfigurationClient} for Vault Configuration.
  *
@@ -88,10 +90,12 @@ public class VaultConfigurationClient implements ConfigurationClient {
         final Set<String> activeNames = environment.getActiveNames();
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Vault server endpoint: {}, secret engine version: {}, secret-engine-name: {}",
+            LOG.debug("Vault server endpoint: {}, secret engine version: {}, secret-engine-name: {}, " +
+                          "vault keys path prefix: {}",
                     vaultClientConfiguration.getUri(),
                     vaultClientConfiguration.getKvVersion(),
-                    vaultClientConfiguration.getSecretEngineName());
+                    vaultClientConfiguration.getSecretEngineName(),
+                    vaultClientConfiguration.getPathPrefix());
             LOG.debug("Application name: {}, application profiles: {}", applicationName, activeNames);
         }
 
@@ -99,10 +103,11 @@ public class VaultConfigurationClient implements ConfigurationClient {
 
         String token = vaultClientConfiguration.getToken();
         String engine = vaultClientConfiguration.getSecretEngineName();
+        String pathPrefix = vaultClientConfiguration.getPathPrefix();
 
         Scheduler scheduler = executorService != null ? Schedulers.fromExecutor(executorService) : null;
 
-        buildVaultKeys(applicationName, activeNames).forEach((key, value) -> {
+        buildVaultKeys(pathPrefix, applicationName, activeNames).forEach((key, value) -> {
             Flux<PropertySource> propertySourceFlowable = Flux.from(
                     configHttpClient.readConfigurationValues(token, engine, value))
                     .filter(data -> !data.getSecrets().isEmpty())
@@ -131,11 +136,14 @@ public class VaultConfigurationClient implements ConfigurationClient {
     /**
      * Builds the keys used to get vault properties.
      *
+     * @param pathPrefix The prefix path of vault keys
      * @param applicationName The application name
      * @param environmentNames The active environments
      * @return list of vault keys
      */
-    protected Map<Integer, String> buildVaultKeys(@Nullable String applicationName, Set<String> environmentNames) {
+    protected Map<Integer, String> buildVaultKeys(String pathPrefix,
+                                                  @Nullable String applicationName,
+                                                  Set<String> environmentNames) {
         Map<Integer, String> vaultKeys = new HashMap<>();
 
         int baseOrder = EnvironmentPropertySource.POSITION + 100;
@@ -152,7 +160,21 @@ public class VaultConfigurationClient implements ConfigurationClient {
                 vaultKeys.put(++envOrder, applicationName + "/" + activeName);
             }
         }
-        return vaultKeys;
+
+        return !pathPrefix.isEmpty()
+                   ? prefixVaultKeys(pathPrefix, vaultKeys)
+                   : vaultKeys;
+    }
+
+    private Map<Integer, String> prefixVaultKeys(String prefix, Map<Integer, String> vaultKeys) {
+        return vaultKeys.entrySet()
+                .stream()
+                .collect(toMap(Map.Entry::getKey, entry -> {
+                    if (prefix.endsWith("/")) {
+                        return prefix + entry.getValue();
+                    }
+                    return prefix + "/" + entry.getValue();
+                }));
     }
 
     @Override

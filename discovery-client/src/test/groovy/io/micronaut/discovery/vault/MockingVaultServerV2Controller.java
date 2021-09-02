@@ -38,33 +38,34 @@ import java.util.Map;
 public class MockingVaultServerV2Controller {
 
     public static final String ENABLED = "enable.mock.vault-config-v2";
+    public static final String PATH_PREFIX = "mock/path/prefix/";
 
     @Get("/v1/{backend}/data/{vaultKey:.*}")
     public Publisher<VaultResponseV2> readConfigurationValuesV2(@NonNull String backend,
                                                                 @NonNull String vaultKey) {
         Map<String, Object> properties = new HashMap<>();
 
-        if (vaultKey.equals("myapp/second")) {
+        if (vaultKey.equals(PATH_PREFIX + "myapp/second")) {
             properties.put("v2-secret-1", 1);
-        } else if (vaultKey.equals("application/second")) {
+        } else if (vaultKey.equals(PATH_PREFIX + "application/second")) {
             properties.put("v2-secret-1", 2);
             properties.put("v2-secret-2", 1);
-        } else if (vaultKey.equals("myapp/first")) {
+        } else if (vaultKey.equals(PATH_PREFIX + "myapp/first")) {
             properties.put("v2-secret-1", 3);
             properties.put("v2-secret-2", 2);
             properties.put("v2-secret-3", 1);
-        } else if (vaultKey.equals("application/first")) {
+        } else if (vaultKey.equals(PATH_PREFIX + "application/first")) {
             properties.put("v2-secret-1", 4);
             properties.put("v2-secret-2", 3);
             properties.put("v2-secret-3", 2);
             properties.put("v2-secret-4", 1);
-        } else if (vaultKey.equals("myapp")) {
+        } else if (vaultKey.equals(PATH_PREFIX + "myapp")) {
             properties.put("v2-secret-1", 5);
             properties.put("v2-secret-2", 4);
             properties.put("v2-secret-3", 3);
             properties.put("v2-secret-4", 2);
             properties.put("v2-secret-5", 1);
-        } else if (vaultKey.equals("application")) {
+        } else if (vaultKey.equals(PATH_PREFIX + "application")) {
             properties.put("v2-secret-1", 6);
             properties.put("v2-secret-2", 5);
             properties.put("v2-secret-3", 4);

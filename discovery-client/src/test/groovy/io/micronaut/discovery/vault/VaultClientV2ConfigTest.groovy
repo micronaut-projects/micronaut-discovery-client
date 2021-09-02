@@ -31,6 +31,7 @@ class VaultClientV2ConfigTest extends Specification {
                 "vault.client.config.enabled": true,
                 "vault.client.kv-version": "V2",
                 "vault.client.token": "testtoken",
+                "vault.client.path-prefix": MockingVaultServerV2Controller.PATH_PREFIX,
                 "vault.client.secret-engine-name": "backendv2",
                 "vault.client.uri": embeddedServer.getURL().toString()
         ], "first", "second")
