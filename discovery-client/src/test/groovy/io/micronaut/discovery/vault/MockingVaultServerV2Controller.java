@@ -38,34 +38,33 @@ import java.util.Map;
 public class MockingVaultServerV2Controller {
 
     public static final String ENABLED = "enable.mock.vault-config-v2";
-    public static final String PATH_PREFIX = "mock/path/prefix/";
+    public static final String PATH_PREFIX = "mock/v2/path/prefix";
 
-    @Get("/v1/{backend}/data/{vaultKey:.*}")
-    public Publisher<VaultResponseV2> readConfigurationValuesV2(@NonNull String backend,
-                                                                @NonNull String vaultKey) {
+    @Get("/v1/backendv2/data/{vaultKey:.*}")
+    public Publisher<VaultResponseV2> readConfigurationValuesV2(@NonNull String vaultKey) {
         Map<String, Object> properties = new HashMap<>();
 
-        if (vaultKey.equals(PATH_PREFIX + "myapp/second")) {
+        if (vaultKey.equals("myapp/second")) {
             properties.put("v2-secret-1", 1);
-        } else if (vaultKey.equals(PATH_PREFIX + "application/second")) {
+        } else if (vaultKey.equals("application/second")) {
             properties.put("v2-secret-1", 2);
             properties.put("v2-secret-2", 1);
-        } else if (vaultKey.equals(PATH_PREFIX + "myapp/first")) {
+        } else if (vaultKey.equals("myapp/first")) {
             properties.put("v2-secret-1", 3);
             properties.put("v2-secret-2", 2);
             properties.put("v2-secret-3", 1);
-        } else if (vaultKey.equals(PATH_PREFIX + "application/first")) {
+        } else if (vaultKey.equals("application/first")) {
             properties.put("v2-secret-1", 4);
             properties.put("v2-secret-2", 3);
             properties.put("v2-secret-3", 2);
             properties.put("v2-secret-4", 1);
-        } else if (vaultKey.equals(PATH_PREFIX + "myapp")) {
+        } else if (vaultKey.equals("myapp")) {
             properties.put("v2-secret-1", 5);
             properties.put("v2-secret-2", 4);
             properties.put("v2-secret-3", 3);
             properties.put("v2-secret-4", 2);
             properties.put("v2-secret-5", 1);
-        } else if (vaultKey.equals(PATH_PREFIX + "application")) {
+        } else if (vaultKey.equals("application")) {
             properties.put("v2-secret-1", 6);
             properties.put("v2-secret-2", 5);
             properties.put("v2-secret-3", 4);
@@ -76,18 +75,56 @@ public class MockingVaultServerV2Controller {
             return Publishers.empty();
         }
 
-        VaultResponseData vaultResponseData = new VaultResponseData(properties, Collections.emptyMap());
-
-        VaultResponseV2 response = new VaultResponseV2(vaultResponseData,
-                null,
-                null,
-                null,
-                Collections.emptyMap(),
-                false,
-                Collections.emptyList());
-
-        return Publishers.just(response);
+        return Publishers.just(buildVaultResponse(properties));
     }
 
+    @Get("/v1/backendv2-prefixed/data/{vaultKey:.*}")
+    public Publisher<VaultResponseV2> readPrefixedConfigurationValuesV2(@NonNull String vaultKey) {
+        Map<String, Object> properties = new HashMap<>();
 
+        if (vaultKey.equals(PATH_PREFIX + "/myapp/second")) {
+            properties.put("v2-prefixed-secret-1", 1);
+        } else if (vaultKey.equals(PATH_PREFIX + "/application/second")) {
+            properties.put("v2-prefixed-secret-1", 2);
+            properties.put("v2-prefixed-secret-2", 1);
+        } else if (vaultKey.equals(PATH_PREFIX + "/myapp/first")) {
+            properties.put("v2-prefixed-secret-1", 3);
+            properties.put("v2-prefixed-secret-2", 2);
+            properties.put("v2-prefixed-secret-3", 1);
+        } else if (vaultKey.equals(PATH_PREFIX + "/application/first")) {
+            properties.put("v2-prefixed-secret-1", 4);
+            properties.put("v2-prefixed-secret-2", 3);
+            properties.put("v2-prefixed-secret-3", 2);
+            properties.put("v2-prefixed-secret-4", 1);
+        } else if (vaultKey.equals(PATH_PREFIX + "/myapp")) {
+            properties.put("v2-prefixed-secret-1", 5);
+            properties.put("v2-prefixed-secret-2", 4);
+            properties.put("v2-prefixed-secret-3", 3);
+            properties.put("v2-prefixed-secret-4", 2);
+            properties.put("v2-prefixed-secret-5", 1);
+        } else if (vaultKey.equals(PATH_PREFIX + "/application")) {
+            properties.put("v2-prefixed-secret-1", 6);
+            properties.put("v2-prefixed-secret-2", 5);
+            properties.put("v2-prefixed-secret-3", 4);
+            properties.put("v2-prefixed-secret-4", 3);
+            properties.put("v2-prefixed-secret-5", 2);
+            properties.put("v2-prefixed-secret-6", 1);
+        } else {
+            return Publishers.empty();
+        }
+
+        return Publishers.just(buildVaultResponse(properties));
+    }
+
+    private VaultResponseV2 buildVaultResponse(Map<String, Object> properties) {
+        VaultResponseData vaultResponseData = new VaultResponseData(properties, Collections.emptyMap());
+
+        return new VaultResponseV2(vaultResponseData,
+            null,
+            null,
+            null,
+            Collections.emptyMap(),
+            false,
+            Collections.emptyList());
+    }
 }

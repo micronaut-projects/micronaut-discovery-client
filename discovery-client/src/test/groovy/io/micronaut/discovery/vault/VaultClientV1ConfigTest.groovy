@@ -20,7 +20,7 @@ class VaultClientV1ConfigTest extends Specification {
     @AutoCleanup
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [(MockingVaultServerV1Controller.ENABLED): true])
 
-    
+
     void "test configuration order"() {
         given:
         System.setProperty(Environment.BOOTSTRAP_CONTEXT_PROPERTY, "true")
@@ -32,7 +32,6 @@ class VaultClientV1ConfigTest extends Specification {
                 "vault.client.kv-version": "V1",
                 "vault.client.token": "testtoken",
                 "vault.client.secret-engine-name": "backendv1",
-                "vault.client.path-prefix": MockingVaultServerV1Controller.PATH_PREFIX,
                 "vault.client.uri": embeddedServer.getURL().toString()
         ], "first", "second")
 
@@ -43,6 +42,33 @@ class VaultClientV1ConfigTest extends Specification {
         1 == context.getRequiredProperty("v1-secret-4", Integer.class)
         1 == context.getRequiredProperty("v1-secret-5", Integer.class)
         1 == context.getRequiredProperty("v1-secret-6", Integer.class)
+
+        cleanup:
+        context.stop()
+    }
+
+    void "test prefixed configuration order"() {
+        given:
+        System.setProperty(Environment.BOOTSTRAP_CONTEXT_PROPERTY, "true")
+        ApplicationContext context = ApplicationContext.run([
+                (MockingVaultServerV2Controller.ENABLED): true,
+                "micronaut.application.name": "myapp",
+                "micronaut.config-client.enabled": true,
+                "vault.client.config.enabled": true,
+                "vault.client.kv-version": "V1",
+                "vault.client.token": "testtoken",
+                "vault.client.path-prefix": MockingVaultServerV1Controller.PATH_PREFIX,
+                "vault.client.secret-engine-name": "backendv1-prefixed",
+                "vault.client.uri": embeddedServer.getURL().toString()
+        ], "first", "second")
+
+        expect:
+        1 == context.getRequiredProperty("v1-prefixed-secret-1", Integer.class)
+        1 == context.getRequiredProperty("v1-prefixed-secret-2", Integer.class)
+        1 == context.getRequiredProperty("v1-prefixed-secret-3", Integer.class)
+        1 == context.getRequiredProperty("v1-prefixed-secret-4", Integer.class)
+        1 == context.getRequiredProperty("v1-prefixed-secret-5", Integer.class)
+        1 == context.getRequiredProperty("v1-prefixed-secret-6", Integer.class)
 
         cleanup:
         context.stop()

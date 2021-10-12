@@ -23,6 +23,7 @@ import io.micronaut.context.env.PropertySource;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.config.ConfigurationClient;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
@@ -40,8 +41,7 @@ import reactor.core.scheduler.Schedulers;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
-
-import static java.util.stream.Collectors.toMap;
+import java.util.stream.Collectors;
 
 /**
  *  A {@link ConfigurationClient} for Vault Configuration.
@@ -90,8 +90,7 @@ public class VaultConfigurationClient implements ConfigurationClient {
         final Set<String> activeNames = environment.getActiveNames();
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Vault server endpoint: {}, secret engine version: {}, secret-engine-name: {}, " +
-                          "vault keys path prefix: {}",
+            LOG.debug("Vault server endpoint: {}, secret engine version: {}, secret-engine-name: {}, vault keys path prefix: {}",
                     vaultClientConfiguration.getUri(),
                     vaultClientConfiguration.getKvVersion(),
                     vaultClientConfiguration.getSecretEngineName(),
@@ -103,7 +102,7 @@ public class VaultConfigurationClient implements ConfigurationClient {
 
         String token = vaultClientConfiguration.getToken();
         String engine = vaultClientConfiguration.getSecretEngineName();
-        String pathPrefix = vaultClientConfiguration.getPathPrefix();
+        String pathPrefix = normalizePathPrefix(vaultClientConfiguration.getPathPrefix());
 
         Scheduler scheduler = executorService != null ? Schedulers.fromExecutor(executorService) : null;
 
@@ -136,12 +135,25 @@ public class VaultConfigurationClient implements ConfigurationClient {
     /**
      * Builds the keys used to get vault properties.
      *
+     * @param applicationName The application name
+     * @param environmentNames The active environments
+     * @return list of vault keys
+     * @deprecated Replaced by {@link #buildVaultKeys(String, String, Set)}
+     */
+    @Deprecated
+    protected Map<Integer, String> buildVaultKeys(@Nullable String applicationName, Set<String> environmentNames) {
+        return buildVaultKeys(null, applicationName, environmentNames);
+    }
+
+    /**
+     * Builds the keys used to get vault properties.
+     *
      * @param pathPrefix The prefix path of vault keys
      * @param applicationName The application name
      * @param environmentNames The active environments
      * @return list of vault keys
      */
-    protected Map<Integer, String> buildVaultKeys(String pathPrefix,
+    protected Map<Integer, String> buildVaultKeys(@Nullable String pathPrefix,
                                                   @Nullable String applicationName,
                                                   Set<String> environmentNames) {
         Map<Integer, String> vaultKeys = new HashMap<>();
@@ -161,7 +173,7 @@ public class VaultConfigurationClient implements ConfigurationClient {
             }
         }
 
-        return !pathPrefix.isEmpty()
+        return StringUtils.isNotEmpty(pathPrefix)
                    ? prefixVaultKeys(pathPrefix, vaultKeys)
                    : vaultKeys;
     }
@@ -169,12 +181,14 @@ public class VaultConfigurationClient implements ConfigurationClient {
     private Map<Integer, String> prefixVaultKeys(String prefix, Map<Integer, String> vaultKeys) {
         return vaultKeys.entrySet()
                 .stream()
-                .collect(toMap(Map.Entry::getKey, entry -> {
-                    if (prefix.endsWith("/")) {
-                        return prefix + entry.getValue();
-                    }
-                    return prefix + "/" + entry.getValue();
-                }));
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> StringUtils.prependUri(prefix, entry.getValue())));
+    }
+
+    private String normalizePathPrefix(String prefix) {
+        if (prefix.length() > 0 && prefix.charAt(0) == '/') {
+            return prefix.substring(1);
+        }
+        return prefix;
     }
 
     @Override
