@@ -28,7 +28,6 @@ import io.micronaut.runtime.server.EmbeddedServer
 import org.testcontainers.containers.GenericContainer
 import reactor.core.publisher.Flux
 import spock.lang.AutoCleanup
-import spock.lang.IgnoreIf
 import spock.lang.Retry
 import spock.lang.Shared
 import spock.lang.Specification
@@ -122,7 +121,11 @@ class ConsulClientSpec extends Specification {
 
     void "test register and deregister service entry"() {
         setup:
-        Flux.from(client.deregister('xxxxxxxx')).blockFirst()
+        try {
+            Flux.from(client.deregister('xxxxxxxx')).blockFirst()
+        } catch(e) {
+            // ignore (throws Unknown service exception if it doesn't exist)
+        }        
 
         when:
         int oldSize = Flux.from(client.getServices()).blockFirst().size()
