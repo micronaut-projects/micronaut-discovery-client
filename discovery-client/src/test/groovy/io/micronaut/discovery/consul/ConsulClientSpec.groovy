@@ -197,18 +197,10 @@ class ConsulClientSpec extends Specification {
         services[0].URI == embeddedServer.getURI()
 
         when:
-        HttpStatus result = Flux.from(client.deregister('test-service')).blockFirst()
+        HttpStatus result = Flux.from(client.deregister(service.ID.get())).blockFirst()
 
         then:
         result == HttpStatus.OK
-
-
-        when:
-        result = Flux.from(client.deregister('xxxxxxxx')).blockFirst()
-
-        then:
-        result == HttpStatus.OK
-
     }
 
     void "test list members"() {

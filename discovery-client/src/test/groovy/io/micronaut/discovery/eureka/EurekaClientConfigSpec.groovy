@@ -19,6 +19,7 @@ import io.micronaut.context.ApplicationContext
 import io.micronaut.discovery.ServiceInstance
 import io.micronaut.discovery.eureka.client.v2.EurekaClient
 import io.micronaut.runtime.ApplicationConfiguration
+import io.micronaut.runtime.server.EmbeddedServer
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -80,6 +81,7 @@ class EurekaClientConfigSpec extends Specification {
                 'eureka.client.registration.leaseInfo.durationInSecs': '60',
                 'eureka.client.registration.metadata.foo': 'bar'
         )
+        applicationContext.getBean(EmbeddedServer).start()
         EurekaConfiguration config = applicationContext.getBean(EurekaConfiguration)
 
 
