@@ -1,7 +1,8 @@
+plugins {
+    id("io.micronaut.build.internal.module")
+}
 dependencies {
-    annotationProcessor "io.micronaut:micronaut-inject-java"
     annotationProcessor "io.micronaut.docs:micronaut-docs-asciidoc-config-props:$micronautDocsVersion"
-    testAnnotationProcessor "io.micronaut:micronaut-inject-java"
     annotationProcessor "io.micronaut:micronaut-graal"
 
     api "io.micronaut:micronaut-http-client"
@@ -11,7 +12,8 @@ dependencies {
 
     compileOnly "io.micronaut:micronaut-management"
 
-    testImplementation "org.testcontainers:spock:1.15.3"
+    testAnnotationProcessor("io.micronaut:micronaut-inject-java")
+    testImplementation "org.testcontainers:spock"
 
     testImplementation "io.micronaut:micronaut-management"
     testImplementation "io.micronaut:micronaut-http-server-netty"
