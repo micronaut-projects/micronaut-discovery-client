@@ -104,7 +104,7 @@
         <h1>Micronaut Discovery Client</h1>
         <p></p>
         <p>Adds Service Discovery Features for Eureka and Consul</p>
-        <p><strong>Version:</strong> <select style='max-width: 200px' onChange='window.document.location.href=this.options[this.selectedIndex].value;'><option selected='selected' value='https://micronaut-projects.github.io/micronaut-discovery-client/snapshot/guide/index.html'>SNAPSHOT</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/3.0.0/guide/index.html'>3.0.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/3.0.0-M2/guide/index.html'>3.0.0-M2</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/3.0.0-M1/guide/index.html'>3.0.0-M1</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.5.0/guide/index.html'>2.5.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.4.0/guide/index.html'>2.4.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.3.0/guide/index.html'>2.3.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.4/guide/index.html'>2.2.4</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.3/guide/index.html'>2.2.3</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.2/guide/index.html'>2.2.2</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.1/guide/index.html'>2.2.1</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.0/guide/index.html'>2.2.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.1.0/guide/index.html'>2.1.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.0.1/guide/index.html'>2.0.1</option></select></p>
+        <p><strong>Version:</strong> <select style='max-width: 200px' onChange='window.document.location.href=this.options[this.selectedIndex].value;'><option selected='selected' value='https://micronaut-projects.github.io/micronaut-discovery-client/snapshot/guide/index.html'>SNAPSHOT</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/3.0.0/guide/index.html'>3.0.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/3.0.0-M2/guide/index.html'>3.0.0-M2</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/3.0.0-M1/guide/index.html'>3.0.0-M1</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.5.0/guide/index.html'>2.5.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.4.0/guide/index.html'>2.4.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.3.0/guide/index.html'>2.3.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.4/guide/index.html'>2.2.4</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.3/guide/index.html'>2.2.3</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.2/guide/index.html'>2.2.2</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.1/guide/index.html'>2.2.1</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.0/guide/index.html'>2.2.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.1.0/guide/index.html'>2.1.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.0.1/guide/index.html'>2.0.1</option></select> </p>
     </div>
     
 <h1 id="introduction"><a class="anchor" href="#introduction"></a>1 Introduction</h1>
@@ -175,13 +175,13 @@
 <p>        <div class="listingblock multi-language-sample">
 <div class="title"></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut:micronaut-discovery-client")</span></code></pre>
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="gradle">implementation(<span class="hljs-string">"io.micronaut.discovery:micronaut-discovery-client")</span></code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="maven">&lt;dependency&gt;
-    &lt;groupId&gt;io.micronaut&lt;/groupId&gt;
+    &lt;groupId&gt;io.micronaut.discovery&lt;/groupId&gt;
     &lt;artifactId&gt;micronaut-discovery-client&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
@@ -593,9 +593,6 @@ eureka:
       ip-addr: 1.2.3.4           # optional, exposed eureka instance ip address, useful in docker bridged network environments
       port: 9090                 # optional, exposed eureka instance port, useful in docker bridged network environments</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>Unresolved directive in &lt;stdin&gt; - include::/home/runner/work/micronaut-discovery-client/micronaut-discovery-client/build/generated/configurationProperties/io.micronaut.discovery.eureka.EurekaConfiguration$EurekaRegistrationConfiguration.adoc[]</p>
 </div>
 </div>
 </div>
