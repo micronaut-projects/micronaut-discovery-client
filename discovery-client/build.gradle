@@ -12,6 +12,7 @@ dependencies {
 
     compileOnly "io.micronaut:micronaut-management"
 
+    testAnnotationProcessor("io.micronaut:micronaut-inject-java")
     testImplementation "org.testcontainers:spock"
 
     testImplementation "io.micronaut:micronaut-management"
