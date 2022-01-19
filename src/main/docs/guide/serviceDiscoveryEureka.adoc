@@ -51,10 +51,6 @@ eureka:
       port: 9090                 # optional, exposed eureka instance port, useful in docker bridged network environments
 ----
 
-
-include::{includedir}configurationProperties/io.micronaut.discovery.eureka.EurekaConfiguration$EurekaRegistrationConfiguration.adoc[]
-
-
 == Eureka Basic Authentication
 
 You can customize the Eureka credentials in the URI you specify to in `defaultZone`.
