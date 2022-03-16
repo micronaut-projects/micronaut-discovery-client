@@ -19,6 +19,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.ReflectiveAccess;
+
 import java.util.Collections;
 import java.util.Map;
 
@@ -28,6 +30,7 @@ import java.util.Map;
  *  @author Thiago Locatelli
  *  @since 1.1.0
  */
+@ReflectiveAccess
 public class ConfigServerPropertySource {
 
     private final String name;
