@@ -2,23 +2,23 @@ plugins {
     id("io.micronaut.build.internal.module")
 }
 dependencies {
-    annotationProcessor "io.micronaut.docs:micronaut-docs-asciidoc-config-props:$micronautDocsVersion"
-    annotationProcessor "io.micronaut:micronaut-graal"
+    annotationProcessor(libs.micronaut.docs.asciidoc.config.props)
+    annotationProcessor(libs.micronaut.graal)
 
-    api "io.micronaut:micronaut-http-client"
-    api "io.micronaut:micronaut-validation"
+    api(libs.micronaut.http.client)
+    api(libs.micronaut.validation)
 
-    implementation "io.projectreactor:reactor-core"
+    implementation(libs.reactor.core)
 
-    compileOnly "io.micronaut:micronaut-management"
+    compileOnly(libs.micronaut.management)
 
-    testAnnotationProcessor("io.micronaut:micronaut-inject-java")
-    testImplementation "org.testcontainers:spock"
+    testAnnotationProcessor(libs.micronaut.inject.java)
+    testImplementation(libs.spock)
 
-    testImplementation "io.micronaut:micronaut-management"
-    testImplementation "io.micronaut:micronaut-http-server-netty"
+    testImplementation(libs.micronaut.management)
+    testImplementation(libs.micronaut.http.server.netty)
 
-    testCompileOnly "io.micronaut:micronaut-inject-groovy"
+    testCompileOnly(libs.micronaut.inject.groovy)
 }
 
 spotless {
