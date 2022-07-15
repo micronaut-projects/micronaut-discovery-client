@@ -23,6 +23,7 @@ import io.micronaut.discovery.spring.config.client.ConfigServerPropertySource;
 import io.micronaut.discovery.spring.config.client.ConfigServerResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Produces;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
@@ -41,20 +42,22 @@ public class MockSpringCloudConfigServer {
     @Get("/{applicationName}{/profiles}")
     @Produces(single = true)
     public Publisher<ConfigServerResponse> readValues(@NonNull String applicationName,
-                                                      @Nullable String profiles) {
-        return getConfigServerResponse(applicationName, profiles, null);
+                                                      @Nullable String profiles,
+                                                      @Nullable @Header String authorization) {
+        return getConfigServerResponse(applicationName, profiles, null, authorization);
     }
 
     @Get("/{applicationName}{/profiles}{/label}")
     @Produces(single = true)
     public Publisher<ConfigServerResponse> readValues(@NonNull String applicationName,
                                                       @Nullable String profiles,
-                                                      @Nullable String label) {
-        return getConfigServerResponse(applicationName, profiles, label);
+                                                      @Nullable String label,
+                                                      @Nullable @Header String authorization) {
+        return getConfigServerResponse(applicationName, profiles, label, authorization);
     }
 
-    private Publisher<ConfigServerResponse> getConfigServerResponse(
-            String applicationName, String profiles, String label)
+    protected Publisher<ConfigServerResponse> getConfigServerResponse(
+            String applicationName, String profiles, String label, String authorization)
     {
         String[] profilesArray = profiles != null ? profiles.split(",") : new String[0];
         ConfigServerResponse configServerResponse = new ConfigServerResponse();

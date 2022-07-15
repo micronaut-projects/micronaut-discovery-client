@@ -50,6 +50,8 @@ public class SpringCloudClientConfiguration extends HttpClientConfiguration {
     private String label;
     private boolean failFast = DEFAULT_FAIL_FAST;
     private String name;
+    private String username;
+    private String password;
 
     private final SpringCloudConnectionPoolConfiguration springCloudConnectionPoolConfiguration;
     private final SpringConfigDiscoveryConfiguration springConfigDiscoveryConfiguration = new SpringConfigDiscoveryConfiguration();
@@ -114,6 +116,20 @@ public class SpringCloudClientConfiguration extends HttpClientConfiguration {
     }
 
     /**
+     * @return The spring cloud config username.
+     */
+    public Optional<String> getUsername() {
+        return username != null ? Optional.of(username) : Optional.empty();
+    }
+
+    /**
+     * @return The spring cloud config password.
+     */
+    public Optional<String> getPassword() {
+        return password != null ? Optional.of(password) : Optional.empty();
+    }
+
+    /**
      *
      * @return Flag to indicate that failure to connect to Spring Cloud Config is fatal (default false).
      */
@@ -148,6 +164,24 @@ public class SpringCloudClientConfiguration extends HttpClientConfiguration {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * Set the Spring cloud config username.
+     *
+     * @param username Spring Cloud config username
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    /**
+     * Set the Spring cloud config password.
+     *
+     * @param password Spring Cloud config password
+     */
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     /**
