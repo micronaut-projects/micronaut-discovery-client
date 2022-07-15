@@ -36,7 +36,7 @@ class SpringCloudConfigSecuredTest extends Specification {
     @AutoCleanup
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, [(MockSpringCloudConfigSecuredServer.ENABLED): true])
 
-    void "test spring name configuration field when server secured"() {
+    void "test spring name configuration field when server secured and authorization provided"() {
         given:
         System.setProperty(Environment.BOOTSTRAP_CONTEXT_PROPERTY, "true")
         ApplicationContext context = ApplicationContext.run([
@@ -57,7 +57,7 @@ class SpringCloudConfigSecuredTest extends Specification {
         context.stop()
     }
 
-    void "test when cloud server secured and authorization not sent"() {
+    void "test when cloud server secured and authorization not provided"() {
         given:
         System.setProperty(Environment.BOOTSTRAP_CONTEXT_PROPERTY, "true")
 
@@ -81,7 +81,32 @@ class SpringCloudConfigSecuredTest extends Specification {
         }
     }
 
-    void "test when cloud server secured and invalid user credentials sent"() {
+    void "test when cloud server secured and only username is provided"() {
+        given:
+        System.setProperty(Environment.BOOTSTRAP_CONTEXT_PROPERTY, "true")
+
+        when:
+        ApplicationContext context = ApplicationContext.run([
+                (MockSpringCloudConfigServer.ENABLED): true,
+                "micronaut.application.name": "myapp",
+                "micronaut.config-client.enabled": true,
+                "spring.cloud.config.enabled": true,
+                "spring.cloud.config.name": "myapp-from-spring",
+                "spring.cloud.config.uri": embeddedServer.getURL().toString(),
+                "spring.cloud.config.username": "user",
+        ], "first", "second")
+
+        then:
+        def e = thrown(ConfigurationException)
+        e.cause instanceof HttpClientResponseException
+
+        cleanup:
+        if (context != null) {
+            context.stop()
+        }
+    }
+
+    void "test when cloud server secured and invalid user credentials provided"() {
         given:
         System.setProperty(Environment.BOOTSTRAP_CONTEXT_PROPERTY, "true")
 
