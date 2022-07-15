@@ -21,6 +21,7 @@ import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.discovery.spring.config.SpringCloudClientConfiguration;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.retry.annotation.Retryable;
@@ -44,6 +45,7 @@ public interface SpringCloudConfigClient {
      *
      * @param applicationName   The application name
      * @param profiles          The active profiles
+     * @param authorization     The Basic authorization header if provided
      * @return A {@link Publisher} that emits a list of {@link ConfigServerResponse}
      */
     @Get("/{applicationName}{/profiles}")
@@ -54,7 +56,8 @@ public interface SpringCloudConfigClient {
     )
     Publisher<ConfigServerResponse> readValues(
             @NonNull String applicationName,
-            @Nullable String profiles);
+            @Nullable String profiles,
+            @Nullable @Header String authorization);
 
     /**
      * Reads a versioned (#label) application configuration from Spring Config Server.
@@ -62,6 +65,7 @@ public interface SpringCloudConfigClient {
      * @param applicationName   The application name
      * @param profiles          The active profiles
      * @param label             The label
+     * @param authorization     The Basic authorization header if provided
      * @return A {@link Publisher} that emits a list of {@link ConfigServerResponse}
      */
     @Get("/{applicationName}{/profiles}{/label}")
@@ -73,6 +77,7 @@ public interface SpringCloudConfigClient {
     Publisher<ConfigServerResponse> readValues(
             @NonNull String applicationName,
             @Nullable String profiles,
-            @Nullable String label);
+            @Nullable String label,
+            @Nullable @Header String authorization);
 
 }
