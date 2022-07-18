@@ -19,6 +19,7 @@ import io.micronaut.context.annotation.BootstrapContextCompatible;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.config.ConfigDiscoveryConfiguration;
 import io.micronaut.http.client.HttpClientConfiguration;
@@ -119,14 +120,14 @@ public class SpringCloudClientConfiguration extends HttpClientConfiguration {
      * @return The spring cloud config username.
      */
     public Optional<String> getUsername() {
-        return username != null ? Optional.of(username) : Optional.empty();
+        return Optional.ofNullable(username);
     }
 
     /**
      * @return The spring cloud config password.
      */
     public Optional<String> getPassword() {
-        return password != null ? Optional.of(password) : Optional.empty();
+        return Optional.ofNullable(password);
     }
 
     /**
@@ -171,7 +172,7 @@ public class SpringCloudClientConfiguration extends HttpClientConfiguration {
      *
      * @param username Spring Cloud config username
      */
-    public void setUsername(String username) {
+    public void setUsername(@Nullable String username) {
         this.username = username;
     }
 
@@ -180,7 +181,7 @@ public class SpringCloudClientConfiguration extends HttpClientConfiguration {
      *
      * @param password Spring Cloud config password
      */
-    public void setPassword(String password) {
+    public void setPassword(@Nullable String password) {
         this.password = password;
     }
 
