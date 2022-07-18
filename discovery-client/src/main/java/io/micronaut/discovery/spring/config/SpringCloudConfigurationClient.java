@@ -101,12 +101,21 @@ public class SpringCloudConfigurationClient implements ConfigurationClient {
             }
 
             String authorization = getAuthorization(springCloudConfiguration);
+            Publisher<ConfigServerResponse> responsePublisher;
 
-            Publisher<ConfigServerResponse> responsePublisher =
+            if (authorization == null) {
+                responsePublisher =
                     springCloudConfiguration.getLabel() == null ?
-                    springCloudConfigClient.readValues(applicationName, profiles, authorization) :
-                    springCloudConfigClient.readValues(applicationName,
+                        springCloudConfigClient.readValues(applicationName, profiles) :
+                        springCloudConfigClient.readValues(applicationName,
+                            profiles, springCloudConfiguration.getLabel());
+            } else {
+                responsePublisher =
+                    springCloudConfiguration.getLabel() == null ?
+                        springCloudConfigClient.readValuesAuthorized(applicationName, profiles, authorization) :
+                        springCloudConfigClient.readValuesAuthorized(applicationName,
                             profiles, springCloudConfiguration.getLabel(), authorization);
+            }
 
             Flux<PropertySource> configurationValues = Flux.from(responsePublisher)
                     .onErrorResume(throwable -> {
