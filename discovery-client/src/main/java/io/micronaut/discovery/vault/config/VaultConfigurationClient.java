@@ -34,12 +34,15 @@ import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
@@ -130,19 +133,6 @@ public class VaultConfigurationClient implements ConfigurationClient {
         });
 
         return Flux.merge(propertySources);
-    }
-
-    /**
-     * Builds the keys used to get vault properties.
-     *
-     * @param applicationName The application name
-     * @param environmentNames The active environments
-     * @return list of vault keys
-     * @deprecated Replaced by {@link #buildVaultKeys(String, String, Set)}
-     */
-    @Deprecated
-    protected Map<Integer, String> buildVaultKeys(@Nullable String applicationName, Set<String> environmentNames) {
-        return buildVaultKeys(null, applicationName, environmentNames);
     }
 
     /**
