@@ -1,6 +1,7 @@
 plugins {
-    id("io.micronaut.build.internal.module")
+    id("io.micronaut.build.internal.discovery-client-module")
 }
+
 dependencies {
     annotationProcessor(libs.micronaut.docs.asciidoc.config.props)
     annotationProcessor(libs.micronaut.graal)
