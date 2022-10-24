@@ -6,13 +6,5 @@ micronaut-docs = "2.0.0"
 [libraries]
 # Micronaut
 micronaut-docs-asciidoc-config-props = { module = "io.micronaut.docs:micronaut-docs-asciidoc-config-props", version.ref = "micronaut-docs" }
-micronaut-graal = { module = "io.micronaut:micronaut-graal" }
-micronaut-http-client = { module = "io.micronaut:micronaut-http-client" }
-micronaut-http-server-netty = { module = "io.micronaut:micronaut-http-server-netty" }
-micronaut-inject-groovy = { module = "io.micronaut:micronaut-inject-groovy" }
-micronaut-inject-java = { module = "io.micronaut:micronaut-inject-java" }
-micronaut-management = { module = "io.micronaut:micronaut-management" }
-micronaut-validation = { module = "io.micronaut:micronaut-validation" }
 
-reactor-core = { module = "io.projectreactor:reactor-core" }
-spock = { module = "org.testcontainers:spock" }
+testcontainers-spock = { module = 'org.testcontainers:spock' }
