@@ -11,6 +11,7 @@ dependencies {
 
     implementation(mn.reactor)
     implementation(mn.micronaut.retry)
+    implementation(mn.micronaut.jackson.databind)
 
     compileOnly(mn.micronaut.management)
 
