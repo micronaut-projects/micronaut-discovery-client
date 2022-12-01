@@ -6,20 +6,16 @@ pluginManagement {
 }
 
 plugins {
-    id("io.micronaut.build.shared.settings") version "6.0.1"
+    id("io.micronaut.build.shared.settings") version "6.1.0"
 }
 
 rootProject.name = 'discovery-client-parent'
 
 include 'discovery-client'
 
-dependencyResolutionManagement {
-    repositories {
-        mavenCentral()
-        maven { url "https://s01.oss.sonatype.org/content/repositories/snapshots/" }
-    }
-}
+enableFeaturePreview 'TYPESAFE_PROJECT_ACCESSORS'
 
 micronautBuild {
+    addSnapshotRepository()
     importMicronautCatalog()
 }

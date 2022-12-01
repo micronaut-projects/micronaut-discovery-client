@@ -6,6 +6,7 @@ dependencies {
     annotationProcessor(libs.micronaut.docs.asciidoc.config.props)
     annotationProcessor(mn.micronaut.graal)
 
+    api(mn.micronaut.discovery.core)
     api(mn.micronaut.http.client)
     api(mn.micronaut.validation)
 
