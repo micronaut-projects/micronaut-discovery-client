@@ -251,7 +251,7 @@ class ConsulAutoRegistrationSpec extends Specification {
                  'consul.client.registration.ip-addr': '${SERVICE_ADDRESS:}',
                  'consul.client.registration.health-path': '/health',
                  'consul.client.registration.check': [id: UUID.randomUUID().toString(), enabled: true, interval: '15s', 'deregister-critical-service-after': '60s', http: true],
-                 'consul.client.registration.check.headers': ["X-Foo": ["bar"]],
+                 'consul.client.registration.check.headers': ["X-Foo": ["bar", "baz"]],
                  'consul.client.host'        : consulHost,
                  'consul.client.port'        : consulPort]
         )
