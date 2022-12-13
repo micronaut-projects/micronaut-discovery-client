@@ -41,8 +41,10 @@ import io.micronaut.validation.Validated;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -83,17 +85,16 @@ abstract class AbstractEurekaClient implements EurekaClient {
     @Override
     public Publisher<List<ServiceInstance>> getInstances(String serviceId) {
         serviceId = NameUtils.hyphenate(serviceId);
-        Flux<List<ServiceInstance>> flowable = Flux.from(getApplicationInfo(serviceId)).map(applicationInfo -> {
-            List<InstanceInfo> instances = applicationInfo.getInstances();
-            return instances.stream()
-                .map(ii -> {
-                    if (!discoveryConfiguration.isUseSecurePort()) {
-                        ii.setSecurePort(-1);
-                    }
-                    return new EurekaServiceInstance(ii);
-                })
-                .collect(Collectors.toList());
-        });
+        Flux<List<ServiceInstance>> flowable = Flux.from(getApplicationInfo(serviceId)).map(applicationInfo -> Optional.ofNullable(applicationInfo.getInstances())
+            .stream()
+            .flatMap(Collection::stream)
+            .map(ii -> {
+                if (!discoveryConfiguration.isUseSecurePort()) {
+                    ii.setSecurePort(-1);
+                }
+                return new EurekaServiceInstance(ii);
+            })
+            .collect(Collectors.toList()));
 
         return flowable.onErrorResume(throwable -> {
             // Translate 404 into empty list
