@@ -122,11 +122,8 @@ public class ConsulConfigurationClient implements ConfigurationClient {
         List<Flux<List<KeyValue>>> keyValueFlowables = new ArrayList<>();
 
         Function<Throwable, Publisher<? extends List<KeyValue>>> errorHandler = throwable -> {
-            if (throwable instanceof HttpClientResponseException) {
-                HttpClientResponseException httpClientResponseException = (HttpClientResponseException) throwable;
-                if (httpClientResponseException.getStatus() == HttpStatus.NOT_FOUND) {
-                    return Flux.empty();
-                }
+            if (throwable instanceof HttpClientResponseException hcre && hcre.getStatus() == HttpStatus.NOT_FOUND) {
+                return Flux.empty();
             }
             return Flux.error(new ConfigurationException("Error reading distributed configuration from Consul: " + throwable.getMessage(), throwable));
         };
@@ -214,9 +211,7 @@ public class ConsulConfigurationClient implements ConfigurationClient {
                                 }
                                 break;
 
-                            case JSON:
-                            case YAML:
-                            case PROPERTIES:
+                            case JSON, YAML, PROPERTIES:
                                 String fullName = key.substring(pathPrefix.length());
                                 if (!fullName.contains("/")) {
                                     propertySourceNames = ClientUtil.calcPropertySourceNames(fullName, activeNames, ",");
@@ -283,22 +278,12 @@ public class ConsulConfigurationClient implements ConfigurationClient {
     }
 
     private PropertySourceLoader defaultLoader(String format) {
-        try {
-            switch (format) {
-                case "json":
-                    return new JsonPropertySourceLoader();
-                case "properties":
-                    return new PropertiesPropertySourceLoader();
-                case "yml":
-                case "yaml":
-                    return new YamlPropertySourceLoader();
-                default:
-                    // no-op
-            }
-        } catch (Exception e) {
-            // ignore, fallback to exception
-        }
-        throw new ConfigurationException("Unsupported properties file format: " + format);
+            return switch (format) {
+                case "json" -> new JsonPropertySourceLoader();
+                case "properties" -> new PropertiesPropertySourceLoader();
+                case "yml", "yaml" -> new YamlPropertySourceLoader();
+                default -> throw new ConfigurationException("Unsupported properties file format: " + format);
+            };
     }
 
     /**
@@ -318,9 +303,6 @@ public class ConsulConfigurationClient implements ConfigurationClient {
         if (i > -1) {
             prefix = prefix.substring(0, i);
             propertySourceNames = ClientUtil.calcPropertySourceNames(prefix, activeNames, ",");
-            if (propertySourceNames == null) {
-                return null;
-            }
         }
         return propertySourceNames;
     }

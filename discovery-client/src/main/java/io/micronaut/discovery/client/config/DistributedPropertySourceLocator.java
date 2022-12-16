@@ -78,7 +78,7 @@ public class DistributedPropertySourceLocator implements BootstrapPropertySource
                     .collectList()
                     .block();
             if (LOG.isInfoEnabled()) {
-                LOG.info("Resolved {} configuration sources from client: {}", propertySources.size(), configurationClient);
+                LOG.info("Resolved {} configuration sources from client: {}", propertySources != null ? propertySources.size() : 0, configurationClient);
             }
             return propertySources;
         } catch (RuntimeException e) {

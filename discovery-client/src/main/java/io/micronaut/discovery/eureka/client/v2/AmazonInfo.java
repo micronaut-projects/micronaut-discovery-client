@@ -33,6 +33,7 @@ import java.net.URL;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -246,20 +247,10 @@ public class AmazonInfo implements DataCenterInfo {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
+        if (o instanceof AmazonInfo that) {
+            return Objects.equals(metadata, that.metadata);
         }
-        if (!(o instanceof AmazonInfo)) {
-            return false;
-        }
-
-        AmazonInfo that = (AmazonInfo) o;
-
-        if (metadata != null ? !metadata.equals(that.metadata) : that.metadata != null) {
-            return false;
-        }
-
-        return true;
+        return false;
     }
 
     @Override
@@ -348,7 +339,6 @@ public class AmazonInfo implements DataCenterInfo {
          * @param config The Eureka configuration
          * @return the instance information specific to AWS.
          */
-        @SuppressWarnings("MagicNumber")
         public AmazonInfo autoBuild(EurekaConfiguration config) {
 
             for (AmazonInfo.MetaDataKey key : AmazonInfo.MetaDataKey.values()) {
@@ -375,7 +365,7 @@ public class AmazonInfo implements DataCenterInfo {
                             try {
                                 Thread.sleep(SLEEP_TIME_MS);
                             } catch (InterruptedException e1) {
-
+                                Thread.currentThread().interrupt();
                             }
                         }
                     }

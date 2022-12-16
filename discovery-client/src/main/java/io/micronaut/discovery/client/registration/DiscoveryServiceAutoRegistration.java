@@ -63,7 +63,7 @@ public abstract class DiscoveryServiceAutoRegistration extends AutoRegistration 
             registrationFlowable = registrationFlowable.timeout(Duration.ofMillis(timeout.toMillis()));
         }
 
-        registrationFlowable.subscribe(new Subscriber<HttpStatus>() {
+        registrationFlowable.subscribe(new Subscriber<>() {
             @Override
             public void onSubscribe(Subscription s) {
                 s.request(1);
@@ -82,8 +82,8 @@ public abstract class DiscoveryServiceAutoRegistration extends AutoRegistration 
                     String message = getErrorMessage(discoveryService, t);
                     LOG.error(message, t);
                 }
-                if (registration.isFailFast() && instance instanceof EmbeddedServerInstance) {
-                    ((EmbeddedServerInstance) instance).getEmbeddedServer().stop();
+                if (registration.isFailFast() && instance instanceof EmbeddedServerInstance embeddedServerInstance) {
+                    embeddedServerInstance.getEmbeddedServer().stop();
                 }
             }
 
@@ -101,8 +101,7 @@ public abstract class DiscoveryServiceAutoRegistration extends AutoRegistration 
      */
     protected String getErrorMessage(Throwable e, String description) {
         String message;
-        if (e instanceof HttpClientResponseException) {
-            HttpClientResponseException hcre = (HttpClientResponseException) e;
+        if (e instanceof HttpClientResponseException hcre) {
             if (hcre.getStatus() == HttpStatus.BAD_REQUEST) {
                 message = description + hcre.getResponse().getBody(String.class).orElse(e.getMessage());
             } else {
@@ -143,7 +142,7 @@ public abstract class DiscoveryServiceAutoRegistration extends AutoRegistration 
                 registered.set(false);
             }
         } else {
-            deregisterFlowable.subscribe(new Subscriber<HttpStatus>() {
+            deregisterFlowable.subscribe(new Subscriber<>() {
                 @Override
                 public void onSubscribe(Subscription subscription) {
                     subscription.request(1);

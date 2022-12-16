@@ -87,7 +87,7 @@ public class SpringCloudConfigurationClient implements ConfigurationClient {
         }
 
         Optional<String> configuredApplicationName = applicationConfiguration.getName();
-        if (!configuredApplicationName.isPresent()) {
+        if (configuredApplicationName.isEmpty()) {
             return Flux.empty();
         } else {
             String applicationName = springCloudConfiguration.getName().orElse(configuredApplicationName.get());
@@ -108,15 +108,12 @@ public class SpringCloudConfigurationClient implements ConfigurationClient {
 
             Flux<PropertySource> configurationValues = Flux.from(responsePublisher)
                     .onErrorResume(throwable -> {
-                        if (throwable instanceof HttpClientResponseException) {
-                            HttpClientResponseException httpClientResponseException = (HttpClientResponseException) throwable;
-                            if (httpClientResponseException.getStatus() == HttpStatus.NOT_FOUND) {
-                                if (springCloudConfiguration.isFailFast()) {
-                                    return Flux.error(
-                                        new ConfigurationException("Could not locate PropertySource and the fail fast property is set", throwable));
-                                } else {
-                                    return Flux.empty();
-                                }
+                        if (throwable instanceof HttpClientResponseException httpClientResponseException && httpClientResponseException.getStatus() == HttpStatus.NOT_FOUND) {
+                            if (springCloudConfiguration.isFailFast()) {
+                                return Flux.error(
+                                    new ConfigurationException("Could not locate PropertySource and the fail fast property is set", throwable));
+                            } else {
+                                return Flux.empty();
                             }
                         }
                         return Flux.error(new ConfigurationException("Error reading distributed configuration from Spring Cloud: " + throwable.getMessage(), throwable));

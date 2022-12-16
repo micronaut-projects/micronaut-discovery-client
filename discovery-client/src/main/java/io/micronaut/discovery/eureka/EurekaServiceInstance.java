@@ -53,21 +53,18 @@ public class EurekaServiceInstance implements ServiceInstance {
     @Override
     public HealthStatus getHealthStatus() {
         InstanceInfo.@NotNull Status status = instanceInfo.getStatus();
-        switch (status) {
-            case UP:
-                return HealthStatus.UP;
-            case UNKNOWN:
-                return HealthStatus.UNKNOWN;
-            default:
-                return HealthStatus.DOWN;
-        }
+        return switch (status) {
+            case UP -> HealthStatus.UP;
+            case UNKNOWN -> HealthStatus.UNKNOWN;
+            default -> HealthStatus.DOWN;
+        };
     }
 
     @Override
     public Optional<String> getZone() {
         @NotNull DataCenterInfo dataCenterInfo = instanceInfo.getDataCenterInfo();
-        if (dataCenterInfo instanceof AmazonInfo) {
-            String availabilityZone = ((AmazonInfo) dataCenterInfo).get(AmazonInfo.MetaDataKey.availabilityZone);
+        if (dataCenterInfo instanceof AmazonInfo amazonInfo) {
+            String availabilityZone = amazonInfo.get(AmazonInfo.MetaDataKey.availabilityZone);
             return Optional.ofNullable(availabilityZone);
         }
         return ServiceInstance.super.getZone();
@@ -76,8 +73,8 @@ public class EurekaServiceInstance implements ServiceInstance {
     @Override
     public Optional<String> getRegion() {
         @NotNull DataCenterInfo dataCenterInfo = instanceInfo.getDataCenterInfo();
-        if (dataCenterInfo instanceof AmazonInfo) {
-            String availabilityZone = ((AmazonInfo) dataCenterInfo).get(AmazonInfo.MetaDataKey.availabilityZone);
+        if (dataCenterInfo instanceof AmazonInfo amazonInfo) {
+            String availabilityZone = amazonInfo.get(AmazonInfo.MetaDataKey.availabilityZone);
             return Optional.ofNullable(availabilityZone);
         }
         return ServiceInstance.super.getZone();

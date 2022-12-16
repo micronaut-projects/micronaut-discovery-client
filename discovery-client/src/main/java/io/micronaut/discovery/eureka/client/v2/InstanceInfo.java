@@ -27,6 +27,7 @@ import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -144,11 +145,7 @@ public class InstanceInfo implements ConfigurableInstanceInfo {
 
         // ---------------------------------------------------------------
         // for compatibility
-        if (metadata == null) {
-            this.metadata = Collections.emptyMap();
-        } else {
-            this.metadata = metadata;
-        }
+        this.metadata = Objects.requireNonNullElse(metadata, Collections.emptyMap());
     }
 
     /**
@@ -240,8 +237,8 @@ public class InstanceInfo implements ConfigurableInstanceInfo {
     public String getId() {
         if (instanceId != null && !instanceId.isEmpty()) {
             return instanceId;
-        } else if (dataCenterInfo instanceof AmazonInfo) {
-            String uniqueId = ((AmazonInfo) dataCenterInfo).getId();
+        } else if (dataCenterInfo instanceof AmazonInfo amazonInfo) {
+            String uniqueId = amazonInfo.getId();
             if (uniqueId != null && !uniqueId.isEmpty()) {
                 return uniqueId;
             }
@@ -403,10 +400,7 @@ public class InstanceInfo implements ConfigurableInstanceInfo {
      */
     @Override
     public String getHealthCheckUrl() {
-        if (this.healthCheckUrl == null) {
-            return "http://" + this.hostName + portString() + "/health";
-        }
-        return healthCheckUrl;
+        return Objects.requireNonNullElseGet(this.healthCheckUrl, () -> "http://" + this.hostName + portString() + "/health");
     }
 
     /**
@@ -438,10 +432,7 @@ public class InstanceInfo implements ConfigurableInstanceInfo {
      */
     @Override
     public String getSecureHealthCheckUrl() {
-        if (this.secureHealthCheckUrl == null) {
-            return "https://" + this.hostName + securePortString() + "/health";
-        }
-        return secureHealthCheckUrl;
+        return Objects.requireNonNullElseGet(this.secureHealthCheckUrl, () -> "https://" + this.hostName + securePortString() + "/health");
     }
 
     /**
@@ -578,7 +569,7 @@ public class InstanceInfo implements ConfigurableInstanceInfo {
      * The instance status according to Eureka.
      */
     public enum Status {
-        UP, DOWN, STARTING, OUT_OF_SERVICE, UNKNOWN;
+        UP, DOWN, STARTING, OUT_OF_SERVICE, UNKNOWN
     }
 
     /**

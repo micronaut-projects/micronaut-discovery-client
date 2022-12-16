@@ -103,14 +103,14 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
             if (status.equals(HealthStatus.UP)) {
                 // send a request to /agent/check/pass/:check_id
                 Mono<HttpStatus> passPublisher = Mono.from(consulClient.pass(checkId));
-                passPublisher.subscribe((httpStatus) -> {
+                passPublisher.subscribe(httpStatus -> {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Successfully reported passing state to Consul");
                     }
-                }, (throwable) -> {
+                }, throwable -> {
 
                         // check if the service is still registered with Consul
-                        Mono.from(consulClient.getServiceIds()).subscribe((serviceIds) -> {
+                        Mono.from(consulClient.getServiceIds()).subscribe(serviceIds -> {
                             String serviceId = idGenerator.generateId(environment, instance);
                             if (!serviceIds.contains(serviceId)) {
                                 if (LOG.isInfoEnabled()) {
@@ -127,11 +127,11 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
             } else {
                 // send a request to /agent/check/fail/:check_id
                 Mono<HttpStatus> failPublisher = Mono.from(consulClient.fail(checkId, status.getDescription().orElse(null)));
-                failPublisher.subscribe((httpStatus) -> {
+                failPublisher.subscribe(httpStatus -> {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Successfully reported failure state to Consul");
                     }
-                }, (throwable) -> {
+                }, throwable -> {
                     if (LOG.isErrorEnabled()) {
                         LOG.error(getErrorMessage(throwable, "Error reporting failure state to Consul: "), throwable);
                     }
@@ -152,7 +152,6 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
         }
     }
 
-    @SuppressWarnings("MagicNumber")
     @Override
     protected void register(ServiceInstance instance) {
         ConsulConfiguration.ConsulRegistrationConfiguration registration = consulConfiguration.getRegistration();
@@ -187,9 +186,8 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
                 String serviceId = idGenerator.generateId(environment, instance);
                 serviceEntry.id(serviceId);
 
-                if (instance instanceof EmbeddedServerInstance) {
+                if (instance instanceof EmbeddedServerInstance embeddedServerInstance) {
                     NewCheck check = null;
-                    EmbeddedServerInstance embeddedServerInstance = (EmbeddedServerInstance) instance;
                     ApplicationConfiguration applicationConfiguration = embeddedServerInstance.getEmbeddedServer().getApplicationConfiguration();
                     ApplicationConfiguration.InstanceConfiguration instanceConfiguration = applicationConfiguration.getInstance();
                     instanceConfiguration.getGroup().ifPresent(g -> {

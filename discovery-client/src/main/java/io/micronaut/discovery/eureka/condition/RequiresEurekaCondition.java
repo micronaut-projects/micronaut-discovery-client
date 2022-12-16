@@ -31,8 +31,7 @@ public class RequiresEurekaCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context) {
         BeanContext beanContext = context.getBeanContext();
-        if (beanContext instanceof PropertyResolver) {
-            PropertyResolver propertyResolver = (PropertyResolver) beanContext;
+        if (beanContext instanceof PropertyResolver propertyResolver) {
             if (!propertyResolver.containsProperties("eureka.client")) {
                 return false;
             }

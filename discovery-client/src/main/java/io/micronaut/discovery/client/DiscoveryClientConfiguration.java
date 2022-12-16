@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -134,7 +133,7 @@ public abstract class DiscoveryClientConfiguration extends HttpClientConfigurati
             .stream()
             .map(uriMapper())
             .map(uri -> ServiceInstance.builder(getServiceID(), uri).build())
-            .collect(Collectors.toList());
+            .toList();
     }
 
     /**
@@ -165,7 +164,7 @@ public abstract class DiscoveryClientConfiguration extends HttpClientConfigurati
                                 .zone(entry.getKey())
                                 .build()
                         ))
-                .collect(Collectors.toList());
+                .toList();
         }
     }
 
