@@ -1,24 +1,29 @@
 plugins {
-    id("io.micronaut.build.internal.module")
+    id("io.micronaut.build.internal.discovery-client-module")
 }
+
 dependencies {
     annotationProcessor(libs.micronaut.docs.asciidoc.config.props)
-    annotationProcessor(libs.micronaut.graal)
+    annotationProcessor(mn.micronaut.graal)
 
-    api(libs.micronaut.http.client)
-    api(libs.micronaut.validation)
+    api(mn.micronaut.discovery.core)
+    api(mn.micronaut.http.client)
+    api(mn.micronaut.validation)
 
-    implementation(libs.reactor.core)
+    implementation(mn.reactor)
+    implementation(mn.micronaut.retry)
+    implementation(mn.micronaut.jackson.databind)
 
-    compileOnly(libs.micronaut.management)
+    compileOnly(mn.micronaut.management)
 
-    testAnnotationProcessor(libs.micronaut.inject.java)
-    testImplementation(libs.spock)
+    testAnnotationProcessor(mn.micronaut.inject.java)
+    testImplementation(libs.testcontainers.spock)
 
-    testImplementation(libs.micronaut.management)
-    testImplementation(libs.micronaut.http.server.netty)
+    testImplementation(mn.micronaut.management)
+    testImplementation(mn.micronaut.http.server.netty)
+    testImplementation(mn.snakeyaml)
 
-    testCompileOnly(libs.micronaut.inject.groovy)
+    testCompileOnly(mn.micronaut.inject.groovy)
 }
 
 spotless {

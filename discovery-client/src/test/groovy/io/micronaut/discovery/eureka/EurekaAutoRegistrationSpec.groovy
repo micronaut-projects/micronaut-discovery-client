@@ -39,11 +39,11 @@ class EurekaAutoRegistrationSpec extends Specification{
     @Shared
     @AutoCleanup
     GenericContainer eurekaContainer =
-            new GenericContainer("cloudready/spring-cloud-eureka-server:1.0.1")
+            new GenericContainer("jhipster/jhipster-registry:latest")
                     .withExposedPorts(8761)
                     .waitingFor(
                             new LogMessageWaitStrategy()
-                            .withRegEx("(?s).*Started Eureka.*")
+                            .withRegEx("(?s).*Application 'jhipster-registry' is running!.*")
                             .withStartupTimeout(Duration.ofMinutes(5))
                     )
 
@@ -69,9 +69,12 @@ class EurekaAutoRegistrationSpec extends Specification{
     void "test that an application can be registered and de-registered with Eureka"() {
         when: "An application is started and eureka configured"
         String serviceId = 'myService'
+        println "https://admin:admin@${eurekaHost}:${eurekaPort}"
         def eurekaConfiguration = [
                 'eureka.client.host'                       : eurekaHost,
-                'eureka.client.port'                       : eurekaPort
+                'eureka.client.port'                       : eurekaPort,
+                'eureka.client.defaultZone'                : "http://admin:admin@${eurekaHost}:${eurekaPort}"
+
         ]
         // run an application
         EmbeddedServer application = ApplicationContext.run(

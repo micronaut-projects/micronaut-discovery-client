@@ -46,9 +46,9 @@ class EurekaClientSpec extends Specification {
     @Shared
     @AutoCleanup
     GenericContainer eurekaContainer =
-            new GenericContainer("cloudready/spring-cloud-eureka-server:1.0.1")
+            new GenericContainer("jhipster/jhipster-registry:latest")
                     .withExposedPorts(8761)
-                    .waitingFor(new LogMessageWaitStrategy().withRegEx("(?s).*Started Eureka.*"))
+                    .waitingFor(new LogMessageWaitStrategy().withRegEx("(?s).*Application 'jhipster-registry' is running!.*"))
 
     @Shared String eurekaHost
     @Shared int eurekaPort
@@ -71,7 +71,8 @@ class EurekaClientSpec extends Specification {
                 (EurekaConfiguration.HOST): eurekaHost,
                 (EurekaConfiguration.PORT): eurekaPort,
                 "micronaut.caches.discoveryClient.enabled": false,
-                'eureka.client.readTimeout': '5s'
+                'eureka.client.readTimeout': '5s',
+                'eureka.client.defaultZone'                : "http://admin:admin@${eurekaHost}:${eurekaPort}"
         ] as Map<String, Object>
         embeddedServer = ApplicationContext.run(EmbeddedServer, embeddedServerConfig, Environment.TEST)
         client = embeddedServer.applicationContext.getBean(EurekaClient)

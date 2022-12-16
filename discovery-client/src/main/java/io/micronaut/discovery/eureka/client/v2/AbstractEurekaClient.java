@@ -41,9 +41,10 @@ import io.micronaut.validation.Validated;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 /**
  * Compile time implementation of {@link EurekaClient}.
@@ -83,25 +84,21 @@ abstract class AbstractEurekaClient implements EurekaClient {
     @Override
     public Publisher<List<ServiceInstance>> getInstances(String serviceId) {
         serviceId = NameUtils.hyphenate(serviceId);
-        Flux<List<ServiceInstance>> flowable = Flux.from(getApplicationInfo(serviceId)).map(applicationInfo -> {
-            List<InstanceInfo> instances = applicationInfo.getInstances();
-            return instances.stream()
-                .map(ii -> {
-                    if (!discoveryConfiguration.isUseSecurePort()) {
-                        ii.setSecurePort(-1);
-                    }
-                    return new EurekaServiceInstance(ii);
-                })
-                .collect(Collectors.toList());
-        });
+        Flux<List<ServiceInstance>> flowable = Flux.from(getApplicationInfo(serviceId)).map(applicationInfo -> Optional.ofNullable(applicationInfo.getInstances())
+            .stream()
+            .flatMap(Collection::stream)
+            .map(ii -> {
+                if (!discoveryConfiguration.isUseSecurePort()) {
+                    ii.setSecurePort(-1);
+                }
+                return (ServiceInstance) new EurekaServiceInstance(ii);
+            })
+            .toList());
 
         return flowable.onErrorResume(throwable -> {
             // Translate 404 into empty list
-            if (throwable instanceof HttpClientResponseException) {
-                HttpClientResponseException hcre = (HttpClientResponseException) throwable;
-                if (hcre.getStatus() == HttpStatus.NOT_FOUND) {
-                    return Flux.just(Collections.emptyList());
-                }
+            if (throwable instanceof HttpClientResponseException hcre && hcre.getStatus() == HttpStatus.NOT_FOUND) {
+                return Flux.just(Collections.emptyList());
             }
             if (throwable instanceof Exception) {
                 return Flux.error(throwable);
@@ -128,7 +125,7 @@ abstract class AbstractEurekaClient implements EurekaClient {
                 .applications
                 .stream()
                 .map(ApplicationInfo::getName)
-                .collect(Collectors.toList())
+                .toList()
         );
     }
 

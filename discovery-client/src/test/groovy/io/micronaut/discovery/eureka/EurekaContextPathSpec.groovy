@@ -32,9 +32,10 @@ class EurekaContextPathSpec extends Specification {
 
         given:
         EmbeddedServer eurekaServer = ApplicationContext.run(EmbeddedServer, [
-                'eureka.client.context-path'           : '/eureka/v2',
-                'jackson.serialization.WRAP_ROOT_VALUE': true,
-                (MockEurekaServer.ENABLED)             : true
+                'eureka.client.context-path'                : '/eureka/v2',
+                'jackson.serialization.WRAP_ROOT_VALUE'     : true,
+                'jackson.deserialization.UNWRAP_ROOT_VALUE' : true,
+                (MockEurekaServer.ENABLED)                  : true
         ])
 
         when: "An application is started and eureka configured"

@@ -34,9 +34,10 @@ class EurekaMockBasicAuthSpec extends Specification {
     void "test authentication works"() {
         given: "a mock server with auth enabled"
         EmbeddedServer eurekaServer = ApplicationContext.run(EmbeddedServer, [
-                'jackson.serialization.WRAP_ROOT_VALUE': true,
-                'test.eureka.userinfo'                 : 'foo:bar',
-                (MockEurekaServer.ENABLED): true
+                'test.eureka.userinfo'                      : 'foo:bar',
+                'jackson.serialization.WRAP_ROOT_VALUE'     : true,
+                'jackson.deserialization.UNWRAP_ROOT_VALUE' : true,
+                (MockEurekaServer.ENABLED)                  : true
         ])
 
         and: "A client with the token"

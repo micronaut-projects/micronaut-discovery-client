@@ -136,7 +136,7 @@ public class HTTPCheck extends NewCheck {
      *
      * @return The HTTP headers to use for the check
      */
-    public ConvertibleMultiValues<String> getHeader() {
+    public ConvertibleMultiValues<String> getHeaders() {
         return headers;
     }
 
