@@ -115,8 +115,8 @@ public class VaultConfigurationClient implements ConfigurationClient {
                     .filter(data -> !data.getSecrets().isEmpty())
                     .map(data -> PropertySource.of(value, data.getSecrets(), key))
                     .onErrorResume(t -> {
-                        if (t instanceof HttpClientResponseException) {
-                            if (((HttpClientResponseException) t).getStatus() == HttpStatus.NOT_FOUND) {
+                        if (t instanceof HttpClientResponseException hcre) {
+                            if (hcre.getStatus() == HttpStatus.NOT_FOUND) {
                                 if (vaultClientConfiguration.isFailFast()) {
                                     return Flux.error(new ConfigurationException(
                                             "Could not locate PropertySource and the fail fast property is set", t));

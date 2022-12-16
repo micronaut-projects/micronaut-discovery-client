@@ -94,12 +94,12 @@ abstract class AbstractEurekaClient implements EurekaClient {
                 }
                 return new EurekaServiceInstance(ii);
             })
-            .collect(Collectors.toList()));
+            .map(ServiceInstance.class::cast)
+            .toList();
 
         return flowable.onErrorResume(throwable -> {
             // Translate 404 into empty list
-            if (throwable instanceof HttpClientResponseException) {
-                HttpClientResponseException hcre = (HttpClientResponseException) throwable;
+            if (throwable instanceof HttpClientResponseException hcre) {
                 if (hcre.getStatus() == HttpStatus.NOT_FOUND) {
                     return Flux.just(Collections.emptyList());
                 }
@@ -129,7 +129,7 @@ abstract class AbstractEurekaClient implements EurekaClient {
                 .applications
                 .stream()
                 .map(ApplicationInfo::getName)
-                .collect(Collectors.toList())
+                .toList()
         );
     }
 
