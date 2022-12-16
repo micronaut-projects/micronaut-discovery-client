@@ -92,9 +92,8 @@ abstract class AbstractEurekaClient implements EurekaClient {
                 if (!discoveryConfiguration.isUseSecurePort()) {
                     ii.setSecurePort(-1);
                 }
-                return new EurekaServiceInstance(ii);
+                return (ServiceInstance) new EurekaServiceInstance(ii);
             })
-            .map(ServiceInstance.class::cast)
             .toList());
 
         return flowable.onErrorResume(throwable -> {
