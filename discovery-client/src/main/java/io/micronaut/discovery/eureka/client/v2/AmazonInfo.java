@@ -247,14 +247,10 @@ public class AmazonInfo implements DataCenterInfo {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
+        if (o instanceof AmazonInfo that) {
+            return Objects.equals(metadata, that.metadata);
         }
-        if (!(o instanceof AmazonInfo that)) {
-            return false;
-        }
-
-        return Objects.equals(metadata, that.metadata);
+        return false;
     }
 
     @Override
