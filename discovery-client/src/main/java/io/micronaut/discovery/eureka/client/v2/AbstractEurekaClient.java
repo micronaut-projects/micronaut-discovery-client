@@ -95,7 +95,7 @@ abstract class AbstractEurekaClient implements EurekaClient {
                 return new EurekaServiceInstance(ii);
             })
             .map(ServiceInstance.class::cast)
-            .toList();
+            .toList());
 
         return flowable.onErrorResume(throwable -> {
             // Translate 404 into empty list
