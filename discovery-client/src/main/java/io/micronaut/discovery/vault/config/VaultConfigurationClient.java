@@ -141,7 +141,7 @@ public class VaultConfigurationClient implements ConfigurationClient {
      * @param pathPrefix The prefix path of vault keys
      * @param applicationName The application name
      * @param environmentNames The active environments
-     * @return list of vault keys
+     * @return map of vault keys
      */
     protected Map<Integer, String> buildVaultKeys(@Nullable String pathPrefix,
                                                   @Nullable String applicationName,

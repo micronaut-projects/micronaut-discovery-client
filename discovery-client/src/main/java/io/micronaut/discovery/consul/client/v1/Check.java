@@ -15,7 +15,7 @@
  */
 package io.micronaut.discovery.consul.client.v1;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 /**
@@ -47,7 +47,7 @@ public interface Check {
     /**
      * Valid health status values.
      */
-    @JsonNaming(PropertyNamingStrategy.LowerCaseStrategy.class)
+    @JsonNaming(PropertyNamingStrategies.LowerCaseStrategy.class)
     enum Status {
         PASSING, WARNING, CRITICAL
     }

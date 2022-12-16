@@ -152,7 +152,6 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
         }
     }
 
-    @SuppressWarnings("MagicNumber")
     @Override
     protected void register(ServiceInstance instance) {
         ConsulConfiguration.ConsulRegistrationConfiguration registration = consulConfiguration.getRegistration();
@@ -187,9 +186,8 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
                 String serviceId = idGenerator.generateId(environment, instance);
                 serviceEntry.id(serviceId);
 
-                if (instance instanceof EmbeddedServerInstance) {
+                if (instance instanceof EmbeddedServerInstance embeddedServerInstance) {
                     NewCheck check = null;
-                    EmbeddedServerInstance embeddedServerInstance = (EmbeddedServerInstance) instance;
                     ApplicationConfiguration applicationConfiguration = embeddedServerInstance.getEmbeddedServer().getApplicationConfiguration();
                     ApplicationConfiguration.InstanceConfiguration instanceConfiguration = applicationConfiguration.getInstance();
                     instanceConfiguration.getGroup().ifPresent(g -> {

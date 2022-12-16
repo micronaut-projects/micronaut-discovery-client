@@ -284,12 +284,7 @@ public class EndpointUtil {
     /**
      * Default randomizer.
      */
-    private static class InstanceInfoBasedUrlRandomizer implements ServiceUrlRandomizer {
-        private final EmbeddedServer instanceInfo;
-
-        InstanceInfoBasedUrlRandomizer(EmbeddedServer instanceInfo) {
-            this.instanceInfo = instanceInfo;
-        }
+    private record InstanceInfoBasedUrlRandomizer(EmbeddedServer instanceInfo) implements ServiceUrlRandomizer {
 
         @Override
         public void randomize(List<String> urlList) {

@@ -18,7 +18,6 @@ package io.micronaut.discovery.eureka.client.v2;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import io.micronaut.core.annotation.ReflectiveAccess;
 
@@ -28,7 +27,7 @@ import io.micronaut.core.annotation.ReflectiveAccess;
  * @author Karthik Ranganathan
  */
 @JsonRootName("dataCenterInfo")
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = As.PROPERTY, property = "@class")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
 @JsonTypeIdResolver(DataCenterTypeInfoResolver.class)
 public interface DataCenterInfo {
 
