@@ -36,8 +36,9 @@ class EurekaMockHeartbeatSpec extends Specification {
 
         given:
         EmbeddedServer eurekaServer = ApplicationContext.run(EmbeddedServer, [
-                'jackson.serialization.WRAP_ROOT_VALUE': true,
-                (MockEurekaServer.ENABLED)             : true
+                'jackson.serialization.WRAP_ROOT_VALUE'    : true,
+                'jackson.deserialization.UNWRAP_ROOT_VALUE': true,
+                (MockEurekaServer.ENABLED)                 : true
         ])
 
         when: "An application is started and eureka configured"

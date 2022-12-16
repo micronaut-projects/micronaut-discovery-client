@@ -43,8 +43,9 @@ class EurekaMockAutoRegistrationSpec extends Specification {
     void "test that an application can be registered and de-registered with Eureka hyphenated"() {
         given:
         Map eurekaServerConfig = [
-                'jackson.serialization.WRAP_ROOT_VALUE': true,
-                (MockEurekaServer.ENABLED): true
+                'jackson.serialization.WRAP_ROOT_VALUE'    : true,
+                'jackson.deserialization.UNWRAP_ROOT_VALUE': true,
+                (MockEurekaServer.ENABLED)                 : true
         ]
         EmbeddedServer eurekaServer = ApplicationContext.run(EmbeddedServer, eurekaServerConfig, Environment.TEST)
 
@@ -87,8 +88,9 @@ class EurekaMockAutoRegistrationSpec extends Specification {
     void "test that an application can be registered and de-registered with Eureka"() {
         given:
         Map eurekaServerConfig = [
-                'jackson.serialization.WRAP_ROOT_VALUE': true,
-                (MockEurekaServer.ENABLED): true
+                'jackson.serialization.WRAP_ROOT_VALUE'    : true,
+                'jackson.deserialization.UNWRAP_ROOT_VALUE': true,
+                (MockEurekaServer.ENABLED)                 : true
         ]
         EmbeddedServer eurekaServer = ApplicationContext.run(EmbeddedServer, eurekaServerConfig, Environment.TEST)
 
@@ -160,8 +162,9 @@ class EurekaMockAutoRegistrationSpec extends Specification {
 
         given:
         EmbeddedServer eurekaServer = ApplicationContext.run(EmbeddedServer, [
-                'jackson.serialization.WRAP_ROOT_VALUE': true,
-                (MockEurekaServer.ENABLED): true
+                'jackson.serialization.WRAP_ROOT_VALUE'    : true,
+                'jackson.deserialization.UNWRAP_ROOT_VALUE': true,
+                (MockEurekaServer.ENABLED)                 : true
         ])
 
         def map = ['consul.client.enabled'              : false,
