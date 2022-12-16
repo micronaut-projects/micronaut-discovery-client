@@ -45,7 +45,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Compile time implementation of {@link EurekaClient}.
@@ -98,10 +97,8 @@ abstract class AbstractEurekaClient implements EurekaClient {
 
         return flowable.onErrorResume(throwable -> {
             // Translate 404 into empty list
-            if (throwable instanceof HttpClientResponseException hcre) {
-                if (hcre.getStatus() == HttpStatus.NOT_FOUND) {
-                    return Flux.just(Collections.emptyList());
-                }
+            if (throwable instanceof HttpClientResponseException hcre && hcre.getStatus() == HttpStatus.NOT_FOUND) {
+                return Flux.just(Collections.emptyList());
             }
             if (throwable instanceof Exception) {
                 return Flux.error(throwable);
