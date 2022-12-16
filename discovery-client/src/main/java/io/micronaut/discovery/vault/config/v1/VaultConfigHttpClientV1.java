@@ -26,6 +26,8 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.retry.annotation.Retryable;
 import org.reactivestreams.Publisher;
 
+import static io.micronaut.http.client.HttpClientConfiguration.ConnectionPoolConfiguration.PREFIX;
+
 /**
  *  A non-blocking HTTP client for Vault - KV v2.
  *
@@ -52,8 +54,8 @@ public interface VaultConfigHttpClientV1 extends VaultConfigHttpClient<VaultResp
     @Get("/v1/{backend}/{vaultKey}")
     @Produces(single = true)
     @Retryable(
-            attempts = "${" + VaultClientConfiguration.VaultClientConnectionPoolConfiguration.PREFIX + ".retry-count:3}",
-            delay = "${" + VaultClientConfiguration.VaultClientConnectionPoolConfiguration.PREFIX + ".retry-delay:1s}"
+            attempts = "${" + PREFIX + ".retry-count:3}",
+            delay = "${" + PREFIX + ".retry-delay:1s}"
     )
     @Override
     Publisher<VaultResponseV1> readConfigurationValues(

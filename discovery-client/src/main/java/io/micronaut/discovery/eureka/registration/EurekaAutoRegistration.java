@@ -88,11 +88,11 @@ public class EurekaAutoRegistration extends DiscoveryServiceAutoRegistration {
             InstanceInfo instanceInfo = registration.getInstanceInfo();
             if (status.equals(HealthStatus.UP)) {
                 Mono<HttpStatus> heartbeatPublisher = Mono.from(eurekaClient.heartbeat(instanceInfo.getApp(), instanceInfo.getId()));
-                heartbeatPublisher.subscribe((httpStatus) -> {
+                heartbeatPublisher.subscribe(httpStatus -> {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Successfully reported passing state to Eureka");
                     }
-                }, (throwable) -> {
+                }, throwable -> {
                     if (throwable instanceof HttpClientResponseException hcre) {
                         HttpStatus httpStatus = hcre.getStatus();
                         if (httpStatus == HttpStatus.NOT_FOUND) {

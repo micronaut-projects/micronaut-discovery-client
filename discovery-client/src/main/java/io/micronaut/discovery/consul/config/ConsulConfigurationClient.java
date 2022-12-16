@@ -122,10 +122,8 @@ public class ConsulConfigurationClient implements ConfigurationClient {
         List<Flux<List<KeyValue>>> keyValueFlowables = new ArrayList<>();
 
         Function<Throwable, Publisher<? extends List<KeyValue>>> errorHandler = throwable -> {
-            if (throwable instanceof HttpClientResponseException httpClientResponseException) {
-                if (httpClientResponseException.getStatus() == HttpStatus.NOT_FOUND) {
-                    return Flux.empty();
-                }
+            if (throwable instanceof HttpClientResponseException hcre && hcre.getStatus() == HttpStatus.NOT_FOUND) {
+                return Flux.empty();
             }
             return Flux.error(new ConfigurationException("Error reading distributed configuration from Consul: " + throwable.getMessage(), throwable));
         };
@@ -213,9 +211,7 @@ public class ConsulConfigurationClient implements ConfigurationClient {
                                 }
                                 break;
 
-                            case JSON:
-                            case YAML:
-                            case PROPERTIES:
+                            case JSON, YAML, PROPERTIES:
                                 String fullName = key.substring(pathPrefix.length());
                                 if (!fullName.contains("/")) {
                                     propertySourceNames = ClientUtil.calcPropertySourceNames(fullName, activeNames, ",");
