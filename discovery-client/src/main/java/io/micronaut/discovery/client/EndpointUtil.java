@@ -283,6 +283,7 @@ public class EndpointUtil {
 
     /**
      * Default randomizer.
+     * @param instanceInfo instance info.
      */
     private record InstanceInfoBasedUrlRandomizer(EmbeddedServer instanceInfo) implements ServiceUrlRandomizer {
 
