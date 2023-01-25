@@ -2,6 +2,7 @@ package io.micronaut.discovery.vault
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.env.Environment
+import io.micronaut.discovery.vault.config.v2.VaultConfigHttpClientV2
 import io.micronaut.runtime.server.EmbeddedServer
 import spock.lang.AutoCleanup
 import spock.lang.Shared
@@ -42,6 +43,7 @@ class VaultClientV2ConfigTest extends Specification {
         1 == context.getRequiredProperty("v2-secret-4", Integer.class)
         1 == context.getRequiredProperty("v2-secret-5", Integer.class)
         1 == context.getRequiredProperty("v2-secret-6", Integer.class)
+        context.getBean(VaultConfigHttpClientV2).description == VaultConfigHttpClientV2.CLIENT_DESCRIPTION
 
         cleanup:
         context.stop()
