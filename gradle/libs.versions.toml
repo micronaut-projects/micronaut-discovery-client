@@ -5,3 +5,6 @@ micronaut = "3.8.2"
 micronaut-test = "3.0.5"
 groovy = "3.0.8"
 spock = "2.3-groovy-3.0"
+
+[libraries]
+testcontainers-spock = { module = "org.testcontainers:spock" }
