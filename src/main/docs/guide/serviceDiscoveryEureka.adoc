@@ -13,7 +13,7 @@ NOTE: As of this writing the official Docker images for Eureka are significantly
 The process to register a Micronaut application with Eureka is very similar to with Consul, as seen in the previous section, simply add the necessary api:discovery.eureka.EurekaConfiguration[]. A minimal example can be seen below:
 
 .Auto Registering with Eureka (application.yml)
-[source,yaml]
+[configuration]
 ----
 micronaut:
   application:
@@ -30,26 +30,38 @@ eureka:
 You can customize various aspects of registration with Eureka using the api:discovery.eureka.EurekaConfiguration[]. Notice that `EurekaConfiguration` extends api:discovery.client.DiscoveryClientConfiguration[]  which in turn extends link:{micronautapi}http/client/HttpClientConfiguration[HttpClientConfiguration] allowing you to customize the settings for the Eureka client, including read timeout, proxy configuration and so on.
 
 .Example Eureka Configuration
-[source,yaml]
+[configuration]
 ----
 eureka:
   client:
     readTimeout: 5s
     registration:
-      asgName: myAsg # the auto scaling group name
-      countryId: 10 # the country id
-      vipAddress: 'myapp' # The Eureka VIP address
+      asgName: myAsg
+      countryId: 10
+      vipAddress: 'myapp'
       leaseInfo:
-        durationInSecs: 60 # The lease information
-      metadata: # arbitrary instance metadata
+        durationInSecs: 60
+      metadata:
         foo: bar
-      retry-count: 10 # How many times to retry
-      retry-delay: 5s # How long to wait between retries
-      appname: some-app-name     # optional, eureka instance application name, defaults to ${micronaut.application.name}
-      hostname: foo.example.com  # optional, exposed eureka instance hostname, useful in docker bridged network environments
-      ip-addr: 1.2.3.4           # optional, exposed eureka instance ip address, useful in docker bridged network environments
-      port: 9090                 # optional, exposed eureka instance port, useful in docker bridged network environments
+      retry-count: 10
+      retry-delay: 5s
+      appname: some-app-name
+      hostname: foo.example.com
+      ip-addr: 1.2.3.4
+      port: 9090
 ----
+
+- `asgName` the auto scaling group name
+- `countryId` the country id
+- `vipAddress` The Eureka VIP address
+- `durationInSecs` The lease information
+- `metadata` arbitrary instance metadata
+- `retry-count` How many times to retry
+- `retry-delay` How long to wait between retries
+- `appname` (optional) eureka instance application name, defaults to ${micronaut.application.name}
+- `hostname` (optional) exposed eureka instance hostname, useful in docker bridged network environments
+- `ip-addr` (optional) exposed eureka instance ip address, useful in docker bridged network environments
+- `port` (optional) exposed eureka instance port, useful in docker bridged network environments
 
 == Eureka Basic Authentication
 
@@ -58,7 +70,7 @@ You can customize the Eureka credentials in the URI you specify to in `defaultZo
 For example:
 
 .Auto Registering with Eureka
-[source,yaml]
+[configuration]
 ----
 eureka:
   client:

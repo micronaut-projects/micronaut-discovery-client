@@ -10,8 +10,8 @@ The quickest way to start a Spring Cloud Config Server is to use to use https://
 
 The process to consume configurations in a Micronaut application from a Spring Cloud Config Server is very strait forward, simply add the necessary configurations. A complete example can be seen below:
 
-.Registering your application as a Spring Cloud Config client  (application.yml)
-[source,yaml]
+.Registering your application as a Spring Cloud Config client
+[configuration]
 ----
 micronaut:
   application:
