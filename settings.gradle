@@ -11,6 +11,7 @@ plugins {
 
 rootProject.name = 'discovery-client-parent'
 
+include 'discovery-client-bom'
 include 'discovery-client'
 
 enableFeaturePreview 'TYPESAFE_PROJECT_ACCESSORS'
