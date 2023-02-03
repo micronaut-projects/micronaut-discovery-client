@@ -16,8 +16,8 @@ Alternatively you can https://www.consul.io/docs/install/index.html[install and 
 
 To register a Micronaut application with Consul simply add the necessary api:discovery.consul.ConsulConfiguration[]. A minimal example can be seen below:
 
-.Auto Registering with Consul (application.yml)
-[source,yaml]
+.Auto Registering with Consul
+[configuration]
 ----
 micronaut:
     application:
@@ -42,7 +42,7 @@ WARNING: Running multiple instances of a service may require an additional confi
 
 If you are running the same applications on the same port across different servers it is important to set the `micronaut.application.instance.id` property or you will experience instance registration collision.
 
-[source,yaml]
+[configuration]
 ----
 micronaut:
   application:
@@ -60,7 +60,7 @@ Notice too that `ConsulConfiguration` extends api:discovery.client.DiscoveryClie
 For example:
 
 .Customizing Consul Registration Configuration
-[source,yaml]
+[configuration]
 ----
 micronaut:
     application:
@@ -69,20 +69,21 @@ consul:
   client:
     registration:
       enabled: true
-      # Alters the tags
       tags:
         - hello
         - world
-      # Alters the metadata
       meta:
         some: value
         instance_type: t2.medium
-      # Alters the retry count
       retry-count: 5
-      # Alters fail fast behaviour
       fail-fast: false
     defaultZone: "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
 ----
+
+- `tags` alters the tags
+- `meta` alters the metadata
+- `retry-count` alsters the retry count
+- `fail-fast` alters the fail fast behavior
 
 == Discovery Services from Consul
 
@@ -124,7 +125,7 @@ With this arrangement the responsibility is on the Micronaut application to send
 If you prefer you can push the responsibility for health checks to Consul itself by registering an HTTP check:
 
 .Consul HTTP Check Configuration
-[source,yaml]
+[configuration]
 ----
 consul:
   client:
@@ -144,7 +145,7 @@ You can use the `consul.client.registration.prefer-ip-address` setting to indica
 Micronaut will by default perform an IP lookup to try and figure out the IP address, however you can use the `consul.client.registration.ip-addr` setting to specify the IP address of the service directly.
 
 .Consul HTTP Check Configuration
-[source,yaml]
+[configuration]
 ----
 consul:
   client:
@@ -158,7 +159,7 @@ This will tell Consul to register the IP that other instances can use to access 
 If you use HTTP health checks (see the previous section) then Consul will use the configured IP address to check the Micronaut `/health` endpoint.
 
 .Consul HTTP Check Configuration
-[source,yaml]
+[configuration]
 ----
 consul:
   client:

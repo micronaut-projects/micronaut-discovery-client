@@ -36,7 +36,7 @@ Both methods return rs:Publisher[] instances since the operation to retrieve ser
 If you are using Micronaut's cache module, the default implementation of the `DiscoveryClient` interface is link:{cacheapi}cache/discovery/CachingCompositeDiscoveryClient[CachingCompositeDiscoveryClient] which merges all other `DiscoveryClient` beans into a single bean and provides caching of the results of the methods. The default behaviour is to cache for 30 seconds. This cache can be disabled in application configuration:
 
 .Disabling the Discovery Client Cache
-[source,yaml]
+[configuration]
 ----
 micronaut:
   caches:
@@ -47,7 +47,7 @@ micronaut:
 Alternatively you can alter the cache's expiration policy:
 
 .Configuring the Discovery Client Cache
-[source,yaml]
+[configuration]
 ----
 micronaut:
   caches:
