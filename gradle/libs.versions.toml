@@ -3,12 +3,16 @@
 micronaut = "4.0.0-SNAPSHOT"
 micronaut-docs = "2.0.0"
 micronaut-test = "4.0.0-SNAPSHOT"
+micronaut-serde = "2.0.0-SNAPSHOT"
 groovy = "4.0.6"
 spock = "2.3-groovy-4.0"
 testcontainers = "1.17.6"
 
 [libraries]
 # Micronaut
+micronaut-serde-jackson = { module = "io.micronaut.serde:micronaut-serde-jackson", version.ref = "micronaut-serde" }
 micronaut-docs-asciidoc-config-props = { module = "io.micronaut.docs:micronaut-docs-asciidoc-config-props", version.ref = "micronaut-docs" }
 
+spock = { module = 'org.spockframework:spock-core', version.ref = "spock" }
 testcontainers-spock = { module = 'org.testcontainers:spock', version.ref = "testcontainers" }
+testcontainers-vault = { module = 'org.testcontainers:vault', version.ref = "testcontainers" }

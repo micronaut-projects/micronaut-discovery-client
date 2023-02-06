@@ -17,7 +17,11 @@ dependencies {
     compileOnly(mn.micronaut.management)
 
     testAnnotationProcessor(mn.micronaut.inject.java)
-    testImplementation(libs.testcontainers.spock)
+    testImplementation(libs.spock)
+    testImplementation(libs.testcontainers.spock) {
+        exclude module:'spock-core'
+    }
+    testImplementation(libs.testcontainers.vault)
 
     testImplementation(mn.micronaut.management)
     testImplementation(mn.micronaut.http.server.netty)
