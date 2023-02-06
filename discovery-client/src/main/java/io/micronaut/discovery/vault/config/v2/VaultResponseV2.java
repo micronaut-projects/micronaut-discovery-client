@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.discovery.vault.config.AbstractVaultResponse;
 
 import java.util.List;
@@ -51,9 +52,9 @@ public class VaultResponseV2 extends AbstractVaultResponse<VaultResponseData> {
             @JsonProperty("lease_duration") final Long leaseDuration,
             @JsonProperty("lease_id") final String leaseId,
             @JsonProperty("request_id") final String requestId,
-            @JsonProperty("wrap_info") final Map<String, String> wrapInfo,
+            @Nullable @JsonProperty("wrap_info") final Map<String, String> wrapInfo,
             @JsonProperty("renewable") final boolean renewable,
-            @JsonProperty("warnings") final List<String> warnings) {
+            @Nullable @JsonProperty("warnings") final List<String> warnings) {
 
         super(data, leaseDuration, leaseId, requestId, wrapInfo, renewable,
                 warnings);

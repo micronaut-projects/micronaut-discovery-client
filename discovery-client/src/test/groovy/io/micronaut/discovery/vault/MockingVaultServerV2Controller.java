@@ -123,7 +123,7 @@ public class MockingVaultServerV2Controller {
             null,
             null,
             null,
-            Collections.emptyMap(),
+            null,
             false,
             Collections.emptyList());
     }

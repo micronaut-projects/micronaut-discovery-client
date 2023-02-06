@@ -1,0 +1,16 @@
+plugins {
+    id("io.micronaut.build.internal.discovery-client-tests")
+}
+
+dependencies {
+    testImplementation(project(":discovery-client")) {
+        exclude module:"micronaut-jackson-databind"
+    }
+    testImplementation(libs.micronaut.serde.jackson)
+    testImplementation(libs.testcontainers.vault)
+    testCompileOnly(mn.micronaut.inject.groovy)
+    testImplementation(libs.spock)
+    testImplementation(libs.testcontainers.spock) {
+        exclude module:'spock-core'
+    }
+}
