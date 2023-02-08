@@ -24,13 +24,9 @@ dependencies {
     testImplementation(mn.micronaut.http.client)
     testImplementation(mn.micronaut.http.server.netty)
     testImplementation(mn.micronaut.test.junit5)
-    testImplementation(libs.testcontainers)
-    testImplementation(libs.testcontainers.junit)
     testImplementation(libs.awaitility)
 
     testImplementation(projects.discoveryClient)
-
-    testResourcesImplementation("io.micronaut.testresources:micronaut-test-resources-testcontainers:1.2.3")
 
     testRuntimeOnly(mn.logback)
 }

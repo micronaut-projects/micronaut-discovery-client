@@ -9,7 +9,5 @@ awaitility = "4.2.0"
 
 [libraries]
 awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility" }
-testcontainers = { module = "org.testcontainers:testcontainers" }
-testcontainers-junit = { module = "org.testcontainers:junit-jupiter" }
 
 testcontainers-spock = { module = "org.testcontainers:spock" }
