@@ -5,6 +5,11 @@ micronaut = "3.8.2"
 micronaut-test = "3.0.5"
 groovy = "3.0.8"
 spock = "2.3-groovy-3.0"
+awaitility = "4.2.0"
 
 [libraries]
+awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility" }
+testcontainers = { module = "org.testcontainers:testcontainers" }
+testcontainers-junit = { module = "org.testcontainers:junit-jupiter" }
+
 testcontainers-spock = { module = "org.testcontainers:spock" }

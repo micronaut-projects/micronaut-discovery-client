@@ -14,6 +14,10 @@ rootProject.name = 'discovery-client-parent'
 include 'discovery-client-bom'
 include 'discovery-client'
 
+include 'test-suite-consul-graal'
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 micronautBuild {
     importMicronautCatalog()
 }
