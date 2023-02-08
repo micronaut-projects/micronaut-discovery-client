@@ -12,9 +12,6 @@ repositories {
 
 micronaut {
     version.set(libs.versions.micronaut.asProvider())
-    testResources {
-        enabled.set(true)
-    }
 }
 
 dependencies {
