@@ -2,7 +2,7 @@ import java.util.Locale
 
 plugins {
     id("org.graalvm.buildtools.native") version "0.9.14"
-    id("io.micronaut.application") version "3.7.0"
+    id("io.micronaut.library") version "3.7.0"
     id("io.micronaut.test-resources") version "3.7.0"
 }
 
@@ -33,17 +33,6 @@ dependencies {
 
 val isGraalVMJdk = listOf("jvmci.Compiler", "java.vendor.version", "java.vendor").any {
     System.getProperty(it)?.toLowerCase(Locale.ENGLISH)?.contains("graal") == true
-}
-
-// The Graal pipeline will assume this is an application, and fail to run testNativeImage as we don't have a main class
-// So disable these tasks, so we just run the native tests
-afterEvaluate {
-    tasks.named("testNativeImage") {
-        enabled = false
-    }
-    tasks.named("nativeCompile") {
-        enabled = false
-    }
 }
 
 tasks {
