@@ -2,7 +2,7 @@ import java.util.Locale
 
 plugins {
     id("org.graalvm.buildtools.native") version "0.9.14"
-    id("io.micronaut.minimal.application") version "3.7.0"
+    id("io.micronaut.application") version "3.7.0"
     id("io.micronaut.test-resources") version "3.7.0"
 }
 
@@ -30,6 +30,8 @@ dependencies {
 
     testImplementation(projects.discoveryClient)
 
+    testResourcesImplementation("io.micronaut.testresources:micronaut-test-resources-testcontainers:1.2.3")
+
     testRuntimeOnly(mn.logback)
 }
 
@@ -49,19 +51,6 @@ tasks {
     }
 }
 
-val openGraalModules = listOf(
-    "org.graalvm.nativeimage.builder/com.oracle.svm.core.jdk",
-    "org.graalvm.nativeimage.builder/com.oracle.svm.core.configure",
-    "org.graalvm.sdk/org.graalvm.nativeimage.impl"
-)
-
 graalvmNative {
     toolchainDetection.set(false)
-    binaries {
-        all {
-            openGraalModules.forEach { module ->
-                jvmArgs.add("--add-exports=" + module + "=ALL-UNNAMED")
-            }
-        }
-    }
 }

@@ -8,16 +8,4 @@ consul:
       enabled: true
       check:
         deregister-critical-service-after: 30s
-
-test-resources:
-  containers:
-    consul:
-      image-name: consul:1.9.0
-      hostnames:
-        - consul.host
-      exposed-ports:
-        - consul.port: 8500
-      wait-strategy:
-        log:
-          regex: ".*Node info in sync.*"
-          times: 2
+    default-zone: ${consul.address}
