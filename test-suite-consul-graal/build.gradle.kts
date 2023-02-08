@@ -35,6 +35,8 @@ val isGraalVMJdk = listOf("jvmci.Compiler", "java.vendor.version", "java.vendor"
     System.getProperty(it)?.toLowerCase(Locale.ENGLISH)?.contains("graal") == true
 }
 
+// The Graal pipeline will assume this is an application, and fail to run testNativeImage as we don't have a main class
+// So disable these tasks, so we just run the native tests
 afterEvaluate {
     tasks.named("testNativeImage") {
         enabled = false
