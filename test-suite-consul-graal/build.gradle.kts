@@ -35,6 +35,15 @@ val isGraalVMJdk = listOf("jvmci.Compiler", "java.vendor.version", "java.vendor"
     System.getProperty(it)?.toLowerCase(Locale.ENGLISH)?.contains("graal") == true
 }
 
+afterEvaluate {
+    tasks.named("testNativeImage") {
+        enabled = false
+    }
+    tasks.named("nativeCompile") {
+        enabled = false
+    }
+}
+
 tasks {
     test {
         useJUnitPlatform()
