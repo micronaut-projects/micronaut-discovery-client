@@ -7,11 +7,14 @@ micronaut-serde = "2.0.0-SNAPSHOT"
 groovy = "4.0.6"
 spock = "2.3-groovy-4.0"
 testcontainers = "1.17.6"
+awaitility = "4.2.0"
 
 [libraries]
 # Micronaut
 micronaut-serde-jackson = { module = "io.micronaut.serde:micronaut-serde-jackson", version.ref = "micronaut-serde" }
+micronaut-test = { module = "io.micronaut.test:micronaut-test-bom", version.ref = "micronaut-test" }
 micronaut-docs-asciidoc-config-props = { module = "io.micronaut.docs:micronaut-docs-asciidoc-config-props", version.ref = "micronaut-docs" }
+awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility" }
 
 spock = { module = 'org.spockframework:spock-core', version.ref = "spock" }
 testcontainers-spock = { module = 'org.testcontainers:spock', version.ref = "testcontainers" }

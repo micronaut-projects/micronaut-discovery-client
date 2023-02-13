@@ -14,10 +14,13 @@ rootProject.name = 'discovery-client-parent'
 include 'discovery-client-bom'
 include 'discovery-client'
 include 'discovery-client-tests'
+include 'test-suite-consul-graal'
 
-enableFeaturePreview 'TYPESAFE_PROJECT_ACCESSORS'
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 micronautBuild {
     addSnapshotRepository()
     importMicronautCatalog()
+    importMicronautCatalog("micronaut-test")
 }
+
