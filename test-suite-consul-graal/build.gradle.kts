@@ -4,11 +4,11 @@ plugins {
     id("org.graalvm.buildtools.native") version "0.9.14"
     id("io.micronaut.library") version "3.7.0"
     id("io.micronaut.test-resources") version "3.7.0"
-    id("io.micronaut.build.internal.discovery-client-tests")
 }
 
 repositories {
     mavenCentral()
+    maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots/")
 }
 
 micronaut {
