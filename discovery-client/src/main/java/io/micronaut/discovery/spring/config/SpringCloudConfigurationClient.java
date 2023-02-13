@@ -100,11 +100,22 @@ public class SpringCloudConfigurationClient implements ConfigurationClient {
                          springCloudConfiguration.getLabel());
             }
 
-            Publisher<ConfigServerResponse> responsePublisher =
+            String authorization = getAuthorization(springCloudConfiguration);
+            Publisher<ConfigServerResponse> responsePublisher;
+
+            if (authorization == null) {
+                responsePublisher =
                     springCloudConfiguration.getLabel() == null ?
-                    springCloudConfigClient.readValues(applicationName, profiles) :
-                    springCloudConfigClient.readValues(applicationName,
+                        springCloudConfigClient.readValues(applicationName, profiles) :
+                        springCloudConfigClient.readValues(applicationName,
                             profiles, springCloudConfiguration.getLabel());
+            } else {
+                responsePublisher =
+                    springCloudConfiguration.getLabel() == null ?
+                        springCloudConfigClient.readValuesAuthorized(applicationName, profiles, authorization) :
+                        springCloudConfigClient.readValuesAuthorized(applicationName,
+                            profiles, springCloudConfiguration.getLabel(), authorization);
+            }
 
             Flux<PropertySource> configurationValues = Flux.from(responsePublisher)
                     .onErrorResume(throwable -> {
@@ -149,4 +160,17 @@ public class SpringCloudConfigurationClient implements ConfigurationClient {
         return io.micronaut.discovery.spring.config.client.SpringCloudConfigClient.CLIENT_DESCRIPTION;
     }
 
+    /**
+     * Gets Basic authorization from the spring cloud client configuration if both username and password are provided, otherwise returns null.
+     * @param springCloudConfiguration the spring cloud client configuration
+     * @return the Basic authorization header or null if no credentials are configured for spring cloud client
+     */
+    private static String getAuthorization(SpringCloudClientConfiguration springCloudConfiguration) {
+        String authorization = null;
+        if (springCloudConfiguration.getUsername().isPresent() && springCloudConfiguration.getPassword().isPresent()) {
+            String basicAuth = springCloudConfiguration.getUsername().get() + ":" + springCloudConfiguration.getPassword().get();
+            authorization = "Basic " + Base64.getEncoder().encodeToString(basicAuth.getBytes());
+        }
+        return authorization;
+    }
 }

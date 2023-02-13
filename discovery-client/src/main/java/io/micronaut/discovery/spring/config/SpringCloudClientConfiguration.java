@@ -19,6 +19,7 @@ import io.micronaut.context.annotation.BootstrapContextCompatible;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.config.ConfigDiscoveryConfiguration;
 import io.micronaut.http.client.HttpClientConfiguration;
@@ -50,6 +51,8 @@ public class SpringCloudClientConfiguration extends HttpClientConfiguration {
     private String label;
     private boolean failFast = DEFAULT_FAIL_FAST;
     private String name;
+    private String username;
+    private String password;
 
     private final SpringCloudConnectionPoolConfiguration springCloudConnectionPoolConfiguration;
     private final SpringConfigDiscoveryConfiguration springConfigDiscoveryConfiguration = new SpringConfigDiscoveryConfiguration();
@@ -114,6 +117,20 @@ public class SpringCloudClientConfiguration extends HttpClientConfiguration {
     }
 
     /**
+     * @return The spring cloud config username.
+     */
+    public Optional<String> getUsername() {
+        return Optional.ofNullable(username);
+    }
+
+    /**
+     * @return The spring cloud config password.
+     */
+    public Optional<String> getPassword() {
+        return Optional.ofNullable(password);
+    }
+
+    /**
      *
      * @return Flag to indicate that failure to connect to Spring Cloud Config is fatal (default false).
      */
@@ -148,6 +165,24 @@ public class SpringCloudClientConfiguration extends HttpClientConfiguration {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * Set the Spring cloud config username.
+     *
+     * @param username Spring Cloud config username
+     */
+    public void setUsername(@Nullable String username) {
+        this.username = username;
+    }
+
+    /**
+     * Set the Spring cloud config password.
+     *
+     * @param password Spring Cloud config password
+     */
+    public void setPassword(@Nullable String password) {
+        this.password = password;
     }
 
     /**

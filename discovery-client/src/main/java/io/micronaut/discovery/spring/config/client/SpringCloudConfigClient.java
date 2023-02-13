@@ -21,6 +21,7 @@ import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.discovery.spring.config.SpringCloudClientConfiguration;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.retry.annotation.Retryable;
@@ -49,12 +50,31 @@ public interface SpringCloudConfigClient {
     @Get("/{applicationName}{/profiles}")
     @Produces(single = true)
     @Retryable(
+        attempts = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-count:3}",
+        delay = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-delay:1s}"
+    )
+    Publisher<ConfigServerResponse> readValues(
+        @NonNull String applicationName,
+        @Nullable String profiles);
+
+    /**
+     * Reads an application configuration from Spring Config Server with authorization parameter.
+     *
+     * @param applicationName   The application name
+     * @param profiles          The active profiles
+     * @param authorization     The Basic authorization header needed to authorize against the server
+     * @return A {@link Publisher} that emits a list of {@link ConfigServerResponse}
+     */
+    @Get("/{applicationName}{/profiles}")
+    @Produces(single = true)
+    @Retryable(
             attempts = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-count:3}",
             delay = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-delay:1s}"
     )
-    Publisher<ConfigServerResponse> readValues(
+    Publisher<ConfigServerResponse> readValuesAuthorized(
             @NonNull String applicationName,
-            @Nullable String profiles);
+            @Nullable String profiles,
+            @Header String authorization);
 
     /**
      * Reads a versioned (#label) application configuration from Spring Config Server.
@@ -67,12 +87,33 @@ public interface SpringCloudConfigClient {
     @Get("/{applicationName}{/profiles}{/label}")
     @Produces(single = true)
     @Retryable(
+        attempts = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-count:3}",
+        delay = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-delay:1s}"
+    )
+    Publisher<ConfigServerResponse> readValues(
+        @NonNull String applicationName,
+        @Nullable String profiles,
+        @Nullable String label);
+
+    /**
+     * Reads a versioned (#label) application configuration from Spring Config Server with authorization parameter.
+     *
+     * @param applicationName   The application name
+     * @param profiles          The active profiles
+     * @param label             The label
+     * @param authorization     The Basic authorization header needed to authorize against the server
+     * @return A {@link Publisher} that emits a list of {@link ConfigServerResponse}
+     */
+    @Get("/{applicationName}{/profiles}{/label}")
+    @Produces(single = true)
+    @Retryable(
             attempts = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-count:3}",
             delay = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-delay:1s}"
     )
-    Publisher<ConfigServerResponse> readValues(
+    Publisher<ConfigServerResponse> readValuesAuthorized(
             @NonNull String applicationName,
             @Nullable String profiles,
-            @Nullable String label);
+            @Nullable String label,
+            @Header String authorization);
 
 }
