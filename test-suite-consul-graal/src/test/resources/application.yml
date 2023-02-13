@@ -19,6 +19,6 @@ test-resources:
       exposed-ports:
         - consul.port: 8500
       wait-strategy:
-        log:
-          regex: ".*Node info in sync.*"
-          times: 2
+        http:
+          path: "/v1/status/leader"
+          status-code: 200
