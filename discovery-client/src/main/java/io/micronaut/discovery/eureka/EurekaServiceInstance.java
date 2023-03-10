@@ -22,8 +22,8 @@ import io.micronaut.discovery.eureka.client.v2.AmazonInfo;
 import io.micronaut.discovery.eureka.client.v2.DataCenterInfo;
 import io.micronaut.discovery.eureka.client.v2.InstanceInfo;
 import io.micronaut.health.HealthStatus;
+import jakarta.validation.constraints.NotNull;
 
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Optional;
 

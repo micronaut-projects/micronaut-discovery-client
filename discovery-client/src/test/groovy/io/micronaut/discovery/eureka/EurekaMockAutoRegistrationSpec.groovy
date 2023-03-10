@@ -25,13 +25,12 @@ import io.micronaut.discovery.eureka.client.v2.InstanceInfo
 import io.micronaut.health.HealthStatus
 import io.micronaut.health.HeartbeatEvent
 import io.micronaut.runtime.server.EmbeddedServer
+import jakarta.validation.ConstraintViolationException
 import reactor.core.publisher.Flux
 import spock.lang.Specification
 import spock.lang.Stepwise
 import spock.lang.Unroll
 import spock.util.concurrent.PollingConditions
-
-import javax.validation.ConstraintViolationException
 
 /**
  * @author graemerocher

@@ -3,10 +3,11 @@ plugins {
 }
 
 dependencies {
-    testImplementation(project(":discovery-client")) {
+    testImplementation(projects.micronautDiscoveryClient) {
         exclude module:"micronaut-jackson-databind"
     }
-    testImplementation(libs.micronaut.serde.jackson)
+    testImplementation(mnSerde.micronaut.serde.jackson)
+
     testImplementation(libs.testcontainers.vault)
     testCompileOnly(mn.micronaut.inject.groovy)
     testImplementation(libs.spock)

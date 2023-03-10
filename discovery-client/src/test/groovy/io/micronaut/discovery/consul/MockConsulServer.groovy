@@ -20,17 +20,27 @@ import io.micronaut.core.annotation.Nullable
 import io.micronaut.core.async.annotation.SingleResult
 import io.micronaut.core.async.publisher.Publishers
 import io.micronaut.core.util.StringUtils
-import io.micronaut.discovery.consul.client.v1.*
+import io.micronaut.discovery.consul.client.v1.CatalogEntry
+import io.micronaut.discovery.consul.client.v1.Check
+import io.micronaut.discovery.consul.client.v1.ConsulOperations
+import io.micronaut.discovery.consul.client.v1.HealthEntry
+import io.micronaut.discovery.consul.client.v1.KeyValue
+import io.micronaut.discovery.consul.client.v1.LocalAgentConfiguration
+import io.micronaut.discovery.consul.client.v1.MemberEntry
+import io.micronaut.discovery.consul.client.v1.MockCheckEntry
+import io.micronaut.discovery.consul.client.v1.MockHealthEntry
+import io.micronaut.discovery.consul.client.v1.NewServiceEntry
+import io.micronaut.discovery.consul.client.v1.ServiceEntry
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.QueryValue
 import io.micronaut.runtime.server.EmbeddedServer
+import jakarta.validation.constraints.NotNull
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
 
-import javax.validation.constraints.NotNull
 import java.util.concurrent.ConcurrentHashMap
 import java.util.stream.Collectors
 

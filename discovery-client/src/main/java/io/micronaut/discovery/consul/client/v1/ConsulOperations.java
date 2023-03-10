@@ -23,9 +23,9 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.retry.annotation.Retryable;
+import jakarta.validation.constraints.NotNull;
 import org.reactivestreams.Publisher;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 
