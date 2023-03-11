@@ -4,15 +4,19 @@ micronaut = "4.0.0-SNAPSHOT"
 micronaut-docs = "2.0.0"
 micronaut-test = "4.0.0-SNAPSHOT"
 micronaut-serde = "2.0.0-SNAPSHOT"
-groovy = "4.0.6"
+micronaut-validation = "4.0.0-SNAPSHOT"
+
+groovy = "4.0.9"
 spock = "2.3-groovy-4.0"
 testcontainers = "1.17.6"
 awaitility = "4.2.0"
 
 [libraries]
 # Micronaut
-micronaut-serde-jackson = { module = "io.micronaut.serde:micronaut-serde-jackson", version.ref = "micronaut-serde" }
+micronaut-serde = { module = "io.micronaut.serde:micronaut-serde-bom", version.ref = "micronaut-serde" }
 micronaut-test = { module = "io.micronaut.test:micronaut-test-bom", version.ref = "micronaut-test" }
+micronaut-validation = { module = "io.micronaut.validation:micronaut-validation-bom", version.ref = "micronaut-validation" }
+
 micronaut-docs-asciidoc-config-props = { module = "io.micronaut.docs:micronaut-docs-asciidoc-config-props", version.ref = "micronaut-docs" }
 awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility" }
 

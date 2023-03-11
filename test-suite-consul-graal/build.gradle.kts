@@ -1,9 +1,9 @@
-import java.util.Locale
+import java.util.*
 
 plugins {
     id("org.graalvm.buildtools.native") version "0.9.20"
-    id("io.micronaut.library") version "3.7.3"
-    id("io.micronaut.test-resources") version "3.7.2"
+    id("io.micronaut.library") version "3.7.5"
+    id("io.micronaut.test-resources") version "3.7.5"
 }
 
 repositories {
@@ -21,10 +21,11 @@ dependencies {
     testImplementation(mn.micronaut.json.core)
     testImplementation(mn.micronaut.http.client)
     testImplementation(mn.micronaut.http.server.netty)
+    testImplementation(mn.micronaut.jackson.databind)
     testImplementation(mnTest.micronaut.test.junit5)
     testImplementation(libs.awaitility)
     testImplementation(mn.snakeyaml)
-    testImplementation(projects.discoveryClient)
+    testImplementation(projects.micronautDiscoveryClient)
 }
 
 val isGraalVMJdk = listOf("jvmci.Compiler", "java.vendor.version", "java.vendor").any {

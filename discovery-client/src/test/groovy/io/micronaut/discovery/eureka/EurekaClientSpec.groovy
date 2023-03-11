@@ -15,8 +15,8 @@
  */
 package io.micronaut.discovery.eureka
 
-import io.micronaut.context.env.Environment
 import io.micronaut.context.ApplicationContext
+import io.micronaut.context.env.Environment
 import io.micronaut.discovery.CompositeDiscoveryClient
 import io.micronaut.discovery.DiscoveryClient
 import io.micronaut.discovery.eureka.client.v2.ApplicationInfo
@@ -24,17 +24,16 @@ import io.micronaut.discovery.eureka.client.v2.EurekaClient
 import io.micronaut.discovery.eureka.client.v2.InstanceInfo
 import io.micronaut.http.HttpStatus
 import io.micronaut.runtime.server.EmbeddedServer
+import jakarta.validation.ConstraintViolationException
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy
 import reactor.core.publisher.Flux
+import spock.lang.AutoCleanup
 import spock.lang.Retry
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Stepwise
-import spock.lang.Shared
-import spock.lang.AutoCleanup
 import spock.util.concurrent.PollingConditions
-
-import javax.validation.ConstraintViolationException
 
 /**
  * @author graemerocher
