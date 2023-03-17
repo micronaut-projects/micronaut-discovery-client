@@ -3,7 +3,7 @@ import java.util.*
 plugins {
     id("org.graalvm.buildtools.native") version "0.9.20"
     id("io.micronaut.library") version "3.7.5"
-    id("io.micronaut.test-resources") version "3.7.5"
+    id("io.micronaut.test-resources") version "3.7.6"
 }
 
 repositories {
