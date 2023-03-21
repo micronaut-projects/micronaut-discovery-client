@@ -47,4 +47,7 @@ tasks {
 
 graalvmNative {
     toolchainDetection.set(false)
+    metadataRepository {
+        enabled.set(true)
+    }
 }
