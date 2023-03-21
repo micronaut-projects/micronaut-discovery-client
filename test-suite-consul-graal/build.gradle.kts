@@ -12,7 +12,8 @@ repositories {
 }
 
 micronaut {
-    version.set(libs.versions.micronaut.asProvider())
+    version.set("4.0.0-SNAPSHOT")
+    //version.set(libs.versions.micronaut.asProvider())
 }
 
 dependencies {
