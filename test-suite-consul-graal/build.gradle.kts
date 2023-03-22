@@ -1,9 +1,8 @@
 import java.util.*
-
 plugins {
     id("org.graalvm.buildtools.native") version "0.9.20"
-    id("io.micronaut.library") version "3.7.5"
-    id("io.micronaut.test-resources") version "3.7.5"
+    id("io.micronaut.library") version "4.0.0-SNAPSHOT"
+    id("io.micronaut.test-resources") version "4.0.0-SNAPSHOT"
 }
 
 repositories {
@@ -12,7 +11,8 @@ repositories {
 }
 
 micronaut {
-    version.set(libs.versions.micronaut.asProvider())
+    version.set("4.0.0-SNAPSHOT")
+    //version.set(libs.versions.micronaut.asProvider())
 }
 
 dependencies {
@@ -46,4 +46,7 @@ tasks {
 
 graalvmNative {
     toolchainDetection.set(false)
+    metadataRepository {
+        enabled.set(true)
+    }
 }
