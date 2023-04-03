@@ -88,7 +88,7 @@ datasource:
 """)
         writeValue("test-app-other.yml", """
 not:
-    here: true 
+    here: true
 """)
 
         ApplicationContext applicationContext = ApplicationContext.run(

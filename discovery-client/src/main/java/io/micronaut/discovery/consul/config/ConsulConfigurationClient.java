@@ -51,6 +51,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A {@link ConfigurationClient} for Consul.
@@ -61,6 +64,8 @@ import java.util.function.Function;
 @Requires(property = ConfigurationClient.ENABLED, value = StringUtils.TRUE, defaultValue = StringUtils.FALSE)
 @BootstrapContextCompatible
 public class ConsulConfigurationClient implements ConfigurationClient {
+
+    private static final String MATCHING_APPLICATION = "^(application|%s)(\\[\\w+])?$";
 
     private final ConsulClient consulClient;
     private final ConsulConfiguration consulConfiguration;
@@ -112,6 +117,13 @@ public class ConsulConfigurationClient implements ConfigurationClient {
         String commonConfigPath = path + Environment.DEFAULT_NAME;
         final boolean hasApplicationSpecificConfig = serviceId.isPresent();
         String applicationSpecificPath = hasApplicationSpecificConfig ? path + serviceId.get() : null;
+        final var patternApplication = serviceId
+            .map(MATCHING_APPLICATION::formatted)
+            .map(Pattern::compile);
+        final Predicate<String> isMatchingApplication = name -> patternApplication
+            .map(pattern -> pattern.matcher(name))
+            .map(Matcher::matches)
+            .orElse(Boolean.TRUE);
 
         String dc = configDiscoveryConfiguration.getDatacenter().orElse(null);
 
@@ -130,7 +142,7 @@ public class ConsulConfigurationClient implements ConfigurationClient {
 
         Flux<List<KeyValue>> applicationConfig = Flux.from(
                 consulClient.readValues(commonConfigPath, dc, null, null))
-                .onErrorResume(errorHandler);
+            .onErrorResume(errorHandler);
         if (scheduler != null) {
             applicationConfig = applicationConfig.subscribeOn(scheduler);
         }
@@ -139,7 +151,7 @@ public class ConsulConfigurationClient implements ConfigurationClient {
         if (hasApplicationSpecificConfig) {
             Flux<List<KeyValue>> appSpecificConfig = Flux.from(
                     consulClient.readValues(applicationSpecificPath, dc, null, null))
-                    .onErrorResume(errorHandler);
+                .onErrorResume(errorHandler);
             if (scheduler != null) {
                 appSpecificConfig = appSpecificConfig.subscribeOn(scheduler);
             }
@@ -178,7 +190,7 @@ public class ConsulConfigurationClient implements ConfigurationClient {
                                         if (hasApplicationSpecificConfig && propertySourceName == null) {
                                             propertySourceName = resolvePropertySourceName(serviceId.get(), fileName, activeNames);
                                         }
-                                        if (propertySourceName != null) {
+                                        if (propertySourceName != null && isMatchingApplication.test(propertySourceName)) {
                                             String finalName = propertySourceName;
                                             byte[] decoded = base64Decoder.decode(value);
                                             Map<String, Object> properties = propertySourceLoader.read(propertySourceName, decoded);
@@ -203,10 +215,12 @@ public class ConsulConfigurationClient implements ConfigurationClient {
                                 }
                                 if (property != null && propertySourceNames != null) {
                                     for (String propertySourceName : propertySourceNames) {
-                                        String envName = ClientUtil.resolveEnvironment(propertySourceName, activeNames);
-                                        LocalSource localSource = propertySources.computeIfAbsent(propertySourceName, s -> new LocalSource(isApplicationSpecificConfigKey, envName, propertySourceName));
-                                        byte[] decoded = base64Decoder.decode(value);
-                                        localSource.put(property, new String(decoded));
+                                        if (isMatchingApplication.test(propertySourceName)) {
+                                            String envName = ClientUtil.resolveEnvironment(propertySourceName, activeNames);
+                                            LocalSource localSource = propertySources.computeIfAbsent(propertySourceName, s -> new LocalSource(isApplicationSpecificConfigKey, envName, propertySourceName));
+                                            byte[] decoded = base64Decoder.decode(value);
+                                            localSource.put(property, new String(decoded));
+                                        }
                                     }
                                 }
                                 break;
@@ -226,9 +240,11 @@ public class ConsulConfigurationClient implements ConfigurationClient {
                                             byte[] decoded = base64Decoder.decode(value);
                                             Map<String, Object> properties = propertySourceLoader.read(fullName, decoded);
                                             for (String propertySourceName : propertySourceNames) {
-                                                String envName = ClientUtil.resolveEnvironment(propertySourceName, activeNames);
-                                                LocalSource localSource = propertySources.computeIfAbsent(propertySourceName, s -> new LocalSource(isApplicationSpecificConfigKey, envName, propertySourceName));
-                                                localSource.putAll(properties);
+                                                if (isMatchingApplication.test(propertySourceName)) {
+                                                    String envName = ClientUtil.resolveEnvironment(propertySourceName, activeNames);
+                                                    LocalSource localSource = propertySources.computeIfAbsent(propertySourceName, s -> new LocalSource(isApplicationSpecificConfigKey, envName, propertySourceName));
+                                                    localSource.putAll(properties);
+                                                }
                                             }
                                         }
                                     }
@@ -240,7 +256,7 @@ public class ConsulConfigurationClient implements ConfigurationClient {
                     }
                 }
 
-                for (LocalSource localSource: propertySources.values()) {
+                for (LocalSource localSource : propertySources.values()) {
                     int priority;
                     if (localSource.environment != null) {
                         priority = envBasePriority + (activeNames.indexOf(localSource.environment) * 2);
@@ -278,12 +294,13 @@ public class ConsulConfigurationClient implements ConfigurationClient {
     }
 
     private PropertySourceLoader defaultLoader(String format) {
-            return switch (format) {
-                case "json" -> new JsonPropertySourceLoader();
-                case "properties" -> new PropertiesPropertySourceLoader();
-                case "yml", "yaml" -> new YamlPropertySourceLoader();
-                default -> throw new ConfigurationException("Unsupported properties file format: " + format);
-            };
+        return switch (format) {
+            case "json" -> new JsonPropertySourceLoader();
+            case "properties" -> new PropertiesPropertySourceLoader();
+            case "yml", "yaml" -> new YamlPropertySourceLoader();
+            default ->
+                throw new ConfigurationException("Unsupported properties file format: " + format);
+        };
     }
 
     /**
