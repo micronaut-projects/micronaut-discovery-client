@@ -91,32 +91,32 @@ class MockConfigurationDiscoverySpec extends Specification {
     void "test multiple environment precedence"() {
         System.setProperty("some.consul.value", "other") // consul should override
 
-        writeValue("test-app,second", "some.consul.value-1", "1")
+        writeValue("test-app,second", "some.consul.value-1", "51")
 
-        writeValue("application,second", "some.consul.value-1", "2")
-        writeValue("application,second", "some.consul.value-2", "1")
+        writeValue("test-app,first", "some.consul.value-1", "41")
+        writeValue("test-app,first", "some.consul.value-2", "42")
 
-        writeValue("test-app,first", "some.consul.value-1", "3")
-        writeValue("test-app,first", "some.consul.value-2", "2")
-        writeValue("test-app,first", "some.consul.value-3", "1")
+        writeValue("test-app", "some.consul.value-1", "31")
+        writeValue("test-app", "some.consul.value-2", "32")
+        writeValue("test-app", "some.consul.value-3", "33")
 
-        writeValue("application,first", "some.consul.value-1", "4")
-        writeValue("application,first", "some.consul.value-2", "3")
-        writeValue("application,first", "some.consul.value-3", "2")
-        writeValue("application,first", "some.consul.value-4", "1")
+        writeValue("application,second", "some.consul.value-1", "21")
+        writeValue("application,second", "some.consul.value-2", "22")
+        writeValue("application,second", "some.consul.value-3", "23")
+        writeValue("application,second", "some.consul.value-4", "24")
 
-        writeValue("test-app", "some.consul.value-1", "5")
-        writeValue("test-app", "some.consul.value-2", "4")
-        writeValue("test-app", "some.consul.value-3", "3")
-        writeValue("test-app", "some.consul.value-4", "2")
-        writeValue("test-app", "some.consul.value-5", "1")
+        writeValue("application,first", "some.consul.value-1", "11")
+        writeValue("application,first", "some.consul.value-2", "12")
+        writeValue("application,first", "some.consul.value-3", "13")
+        writeValue("application,first", "some.consul.value-4", "14")
+        writeValue("application,first", "some.consul.value-5", "15")
 
-        writeValue("application", "some.consul.value-1", "6")
-        writeValue("application", "some.consul.value-2", "5")
-        writeValue("application", "some.consul.value-3", "4")
-        writeValue("application", "some.consul.value-4", "3")
-        writeValue("application", "some.consul.value-5", "2")
-        writeValue("application", "some.consul.value-6", "1")
+        writeValue("application", "some.consul.value-1", "01")
+        writeValue("application", "some.consul.value-2", "02")
+        writeValue("application", "some.consul.value-3", "03")
+        writeValue("application", "some.consul.value-4", "04")
+        writeValue("application", "some.consul.value-5", "05")
+        writeValue("application", "some.consul.value-6", "06")
 
         ApplicationContext applicationContext = ApplicationContext.run(
                 [
@@ -130,12 +130,12 @@ class MockConfigurationDiscoverySpec extends Specification {
         def environment = applicationContext.environment
 
         then:
-        environment.getRequiredProperty("some.consul.value-1", String) == "1"
-        environment.getRequiredProperty("some.consul.value-2", String) == "1"
-        environment.getRequiredProperty("some.consul.value-3", String) == "1"
-        environment.getRequiredProperty("some.consul.value-4", String) == "1"
-        environment.getRequiredProperty("some.consul.value-5", String) == "1"
-        environment.getRequiredProperty("some.consul.value-6", String) == "1"
+        environment.getRequiredProperty("some.consul.value-1", String) == "51"
+        environment.getRequiredProperty("some.consul.value-2", String) == "42"
+        environment.getRequiredProperty("some.consul.value-3", String) == "33"
+        environment.getRequiredProperty("some.consul.value-4", String) == "24"
+        environment.getRequiredProperty("some.consul.value-5", String) == "15"
+        environment.getRequiredProperty("some.consul.value-6", String) == "06"
 
         cleanup:
         applicationContext.close()
