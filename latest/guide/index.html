@@ -104,7 +104,7 @@
         <h1>Micronaut Discovery Client</h1>
         <p></p>
         <p>Adds Service Discovery Features for Eureka and Consul</p>
-        <p><strong>Version:</strong> <select style='max-width: 200px' onChange='window.document.location.href=this.options[this.selectedIndex].value;'><option value='https://micronaut-projects.github.io/micronaut-discovery-client/snapshot/guide/index.html'>SNAPSHOT</option><option selected='selected' value='https://micronaut-projects.github.io/micronaut-discovery-client/3.3.0/guide/index.html'>3.3.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/3.2.0/guide/index.html'>3.2.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/3.1.0/guide/index.html'>3.1.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/3.0.0/guide/index.html'>3.0.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/3.0.0-M2/guide/index.html'>3.0.0-M2</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/3.0.0-M1/guide/index.html'>3.0.0-M1</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.5.0/guide/index.html'>2.5.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.4.0/guide/index.html'>2.4.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.3.0/guide/index.html'>2.3.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.4/guide/index.html'>2.2.4</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.3/guide/index.html'>2.2.3</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.2/guide/index.html'>2.2.2</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.1/guide/index.html'>2.2.1</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.0/guide/index.html'>2.2.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.1.0/guide/index.html'>2.1.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.0.1/guide/index.html'>2.0.1</option></select> </p>
+        <p><strong>Version:</strong> <select style='max-width: 200px' onChange='window.document.location.href=this.options[this.selectedIndex].value;'><option value='https://micronaut-projects.github.io/micronaut-discovery-client/snapshot/guide/index.html'>SNAPSHOT</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/latest/guide/index.html'>LATEST</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/4.0.0-M1/guide/index.html'>4.0.0-M1</option><option selected='selected' value='https://micronaut-projects.github.io/micronaut-discovery-client/3.3.1/guide/index.html'>3.3.1</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/3.3.0/guide/index.html'>3.3.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/3.2.0/guide/index.html'>3.2.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/3.1.0/guide/index.html'>3.1.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/3.0.0/guide/index.html'>3.0.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/3.0.0-M2/guide/index.html'>3.0.0-M2</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/3.0.0-M1/guide/index.html'>3.0.0-M1</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.5.0/guide/index.html'>2.5.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.4.0/guide/index.html'>2.4.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.3.0/guide/index.html'>2.3.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.4/guide/index.html'>2.2.4</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.3/guide/index.html'>2.2.3</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.2/guide/index.html'>2.2.2</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.1/guide/index.html'>2.2.1</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.2.0/guide/index.html'>2.2.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.1.0/guide/index.html'>2.1.0</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/2.0.1/guide/index.html'>2.0.1</option></select> </p>
     </div>
     
 <h1 id="introduction"><a class="anchor" href="#introduction"></a>1 Introduction</h1>
@@ -209,8 +209,15 @@
 <div class="paragraph">
 <p>If you are using Micronaut&#8217;s cache module, the default implementation of the <code>DiscoveryClient</code> interface is <a href="https://micronaut-projects.github.io/micronaut-cache/latest/api/io/micronaut/cache/discovery/CachingCompositeDiscoveryClient">CachingCompositeDiscoveryClient</a> which merges all other <code>DiscoveryClient</code> beans into a single bean and provides caching of the results of the methods. The default behaviour is to cache for 30 seconds. This cache can be disabled in application configuration:</p>
 </div>
-<div class="listingblock">
+<div class="openblock">
 <div class="title">Disabling the Discovery Client Cache</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.caches.discovery-client.enabled=false</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
   caches:
@@ -218,16 +225,117 @@
       enabled: false</code></pre>
 </div>
 </div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.caches]
+    [micronaut.caches.discovery-client]
+      enabled=false</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  caches {
+    discoveryClient {
+      enabled = false
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    caches {
+      discovery-client {
+        enabled = false
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "caches": {
+      "discovery-client": {
+        "enabled": false
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
 <div class="paragraph">
 <p>Alternatively you can alter the cache&#8217;s expiration policy:</p>
 </div>
-<div class="listingblock">
+<div class="openblock">
 <div class="title">Configuring the Discovery Client Cache</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.caches.discovery-client.expire-after-access=60s</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
   caches:
     discovery-client:
       expire-after-access: 60s</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.caches]
+    [micronaut.caches.discovery-client]
+      expire-after-access="60s"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  caches {
+    discoveryClient {
+      expireAfterAccess = "60s"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    caches {
+      discovery-client {
+        expire-after-access = "60s"
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "caches": {
+      "discovery-client": {
+        "expire-after-access": "60s"
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -291,8 +399,17 @@
 <div class="paragraph">
 <p>To register a Micronaut application with Consul simply add the necessary <a href="../api/io/micronaut/discovery/consul/ConsulConfiguration.html">ConsulConfiguration</a>. A minimal example can be seen below:</p>
 </div>
-<div class="listingblock">
-<div class="title">Auto Registering with Consul (application.yml)</div>
+<div class="openblock">
+<div class="title">Auto Registering with Consul</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.application.name=hello-world
+consul.client.registration.enabled=true
+consul.client.defaultZone=${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
     application:
@@ -302,6 +419,75 @@ consul:
     registration:
       enabled: true
     defaultZone: "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.application]
+    name="hello-world"
+[consul]
+  [consul.client]
+    [consul.client.registration]
+      enabled=true
+    defaultZone="${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  application {
+    name = "hello-world"
+  }
+}
+consul {
+  client {
+    registration {
+      enabled = true
+    }
+    defaultZone = "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    application {
+      name = "hello-world"
+    }
+  }
+  consul {
+    client {
+      registration {
+        enabled = true
+      }
+      defaultZone = "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "application": {
+      "name": "hello-world"
+    }
+  },
+  "consul": {
+    "client": {
+      "registration": {
+        "enabled": true
+      },
+      "defaultZone": "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+    }
+  }
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -349,13 +535,72 @@ Running multiple instances of a service may require an additional configuration 
 <div class="paragraph">
 <p>If you are running the same applications on the same port across different servers it is important to set the <code>micronaut.application.instance.id</code> property or you will experience instance registration collision.</p>
 </div>
-<div class="listingblock">
+<div class="openblock">
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.application.name=hello-world
+micronaut.application.instance.id=${random.shortuuid}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
   application:
     name: hello-world
     instance:
       id: ${random.shortuuid}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.application]
+    name="hello-world"
+    [micronaut.application.instance]
+      id="${random.shortuuid}"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  application {
+    name = "hello-world"
+    instance {
+      id = "${random.shortuuid}"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    application {
+      name = "hello-world"
+      instance {
+        id = "${random.shortuuid}"
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "application": {
+      "name": "hello-world",
+      "instance": {
+        "id": "${random.shortuuid}"
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -372,8 +617,23 @@ Running multiple instances of a service may require an additional configuration 
 <div class="paragraph">
 <p>For example:</p>
 </div>
-<div class="listingblock">
+<div class="openblock">
 <div class="title">Customizing Consul Registration Configuration</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.application.name=hello-world
+consul.client.registration.enabled=true
+consul.client.registration.tags[0]=hello
+consul.client.registration.tags[1]=world
+consul.client.registration.meta.some=value
+consul.client.registration.meta.instance_type=t2.medium
+consul.client.registration.retry-count=5
+consul.client.registration.fail-fast=false
+consul.client.defaultZone=${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
     application:
@@ -382,20 +642,131 @@ consul:
   client:
     registration:
       enabled: true
-      # Alters the tags
       tags:
         - hello
         - world
-      # Alters the metadata
       meta:
         some: value
         instance_type: t2.medium
-      # Alters the retry count
       retry-count: 5
-      # Alters fail fast behaviour
       fail-fast: false
     defaultZone: "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"</code></pre>
 </div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.application]
+    name="hello-world"
+[consul]
+  [consul.client]
+    [consul.client.registration]
+      enabled=true
+      tags=[
+        "hello",
+        "world"
+      ]
+      [consul.client.registration.meta]
+        some="value"
+        instance_type="t2.medium"
+      retry-count=5
+      fail-fast=false
+    defaultZone="${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  application {
+    name = "hello-world"
+  }
+}
+consul {
+  client {
+    registration {
+      enabled = true
+      tags = ["hello", "world"]
+      meta {
+        some = "value"
+        instance_type = "t2.medium"
+      }
+      retryCount = 5
+      failFast = false
+    }
+    defaultZone = "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    application {
+      name = "hello-world"
+    }
+  }
+  consul {
+    client {
+      registration {
+        enabled = true
+        tags = ["hello", "world"]
+        meta {
+          some = "value"
+          instance_type = "t2.medium"
+        }
+        retry-count = 5
+        fail-fast = false
+      }
+      defaultZone = "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "application": {
+      "name": "hello-world"
+    }
+  },
+  "consul": {
+    "client": {
+      "registration": {
+        "enabled": true,
+        "tags": ["hello", "world"],
+        "meta": {
+          "some": "value",
+          "instance_type": "t2.medium"
+        },
+        "retry-count": 5,
+        "fail-fast": false
+      },
+      "defaultZone": "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>tags</code> alters the tags</p>
+</li>
+<li>
+<p><code>meta</code> alters the metadata</p>
+</li>
+<li>
+<p><code>retry-count</code> alsters the retry count</p>
+</li>
+<li>
+<p><code>fail-fast</code> alters the fail fast behavior</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -451,14 +822,75 @@ RxHttpClient httpClient;</code></pre>
 <div class="paragraph">
 <p>If you prefer you can push the responsibility for health checks to Consul itself by registering an HTTP check:</p>
 </div>
-<div class="listingblock">
+<div class="openblock">
 <div class="title">Consul HTTP Check Configuration</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">consul.client.registration.check.http=true</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">consul:
   client:
     registration:
        check:
          http: true</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[consul]
+  [consul.client]
+    [consul.client.registration]
+      [consul.client.registration.check]
+        http=true</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">consul {
+  client {
+    registration {
+      check {
+        http = true
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  consul {
+    client {
+      registration {
+        check {
+          http = true
+        }
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "consul": {
+    "client": {
+      "registration": {
+        "check": {
+          "http": true
+        }
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -478,8 +910,16 @@ RxHttpClient httpClient;</code></pre>
 <div class="paragraph">
 <p>Micronaut will by default perform an IP lookup to try and figure out the IP address, however you can use the <code>consul.client.registration.ip-addr</code> setting to specify the IP address of the service directly.</p>
 </div>
-<div class="listingblock">
+<div class="openblock">
 <div class="title">Consul HTTP Check Configuration</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">consul.client.registration.ip-addr=&lt;your base container ip&gt;
+consul.client.registration.prefer-ip-address=true</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">consul:
   client:
@@ -488,14 +928,74 @@ RxHttpClient httpClient;</code></pre>
       prefer-ip-address: true</code></pre>
 </div>
 </div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[consul]
+  [consul.client]
+    [consul.client.registration]
+      ip-addr="&lt;your base container ip&gt;"
+      prefer-ip-address=true</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">consul {
+  client {
+    registration {
+      ipAddr = "&lt;your base container ip&gt;"
+      preferIpAddress = true
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  consul {
+    client {
+      registration {
+        ip-addr = "&lt;your base container ip&gt;"
+        prefer-ip-address = true
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "consul": {
+    "client": {
+      "registration": {
+        "ip-addr": "&lt;your base container ip&gt;",
+        "prefer-ip-address": true
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
 <div class="paragraph">
 <p>This will tell Consul to register the IP that other instances can use to access your service and not the NAT IP it is running under (or 127.0.0.1).</p>
 </div>
 <div class="paragraph">
 <p>If you use HTTP health checks (see the previous section) then Consul will use the configured IP address to check the Micronaut <code>/health</code> endpoint.</p>
 </div>
-<div class="listingblock">
+<div class="openblock">
 <div class="title">Consul HTTP Check Configuration</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">consul.client.registration.ip-addr=&lt;your base container ip&gt;
+consul.client.registration.prefer-ip-address=true
+consul.client.registration.check.http=true</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">consul:
   client:
@@ -504,6 +1004,68 @@ RxHttpClient httpClient;</code></pre>
       prefer-ip-address: true
       check:
         http: true</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[consul]
+  [consul.client]
+    [consul.client.registration]
+      ip-addr="&lt;your base container ip&gt;"
+      prefer-ip-address=true
+      [consul.client.registration.check]
+        http=true</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">consul {
+  client {
+    registration {
+      ipAddr = "&lt;your base container ip&gt;"
+      preferIpAddress = true
+      check {
+        http = true
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  consul {
+    client {
+      registration {
+        ip-addr = "&lt;your base container ip&gt;"
+        prefer-ip-address = true
+        check {
+          http = true
+        }
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "consul": {
+    "client": {
+      "registration": {
+        "ip-addr": "&lt;your base container ip&gt;",
+        "prefer-ip-address": true,
+        "check": {
+          "http": true
+        }
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -550,8 +1112,17 @@ As of this writing the official Docker images for Eureka are significantly out-o
 <div class="paragraph">
 <p>The process to register a Micronaut application with Eureka is very similar to with Consul, as seen in the previous section, simply add the necessary <a href="../api/io/micronaut/discovery/eureka/EurekaConfiguration.html">EurekaConfiguration</a>. A minimal example can be seen below:</p>
 </div>
-<div class="listingblock">
+<div class="openblock">
 <div class="title">Auto Registering with Eureka (application.yml)</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.application.name=hello-world
+eureka.client.registration.enabled=true
+eureka.client.defaultZone=${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
   application:
@@ -563,6 +1134,75 @@ eureka:
     defaultZone: "${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}"</code></pre>
 </div>
 </div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.application]
+    name="hello-world"
+[eureka]
+  [eureka.client]
+    [eureka.client.registration]
+      enabled=true
+    defaultZone="${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  application {
+    name = "hello-world"
+  }
+}
+eureka {
+  client {
+    registration {
+      enabled = true
+    }
+    defaultZone = "${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    application {
+      name = "hello-world"
+    }
+  }
+  eureka {
+    client {
+      registration {
+        enabled = true
+      }
+      defaultZone = "${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "application": {
+      "name": "hello-world"
+    }
+  },
+  "eureka": {
+    "client": {
+      "registration": {
+        "enabled": true
+      },
+      "defaultZone": "${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -571,27 +1211,187 @@ eureka:
 <div class="paragraph">
 <p>You can customize various aspects of registration with Eureka using the <a href="../api/io/micronaut/discovery/eureka/EurekaConfiguration.html">EurekaConfiguration</a>. Notice that <code>EurekaConfiguration</code> extends <a href="../api/io/micronaut/discovery/client/DiscoveryClientConfiguration.html">DiscoveryClientConfiguration</a>  which in turn extends <a href="https://docs.micronaut.io/latest/api/io/micronaut/http/client/HttpClientConfiguration">HttpClientConfiguration</a> allowing you to customize the settings for the Eureka client, including read timeout, proxy configuration and so on.</p>
 </div>
-<div class="listingblock">
+<div class="openblock">
 <div class="title">Example Eureka Configuration</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">eureka.client.readTimeout=5s
+eureka.client.registration.asgName=myAsg
+eureka.client.registration.countryId=10
+eureka.client.registration.vipAddress=myapp
+eureka.client.registration.leaseInfo.durationInSecs=60
+eureka.client.registration.metadata.foo=bar
+eureka.client.registration.retry-count=10
+eureka.client.registration.retry-delay=5s
+eureka.client.registration.appname=some-app-name
+eureka.client.registration.hostname=foo.example.com
+eureka.client.registration.ip-addr=1.2.3.4
+eureka.client.registration.port=9090</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">eureka:
   client:
     readTimeout: 5s
     registration:
-      asgName: myAsg # the auto scaling group name
-      countryId: 10 # the country id
-      vipAddress: 'myapp' # The Eureka VIP address
+      asgName: myAsg
+      countryId: 10
+      vipAddress: 'myapp'
       leaseInfo:
-        durationInSecs: 60 # The lease information
-      metadata: # arbitrary instance metadata
+        durationInSecs: 60
+      metadata:
         foo: bar
-      retry-count: 10 # How many times to retry
-      retry-delay: 5s # How long to wait between retries
-      appname: some-app-name     # optional, eureka instance application name, defaults to ${micronaut.application.name}
-      hostname: foo.example.com  # optional, exposed eureka instance hostname, useful in docker bridged network environments
-      ip-addr: 1.2.3.4           # optional, exposed eureka instance ip address, useful in docker bridged network environments
-      port: 9090                 # optional, exposed eureka instance port, useful in docker bridged network environments</code></pre>
+      retry-count: 10
+      retry-delay: 5s
+      appname: some-app-name
+      hostname: foo.example.com
+      ip-addr: 1.2.3.4
+      port: 9090</code></pre>
 </div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[eureka]
+  [eureka.client]
+    readTimeout="5s"
+    [eureka.client.registration]
+      asgName="myAsg"
+      countryId=10
+      vipAddress="myapp"
+      [eureka.client.registration.leaseInfo]
+        durationInSecs=60
+      [eureka.client.registration.metadata]
+        foo="bar"
+      retry-count=10
+      retry-delay="5s"
+      appname="some-app-name"
+      hostname="foo.example.com"
+      ip-addr="1.2.3.4"
+      port=9090</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">eureka {
+  client {
+    readTimeout = "5s"
+    registration {
+      asgName = "myAsg"
+      countryId = 10
+      vipAddress = "myapp"
+      leaseInfo {
+        durationInSecs = 60
+      }
+      metadata {
+        foo = "bar"
+      }
+      retryCount = 10
+      retryDelay = "5s"
+      appname = "some-app-name"
+      hostname = "foo.example.com"
+      ipAddr = "1.2.3.4"
+      port = 9090
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  eureka {
+    client {
+      readTimeout = "5s"
+      registration {
+        asgName = "myAsg"
+        countryId = 10
+        vipAddress = "myapp"
+        leaseInfo {
+          durationInSecs = 60
+        }
+        metadata {
+          foo = "bar"
+        }
+        retry-count = 10
+        retry-delay = "5s"
+        appname = "some-app-name"
+        hostname = "foo.example.com"
+        ip-addr = "1.2.3.4"
+        port = 9090
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "eureka": {
+    "client": {
+      "readTimeout": "5s",
+      "registration": {
+        "asgName": "myAsg",
+        "countryId": 10,
+        "vipAddress": "myapp",
+        "leaseInfo": {
+          "durationInSecs": 60
+        },
+        "metadata": {
+          "foo": "bar"
+        },
+        "retry-count": 10,
+        "retry-delay": "5s",
+        "appname": "some-app-name",
+        "hostname": "foo.example.com",
+        "ip-addr": "1.2.3.4",
+        "port": 9090
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>asgName</code> the auto scaling group name</p>
+</li>
+<li>
+<p><code>countryId</code> the country id</p>
+</li>
+<li>
+<p><code>vipAddress</code> The Eureka VIP address</p>
+</li>
+<li>
+<p><code>durationInSecs</code> The lease information</p>
+</li>
+<li>
+<p><code>metadata</code> arbitrary instance metadata</p>
+</li>
+<li>
+<p><code>retry-count</code> How many times to retry</p>
+</li>
+<li>
+<p><code>retry-delay</code> How long to wait between retries</p>
+</li>
+<li>
+<p><code>appname</code> (optional) eureka instance application name, defaults to ${micronaut.application.name}</p>
+</li>
+<li>
+<p><code>hostname</code> (optional) exposed eureka instance hostname, useful in docker bridged network environments</p>
+</li>
+<li>
+<p><code>ip-addr</code> (optional) exposed eureka instance ip address, useful in docker bridged network environments</p>
+</li>
+<li>
+<p><code>port</code> (optional) exposed eureka instance port, useful in docker bridged network environments</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -604,12 +1404,59 @@ eureka:
 <div class="paragraph">
 <p>For example:</p>
 </div>
-<div class="listingblock">
+<div class="openblock">
 <div class="title">Auto Registering with Eureka</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">eureka.client.defaultZone=https://${EUREKA_USERNAME}:${EUREKA_PASSWORD}@localhost:8761</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">eureka:
   client:
     defaultZone: "https://${EUREKA_USERNAME}:${EUREKA_PASSWORD}@localhost:8761"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[eureka]
+  [eureka.client]
+    defaultZone="https://${EUREKA_USERNAME}:${EUREKA_PASSWORD}@localhost:8761"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">eureka {
+  client {
+    defaultZone = "https://${EUREKA_USERNAME}:${EUREKA_PASSWORD}@localhost:8761"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  eureka {
+    client {
+      defaultZone = "https://${EUREKA_USERNAME}:${EUREKA_PASSWORD}@localhost:8761"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "eureka": {
+    "client": {
+      "defaultZone": "https://${EUREKA_USERNAME}:${EUREKA_PASSWORD}@localhost:8761"
+    }
+  }
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -666,8 +1513,19 @@ eureka:
 <div class="paragraph">
 <p>The process to consume configurations in a Micronaut application from a Spring Cloud Config Server is very strait forward, simply add the necessary configurations. A complete example can be seen below:</p>
 </div>
-<div class="listingblock">
-<div class="title">Registering your application as a Spring Cloud Config client  (application.yml)</div>
+<div class="openblock">
+<div class="title">Registering your application as a Spring Cloud Config client</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.application.name=hello-world
+micronaut.config-client.enabled=true
+spring.cloud.config.enabled=true
+spring.cloud.config.uri=http://configserver:9000
+spring.cloud.config.name=filename1,filename2</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
   application:
@@ -680,6 +1538,90 @@ spring:
       enabled: true
       uri: "http://configserver:9000"
       name: filename1,filename2</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.application]
+    name="hello-world"
+  [micronaut.config-client]
+    enabled=true
+[spring]
+  [spring.cloud]
+    [spring.cloud.config]
+      enabled=true
+      uri="http://configserver:9000"
+      name="filename1,filename2"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  application {
+    name = "hello-world"
+  }
+  configClient {
+    enabled = true
+  }
+}
+spring {
+  cloud {
+    config {
+      enabled = true
+      uri = "http://configserver:9000"
+      name = "filename1,filename2"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    application {
+      name = "hello-world"
+    }
+    config-client {
+      enabled = true
+    }
+  }
+  spring {
+    cloud {
+      config {
+        enabled = true
+        uri = "http://configserver:9000"
+        name = "filename1,filename2"
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "application": {
+      "name": "hello-world"
+    },
+    "config-client": {
+      "enabled": true
+    }
+  },
+  "spring": {
+    "cloud": {
+      "config": {
+        "enabled": true,
+        "uri": "http://configserver:9000",
+        "name": "filename1,filename2"
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
