@@ -242,13 +242,18 @@ public class ConsulConfigurationClient implements ConfigurationClient {
 
                 for (LocalSource localSource: propertySources.values()) {
                     int priority;
-                    if (localSource.environment != null) {
-                        priority = envBasePriority + (activeNames.indexOf(localSource.environment) * 2);
-                    } else {
-                        priority = basePriority + 1;
-                    }
                     if (localSource.appSpecific) {
-                        priority++;
+                        if (localSource.environment != null) {
+                            priority = envBasePriority + ((activeNames.indexOf(localSource.environment) + 1) * 2);
+                        } else {
+                            priority = envBasePriority + 1;
+                        }
+                    } else {
+                        if (localSource.environment != null) {
+                            priority = basePriority + ((activeNames.indexOf(localSource.environment) + 1) * 2);
+                        } else {
+                            priority = basePriority + 1;
+                        }
                     }
                     emitter.next(PropertySource.of(ConsulClient.SERVICE_ID + '-' + localSource.name, localSource.values, priority));
                 }
