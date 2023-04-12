@@ -60,7 +60,8 @@ class MockConfigurationDiscoverySpec extends Specification {
         writeValue("test-app", "must.override1", "overridden")
         writeValue("test-app", "must.override2", "test")
         writeValue("test-app,test", "must.override2", "overridden")
-
+        writeValue("test-app2", "must.override1", "other_value")
+        writeValue("test-app2,test", "must.override2", "other_value")
 
         ApplicationContext applicationContext = ApplicationContext.run(
                 [
