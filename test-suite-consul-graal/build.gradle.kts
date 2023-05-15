@@ -28,19 +28,9 @@ dependencies {
     testImplementation(projects.micronautDiscoveryClient)
 }
 
-val isGraalVMJdk = listOf("jvmci.Compiler", "java.vendor.version", "java.vendor").any {
-    System.getProperty(it)?.toLowerCase(Locale.ENGLISH)?.contains("graal") == true
-}
-
 tasks {
     test {
         useJUnitPlatform()
-    }
-
-    named("check") {
-        if (isGraalVMJdk) {
-            dependsOn("nativeTest")
-        }
     }
 }
 
