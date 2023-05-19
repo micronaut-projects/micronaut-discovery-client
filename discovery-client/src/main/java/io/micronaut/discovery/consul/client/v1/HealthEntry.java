@@ -63,7 +63,6 @@ public class HealthEntry {
     /**
      * @param checks The list of checks
      */
-    @JsonDeserialize(contentAs = CheckEntry.class)
     @ReflectiveAccess
     void setChecks(List<Check> checks) {
         this.checks = checks;

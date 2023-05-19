@@ -6,6 +6,7 @@ dependencies {
     annotationProcessor(libs.micronaut.docs.asciidoc.config.props)
     annotationProcessor(mn.micronaut.graal)
     annotationProcessor(mnValidation.micronaut.validation.processor)
+    annotationProcessor(mnSerde.micronaut.serde.processor)
 
     api(mn.micronaut.discovery.core)
     api(mn.micronaut.http.client)
@@ -13,8 +14,7 @@ dependencies {
 
     implementation(mn.reactor)
     implementation(mn.micronaut.retry)
-    implementation(mn.micronaut.jackson.databind)
-
+    compileOnly(mn.micronaut.jackson.databind)
     compileOnly(mn.micronaut.management)
 
     testAnnotationProcessor(mn.micronaut.inject.java)
@@ -22,6 +22,7 @@ dependencies {
     testImplementation(libs.testcontainers.spock) {
         exclude module:'spock-core'
     }
+    testImplementation(mn.micronaut.jackson.databind)
     testImplementation(libs.testcontainers.vault)
 
     testImplementation(mn.micronaut.management)
