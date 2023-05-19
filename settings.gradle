@@ -2,10 +2,6 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         mavenCentral()
-        maven {
-            url "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-            mavenContent { snapshotsOnly() }
-        }
     }
 }
 
@@ -23,7 +19,6 @@ include 'test-suite-consul-graal'
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 micronautBuild {
-    addSnapshotRepository()
     useStandardizedProjectNames = true
     importMicronautCatalog()
     importMicronautCatalog("micronaut-serde")
