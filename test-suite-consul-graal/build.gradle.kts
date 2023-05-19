@@ -1,8 +1,8 @@
 import java.util.*
 plugins {
     id("org.graalvm.buildtools.native") version "0.9.22"
-    id("io.micronaut.library") version "4.0.0-SNAPSHOT"
-    id("io.micronaut.test-resources") version "4.0.0-SNAPSHOT"
+    id("io.micronaut.library") version "4.0.0-M3"
+    id("io.micronaut.test-resources") version "4.0.0-M3"
 }
 
 repositories {
@@ -10,8 +10,7 @@ repositories {
 }
 
 micronaut {
-    version.set("4.0.0-SNAPSHOT")
-    //version.set(libs.versions.micronaut.asProvider())
+    version.set("4.0.0-M2")
 }
 
 dependencies {
