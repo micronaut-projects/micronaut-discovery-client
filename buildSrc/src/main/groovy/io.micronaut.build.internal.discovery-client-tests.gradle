@@ -8,3 +8,7 @@ repositories {
 configurations.all {
     resolutionStrategy.preferProjectModules()
 }
+dependencies {
+    // FIXME: remove after https://github.com/micronaut-projects/micronaut-build/pull/562 merged
+    testImplementation("ch.qos.logback:logback-classic:1.4.7")
+}

@@ -19,8 +19,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.ReflectiveAccess;
+import io.micronaut.serde.annotation.Serdeable;
 
 /**
  * Represents a Key/Value pair returned from Consul via /kv/:key.
@@ -29,7 +29,7 @@ import io.micronaut.core.annotation.ReflectiveAccess;
  * @since 1.0
  */
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
-@Introspected
+@Serdeable
 @ReflectiveAccess
 public class KeyValue {
     private String key;

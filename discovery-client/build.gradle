@@ -9,12 +9,14 @@ dependencies {
     annotationProcessor(mnSerde.micronaut.serde.processor)
 
     api(mn.micronaut.discovery.core)
+    api(mn.micronaut.json.core)
     api(mn.micronaut.http.client)
     api(mnValidation.micronaut.validation)
 
     implementation(mn.reactor)
     implementation(mn.micronaut.retry)
     compileOnly(mn.micronaut.jackson.databind)
+    compileOnly(mnSerde.micronaut.serde.jackson)
     compileOnly(mn.micronaut.management)
 
     testAnnotationProcessor(mn.micronaut.inject.java)

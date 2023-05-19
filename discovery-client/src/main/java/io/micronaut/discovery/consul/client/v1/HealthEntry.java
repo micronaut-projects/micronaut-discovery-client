@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.ReflectiveAccess;
+import io.micronaut.serde.annotation.Serdeable;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +32,7 @@ import java.util.List;
  * @since 1.0
  */
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
-@Introspected
+@Serdeable
 @ReflectiveAccess
 public class HealthEntry {
 
