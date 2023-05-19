@@ -46,7 +46,7 @@ class ConsulAutoRegistrationSpec extends Specification {
 
     def setupSpec() {
         consulContainer.start()
-        consulHost = consulContainer.containerIpAddress
+        consulHost = consulContainer.host
         consulPort = consulContainer.getMappedPort(8500)
     }
 
