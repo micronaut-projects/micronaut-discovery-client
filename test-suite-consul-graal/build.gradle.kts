@@ -10,7 +10,7 @@ repositories {
 }
 
 micronaut {
-    version.set(libs.versions.micronaut.asProvider())
+    version.set(libs.versions.micronaut.platform.get())
 }
 
 dependencies {
