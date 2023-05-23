@@ -15,14 +15,13 @@
  */
 package io.micronaut.discovery.consul.client.v1;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.ReflectiveAccess;
-
 import java.util.Collections;
 import java.util.List;
+
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import io.micronaut.core.annotation.ReflectiveAccess;
+import io.micronaut.serde.annotation.Serdeable;
 
 /**
  * Models a Consul Health Entry. See https://www.consul.io/api/health.html.
@@ -31,7 +30,7 @@ import java.util.List;
  * @since 1.0
  */
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
-@Introspected
+@Serdeable
 @ReflectiveAccess
 public class HealthEntry {
 
@@ -63,7 +62,6 @@ public class HealthEntry {
     /**
      * @param checks The list of checks
      */
-    @JsonDeserialize(contentAs = CheckEntry.class)
     @ReflectiveAccess
     void setChecks(List<Check> checks) {
         this.checks = checks;

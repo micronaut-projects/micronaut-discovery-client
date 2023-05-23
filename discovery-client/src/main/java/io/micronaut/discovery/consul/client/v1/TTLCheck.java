@@ -16,6 +16,7 @@
 package io.micronaut.discovery.consul.client.v1;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.micronaut.core.convert.ConversionService;
 
 import java.time.Duration;
@@ -28,6 +29,7 @@ import java.util.Optional;
  * @author graemerocher
  * @since 1.0
  */
+@JsonDeserialize(as = TTLCheck.class)
 public class TTLCheck extends NewCheck {
     private Duration ttl;
 

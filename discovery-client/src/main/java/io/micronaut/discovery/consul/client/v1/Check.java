@@ -16,12 +16,14 @@
 package io.micronaut.discovery.consul.client.v1;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 /**
  * @author graemerocher
  * @since 1.0
  */
+@JsonDeserialize(as = CheckEntry.class)
 public interface Check {
 
     /**

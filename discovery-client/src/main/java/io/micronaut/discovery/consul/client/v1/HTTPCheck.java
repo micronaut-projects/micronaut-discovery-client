@@ -25,6 +25,7 @@ import java.util.Optional;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import io.micronaut.core.annotation.Nullable;
@@ -40,6 +41,7 @@ import io.micronaut.http.HttpMethod;
  * @since 1.0
  */
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
+@JsonDeserialize(as = HTTPCheck.class)
 public class HTTPCheck extends NewCheck {
 
     private Duration interval;
