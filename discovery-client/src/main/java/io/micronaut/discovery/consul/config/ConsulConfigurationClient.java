@@ -65,7 +65,17 @@ import java.util.regex.Pattern;
 @BootstrapContextCompatible
 public class ConsulConfigurationClient implements ConfigurationClient {
 
-    private static final String MATCHING_APPLICATION = "^(application|%s)(\\[\\w+])?$";
+    /**
+     * Handle key name in the format.
+     * <ul>
+     *     <li>application</li>
+     *     <li>application[envName]</li>
+     *     <li>appName</li>
+     *     <li>appName[envName]</li>
+     * </ul>
+     * Note: {@code envName} can contain only word character and "underscore" or "dash"
+     */
+    private static final String MATCHING_APPLICATION = "^(application|%s)(\\[[a-zA-Z0-9_-]+])?$";
 
     private final ConsulClient consulClient;
     private final ConsulConfiguration consulConfiguration;
