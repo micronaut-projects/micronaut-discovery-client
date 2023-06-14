@@ -11,7 +11,7 @@
 <link rel="stylesheet" type="text/css" href="../../../../script-dir/jquery-ui.min.css" title="Style">
 <link rel="stylesheet" type="text/css" href="../../../../jquery-ui.overrides.css" title="Style">
 <script type="text/javascript" src="../../../../script.js"></script>
-<script type="text/javascript" src="../../../../script-dir/jquery-3.6.1.min.js"></script>
+<script type="text/javascript" src="../../../../script-dir/jquery-3.6.0.min.js"></script>
 <script type="text/javascript" src="../../../../script-dir/jquery-ui.min.js"></script>
 </head>
 <body class="class-declaration-page">
@@ -173,7 +173,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(io.micronaut.discovery.eureka.EurekaConfiguration.EurekaConnectionPoolConfiguration,io.micronaut.runtime.ApplicationConfiguration,io.micronaut.discovery.eureka.EurekaConfiguration.EurekaRegistrationConfiguration)" class="member-name-link">EurekaConfiguration</a><wbr>(<a href="EurekaConfiguration.EurekaConnectionPoolConfiguration.html" title="class in io.micronaut.discovery.eureka">EurekaConfiguration.EurekaConnectionPoolConfiguration</a>&nbsp;eurekaConnectionPoolConfiguration,
  io.micronaut.runtime.ApplicationConfiguration&nbsp;applicationConfiguration,
- <a href="EurekaConfiguration.EurekaRegistrationConfiguration.html" title="class in io.micronaut.discovery.eureka">EurekaConfiguration.EurekaRegistrationConfiguration</a>&nbsp;eurekaRegistrationConfiguration)</code></div>
+ @Nullable <a href="EurekaConfiguration.EurekaRegistrationConfiguration.html" title="class in io.micronaut.discovery.eureka">EurekaConfiguration.EurekaRegistrationConfiguration</a>&nbsp;eurekaRegistrationConfiguration)</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
@@ -192,10 +192,10 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>io.micronaut.http.client.HttpClientConfiguration.ConnectionPoolConfiguration</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getConnectionPoolConfiguration()" class="member-name-link">getConnectionPoolConfiguration</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="EurekaConfiguration.EurekaDiscoveryConfiguration.html" title="class in io.micronaut.discovery.eureka">EurekaConfiguration.EurekaDiscoveryConfiguration</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="EurekaConfiguration.EurekaDiscoveryConfiguration.html" title="class in io.micronaut.discovery.eureka">EurekaConfiguration.EurekaDiscoveryConfiguration</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDiscovery()" class="member-name-link">getDiscovery</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="EurekaConfiguration.EurekaRegistrationConfiguration.html" title="class in io.micronaut.discovery.eureka">EurekaConfiguration.EurekaRegistrationConfiguration</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="EurekaConfiguration.EurekaRegistrationConfiguration.html" title="class in io.micronaut.discovery.eureka">EurekaConfiguration.EurekaRegistrationConfiguration</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getRegistration()" class="member-name-link">getRegistration</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
@@ -319,7 +319,7 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">EurekaConfiguration</span><wbr><span class="parameters">(<a href="EurekaConfiguration.EurekaConnectionPoolConfiguration.html" title="class in io.micronaut.discovery.eureka">EurekaConfiguration.EurekaConnectionPoolConfiguration</a>&nbsp;eurekaConnectionPoolConfiguration,
  io.micronaut.runtime.ApplicationConfiguration&nbsp;applicationConfiguration,
  @Nullable
- <a href="EurekaConfiguration.EurekaRegistrationConfiguration.html" title="class in io.micronaut.discovery.eureka">EurekaConfiguration.EurekaRegistrationConfiguration</a>&nbsp;eurekaRegistrationConfiguration)</span></div>
+ @Nullable <a href="EurekaConfiguration.EurekaRegistrationConfiguration.html" title="class in io.micronaut.discovery.eureka">EurekaConfiguration.EurekaRegistrationConfiguration</a>&nbsp;eurekaRegistrationConfiguration)</span></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>eurekaConnectionPoolConfiguration</code> - The connection pool configuration</dd>
@@ -340,7 +340,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getDiscovery()">
 <h3>getDiscovery</h3>
 <div class="member-signature"><span class="annotations">@NonNull
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="EurekaConfiguration.EurekaDiscoveryConfiguration.html" title="class in io.micronaut.discovery.eureka">EurekaConfiguration.EurekaDiscoveryConfiguration</a></span>&nbsp;<span class="element-name">getDiscovery</span>()</div>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="EurekaConfiguration.EurekaDiscoveryConfiguration.html" title="class in io.micronaut.discovery.eureka">EurekaConfiguration.EurekaDiscoveryConfiguration</a></span>&nbsp;<span class="element-name">getDiscovery</span>()</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="../client/DiscoveryClientConfiguration.html#getDiscovery()">getDiscovery</a></code>&nbsp;in class&nbsp;<code><a href="../client/DiscoveryClientConfiguration.html" title="class in io.micronaut.discovery.client">DiscoveryClientConfiguration</a></code></dd>
@@ -363,7 +363,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getRegistration()">
 <h3>getRegistration</h3>
 <div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="EurekaConfiguration.EurekaRegistrationConfiguration.html" title="class in io.micronaut.discovery.eureka">EurekaConfiguration.EurekaRegistrationConfiguration</a></span>&nbsp;<span class="element-name">getRegistration</span>()</div>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="EurekaConfiguration.EurekaRegistrationConfiguration.html" title="class in io.micronaut.discovery.eureka">EurekaConfiguration.EurekaRegistrationConfiguration</a></span>&nbsp;<span class="element-name">getRegistration</span>()</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="../client/DiscoveryClientConfiguration.html#getRegistration()">getRegistration</a></code>&nbsp;in class&nbsp;<code><a href="../client/DiscoveryClientConfiguration.html" title="class in io.micronaut.discovery.client">DiscoveryClientConfiguration</a></code></dd>

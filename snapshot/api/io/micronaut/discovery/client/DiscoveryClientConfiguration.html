@@ -11,7 +11,7 @@
 <link rel="stylesheet" type="text/css" href="../../../../script-dir/jquery-ui.min.css" title="Style">
 <link rel="stylesheet" type="text/css" href="../../../../jquery-ui.overrides.css" title="Style">
 <script type="text/javascript" src="../../../../script.js"></script>
-<script type="text/javascript" src="../../../../script-dir/jquery-3.6.1.min.js"></script>
+<script type="text/javascript" src="../../../../script-dir/jquery-3.6.0.min.js"></script>
 <script type="text/javascript" src="../../../../script-dir/jquery-ui.min.js"></script>
 </head>
 <body class="class-declaration-page">
@@ -148,16 +148,16 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;io.micronaut.discovery.ServiceInstance&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDefaultZone()" class="member-name-link">getDefaultZone</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract io.micronaut.discovery.DiscoveryConfiguration</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract @NonNull io.micronaut.discovery.DiscoveryConfiguration</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDiscovery()" class="member-name-link">getDiscovery</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NonNull <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getHost()" class="member-name-link">getHost</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getPort()" class="member-name-link">getPort</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract io.micronaut.discovery.registration.RegistrationConfiguration</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract @Nullable io.micronaut.discovery.registration.RegistrationConfiguration</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getRegistration()" class="member-name-link">getRegistration</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
@@ -370,7 +370,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getHost()">
 <h3>getHost</h3>
 <div class="member-signature"><span class="annotations">@NonNull
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getHost</span>()</div>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NonNull <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getHost</span>()</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>The Discovery server instance host name. Defaults to 'localhost'.</dd>
@@ -411,7 +411,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getDiscovery()">
 <h3>getDiscovery</h3>
 <div class="member-signature"><span class="annotations">@NonNull
-</span><span class="modifiers">public abstract</span>&nbsp;<span class="return-type">io.micronaut.discovery.DiscoveryConfiguration</span>&nbsp;<span class="element-name">getDiscovery</span>()</div>
+</span><span class="modifiers">public abstract</span>&nbsp;<span class="return-type">@NonNull io.micronaut.discovery.DiscoveryConfiguration</span>&nbsp;<span class="element-name">getDiscovery</span>()</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>The default discovery configuration</dd>
@@ -422,7 +422,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getRegistration()">
 <h3>getRegistration</h3>
 <div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public abstract</span>&nbsp;<span class="return-type">io.micronaut.discovery.registration.RegistrationConfiguration</span>&nbsp;<span class="element-name">getRegistration</span>()</div>
+</span><span class="modifiers">public abstract</span>&nbsp;<span class="return-type">@Nullable io.micronaut.discovery.registration.RegistrationConfiguration</span>&nbsp;<span class="element-name">getRegistration</span>()</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>The default registration configuration</dd>
