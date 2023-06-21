@@ -56,6 +56,7 @@ class MockConfigurationDiscoverySpec extends Specification {
         writeValue("application", "some.consul.value", "test") // should not use default
         writeValue("application,test", "some.consul.value", "foobar")
         writeValue("application,other", "some.consul.value", "other") // should not use test env
+        writeValue("application,an-other", "some.consul.other-value", "an-other")
         writeValue("application", "must.override1", "test")
         writeValue("test-app", "must.override1", "overridden")
         writeValue("test-app", "must.override2", "test")
@@ -69,7 +70,7 @@ class MockConfigurationDiscoverySpec extends Specification {
                         'micronaut.application.name' :'test-app',
                         'consul.client.host'         : 'localhost',
                         'consul.client.port'         : consulServer.port]
-        )
+        ,"an-other")
 
         when:"A configuration value is read"
         def environment = applicationContext.environment
@@ -80,6 +81,7 @@ class MockConfigurationDiscoverySpec extends Specification {
         result.get() == 'foobar'
         environment.getProperty('must.override1', String).get() == 'overridden'
         environment.getProperty('must.override2', String).get() == 'overridden'
+        environment.getProperty('some.consul.other-value', String).get() == 'an-other'
 
         when:"a value is changed and the environment is refreshed"
         writeValue("test-app", "must.override1", "changed")
