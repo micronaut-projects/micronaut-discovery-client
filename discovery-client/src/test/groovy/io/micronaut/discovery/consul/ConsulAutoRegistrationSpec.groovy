@@ -38,7 +38,7 @@ class ConsulAutoRegistrationSpec extends Specification {
     @Shared
     @AutoCleanup
     GenericContainer consulContainer =
-            new GenericContainer("consul:latest")
+            new GenericContainer("consul:1.9.0")
                     .withExposedPorts(8500)
 
     @Shared String consulHost

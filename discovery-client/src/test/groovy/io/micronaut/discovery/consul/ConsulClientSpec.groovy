@@ -43,7 +43,7 @@ class ConsulClientSpec extends Specification {
     @Shared
     @AutoCleanup
     GenericContainer consulContainer =
-            new GenericContainer("consul:latest")
+            new GenericContainer("consul:1.9.0")
                     .withExposedPorts(8500)
 
     @Shared String consulHost
@@ -125,7 +125,7 @@ class ConsulClientSpec extends Specification {
             Flux.from(client.deregister('xxxxxxxx')).blockFirst()
         } catch(e) {
             // ignore (throws Unknown service exception if it doesn't exist)
-        }        
+        }
 
         when:
         int oldSize = Flux.from(client.getServices()).blockFirst().size()
