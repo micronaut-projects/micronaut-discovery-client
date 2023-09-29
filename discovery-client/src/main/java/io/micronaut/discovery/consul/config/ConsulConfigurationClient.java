@@ -51,6 +51,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A {@link ConfigurationClient} for Consul.
@@ -61,6 +64,18 @@ import java.util.function.Function;
 @Requires(property = ConfigurationClient.ENABLED, value = StringUtils.TRUE, defaultValue = StringUtils.FALSE)
 @BootstrapContextCompatible
 public class ConsulConfigurationClient implements ConfigurationClient {
+
+    /**
+     * Handle key name in the format.
+     * <ul>
+     *     <li>application</li>
+     *     <li>application[envName]</li>
+     *     <li>appName</li>
+     *     <li>appName[envName]</li>
+     * </ul>
+     * Note: {@code envName} can contain only word character and "underscore" or "dash"
+     */
+    private static final String MATCHING_APPLICATION = "^(application|%s)(\\[[a-zA-Z0-9_-]+])?$";
 
     private final ConsulClient consulClient;
     private final ConsulConfiguration consulConfiguration;
@@ -112,6 +127,14 @@ public class ConsulConfigurationClient implements ConfigurationClient {
         String commonConfigPath = path + Environment.DEFAULT_NAME;
         final boolean hasApplicationSpecificConfig = serviceId.isPresent();
         String applicationSpecificPath = hasApplicationSpecificConfig ? path + serviceId.get() : null;
+
+        final Optional<Pattern> patternApplication = serviceId
+            .map(args -> String.format(MATCHING_APPLICATION, args))
+            .map(Pattern::compile);
+        final Predicate<String> isMatchingApplication = name -> patternApplication
+            .map(pattern -> pattern.matcher(name))
+            .map(Matcher::matches)
+            .orElse(Boolean.TRUE);
 
         String dc = configDiscoveryConfiguration.getDatacenter().orElse(null);
 
@@ -178,7 +201,7 @@ public class ConsulConfigurationClient implements ConfigurationClient {
                                         if (hasApplicationSpecificConfig && propertySourceName == null) {
                                             propertySourceName = resolvePropertySourceName(serviceId.get(), fileName, activeNames);
                                         }
-                                        if (propertySourceName != null) {
+                                        if (propertySourceName != null && isMatchingApplication.test(propertySourceName)) {
                                             String finalName = propertySourceName;
                                             byte[] decoded = base64Decoder.decode(value);
                                             Map<String, Object> properties = propertySourceLoader.read(propertySourceName, decoded);
@@ -203,10 +226,12 @@ public class ConsulConfigurationClient implements ConfigurationClient {
                                 }
                                 if (property != null && propertySourceNames != null) {
                                     for (String propertySourceName : propertySourceNames) {
-                                        String envName = ClientUtil.resolveEnvironment(propertySourceName, activeNames);
-                                        LocalSource localSource = propertySources.computeIfAbsent(propertySourceName, s -> new LocalSource(isApplicationSpecificConfigKey, envName, propertySourceName));
-                                        byte[] decoded = base64Decoder.decode(value);
-                                        localSource.put(property, new String(decoded));
+                                        if (isMatchingApplication.test(propertySourceName)) {
+                                            String envName = ClientUtil.resolveEnvironment(propertySourceName, activeNames);
+                                            LocalSource localSource = propertySources.computeIfAbsent(propertySourceName, s -> new LocalSource(isApplicationSpecificConfigKey, envName, propertySourceName));
+                                            byte[] decoded = base64Decoder.decode(value);
+                                            localSource.put(property, new String(decoded));
+                                        }
                                     }
                                 }
                                 break;
@@ -226,9 +251,11 @@ public class ConsulConfigurationClient implements ConfigurationClient {
                                             byte[] decoded = base64Decoder.decode(value);
                                             Map<String, Object> properties = propertySourceLoader.read(fullName, decoded);
                                             for (String propertySourceName : propertySourceNames) {
-                                                String envName = ClientUtil.resolveEnvironment(propertySourceName, activeNames);
-                                                LocalSource localSource = propertySources.computeIfAbsent(propertySourceName, s -> new LocalSource(isApplicationSpecificConfigKey, envName, propertySourceName));
-                                                localSource.putAll(properties);
+                                                if (isMatchingApplication.test(propertySourceName)) {
+                                                    String envName = ClientUtil.resolveEnvironment(propertySourceName, activeNames);
+                                                    LocalSource localSource = propertySources.computeIfAbsent(propertySourceName, s -> new LocalSource(isApplicationSpecificConfigKey, envName, propertySourceName));
+                                                    localSource.putAll(properties);
+                                                }
                                             }
                                         }
                                     }
@@ -242,13 +269,18 @@ public class ConsulConfigurationClient implements ConfigurationClient {
 
                 for (LocalSource localSource: propertySources.values()) {
                     int priority;
-                    if (localSource.environment != null) {
-                        priority = envBasePriority + (activeNames.indexOf(localSource.environment) * 2);
-                    } else {
-                        priority = basePriority + 1;
-                    }
                     if (localSource.appSpecific) {
-                        priority++;
+                        if (localSource.environment != null) {
+                            priority = envBasePriority + ((activeNames.indexOf(localSource.environment) + 1) * 2);
+                        } else {
+                            priority = envBasePriority + 1;
+                        }
+                    } else {
+                        if (localSource.environment != null) {
+                            priority = basePriority + ((activeNames.indexOf(localSource.environment) + 1) * 2);
+                        } else {
+                            priority = basePriority + 1;
+                        }
                     }
                     emitter.next(PropertySource.of(ConsulClient.SERVICE_ID + '-' + localSource.name, localSource.values, priority));
                 }
