@@ -39,6 +39,9 @@ class EurekaClientConfigSpec extends Specification {
         expect:
         serviceInstances == result
 
+        cleanup:
+        applicationContext.close()
+
         where:
         value                           | result
         'localhost:8087'                | [newServiceInstance("http://$value")]

@@ -51,5 +51,6 @@ class EurekaHealthIndicatorSpec extends Specification {
 
         cleanup:
         eurekaServer?.stop()
+        applicationContext.close()
     }
 }
