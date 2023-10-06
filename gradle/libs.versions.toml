@@ -9,7 +9,7 @@ micronaut-validation = "4.0.0"
 
 groovy = "4.0.13"
 spock = "2.3-groovy-4.0"
-testcontainers = "1.18.3"
+testcontainers = "1.19.1"
 awaitility = "4.2.0"
 
 [libraries]
