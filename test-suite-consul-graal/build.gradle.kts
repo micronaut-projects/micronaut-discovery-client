@@ -24,6 +24,7 @@ dependencies {
     testImplementation(libs.awaitility)
     testImplementation(mn.snakeyaml)
     testImplementation(projects.micronautDiscoveryClient)
+    testRuntimeOnly(mnLogging.logback.classic)
 }
 
 tasks {
