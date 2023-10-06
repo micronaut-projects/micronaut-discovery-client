@@ -7,10 +7,13 @@ class EagerInitSpec extends Specification {
 
     void 'test run with eager init'() {
         given:
-        def context = ApplicationContext.builder().eagerInitSingletons(true).eagerInitConfiguration(true)
+        ApplicationContext context = ApplicationContext.builder().eagerInitSingletons(true).eagerInitConfiguration(true)
                 .start()
 
         expect: "context starts up successfully"
         context != null
+
+        cleanup:
+        context.close()
     }
 }

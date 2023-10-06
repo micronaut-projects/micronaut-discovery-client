@@ -120,6 +120,9 @@ not:
         env.getRequiredProperty('datasource.driver', String) == 'java.SomeDriver'
         !env.getProperty('not.there', Boolean).isPresent()
         !env.getProperty('also.not.there', Boolean).isPresent()
+
+        cleanup:
+        applicationContext.close()
     }
 
 
