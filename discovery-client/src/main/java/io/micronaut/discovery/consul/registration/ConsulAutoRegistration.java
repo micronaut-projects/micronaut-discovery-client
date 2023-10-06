@@ -15,8 +15,11 @@
  */
 package io.micronaut.discovery.consul.registration;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.value.ConvertibleMultiValues;
 import io.micronaut.core.convert.value.ConvertibleValues;
 import io.micronaut.core.util.StringUtils;
@@ -25,12 +28,7 @@ import io.micronaut.discovery.ServiceInstance;
 import io.micronaut.discovery.ServiceInstanceIdGenerator;
 import io.micronaut.discovery.client.registration.DiscoveryServiceAutoRegistration;
 import io.micronaut.discovery.consul.ConsulConfiguration;
-import io.micronaut.discovery.consul.client.v1.Check;
-import io.micronaut.discovery.consul.client.v1.ConsulClient;
-import io.micronaut.discovery.consul.client.v1.HTTPCheck;
-import io.micronaut.discovery.consul.client.v1.NewCheck;
-import io.micronaut.discovery.consul.client.v1.NewServiceEntry;
-import io.micronaut.discovery.consul.client.v1.TTLCheck;
+import io.micronaut.discovery.consul.client.v1.*;
 import io.micronaut.discovery.exceptions.DiscoveryException;
 import io.micronaut.discovery.registration.RegistrationException;
 import io.micronaut.health.HealthStatus;
@@ -47,10 +45,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Auto registration implementation for consul.
@@ -67,6 +62,8 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
     private final ConsulConfiguration consulConfiguration;
     private final ServiceInstanceIdGenerator idGenerator;
     private final Environment environment;
+
+    private static final String DEFAULT_CHECK_STATUS = ConsulCheckStatus.PASSING.toString();
 
     /**
      * @param environment            The environment
@@ -163,7 +160,7 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
                 List<String> tags = new ArrayList<>(registration.getTags());
                 Map<String, String> meta = new HashMap<>(registration.getMeta());
 
-                String address;
+                String address = null;
                 if (registration.isPreferIpAddress()) {
                     address = registration.getIpAddr().orElseGet(() -> {
                         final String host = instance.getHost();
@@ -174,7 +171,8 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
                             throw new RegistrationException("Failed to lookup IP address for host [" + host + "]: " + e.getMessage(), e);
                         }
                     });
-                } else {
+                }
+                if (StringUtils.isEmpty(address)) {
                     address = instance.getHost();
                 }
 
@@ -187,7 +185,6 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
                 serviceEntry.id(serviceId);
 
                 if (instance instanceof EmbeddedServerInstance embeddedServerInstance) {
-                    NewCheck check = null;
                     ApplicationConfiguration applicationConfiguration = embeddedServerInstance.getEmbeddedServer().getApplicationConfiguration();
                     ApplicationConfiguration.InstanceConfiguration instanceConfiguration = applicationConfiguration.getInstance();
                     instanceConfiguration.getGroup().ifPresent(g -> {
@@ -210,53 +207,8 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
 
                     ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration checkConfig = registration.getCheck();
                     if (checkConfig.isEnabled()) {
-
-                        if (heartbeatConfiguration.isEnabled() && !checkConfig.isHttp()) {
-                            TTLCheck ttlCheck = new TTLCheck();
-                            ttlCheck.ttl(heartbeatConfiguration.getInterval().plus(Duration.ofSeconds(10)));
-                            check = ttlCheck;
-                        } else {
-
-                            EmbeddedServer embeddedServer = ((EmbeddedServerInstance) instance).getEmbeddedServer();
-                            URL serverURL = embeddedServer.getURL();
-                            if (registration.isPreferIpAddress() && address != null) {
-
-                                try {
-                                    serverURL = new URL(embeddedServer.getURL().getProtocol(), address, embeddedServer.getPort(), embeddedServer.getURL().getPath());
-                                } catch (MalformedURLException e) {
-                                    if (LOG.isErrorEnabled()) {
-                                        LOG.error("invalid url for health check: {}:{}/{}", embeddedServer.getURL().getProtocol() + address, embeddedServer.getPort(), embeddedServer.getURL().getPath());
-                                    }
-                                    throw new DiscoveryException("Invalid health path configured: " + registration.getHealthPath());
-                                }
-                            }
-
-                            HTTPCheck httpCheck;
-                            try {
-                                httpCheck = new HTTPCheck(
-                                    new URL(serverURL, registration.getHealthPath().orElse("/health"))
-                                );
-                            } catch (MalformedURLException e) {
-                                throw new DiscoveryException("Invalid health path configured: " + registration.getHealthPath());
-                            }
-
-                            httpCheck.interval(checkConfig.getInterval());
-                            httpCheck.method(checkConfig.getMethod())
-                                .headers(ConvertibleMultiValues.of(checkConfig.getHeaders()));
-
-                            checkConfig.getTlsSkipVerify().ifPresent(httpCheck::setTLSSkipVerify);
-                            check = httpCheck;
-                        }
+                        serviceEntry.check(createCheck(checkConfig, instance, registration, address));
                     }
-
-                    if (check != null) {
-                        check.status(Check.Status.PASSING);
-                        checkConfig.getDeregisterCriticalServiceAfter().ifPresent(check::deregisterCriticalServiceAfter);
-                        checkConfig.getNotes().ifPresent(check::notes);
-                        checkConfig.getId().ifPresent(check::id);
-                        serviceEntry.check(check);
-                    }
-
                 }
 
                 customizeServiceEntry(instance, serviceEntry);
@@ -264,6 +216,63 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
                 performRegistration("Consul", registration, instance, registerFlowable);
             }
         }
+    }
+
+    private ConsulCheck createCheck(@NonNull ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration checkConfig,
+                              @NonNull ServiceInstance instance,
+                              @NonNull ConsulConfiguration.ConsulRegistrationConfiguration registration,
+                              @Nullable String address) {
+
+        ConsulCheck check = new ConsulCheck();
+        check.setDeregisterCriticalServiceAfter(deregisterCriticalServiceAfterCheck(checkConfig));
+        checkConfig.getId().ifPresent(check::setId);
+        check.setStatus(DEFAULT_CHECK_STATUS);
+        checkConfig.getNotes().ifPresent(check::setNotes);
+        if (heartbeatConfiguration.isEnabled() && !checkConfig.isHttp()) {
+            check.setTtl(heartbeatConfiguration.getInterval().plus(Duration.ofSeconds(10)).toSeconds() + "s");
+        } else {
+            check.setInterval(checkInternal(checkConfig));
+            httpCheckUrl(instance, registration, address).ifPresent(check::setHttp);
+            check.setMethod(checkConfig.getMethod());
+            checkConfig.getTlsSkipVerify().ifPresent(check::setTlsSkipVerify);
+            check.setHeader(checkConfig.getHeaders());
+        }
+        return check;
+    }
+
+    @Nullable
+    private String deregisterCriticalServiceAfterCheck(@NonNull ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration checkConfig) {
+        return checkConfig.getDeregisterCriticalServiceAfter().map(d -> d.toMinutes() + "m").orElse(null);
+    }
+
+    @Nullable
+    private String checkInternal(@NonNull ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration checkConfig) {
+        return checkConfig.getInterval().toSeconds() + "s";
+    }
+
+    private Optional<URL> httpCheckUrl(@NonNull ServiceInstance instance,
+                                       @NonNull ConsulConfiguration.ConsulRegistrationConfiguration registration,
+                                       @Nullable String address) {
+        if (instance instanceof EmbeddedServerInstance embeddedServerInstance) {
+            EmbeddedServer embeddedServer = embeddedServerInstance.getEmbeddedServer();
+            URL serverURL = embeddedServer.getURL();
+            if (registration.isPreferIpAddress() && address != null) {
+                try {
+                    serverURL = new URL(embeddedServer.getURL().getProtocol(), address, embeddedServer.getPort(), embeddedServer.getURL().getPath());
+                } catch (MalformedURLException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("invalid url for health check: {}:{}/{}", embeddedServer.getURL().getProtocol() + address, embeddedServer.getPort(), embeddedServer.getURL().getPath());
+                    }
+                    throw new DiscoveryException("Invalid health path configured: " + registration.getHealthPath());
+                }
+            }
+            try {
+                return Optional.of(new URL(serverURL, registration.getHealthPath().orElse("/health")));
+            } catch (MalformedURLException e) {
+                throw new DiscoveryException("Invalid health path configured: " + registration.getHealthPath());
+            }
+        }
+        return Optional.empty();
     }
 
     /**

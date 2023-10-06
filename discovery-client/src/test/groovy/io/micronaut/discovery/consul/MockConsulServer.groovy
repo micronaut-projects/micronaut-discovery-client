@@ -21,13 +21,14 @@ import io.micronaut.core.async.annotation.SingleResult
 import io.micronaut.core.async.publisher.Publishers
 import io.micronaut.core.util.StringUtils
 import io.micronaut.discovery.consul.client.v1.CatalogEntry
-import io.micronaut.discovery.consul.client.v1.Check
+import io.micronaut.discovery.consul.client.v1.ConsulCheck
+import io.micronaut.discovery.consul.client.v1.ConsulCheckStatus
 import io.micronaut.discovery.consul.client.v1.ConsulOperations
 import io.micronaut.discovery.consul.client.v1.HealthEntry
 import io.micronaut.discovery.consul.client.v1.KeyValue
 import io.micronaut.discovery.consul.client.v1.LocalAgentConfiguration
 import io.micronaut.discovery.consul.client.v1.MemberEntry
-import io.micronaut.discovery.consul.client.v1.MockCheckEntry
+
 import io.micronaut.discovery.consul.client.v1.MockHealthEntry
 import io.micronaut.discovery.consul.client.v1.NewServiceEntry
 import io.micronaut.discovery.consul.client.v1.ServiceEntry
@@ -56,7 +57,7 @@ class MockConsulServer implements ConsulOperations {
     public static final String ENABLED = 'enable.mock.consul'
 
     Map<String, ServiceEntry> services = new ConcurrentHashMap<>()
-    Map<String, MockCheckEntry> checks = new ConcurrentHashMap<>()
+    Map<String, ConsulCheck> checks = new ConcurrentHashMap<>()
 
     Map<String, List<KeyValue>> keyvalues = new ConcurrentHashMap<>()
 
@@ -137,7 +138,7 @@ class MockConsulServer implements ConsulOperations {
     Publisher<HttpStatus> pass(String checkId, @Nullable String note) {
         passingReports.add(checkId)
         String service = nameFromCheck(checkId)
-        checks.get(service).setStatus(Check.Status.PASSING.name().toLowerCase())
+        checks.get(service).setStatus(ConsulCheckStatus.PASSING.toString())
 
         return Publishers.just(HttpStatus.OK)
     }
@@ -150,7 +151,7 @@ class MockConsulServer implements ConsulOperations {
     @Override
     Publisher<HttpStatus> fail(String checkId, @Nullable String  note) {
         String service = nameFromCheck(checkId)
-        checks.get(service)?.setStatus(Check.Status.CRITICAL.name().toLowerCase())
+        checks.get(service)?.setStatus(ConsulCheckStatus.CRITICAL.toString())
         return Publishers.just(HttpStatus.OK)
     }
 
@@ -180,7 +181,12 @@ class MockConsulServer implements ConsulOperations {
         def service = entry.getName()
         newEntries.put(service, entry)
         services.put(service, new ServiceEntry(entry))
-        checks.computeIfAbsent(service, { String key -> new MockCheckEntry(service)})
+        checks.computeIfAbsent(service, { String key -> {
+            ConsulCheck check = new ConsulCheck()
+            check.setStatus(ConsulCheckStatus.PASSING.toString())
+            check.setId(key)
+            check
+        }})
         return Publishers.just(HttpStatus.OK)
     }
 
@@ -211,7 +217,12 @@ class MockConsulServer implements ConsulOperations {
             def entry = new MockHealthEntry()
             entry.setNode(nodeEntry)
             entry.setService(serviceEntry)
-            entry.setChecks([checks.computeIfAbsent(service, { String key -> new MockCheckEntry(service)})])
+            entry.setChecks([checks.computeIfAbsent(service, { String key -> {
+                ConsulCheck check = new ConsulCheck()
+                check.setStatus(ConsulCheckStatus.PASSING.toString())
+                check.setId(key)
+                check
+            }})])
             healthEntries.add(entry)
         }
         return Publishers.just(healthEntries)

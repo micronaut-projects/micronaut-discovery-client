@@ -18,8 +18,9 @@ package io.micronaut.discovery.consul
 import io.micronaut.context.ApplicationContext
 import io.micronaut.discovery.DiscoveryClient
 import io.micronaut.discovery.ServiceInstance
+import io.micronaut.discovery.consul.client.v1.ConsulCheckStatus
 import io.micronaut.discovery.consul.client.v1.ConsulClient
-import io.micronaut.discovery.consul.client.v1.HTTPCheck
+
 import io.micronaut.discovery.consul.client.v1.HealthEntry
 import io.micronaut.discovery.consul.client.v1.NewServiceEntry
 import io.micronaut.http.HttpMethod
@@ -32,8 +33,6 @@ import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
-
-import java.time.Duration
 
 /**
  * @author graemerocher
@@ -106,8 +105,8 @@ class ConsulMockAutoRegistrationSpec extends Specification {
             instances[0].host == anotherServer.getHost()
             // TTL check by default so now URL
             MockConsulServer.newEntries.get(serviceName).checks.size() == 1
-            MockConsulServer.newEntries.get(serviceName).checks[0].HTTP == null
-            MockConsulServer.newEntries.get(serviceName).checks[0].status == 'passing'
+            MockConsulServer.newEntries.get(serviceName).checks[0].getHttp() == null
+            MockConsulServer.newEntries.get(serviceName).checks[0].getStatus() == 'passing'
         }
 
         when: "stopping the server"
@@ -185,9 +184,8 @@ class ConsulMockAutoRegistrationSpec extends Specification {
             MockConsulServer.newEntries.get(serviceName).checks.size() == 1
             MockConsulServer.newEntries.get(serviceName).tags == ['foo', 'bar']
             MockConsulServer.newEntries.get(serviceName).meta == [foo:'bar',  key:'value']
-            MockConsulServer.newEntries.get(serviceName).checks[0] instanceof HTTPCheck
-            MockConsulServer.newEntries.get(serviceName).checks[0].HTTP == new URL(expectedCheckURI)
-            MockConsulServer.newEntries.get(serviceName).checks[0].status == 'passing'
+            MockConsulServer.newEntries.get(serviceName).checks[0].getHttp() == new URL(expectedCheckURI)
+            MockConsulServer.newEntries.get(serviceName).checks[0].getStatus() == ConsulCheckStatus.PASSING.toString()
         }
 
         cleanup:
@@ -216,10 +214,9 @@ class ConsulMockAutoRegistrationSpec extends Specification {
             MockConsulServer.newEntries.get(serviceName).checks.size() == 1
             MockConsulServer.newEntries.get(serviceName).tags == ['foo', 'bar']
             MockConsulServer.newEntries.get(serviceName).meta == [key: 'value']
-            MockConsulServer.newEntries.get(serviceName).checks[0] instanceof HTTPCheck
-            MockConsulServer.newEntries.get(serviceName).checks[0].HTTP == new URL(expectedCheckURI)
-            MockConsulServer.newEntries.get(serviceName).checks[0].deregisterCriticalServiceAfter() == Duration.ofMinutes(90)
-            MockConsulServer.newEntries.get(serviceName).checks[0].status == 'passing'
+            MockConsulServer.newEntries.get(serviceName).checks[0].getHttp() == new URL(expectedCheckURI)
+            MockConsulServer.newEntries.get(serviceName).checks[0].getDeregisterCriticalServiceAfter() == '90m'
+            MockConsulServer.newEntries.get(serviceName).checks[0].getStatus() == ConsulCheckStatus.PASSING.toString()
         }
 
         cleanup:
@@ -249,10 +246,9 @@ class ConsulMockAutoRegistrationSpec extends Specification {
             MockConsulServer.newEntries.get(serviceName).checks.size() == 1
             MockConsulServer.newEntries.get(serviceName).tags == ['foo', 'bar']
             MockConsulServer.newEntries.get(serviceName).meta == [key: 'value']
-            MockConsulServer.newEntries.get(serviceName).checks[0] instanceof HTTPCheck
-            MockConsulServer.newEntries.get(serviceName).checks[0].HTTP == new URL(expectedCheckURI)
-            MockConsulServer.newEntries.get(serviceName).checks[0].isTLSSkipVerify()
-            MockConsulServer.newEntries.get(serviceName).checks[0].status == 'passing'
+            MockConsulServer.newEntries.get(serviceName).checks[0].getHttp() == new URL(expectedCheckURI)
+            MockConsulServer.newEntries.get(serviceName).checks[0].getTlsSkipVerify()
+            MockConsulServer.newEntries.get(serviceName).checks[0].getStatus() == ConsulCheckStatus.PASSING.toString()
         }
 
         cleanup:
@@ -281,9 +277,8 @@ class ConsulMockAutoRegistrationSpec extends Specification {
             MockConsulServer.newEntries.get(serviceName).checks.size() == 1
             MockConsulServer.newEntries.get(serviceName).tags == ['foo', 'bar']
             MockConsulServer.newEntries.get(serviceName).meta == [key: 'value']
-            MockConsulServer.newEntries.get(serviceName).checks[0] instanceof HTTPCheck
-            MockConsulServer.newEntries.get(serviceName).checks[0].HTTP == new URL(expectedCheckURI)
-            MockConsulServer.newEntries.get(serviceName).checks[0].method.get() == HttpMethod.POST
+            MockConsulServer.newEntries.get(serviceName).checks[0].getHttp() == new URL(expectedCheckURI)
+            MockConsulServer.newEntries.get(serviceName).checks[0].getMethod() == HttpMethod.POST
             MockConsulServer.newEntries.get(serviceName).checks[0].status == 'passing'
         }
 

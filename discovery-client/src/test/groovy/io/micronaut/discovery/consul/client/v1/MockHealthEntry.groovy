@@ -23,7 +23,7 @@ class MockHealthEntry extends HealthEntry{
 
 
     @Override
-    void setChecks(List<Check> checks) {
+    void setChecks(List<ConsulCheck> checks) {
         super.setChecks(checks)
     }
 

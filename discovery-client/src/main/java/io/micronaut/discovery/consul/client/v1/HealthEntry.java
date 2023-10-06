@@ -36,7 +36,7 @@ public class HealthEntry {
 
     private NodeEntry node;
     private ServiceEntry service;
-    private List<Check> checks = Collections.emptyList();
+    private List<ConsulCheck> checks = Collections.emptyList();
 
     /**
      * @return The node for this health entry
@@ -55,7 +55,7 @@ public class HealthEntry {
     /**
      * @return The checks
      */
-    public List<Check> getChecks() {
+    public List<ConsulCheck> getChecks() {
         return checks;
     }
 
@@ -63,7 +63,7 @@ public class HealthEntry {
      * @param checks The list of checks
      */
     @ReflectiveAccess
-    void setChecks(List<Check> checks) {
+    void setChecks(List<ConsulCheck> checks) {
         this.checks = checks;
     }
 

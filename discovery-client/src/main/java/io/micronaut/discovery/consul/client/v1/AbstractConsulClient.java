@@ -41,7 +41,6 @@ import java.util.Optional;
 @SuppressWarnings("unused")
 @Client(id = ConsulClient.SERVICE_ID, path = "/v1", configuration = ConsulConfiguration.class)
 @Requires(beans = ConsulConfiguration.class)
-@TypeHint({TTLCheck.class, HTTPCheck.class})
 @BootstrapContextCompatible
 public abstract class AbstractConsulClient implements ConsulClient {
 

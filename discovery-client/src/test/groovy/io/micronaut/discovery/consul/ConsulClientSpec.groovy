@@ -17,6 +17,7 @@ package io.micronaut.discovery.consul
 
 import io.micronaut.context.env.Environment
 import io.micronaut.context.ApplicationContext
+import io.micronaut.core.annotation.Nullable
 import io.micronaut.discovery.CompositeDiscoveryClient
 import io.micronaut.discovery.DiscoveryClient
 import io.micronaut.discovery.ServiceInstance
@@ -24,6 +25,7 @@ import io.micronaut.http.HttpStatus
 import io.micronaut.discovery.consul.client.v1.*
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Status
 import io.micronaut.runtime.server.EmbeddedServer
 import org.testcontainers.containers.GenericContainer
 import reactor.core.publisher.Flux
@@ -151,11 +153,16 @@ class ConsulClientSpec extends Specification {
     }
 
     void "test register service with health check"() {
-
         when:
-        def check = new HTTPCheck("test-service-check", new URL(embeddedServer.getURL(), '/consul/test'))
-        check.interval('5s')
-        check.deregisterCriticalServiceAfter('90m')
+
+        ConsulCheck check = new ConsulCheck()
+        check.setDeregisterCriticalServiceAfter('90m')
+        check.setName("test-service-check")
+        check.setStatus(ConsulCheckStatus.PASSING.toString())
+        check.setInterval('5s')
+        check.setHttp(new URL(embeddedServer.getURL(), '/consul/test'))
+        check.setTlsSkipVerify(false)
+
         def entry = new NewServiceEntry("test-service")
                 .tags("foo", "bar")
                 .address(embeddedServer.getHost())
@@ -166,8 +173,8 @@ class ConsulClientSpec extends Specification {
 
         then:
         entry.checks.size() == 1
-        entry.checks.first().interval.get() =='5s'
-        entry.checks.first().deregisterCriticalServiceAfter.get() =='90m'
+        entry.checks.first().getInterval() =='5s'
+        entry.checks.first().getDeregisterCriticalServiceAfter() =='90m'
 
         when:
         List<HealthEntry> entries = Flux.from(client.getHealthyServices('test-service')).blockFirst()

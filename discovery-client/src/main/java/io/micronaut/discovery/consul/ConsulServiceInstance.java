@@ -21,10 +21,7 @@ import io.micronaut.core.convert.value.ConvertibleValues;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.ServiceInstance;
-import io.micronaut.discovery.consul.client.v1.Check;
-import io.micronaut.discovery.consul.client.v1.HealthEntry;
-import io.micronaut.discovery.consul.client.v1.NodeEntry;
-import io.micronaut.discovery.consul.client.v1.ServiceEntry;
+import io.micronaut.discovery.consul.client.v1.*;
 import io.micronaut.discovery.exceptions.DiscoveryException;
 import io.micronaut.health.HealthStatus;
 
@@ -77,12 +74,12 @@ public class ConsulServiceInstance implements ServiceInstance {
 
     @Override
     public HealthStatus getHealthStatus() {
-        List<Check> checks = healthEntry.getChecks();
+        List<ConsulCheck> checks = healthEntry.getChecks();
         if (CollectionUtils.isNotEmpty(checks)) {
-            Stream<Check> criticalStream = checks.stream().filter(c -> c.status() == Check.Status.CRITICAL);
-            Optional<Check> first = criticalStream.findFirst();
+            Stream<ConsulCheck> criticalStream = checks.stream().filter(c -> c.getStatus().equals(ConsulCheckStatus.CRITICAL.toString()));
+            Optional<ConsulCheck> first = criticalStream.findFirst();
             if (first.isPresent()) {
-                Check check = first.get();
+                ConsulCheck check = first.get();
                 String notes = check.getNotes();
                 if (StringUtils.isNotEmpty(notes)) {
                     return HealthStatus.DOWN.describe(notes);
