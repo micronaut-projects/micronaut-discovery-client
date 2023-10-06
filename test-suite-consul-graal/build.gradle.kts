@@ -1,7 +1,7 @@
 import java.util.*
 plugins {
     id("org.graalvm.buildtools.native") version "0.9.27"
-    id("io.micronaut.library") version "4.0.0-M8"
+    id("io.micronaut.library") version "4.1.1"
     id("io.micronaut.test-resources") version "4.1.1"
 }
 
