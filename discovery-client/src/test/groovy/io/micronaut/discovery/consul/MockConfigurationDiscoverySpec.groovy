@@ -90,6 +90,7 @@ class MockConfigurationDiscoverySpec extends Specification {
         then:"The value is retrieved again"
         environment.getProperty('must.override1', String).get() == 'changed'
 
+        cleanup:
         applicationContext.close()
     }
 
