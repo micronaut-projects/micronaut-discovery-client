@@ -17,6 +17,7 @@ package io.micronaut.discovery.consul.client.v1;
 
 import io.micronaut.context.annotation.BootstrapContextCompatible;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.annotation.TypeHint;
 import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.core.naming.NameUtils;
 import io.micronaut.discovery.ServiceInstance;
@@ -40,6 +41,7 @@ import java.util.Optional;
 @SuppressWarnings("unused")
 @Client(id = ConsulClient.SERVICE_ID, path = "/v1", configuration = ConsulConfiguration.class)
 @Requires(beans = ConsulConfiguration.class)
+@TypeHint({TTLCheck.class, HTTPCheck.class})
 @BootstrapContextCompatible
 public abstract class AbstractConsulClient implements ConsulClient {
 
