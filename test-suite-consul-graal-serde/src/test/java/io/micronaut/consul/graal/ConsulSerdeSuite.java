@@ -9,5 +9,5 @@ import org.junit.platform.suite.api.SuiteDisplayName;
 @ExcludeClassNamePatterns("io.micronaut.consul.graal.ConsulTest")
 @SelectPackages("io.micronaut.consul.graal")
 @SuiteDisplayName("Consul TCK Micronaut Serialization")
-public class ConsulSerdeSuite {
+class ConsulSerdeSuite {
 }
