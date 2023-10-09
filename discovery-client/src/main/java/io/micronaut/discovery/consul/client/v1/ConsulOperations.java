@@ -130,7 +130,7 @@ public interface ConsulOperations {
      *
      */
     @Put(uri = "/catalog/register", single = true)
-    @Deprecated
+    @Deprecated(since = "4.1.0", forRemoval = true)
     Publisher<Boolean> register(@NotNull @Body CatalogEntry entry);
 
     /**
