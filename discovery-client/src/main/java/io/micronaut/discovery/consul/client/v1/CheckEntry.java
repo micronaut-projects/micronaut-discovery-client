@@ -29,9 +29,11 @@ import java.util.Locale;
 /**
  * @author graemerocher
  * @since 1.0
+ * @deprecated Use {@link io.micronaut.discovery.consul.client.v1.ConsulCheck} instead.
  */
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 @Serdeable
+@Deprecated(forRemoval = true, since = "4.1.0")
 public class CheckEntry implements Check {
 
     private final String id;

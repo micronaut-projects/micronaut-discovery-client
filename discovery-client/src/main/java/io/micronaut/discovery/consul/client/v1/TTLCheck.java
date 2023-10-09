@@ -28,7 +28,10 @@ import java.util.Optional;
  *
  * @author graemerocher
  * @since 1.0
+ * @deprecated Use {@link io.micronaut.discovery.consul.client.v1.ConsulCheck} instead.
+ *
  */
+@Deprecated(forRemoval = true, since = "4.1.0")
 @JsonDeserialize(as = TTLCheck.class)
 public class TTLCheck extends NewCheck {
     private Duration ttl;

@@ -15,20 +15,24 @@
  */
 package io.micronaut.discovery.consul
 
+
 import io.micronaut.context.annotation.Requires
 import io.micronaut.core.annotation.Nullable
 import io.micronaut.core.async.annotation.SingleResult
 import io.micronaut.core.async.publisher.Publishers
 import io.micronaut.core.util.StringUtils
 import io.micronaut.discovery.consul.client.v1.CatalogEntry
-import io.micronaut.discovery.consul.client.v1.Check
+import io.micronaut.discovery.consul.client.v1.ConsulCatalogEntry
+import io.micronaut.discovery.consul.client.v1.ConsulCheck
+import io.micronaut.discovery.consul.client.v1.ConsulCheckStatus
+import io.micronaut.discovery.consul.client.v1.ConsulNewServiceEntry
 import io.micronaut.discovery.consul.client.v1.ConsulOperations
+import io.micronaut.discovery.consul.client.v1.ConsulServiceEntry
+import io.micronaut.discovery.consul.client.v1.ConsulHealthEntry
 import io.micronaut.discovery.consul.client.v1.HealthEntry
 import io.micronaut.discovery.consul.client.v1.KeyValue
 import io.micronaut.discovery.consul.client.v1.LocalAgentConfiguration
 import io.micronaut.discovery.consul.client.v1.MemberEntry
-import io.micronaut.discovery.consul.client.v1.MockCheckEntry
-import io.micronaut.discovery.consul.client.v1.MockHealthEntry
 import io.micronaut.discovery.consul.client.v1.NewServiceEntry
 import io.micronaut.discovery.consul.client.v1.ServiceEntry
 import io.micronaut.http.HttpStatus
@@ -55,14 +59,14 @@ import java.util.stream.Collectors
 class MockConsulServer implements ConsulOperations {
     public static final String ENABLED = 'enable.mock.consul'
 
-    Map<String, ServiceEntry> services = new ConcurrentHashMap<>()
-    Map<String, MockCheckEntry> checks = new ConcurrentHashMap<>()
+    Map<String, ConsulServiceEntry> consulServices = new ConcurrentHashMap<>()
+    Map<String, ConsulCheck> checks = new ConcurrentHashMap<>()
 
     Map<String, List<KeyValue>> keyvalues = new ConcurrentHashMap<>()
 
-    final CatalogEntry nodeEntry
+    final ConsulCatalogEntry nodeEntry
 
-    static Map<String, NewServiceEntry> newEntries
+    static Map<String, ConsulNewServiceEntry> newEntries
     static List<String> passingReports = []
 
     final MemberEntry agent = new MemberEntry().tap {
@@ -75,11 +79,11 @@ class MockConsulServer implements ConsulOperations {
     MockConsulServer(EmbeddedServer embeddedServer) {
         newEntries = [:]
         passingReports.clear()
-        nodeEntry = new CatalogEntry(UUID.randomUUID().toString(), InetAddress.localHost)
+        nodeEntry = new ConsulCatalogEntry(UUID.randomUUID().toString(), InetAddress.localHost, null, null, null, null)
     }
 
     void reset() {
-        services.clear()
+        consulServices.clear()
         checks.clear()
         passingReports.clear()
         newEntries = [:]
@@ -137,7 +141,7 @@ class MockConsulServer implements ConsulOperations {
     Publisher<HttpStatus> pass(String checkId, @Nullable String note) {
         passingReports.add(checkId)
         String service = nameFromCheck(checkId)
-        checks.get(service).setStatus(Check.Status.PASSING.name().toLowerCase())
+        checks.get(service).setStatus(ConsulCheckStatus.PASSING.toString())
 
         return Publishers.just(HttpStatus.OK)
     }
@@ -150,7 +154,7 @@ class MockConsulServer implements ConsulOperations {
     @Override
     Publisher<HttpStatus> fail(String checkId, @Nullable String  note) {
         String service = nameFromCheck(checkId)
-        checks.get(service)?.setStatus(Check.Status.CRITICAL.name().toLowerCase())
+        checks.get(service)?.setStatus(ConsulCheckStatus.CRITICAL.toString())
         return Publishers.just(HttpStatus.OK)
     }
 
@@ -165,53 +169,90 @@ class MockConsulServer implements ConsulOperations {
         return Publishers.just("localhost")
     }
 
+    @Deprecated
     @Override
     Publisher<Boolean> register(@NotNull @Body CatalogEntry entry) {
         return Publishers.just(true)
     }
 
+    @Deprecated
     @Override
     Publisher<Boolean> deregister(@NotNull @Body CatalogEntry entry) {
         return Publishers.just(true)
     }
 
     @Override
-    Publisher<HttpStatus> register(@NotNull @Body NewServiceEntry entry) {
-        def service = entry.getName()
+    Publisher<Boolean> register(@NotNull @Body ConsulCatalogEntry entry) {
+        return Publishers.just(true)
+    }
+
+    @Override
+    Publisher<Boolean> deregister(@NotNull @Body ConsulCatalogEntry entry) {
+        return Publishers.just(true)
+    }
+
+    @Override
+    Publisher<HttpStatus> register(@NotNull @Body ConsulNewServiceEntry entry) {
+        String service = entry.name()
         newEntries.put(service, entry)
-        services.put(service, new ServiceEntry(entry))
-        checks.computeIfAbsent(service, { String key -> new MockCheckEntry(service)})
+        consulServices.put(service, new ConsulServiceEntry(entry.name(),
+                entry.address(),
+                entry.port(),
+                entry.tags(),
+                entry.id(),
+                entry.meta()))
+        checks.computeIfAbsent(service, { String key -> {
+            ConsulCheck check = new ConsulCheck()
+            check.setStatus(ConsulCheckStatus.PASSING.toString())
+            check.setId(key)
+            check
+        }})
         return Publishers.just(HttpStatus.OK)
+    }
+
+    @Override
+    Publisher<HttpStatus> register(@NotNull @Body NewServiceEntry entry) {
+        return null
     }
 
     @Override
     Publisher<HttpStatus> deregister(@NotNull String service) {
         checks.remove(service)
-        def s = services.find { it.value.ID.isPresent() ? it.value.ID.get().equals(service) : it.value.name == service }
+        def s = consulServices.find { it.value.id() != null ? it.value.id().equals(service) : it.value.service() == service }
         if(s) {
-            services.remove(s.value.name)
+            consulServices.remove(s.value.service())
         }
         else {
-            services.remove(service)
+            consulServices.remove(service)
         }
         return Publishers.just(HttpStatus.OK)
     }
 
+    @Deprecated
     @Override
     Publisher<Map<String, ServiceEntry>> getServices() {
-        return Publishers.just(services)
+        return null
     }
 
     @Override
-    Publisher<List<HealthEntry>> getHealthyServices(
+    Publisher<Map<String, ConsulServiceEntry>> findServices() {
+        return Publishers.just(consulServices)
+    }
+
+    @Override
+    Publisher<List<ConsulHealthEntry>> findHealthyServices(
             @NotNull String service, @Nullable Boolean passing, @Nullable String tag, @Nullable String dc) {
-        ServiceEntry serviceEntry = services.get(service)
-        List<HealthEntry> healthEntries = []
+        ConsulServiceEntry serviceEntry = consulServices.get(service)
+        List<ConsulHealthEntry> healthEntries = []
         if(serviceEntry != null) {
-            def entry = new MockHealthEntry()
-            entry.setNode(nodeEntry)
-            entry.setService(serviceEntry)
-            entry.setChecks([checks.computeIfAbsent(service, { String key -> new MockCheckEntry(service)})])
+            ConsulHealthEntry entry = new ConsulHealthEntry(nodeEntry,
+                    serviceEntry,
+                    [checks.computeIfAbsent(service, { String key -> {
+                ConsulCheck check = new ConsulCheck()
+                check.setStatus(ConsulCheckStatus.PASSING.toString())
+                check.setId(key)
+                check
+            }})])
             healthEntries.add(entry)
         }
         return Publishers.just(healthEntries)
@@ -229,8 +270,8 @@ class MockConsulServer implements ConsulOperations {
 
     @Override
     Publisher<Map<String, List<String>>> getServiceNames() {
-        return Publishers.just(services.collectEntries { String key, ServiceEntry entry ->
-              return [(key): entry.tags]
+        return Publishers.just(consulServices.collectEntries { String key, ConsulServiceEntry entry ->
+              return [(key): entry.tags()]
         })
     }
 
@@ -251,4 +292,11 @@ class MockConsulServer implements ConsulOperations {
             metadata = [ "os_version": "ubuntu_16.04" ]
         })
     }
+
+    @Deprecated
+    @Override
+    Publisher<List<HealthEntry>> getHealthyServices(@NotNull String service, @Nullable Boolean passing, @Nullable String tag, @Nullable String dc) {
+        return null
+    }
+
 }

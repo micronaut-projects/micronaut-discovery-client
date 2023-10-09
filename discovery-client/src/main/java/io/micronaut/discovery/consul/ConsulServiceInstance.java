@@ -21,14 +21,9 @@ import io.micronaut.core.convert.value.ConvertibleValues;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.ServiceInstance;
-import io.micronaut.discovery.consul.client.v1.Check;
-import io.micronaut.discovery.consul.client.v1.HealthEntry;
-import io.micronaut.discovery.consul.client.v1.NodeEntry;
-import io.micronaut.discovery.consul.client.v1.ServiceEntry;
+import io.micronaut.discovery.consul.client.v1.*;
 import io.micronaut.discovery.exceptions.DiscoveryException;
 import io.micronaut.health.HealthStatus;
-
-import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
@@ -46,28 +41,28 @@ import java.util.stream.Stream;
  */
 public class ConsulServiceInstance implements ServiceInstance {
 
-    private final HealthEntry healthEntry;
+    private final ConsulHealthEntry healthEntry;
     private final URI uri;
     private ConvertibleValues<String> metadata;
 
     /**
-     * Constructs a {@link ConsulServiceInstance} for the given {@link HealthEntry} and scheme.
+     * Constructs a {@link ConsulServiceInstance} for the given {@link ConsulHealthEntry} and scheme.
      *
      * @param healthEntry The health entry
      * @param scheme      The scheme
      */
-    public ConsulServiceInstance(@NonNull HealthEntry healthEntry, @Nullable String scheme) {
-        Objects.requireNonNull(healthEntry, "HealthEntry cannot be null");
+    public ConsulServiceInstance(@NonNull ConsulHealthEntry healthEntry, @Nullable String scheme) {
+        Objects.requireNonNull(healthEntry, "ConsulHealthEntry cannot be null");
         this.healthEntry = healthEntry;
-        ServiceEntry service = healthEntry.getService();
-        Objects.requireNonNull(service, "HealthEntry cannot reference a null service entry");
-        NodeEntry node = healthEntry.getNode();
-        Objects.requireNonNull(service, "HealthEntry cannot reference a null node entry");
+        ConsulServiceEntry service = healthEntry.service();
+        Objects.requireNonNull(service, "ConsulHealthEntry cannot reference a null service entry");
+        ConsulCatalogEntry node = healthEntry.node();
+        Objects.requireNonNull(service, "ConsulHealthEntry cannot reference a null node entry");
 
-        InetAddress inetAddress = service.getAddress().orElse(node.getAddress());
-        int port = service.getPort().orElse(-1);
+        String inetAddress = service.address() != null ? service.address() : node.address().getHostAddress();
+        int port = service.port() != null ? service.port() : -1;
         String portSuffix = port > -1 ? ":" + port : "";
-        String uriStr = (scheme != null ? scheme + "://" : "http://") + inetAddress.getHostName() + portSuffix;
+        String uriStr = (scheme != null ? scheme + "://" : "http://") + inetAddress + portSuffix;
         try {
             this.uri = new URI(uriStr);
         } catch (URISyntaxException e) {
@@ -75,14 +70,27 @@ public class ConsulServiceInstance implements ServiceInstance {
         }
     }
 
+    /**
+     * Constructs a {@link ConsulServiceInstance} for the given {@link ConsulHealthEntry} and scheme.
+     *
+     * @param healthEntry The health entry
+     * @param scheme      The scheme
+     * @deprecated use {@link ConsulServiceInstance(ConsulHealthEntry, String)} instead.
+     */
+    @Deprecated(since = "4.1.0", forRemoval = true)
+    public ConsulServiceInstance(@NonNull HealthEntry healthEntry, @Nullable String scheme) {
+        this.healthEntry = null;
+        this.uri = null;
+    }
+
     @Override
     public HealthStatus getHealthStatus() {
-        List<Check> checks = healthEntry.getChecks();
+        List<ConsulCheck> checks = healthEntry.checks();
         if (CollectionUtils.isNotEmpty(checks)) {
-            Stream<Check> criticalStream = checks.stream().filter(c -> c.status() == Check.Status.CRITICAL);
-            Optional<Check> first = criticalStream.findFirst();
+            Stream<ConsulCheck> criticalStream = checks.stream().filter(c -> c.getStatus().equals(ConsulCheckStatus.CRITICAL.toString()));
+            Optional<ConsulCheck> first = criticalStream.findFirst();
             if (first.isPresent()) {
-                Check check = first.get();
+                ConsulCheck check = first.get();
                 String notes = check.getNotes();
                 if (StringUtils.isNotEmpty(notes)) {
                     return HealthStatus.DOWN.describe(notes);
@@ -95,20 +103,22 @@ public class ConsulServiceInstance implements ServiceInstance {
     }
 
     /**
-     * @return The {@link HealthEntry}
+     * @return The {@link ConsulHealthEntry}
+     * @deprecated not used
      */
+    @Deprecated(forRemoval = true, since = "4.1.0")
     public HealthEntry getHealthEntry() {
-        return healthEntry;
+        return null;
     }
 
     @Override
     public String getId() {
-        return healthEntry.getService().getName();
+        return healthEntry.service().id();
     }
 
     @Override
     public Optional<String> getInstanceId() {
-        return healthEntry.getService().getID();
+        return Optional.ofNullable(healthEntry.service().id());
     }
 
     @Override
@@ -132,18 +142,23 @@ public class ConsulServiceInstance implements ServiceInstance {
     }
 
     private ConvertibleValues<String> buildMetadata() {
-        Map<CharSequence, String> map = new LinkedHashMap<>(healthEntry.getNode().getNodeMetadata());
-        List<String> tags = healthEntry.getService().getTags();
-        for (String tag : tags) {
-            int i = tag.indexOf('=');
-            if (i > -1) {
-                map.put(tag.substring(0, i), tag.substring(i + 1));
+
+        Map<CharSequence, String> map = healthEntry.node().nodeMetadata() != null ?
+            new LinkedHashMap<>(healthEntry.node().nodeMetadata()) : new LinkedHashMap<>();
+        List<String> tags = healthEntry.service().tags();
+        if (tags != null) {
+            for (String tag : tags) {
+                int i = tag.indexOf('=');
+                if (i > -1) {
+                    map.put(tag.substring(0, i), tag.substring(i + 1));
+                }
             }
         }
 
-        Map<String, String> meta = healthEntry.getService().getMeta();
-        map.putAll(meta);
-
+        Map<String, String> meta = healthEntry.service().meta();
+        if (meta != null) {
+            map.putAll(meta);
+        }
         return ConvertibleValues.of(map);
     }
 }

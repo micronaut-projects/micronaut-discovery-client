@@ -33,10 +33,12 @@ import java.util.Optional;
  * @author Graeme Rocher
  * @see HTTPCheck
  * @since 1.0
+ * @deprecated Use {@link io.micronaut.discovery.consul.client.v1.ConsulCheck} instead.
  */
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 @Serdeable
 @ReflectiveAccess
+@Deprecated(forRemoval = true, since = "4.1.0")
 public abstract class NewCheck implements Check {
 
     private Duration deregisterCriticalServiceAfter;

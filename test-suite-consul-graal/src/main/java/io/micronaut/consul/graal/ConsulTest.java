@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Property(name = "spec.name", value = "ConsulTest")
 @MicronautTest
 @SuppressWarnings({
+    "java:S5960",
     "java:S5960", // This is a TCK. Assertions are ok.
 })
 class ConsulTest {

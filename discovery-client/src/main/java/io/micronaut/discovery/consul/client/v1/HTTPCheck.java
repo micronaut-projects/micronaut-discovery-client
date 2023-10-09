@@ -15,6 +15,17 @@
  */
 package io.micronaut.discovery.consul.client.v1;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.annotation.ReflectiveAccess;
+import io.micronaut.core.convert.ConversionService;
+import io.micronaut.core.convert.value.ConvertibleMultiValues;
+import io.micronaut.http.HttpMethod;
+
 import java.net.URL;
 import java.time.Duration;
 import java.util.List;
@@ -22,26 +33,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
-
-import io.micronaut.core.annotation.Nullable;
-import io.micronaut.core.annotation.ReflectiveAccess;
-import io.micronaut.core.convert.ConversionService;
-import io.micronaut.core.convert.value.ConvertibleMultiValues;
-import io.micronaut.http.HttpMethod;
-
 /**
  * A class representing an HTTP check. See https://www.consul.io/api/agent/check.html.
  *
  * @author Graeme Rocher
  * @since 1.0
+ * @deprecated Use {@link io.micronaut.discovery.consul.client.v1.ConsulCheck} instead.
  */
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 @JsonDeserialize(as = HTTPCheck.class)
+@Deprecated(forRemoval = true, since = "4.1.0")
 public class HTTPCheck extends NewCheck {
 
     private Duration interval;

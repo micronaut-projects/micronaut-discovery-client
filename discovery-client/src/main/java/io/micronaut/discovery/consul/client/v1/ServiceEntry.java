@@ -19,14 +19,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-
 import io.micronaut.core.annotation.Nullable;
 
 /**
  * @author graemerocher
  * @since 1.0
+ * @deprecated Use {@link io.micronaut.discovery.consul.client.v1.ConsulServiceEntry} instead.
  */
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
+@Deprecated(forRemoval = true, since = "4.1.0")
 public class ServiceEntry extends AbstractServiceEntry {
 
     /**

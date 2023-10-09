@@ -22,8 +22,11 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 /**
  * @author graemerocher
  * @since 1.0
+ * @deprecated Use {@link io.micronaut.discovery.consul.client.v1.ConsulCheck} instead.
+ *
  */
 @JsonDeserialize(as = CheckEntry.class)
+@Deprecated(forRemoval = true, since = "4.1.0")
 public interface Check {
 
     /**

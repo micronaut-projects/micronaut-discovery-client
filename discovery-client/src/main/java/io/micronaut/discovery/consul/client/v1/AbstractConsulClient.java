@@ -24,9 +24,9 @@ import io.micronaut.discovery.ServiceInstance;
 import io.micronaut.discovery.consul.ConsulConfiguration;
 import io.micronaut.discovery.consul.ConsulServiceInstance;
 import io.micronaut.http.client.annotation.Client;
+import jakarta.inject.Inject;
 import org.reactivestreams.Publisher;
 
-import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -93,10 +93,10 @@ public abstract class AbstractConsulClient implements ConsulClient {
             String tag = discovery.getTags().get(serviceId);
             Optional<String> scheme = Optional.ofNullable(discovery.getSchemes().get(serviceId));
 
-            Publisher<List<HealthEntry>> healthyServicesPublisher = getHealthyServices(serviceId, passing, tag, datacenter);
+            Publisher<List<ConsulHealthEntry>> healthyServicesPublisher = findHealthyServices(serviceId, passing, tag, datacenter);
             return Publishers.map(healthyServicesPublisher, healthEntries -> {
                 List<ServiceInstance> serviceInstances = new ArrayList<>();
-                for (HealthEntry healthEntry : healthEntries) {
+                for (ConsulHealthEntry healthEntry : healthEntries) {
                     serviceInstances.add(new ConsulServiceInstance(healthEntry, scheme.orElse("http")));
                 }
                 return serviceInstances;

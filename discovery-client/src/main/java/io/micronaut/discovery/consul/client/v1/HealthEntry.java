@@ -28,10 +28,12 @@ import io.micronaut.serde.annotation.Serdeable;
  *
  * @author graemerocher
  * @since 1.0
+ * @deprecated Use {@link io.micronaut.discovery.consul.client.v1.ConsulHealthEntry} instead.
  */
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 @Serdeable
 @ReflectiveAccess
+@Deprecated(forRemoval = true, since = "4.1.0")
 public class HealthEntry {
 
     private NodeEntry node;
