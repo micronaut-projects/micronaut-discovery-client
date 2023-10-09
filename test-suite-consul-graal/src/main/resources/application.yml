@@ -1,0 +1,23 @@
+micronaut:
+  application:
+    name: service-discovery
+
+consul:
+  client:
+    registration:
+      enabled: true
+      check:
+        deregister-critical-service-after: 30s
+    default-zone: "${consul.host}:${consul.port}"
+test-resources:
+  containers:
+    consul:
+      image-name: consul:1.9.0
+      hostnames:
+        - consul.host
+      exposed-ports:
+        - consul.port: 8500
+      wait-strategy:
+        http:
+          path: "/v1/status/leader"
+          status-code: 200

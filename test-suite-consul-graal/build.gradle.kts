@@ -1,41 +1,15 @@
-import java.util.*
 plugins {
-    id("org.graalvm.buildtools.native") version "0.9.27"
-    id("io.micronaut.library") version "4.1.1"
-    id("io.micronaut.test-resources") version "4.1.1"
+    id("java-library")
+    id("io.micronaut.build.internal.discovery-client-tests")
 }
-
-repositories {
-    mavenCentral()
-}
-
-micronaut {
-    version.set(libs.versions.micronaut.platform.get())
-}
-
 dependencies {
-    testAnnotationProcessor(mn.micronaut.inject.java)
-    testImplementation(mn.micronaut.http)
-    testImplementation(mn.micronaut.json.core)
-    testImplementation(mn.micronaut.http.client)
-    testImplementation(mn.micronaut.http.server.netty)
-    testImplementation(mn.micronaut.jackson.databind)
-    testImplementation(mnTest.micronaut.test.junit5)
-    testImplementation(libs.awaitility)
-    testImplementation(mn.snakeyaml)
-    testImplementation(projects.micronautDiscoveryClient)
-    testRuntimeOnly(mnLogging.logback.classic)
+    annotationProcessor(mn.micronaut.inject.java)
+    implementation(projects.micronautDiscoveryClient)
+    implementation(mn.micronaut.http)
+    implementation(mn.micronaut.http.client.core)
+    implementation(mnTest.micronaut.test.junit5)
+    implementation(libs.awaitility)
 }
-
-tasks {
-    test {
-        useJUnitPlatform()
-    }
-}
-
-graalvmNative {
-    toolchainDetection.set(false)
-    metadataRepository {
-        enabled.set(true)
-    }
+tasks.named("checkstyleMain").configure {
+    enabled = false
 }
