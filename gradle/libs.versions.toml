@@ -30,5 +30,4 @@ testcontainers-spock = { module = 'org.testcontainers:spock', version.ref = "tes
 testcontainers-vault = { module = 'org.testcontainers:vault', version.ref = "testcontainers" }
 
 junit-jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine' }
-junit-jupiter-api = { module = 'org.junit.jupiter:junit-jupiter-api' }
 junit-platform-engine = { module = "org.junit.platform:junit-platform-suite-engine" }

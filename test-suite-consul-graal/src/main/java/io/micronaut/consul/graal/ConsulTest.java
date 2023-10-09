@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @MicronautTest
 @SuppressWarnings({
     "java:S5960",
+    "java:S5960", // This is a TCK. Assertions are ok.
 })
 class ConsulTest {
 
