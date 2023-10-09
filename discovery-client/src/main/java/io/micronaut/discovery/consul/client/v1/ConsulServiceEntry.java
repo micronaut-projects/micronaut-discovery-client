@@ -24,6 +24,9 @@ import java.util.Map;
 
 /**
  * JSON representation of consul `/agent/services` endpoint.
+ * @since 4.1.0
+ * @author Sergio del Amo
+ *
  * @param service
  * @param address The address of the service
  * @param port The port of the service
