@@ -32,6 +32,9 @@ import java.util.Map;
  * @param id Unique ID of the service
  * @param meta Arbitrary KV metadata linked to the service instance.
  * @param checks Specify a list of checks
+ *
+ * @author Sergio del Amo
+ * @since 4.1.0
  */
 @Serdeable
 public record ConsulNewServiceEntry(
