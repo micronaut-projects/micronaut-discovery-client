@@ -89,6 +89,9 @@ class MockConfigurationDiscoverySpec extends Specification {
 
         then:"The value is retrieved again"
         environment.getProperty('must.override1', String).get() == 'changed'
+
+        cleanup:
+        applicationContext.close()
     }
 
     void "test multiple environment precedence"() {
@@ -161,6 +164,8 @@ class MockConfigurationDiscoverySpec extends Specification {
         expect:
         !result.isPresent()
 
+        cleanup:
+        applicationContext.close()
     }
 
     private void writeValue(String env, String name, String value) {
