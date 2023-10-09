@@ -1,5 +1,6 @@
 package io.micronaut.consul.graal;
 
+import io.micronaut.context.annotation.Property;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
@@ -13,6 +14,7 @@ import java.time.Duration;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Property(name = "spec.name", value = "ConsulTest")
 @MicronautTest
 class ConsulTest {
 

@@ -1,8 +1,10 @@
 package io.micronaut.consul.graal;
 
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 
+@Requires(property = "spec.name", value = "ConsulTest")
 @Controller("/api")
 public class GatewayController {
 
