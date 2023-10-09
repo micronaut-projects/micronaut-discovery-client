@@ -140,7 +140,7 @@ public interface ConsulOperations {
      * @return A {@link Publisher} that emits a boolean true if the operation was successful
      * @deprecated Use {@link ConsulOperations#deregister(ConsulCatalogEntry)} instead.
      */
-    @Deprecated
+    @Deprecated(since = "4.1.0", forRemoval = true)
     Publisher<Boolean> deregister(@NotNull @Body CatalogEntry entry);
 
     /**
