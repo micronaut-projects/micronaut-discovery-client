@@ -56,10 +56,10 @@ public class ConsulServiceInstance implements ServiceInstance {
         this.healthEntry = healthEntry;
         ConsulServiceEntry service = healthEntry.service();
         Objects.requireNonNull(service, "ConsulHealthEntry cannot reference a null service entry");
-        NodeEntry node = healthEntry.node();
+        ConsulCatalogEntry node = healthEntry.node();
         Objects.requireNonNull(service, "ConsulHealthEntry cannot reference a null node entry");
 
-        String inetAddress = service.address() != null ? service.address() : node.getAddress().getHostAddress();
+        String inetAddress = service.address() != null ? service.address() : node.address().getHostAddress();
         int port = service.port() != null ? service.port() : -1;
         String portSuffix = port > -1 ? ":" + port : "";
         String uriStr = (scheme != null ? scheme + "://" : "http://") + inetAddress + portSuffix;
@@ -142,7 +142,9 @@ public class ConsulServiceInstance implements ServiceInstance {
     }
 
     private ConvertibleValues<String> buildMetadata() {
-        Map<CharSequence, String> map = new LinkedHashMap<>(healthEntry.node().getNodeMetadata());
+
+        Map<CharSequence, String> map = healthEntry.node().nodeMetadata() != null ?
+            new LinkedHashMap<>(healthEntry.node().nodeMetadata()) : new LinkedHashMap<>();
         List<String> tags = healthEntry.service().tags();
         if (tags != null) {
             for (String tag : tags) {

@@ -99,7 +99,7 @@ class ConsulClientSpec extends Specification {
     void "test register and deregister catalog entry"() {
         when:
         def url = embeddedServer.getURL()
-        def entry = new ConsulCatalogEntry("test-node", InetAddress.getByName(url.host))
+        def entry = new ConsulCatalogEntry("test-node", InetAddress.getByName(url.host), null, null, null, null)
         boolean result = Flux.from(client.register(entry)).blockFirst()
 
         then:

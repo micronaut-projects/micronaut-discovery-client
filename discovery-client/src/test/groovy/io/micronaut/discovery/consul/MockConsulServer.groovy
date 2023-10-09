@@ -79,7 +79,7 @@ class MockConsulServer implements ConsulOperations {
     MockConsulServer(EmbeddedServer embeddedServer) {
         newEntries = [:]
         passingReports.clear()
-        nodeEntry = new ConsulCatalogEntry(UUID.randomUUID().toString(), InetAddress.localHost)
+        nodeEntry = new ConsulCatalogEntry(UUID.randomUUID().toString(), InetAddress.localHost, null, null, null, null)
     }
 
     void reset() {

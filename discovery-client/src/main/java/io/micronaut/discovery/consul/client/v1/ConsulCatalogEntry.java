@@ -15,75 +15,24 @@
  */
 package io.micronaut.discovery.consul.client.v1;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import io.micronaut.core.annotation.Nullable;
+import io.micronaut.serde.annotation.Serdeable;
 
 import java.net.InetAddress;
 import java.util.Map;
-import java.util.Optional;
 
 /**
- * A catalog entry in Consul. See https://www.consul.io/api/catalog.html.
- *
- * @author graemerocher
- * @since 1.0
+ * A catalog entry in Consul.
+ * @see <a href="https://developer.hashicorp.com/consul/api-docs/catalog#sample-payload">Catalog Sample Payload</a>.
+ * @author sdelamo
+ * @since 4.1.0
  */
-@JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
-public class ConsulCatalogEntry extends NodeEntry {
-    private ConsulNewServiceEntry service;
-
-    /**
-     * Create a new catalog entry.
-     *
-     * @param nodeId  The node ID
-     * @param address The node address
-     */
-    @JsonCreator
-    public ConsulCatalogEntry(@JsonProperty("Node") String nodeId, @JsonProperty("Address") InetAddress address) {
-        super(nodeId, address);
-    }
-
-    @Override
-    public ConsulCatalogEntry datacenter(String datacenter) {
-        return (ConsulCatalogEntry) super.datacenter(datacenter);
-    }
-
-    @Override
-    public ConsulCatalogEntry taggedAddresses(Map<String, String> taggedAddresses) {
-        return (ConsulCatalogEntry) super.taggedAddresses(taggedAddresses);
-    }
-
-    @Override
-    public ConsulCatalogEntry nodeMetadata(Map<String, String> nodeMetadata) {
-        return (ConsulCatalogEntry) super.nodeMetadata(nodeMetadata);
-    }
-
-    /**
-     * See https://www.consul.io/api/catalog.html#service.
-     *
-     * @return The service
-     */
-    public Optional<ConsulNewServiceEntry> getService() {
-        return Optional.ofNullable(service);
-    }
-
-    /**
-     * See https://www.consul.io/api/catalog.html#service.
-     *
-     * @param service The service
-     */
-    public void setService(ConsulNewServiceEntry service) {
-        this.service = service;
-    }
-
-    /**
-     * @param service The service
-     * @return The {@link ConsulCatalogEntry} instance
-     */
-    public ConsulCatalogEntry service(ConsulNewServiceEntry service) {
-        this.service = service;
-        return this;
-    }
+@Serdeable
+public record ConsulCatalogEntry(@Nullable @JsonProperty("Node") String node,
+                                 @Nullable @JsonProperty("Address") InetAddress address,
+                                 @Nullable @JsonProperty("Datacenter") String datacenter,
+                                 @Nullable @JsonProperty("TaggedAddresses") Map<String, String> taggedAddresses,
+                                 @Nullable @JsonProperty("NodeMeta") Map<String, String> nodeMetadata,
+                                 @Nullable @JsonProperty("Service") ConsulNewServiceEntry service) {
 }

@@ -29,7 +29,7 @@ import java.util.List;
  * @param checks Health checks
  */
 @Serdeable
-public record ConsulHealthEntry(@JsonProperty("Node") NodeEntry node,
+public record ConsulHealthEntry(@JsonProperty("Node") ConsulCatalogEntry node,
                                 @JsonProperty("Service") ConsulServiceEntry service,
                                 @JsonProperty("Checks") List<ConsulCheck> checks) {
 }

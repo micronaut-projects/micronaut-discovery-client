@@ -2,7 +2,6 @@ package io.micronaut.discovery.consul
 
 import io.micronaut.core.beans.BeanIntrospection
 import io.micronaut.core.type.Argument
-import io.micronaut.discovery.consul.client.v1.ConsulNewServiceEntry
 import io.micronaut.discovery.consul.client.v1.ConsulServiceEntry
 import io.micronaut.json.JsonMapper
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
