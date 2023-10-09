@@ -27,6 +27,9 @@ import java.util.Map;
 /**
  * Represents a Consul check.
  * <a href="https://developer.hashicorp.com/consul/api-docs/agent/check#json-request-body-schema">Check definition</a>
+ *
+ * @since 4.1.0
+ * @author Sergio del Amo
  */
 @Serdeable
 public class ConsulCheck {
