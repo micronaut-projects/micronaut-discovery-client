@@ -19,7 +19,7 @@ package io.micronaut.discovery.consul.client.v1
  * @author graemerocher
  * @since 1.0
  */
-class MockHealthEntry extends HealthEntry{
+class MockHealthEntry extends ConsulHealthEntry {
 
 
     @Override
@@ -33,7 +33,7 @@ class MockHealthEntry extends HealthEntry{
     }
 
     @Override
-    void setService(ServiceEntry service) {
+    void setService(ConsulServiceEntry service) {
         super.setService(service)
     }
 }

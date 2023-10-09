@@ -32,7 +32,7 @@ import java.util.Optional;
  */
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class CatalogEntry extends NodeEntry {
-    private NewServiceEntry service;
+    private ConsulNewServiceEntry service;
 
     /**
      * Create a new catalog entry.
@@ -65,7 +65,7 @@ public class CatalogEntry extends NodeEntry {
      *
      * @return The service
      */
-    public Optional<NewServiceEntry> getService() {
+    public Optional<ConsulNewServiceEntry> getService() {
         return Optional.ofNullable(service);
     }
 
@@ -74,7 +74,7 @@ public class CatalogEntry extends NodeEntry {
      *
      * @param service The service
      */
-    public void setService(NewServiceEntry service) {
+    public void setService(ConsulNewServiceEntry service) {
         this.service = service;
     }
 
@@ -82,7 +82,7 @@ public class CatalogEntry extends NodeEntry {
      * @param service The service
      * @return The {@link CatalogEntry} instance
      */
-    public CatalogEntry service(NewServiceEntry service) {
+    public CatalogEntry service(ConsulNewServiceEntry service) {
         this.service = service;
         return this;
     }

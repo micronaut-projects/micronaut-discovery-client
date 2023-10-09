@@ -37,7 +37,7 @@ class ConsulCheckSpec extends Specification {
 
         then:
         json
-        json.contains('"ID":"mem"')
+        json.contains('"CheckID":"mem"')
         json.contains('"Name":"Memory utilization"')
         json.contains('"Namespace":"default"')
         json.contains("\"Notes\":\"Ensure we don't oversubscribe memory\"")

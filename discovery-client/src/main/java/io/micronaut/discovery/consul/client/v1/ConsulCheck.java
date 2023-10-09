@@ -39,79 +39,92 @@ public class ConsulCheck {
     /**
      * Specifies a unique ID for this check on the node. This defaults to the "Name" parameter, but it may be necessary to provide an ID for uniqueness. This value will return in the response as "CheckId".
      */
-    @Nullable @JsonProperty("ID")
+    @Nullable
+    @JsonProperty("CheckID")
     private String id;
 
     /**
      * Specifies the namespace of the check you register. This field takes precedence over the ns query parameter, one of several other methods to specify the namespace.
      */
-    @Nullable @JsonProperty("Namespace")
+    @Nullable
+    @JsonProperty("Namespace")
     private String namespace;
 
     /**
      * Specifies the frequency at which to run this check. This is required for HTTP, TCP, and UDP checks.
      */
-    @Nullable @JsonProperty("Interval")
+    @Nullable
+    @JsonProperty("Interval")
     private String interval;
 
     /**
      * Specifies arbitrary information for humans. This is not used by Consul internally.
      */
-    @Nullable @JsonProperty("Notes")
+    @Nullable
+    @JsonProperty("Notes")
     private String notes;
 
     /**
      * Specifies that checks associated with a service should deregister after this time. This is specified as a time duration with suffix like "10m". If a check is in the critical state for more than this configured value, then its associated service (and all of its associated checks) will automatically be deregistered. The minimum timeout is 1 minute, and the process that reaps critical services runs every 30 seconds, so it may take slightly longer than the configured timeout to trigger the deregistration. This should generally be configured with a timeout that's much, much longer than any expected recoverable outage for the given service.
      */
-    @Nullable @JsonProperty("DeregisterCriticalServiceAfter")
+    @Nullable
+    @JsonProperty("DeregisterCriticalServiceAfter")
     private String deregisterCriticalServiceAfter;
 
     /**
      * Specifies command arguments to run to update the status of the check. Prior to Consul 1.0, checks used a single Script field to define the command to run, and would always run in a shell. In Consul 1.0, the Args array was added so that checks can be run without a shell. The Script field is deprecated, and you should include the shell in the Args to run under a shell, eg. "args": ["sh", "-c", "..."].
      */
-    @Nullable @JsonProperty("Args")
+    @Nullable
+    @JsonProperty("Args")
     private List<String> args;
 
     /**
      * Specifies the ID of the node for an alias check. If no service is specified, the check will alias the health of the node. If a service is specified, the check will alias the specified service on this particular node.
      */
-    @Nullable @JsonProperty("AliasNode")
+    @Nullable
+    @JsonProperty("AliasNode")
     private String aliasNode;
 
     /**
      * Specifies the ID of a service for an alias check. If the service is not registered with the same agent, AliasNode must also be specified. Note this is the service ID and not the service name (though they are very often the same).
      */
-    @Nullable @JsonProperty("AliasService")
+    @Nullable
+    @JsonProperty("AliasService")
     private String aliasService;
 
     /**
      * Specifies that the check is a Docker check, and Consul will evaluate the script every Interval in the given container using the specified Shell. Note that Shell is currently only supported for Docker checks.
      */
-    @Nullable @JsonProperty("DockerContainerID")
+    @Nullable
+    @JsonProperty("DockerContainerID")
     private String dockerContainerID;
 
     /**
      * Specifies a gRPC check's endpoint that supports the standard gRPC health checking protocol. The state of the check will be updated at the given Interval by probing the configured endpoint. Add the service identifier after the gRPC check's endpoint in the following format to check for a specific service instead of the whole gRPC server /:service_identifier.
      */
-    @Nullable @JsonProperty("GRPC")
+    @Nullable
+    @JsonProperty("GRPC")
     private String grpc;
 
     /**
      * Specifies whether to use TLS for this gRPC health check. If TLS is enabled, then by default, a valid TLS certificate is expected. Certificate verification can be turned off by setting TLSSkipVerify to true.
      */
-    @Nullable @JsonProperty("GRPCUseTLS")
+    @Nullable
+    @JsonProperty("GRPCUseTLS")
     private Boolean grpcUseTls;
 
     /**
      * Specifies an address that uses http2 to run a ping check on. At the specified Interval, a connection is made to the address, and a ping is sent. If the ping is successful, the check will be classified as passing, otherwise it will be marked as critical. TLS is used by default. To disable TLS and use h2c, set H2PingUseTLS to false. If TLS is enabled, a valid SSL certificate is required by default, but verification can be removed with TLSSkipVerify.
      */
-    @Nullable @JsonProperty("H2PING")
+    @Nullable
+    @JsonProperty("H2PING")
     private String h2ping;
 
     /**
      * Specifies if TLS should be used for H2PING check. If TLS is enabled, a valid SSL certificate is required by default, but verification can be removed with TLSSkipVerify.
      */
-    @Nullable @JsonProperty("H2PingUseTLS")
+    @Nullable
+    @JsonProperty("H2PingUseTLS")
     private Boolean h2PingUseTLS;
 
     /**

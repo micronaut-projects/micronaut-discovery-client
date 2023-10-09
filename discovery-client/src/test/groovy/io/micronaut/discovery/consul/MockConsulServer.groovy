@@ -15,6 +15,7 @@
  */
 package io.micronaut.discovery.consul
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import io.micronaut.context.annotation.Requires
 import io.micronaut.core.annotation.Nullable
 import io.micronaut.core.async.annotation.SingleResult
@@ -23,15 +24,16 @@ import io.micronaut.core.util.StringUtils
 import io.micronaut.discovery.consul.client.v1.CatalogEntry
 import io.micronaut.discovery.consul.client.v1.ConsulCheck
 import io.micronaut.discovery.consul.client.v1.ConsulCheckStatus
+import io.micronaut.discovery.consul.client.v1.ConsulNewServiceEntry
 import io.micronaut.discovery.consul.client.v1.ConsulOperations
-import io.micronaut.discovery.consul.client.v1.HealthEntry
+import io.micronaut.discovery.consul.client.v1.ConsulServiceEntry
+import io.micronaut.discovery.consul.client.v1.ConsulHealthEntry
 import io.micronaut.discovery.consul.client.v1.KeyValue
 import io.micronaut.discovery.consul.client.v1.LocalAgentConfiguration
 import io.micronaut.discovery.consul.client.v1.MemberEntry
 
 import io.micronaut.discovery.consul.client.v1.MockHealthEntry
-import io.micronaut.discovery.consul.client.v1.NewServiceEntry
-import io.micronaut.discovery.consul.client.v1.ServiceEntry
+
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
@@ -56,14 +58,14 @@ import java.util.stream.Collectors
 class MockConsulServer implements ConsulOperations {
     public static final String ENABLED = 'enable.mock.consul'
 
-    Map<String, ServiceEntry> services = new ConcurrentHashMap<>()
+    Map<String, ConsulServiceEntry> services = new ConcurrentHashMap<>()
     Map<String, ConsulCheck> checks = new ConcurrentHashMap<>()
 
     Map<String, List<KeyValue>> keyvalues = new ConcurrentHashMap<>()
 
     final CatalogEntry nodeEntry
 
-    static Map<String, NewServiceEntry> newEntries
+    static Map<String, ConsulNewServiceEntry> newEntries
     static List<String> passingReports = []
 
     final MemberEntry agent = new MemberEntry().tap {
@@ -177,10 +179,15 @@ class MockConsulServer implements ConsulOperations {
     }
 
     @Override
-    Publisher<HttpStatus> register(@NotNull @Body NewServiceEntry entry) {
-        def service = entry.getName()
+    Publisher<HttpStatus> register(@NotNull @Body ConsulNewServiceEntry entry) {
+        String service = entry.name()
         newEntries.put(service, entry)
-        services.put(service, new ServiceEntry(entry))
+        services.put(service, new ConsulServiceEntry(entry.name(),
+                entry.address(),
+                entry.port(),
+                entry.tags(),
+                entry.id(),
+                entry.meta()))
         checks.computeIfAbsent(service, { String key -> {
             ConsulCheck check = new ConsulCheck()
             check.setStatus(ConsulCheckStatus.PASSING.toString())
@@ -193,9 +200,9 @@ class MockConsulServer implements ConsulOperations {
     @Override
     Publisher<HttpStatus> deregister(@NotNull String service) {
         checks.remove(service)
-        def s = services.find { it.value.ID.isPresent() ? it.value.ID.get().equals(service) : it.value.name == service }
+        def s = services.find { it.value.id() != null ? it.value.id().equals(service) : it.value.service() == service }
         if(s) {
-            services.remove(s.value.name)
+            services.remove(s.value.service())
         }
         else {
             services.remove(service)
@@ -204,15 +211,15 @@ class MockConsulServer implements ConsulOperations {
     }
 
     @Override
-    Publisher<Map<String, ServiceEntry>> getServices() {
+    Publisher<Map<String, ConsulServiceEntry>> getServices() {
         return Publishers.just(services)
     }
 
     @Override
-    Publisher<List<HealthEntry>> getHealthyServices(
+    Publisher<List<ConsulHealthEntry>> getHealthyServices(
             @NotNull String service, @Nullable Boolean passing, @Nullable String tag, @Nullable String dc) {
-        ServiceEntry serviceEntry = services.get(service)
-        List<HealthEntry> healthEntries = []
+        ConsulServiceEntry serviceEntry = services.get(service)
+        List<ConsulHealthEntry> healthEntries = []
         if(serviceEntry != null) {
             def entry = new MockHealthEntry()
             entry.setNode(nodeEntry)
@@ -240,8 +247,8 @@ class MockConsulServer implements ConsulOperations {
 
     @Override
     Publisher<Map<String, List<String>>> getServiceNames() {
-        return Publishers.just(services.collectEntries { String key, ServiceEntry entry ->
-              return [(key): entry.tags]
+        return Publishers.just(services.collectEntries { String key, ConsulServiceEntry entry ->
+              return [(key): entry.tags()]
         })
     }
 

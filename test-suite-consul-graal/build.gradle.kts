@@ -19,7 +19,6 @@ dependencies {
     testImplementation(mn.micronaut.json.core)
     testImplementation(mn.micronaut.http.client)
     testImplementation(mn.micronaut.http.server.netty)
-    //testImplementation(mn.micronaut.jackson.databind)
     testImplementation(mnSerde.micronaut.serde.jackson)
     testImplementation(mnTest.micronaut.test.junit5)
     testImplementation(libs.awaitility)

@@ -150,7 +150,7 @@ public interface ConsulOperations {
         attempts = AbstractConsulClient.CONSUL_REGISTRATION_RETRY_COUNT,
         delay = AbstractConsulClient.CONSUL_REGISTRATION_RETRY_DELAY
     )
-    Publisher<HttpStatus> register(@NotNull @Body NewServiceEntry entry);
+    Publisher<HttpStatus> register(@NotNull @Body ConsulNewServiceEntry entry);
 
     /**
      * Register a new {@link CatalogEntry}. See https://www.consul.io/api/catalog.html.
@@ -168,10 +168,10 @@ public interface ConsulOperations {
     /**
      * Gets all of the registered services.
      *
-     * @return The {@link NewServiceEntry} instances
+     * @return The {@link ConsulServiceEntry} instances
      */
     @Get(uri = "/agent/services", single = true)
-    Publisher<Map<String, ServiceEntry>> getServices();
+    Publisher<Map<String, ConsulServiceEntry>> getServices();
 
     /**
      * Returns the members the agent sees in the cluster gossip pool.
@@ -196,10 +196,10 @@ public interface ConsulOperations {
      * @param passing The passing parameter
      * @param tag     The tag
      * @param dc      The dc
-     * @return The {@link HealthEntry} instances
+     * @return The {@link ConsulHealthEntry} instances
      */
     @Get(uri = "/health/service/{service}{?passing,tag,dc}", single = true)
-    Publisher<List<HealthEntry>> getHealthyServices(
+    Publisher<List<ConsulHealthEntry>> getHealthyServices(
         @NotNull String service,
         @Nullable Boolean passing,
         @Nullable String tag,
@@ -264,9 +264,9 @@ public interface ConsulOperations {
      * Gets service health information. Defaults to return both non-healthy and healthy services.
      *
      * @param service The service
-     * @return The {@link HealthEntry} instances
+     * @return The {@link ConsulHealthEntry} instances
      */
-    default Publisher<List<HealthEntry>> getHealthyServices(@NotNull String service) {
+    default Publisher<List<ConsulHealthEntry>> getHealthyServices(@NotNull String service) {
         return getHealthyServices(service, null, null, null);
     }
 }

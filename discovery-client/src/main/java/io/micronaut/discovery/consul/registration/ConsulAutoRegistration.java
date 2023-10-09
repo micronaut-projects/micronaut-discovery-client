@@ -156,66 +156,80 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
             String applicationName = instance.getId();
             validateApplicationName(applicationName);
             if (StringUtils.isNotEmpty(applicationName)) {
-                NewServiceEntry serviceEntry = new NewServiceEntry(applicationName);
-                List<String> tags = new ArrayList<>(registration.getTags());
+                String address = address(instance, registration);
                 Map<String, String> meta = new HashMap<>(registration.getMeta());
-
-                String address = null;
-                if (registration.isPreferIpAddress()) {
-                    address = registration.getIpAddr().orElseGet(() -> {
-                        final String host = instance.getHost();
-                        try {
-                            final InetAddress inetAddress = InetAddress.getByName(host);
-                            return inetAddress.getHostAddress();
-                        } catch (UnknownHostException e) {
-                            throw new RegistrationException("Failed to lookup IP address for host [" + host + "]: " + e.getMessage(), e);
-                        }
-                    });
-                }
-                if (StringUtils.isEmpty(address)) {
-                    address = instance.getHost();
-                }
-
-                serviceEntry.address(address)
-                    .port(instance.getPort())
-                    .tags(tags)
-                    .meta(meta);
-
                 String serviceId = idGenerator.generateId(environment, instance);
-                serviceEntry.id(serviceId);
-
-                if (instance instanceof EmbeddedServerInstance embeddedServerInstance) {
-                    ApplicationConfiguration applicationConfiguration = embeddedServerInstance.getEmbeddedServer().getApplicationConfiguration();
-                    ApplicationConfiguration.InstanceConfiguration instanceConfiguration = applicationConfiguration.getInstance();
-                    instanceConfiguration.getGroup().ifPresent(g -> {
-                            validateName(g, "Instance Group");
-                            tags.add(ServiceInstance.GROUP + "=" + g);
-                        }
-
-                    );
-                    instanceConfiguration.getZone().ifPresent(z -> {
-                            validateName(z, "Instance Zone");
-                            tags.add(ServiceInstance.ZONE + "=" + z);
-                        }
-                    );
-
-                    // include metadata as tags
-                    ConvertibleValues<String> metadata = embeddedServerInstance.getMetadata();
-                    for (Map.Entry<String, String> entry : metadata) {
-                        tags.add(entry.getKey() + "=" + entry.getValue());
-                    }
-
-                    ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration checkConfig = registration.getCheck();
-                    if (checkConfig.isEnabled()) {
-                        serviceEntry.check(createCheck(checkConfig, instance, registration, address));
-                    }
-                }
-
-                customizeServiceEntry(instance, serviceEntry);
+                ConsulNewServiceEntry serviceEntry = new ConsulNewServiceEntry(
+                    applicationName,
+                    address,
+                    instance.getPort(),
+                    tags(instance, registration),
+                    serviceId,
+                    meta,
+                    createChecks(instance, registration, address));
                 Publisher<HttpStatus> registerFlowable = consulClient.register(serviceEntry);
                 performRegistration("Consul", registration, instance, registerFlowable);
             }
         }
+    }
+
+    @NonNull
+    private List<String> tags(@NonNull ServiceInstance instance,
+                              @NonNull ConsulConfiguration.ConsulRegistrationConfiguration registration) {
+        List<String> tags = new ArrayList<>(registration.getTags());
+        if (instance instanceof EmbeddedServerInstance embeddedServerInstance) {
+            ApplicationConfiguration applicationConfiguration = embeddedServerInstance.getEmbeddedServer().getApplicationConfiguration();
+            ApplicationConfiguration.InstanceConfiguration instanceConfiguration = applicationConfiguration.getInstance();
+            instanceConfiguration.getGroup().ifPresent(g -> {
+                    validateName(g, "Instance Group");
+                    tags.add(ServiceInstance.GROUP + "=" + g);
+                }
+
+            );
+            instanceConfiguration.getZone().ifPresent(z -> {
+                    validateName(z, "Instance Zone");
+                    tags.add(ServiceInstance.ZONE + "=" + z);
+                }
+            );
+
+            // include metadata as tags
+            ConvertibleValues<String> metadata = embeddedServerInstance.getMetadata();
+            for (Map.Entry<String, String> entry : metadata) {
+                tags.add(entry.getKey() + "=" + entry.getValue());
+            }
+        }
+        return tags;
+    }
+
+    @NonNull
+    private List<ConsulCheck> createChecks(@NonNull ServiceInstance instance,
+                                           @NonNull ConsulConfiguration.ConsulRegistrationConfiguration registration,
+                                           String address) {
+        ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration checkConfig = registration.getCheck();
+        if (checkConfig.isEnabled()) {
+            return Collections.singletonList(createCheck(checkConfig, instance, registration, address));
+        }
+        return Collections.emptyList();
+    }
+
+    private String address(@NonNull ServiceInstance instance,
+                           @NonNull ConsulConfiguration.ConsulRegistrationConfiguration registration) {
+        String address = null;
+        if (registration.isPreferIpAddress()) {
+            address = registration.getIpAddr().orElseGet(() -> {
+                final String host = instance.getHost();
+                try {
+                    final InetAddress inetAddress = InetAddress.getByName(host);
+                    return inetAddress.getHostAddress();
+                } catch (UnknownHostException e) {
+                    throw new RegistrationException("Failed to lookup IP address for host [" + host + "]: " + e.getMessage(), e);
+                }
+            });
+        }
+        if (StringUtils.isEmpty(address)) {
+            address = instance.getHost();
+        }
+        return address;
     }
 
     private ConsulCheck createCheck(@NonNull ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration checkConfig,
@@ -280,8 +294,10 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
      *
      * @param instance     The instance
      * @param serviceEntry The service entry
+     * @deprecated no longer used
      */
-    protected void customizeServiceEntry(ServiceInstance instance, NewServiceEntry serviceEntry) {
+    @Deprecated(forRemoval = true, since = "4.1.0")
+    protected void customizeServiceEntry(ServiceInstance instance, ConsulNewServiceEntry serviceEntry) {
         // no-op
     }
 }

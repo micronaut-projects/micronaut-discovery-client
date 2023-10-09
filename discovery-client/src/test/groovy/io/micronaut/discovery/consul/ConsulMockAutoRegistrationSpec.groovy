@@ -21,8 +21,8 @@ import io.micronaut.discovery.ServiceInstance
 import io.micronaut.discovery.consul.client.v1.ConsulCheckStatus
 import io.micronaut.discovery.consul.client.v1.ConsulClient
 
-import io.micronaut.discovery.consul.client.v1.HealthEntry
-import io.micronaut.discovery.consul.client.v1.NewServiceEntry
+import io.micronaut.discovery.consul.client.v1.ConsulHealthEntry
+import io.micronaut.discovery.consul.client.v1.ConsulNewServiceEntry
 import io.micronaut.http.HttpMethod
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.HttpClient
@@ -63,7 +63,7 @@ class ConsulMockAutoRegistrationSpec extends Specification {
 
     void 'test mock server'() {
         when:
-        def status = Flux.from(client.register(new NewServiceEntry("test-service"))).blockFirst()
+        def status = Flux.from(client.register(new ConsulNewServiceEntry("test-service", null, null, null, null, null, null))).blockFirst()
         then:
         status
         Flux.from(client.services).blockFirst()
@@ -132,9 +132,9 @@ class ConsulMockAutoRegistrationSpec extends Specification {
 
         then:
         conditions.eventually {
-            List<HealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
+            List<ConsulHealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
             entry.size() == 1
-            entry[0].service.tags == ['foo', 'bar']
+            entry[0].service.tags() == ['foo', 'bar']
         }
 
         cleanup:
@@ -154,9 +154,9 @@ class ConsulMockAutoRegistrationSpec extends Specification {
         then:
         Thread.sleep(30000)
         conditions.eventually {
-            List<HealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
+            List<ConsulHealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
             entry.size() == 1
-            entry[0].service.meta == [foo:'bar',  key:'value']
+            entry[0].service.meta() == [foo:'bar',  key:'value']
         }
 
         cleanup:
@@ -178,14 +178,14 @@ class ConsulMockAutoRegistrationSpec extends Specification {
         then:
 
         conditions.eventually {
-            List<HealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
+            List<ConsulHealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
             entry.size() == 1
-            entry[0].service.tags == ['foo', 'bar']
-            MockConsulServer.newEntries.get(serviceName).checks.size() == 1
-            MockConsulServer.newEntries.get(serviceName).tags == ['foo', 'bar']
-            MockConsulServer.newEntries.get(serviceName).meta == [foo:'bar',  key:'value']
-            MockConsulServer.newEntries.get(serviceName).checks[0].getHttp() == new URL(expectedCheckURI)
-            MockConsulServer.newEntries.get(serviceName).checks[0].getStatus() == ConsulCheckStatus.PASSING.toString()
+            entry[0].service.tags() == ['foo', 'bar']
+            MockConsulServer.newEntries.get(serviceName).checks().size() == 1
+            MockConsulServer.newEntries.get(serviceName).tags() == ['foo', 'bar']
+            MockConsulServer.newEntries.get(serviceName).meta() == [foo:'bar',  key:'value']
+            MockConsulServer.newEntries.get(serviceName).checks()[0].getHttp() == new URL(expectedCheckURI)
+            MockConsulServer.newEntries.get(serviceName).checks()[0].getStatus() == ConsulCheckStatus.PASSING.toString()
         }
 
         cleanup:
@@ -208,7 +208,7 @@ class ConsulMockAutoRegistrationSpec extends Specification {
         then:
 
         conditions.eventually {
-            List<HealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
+            List<ConsulHealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
             entry.size() == 1
             entry[0].service.tags == ['foo', 'bar']
             MockConsulServer.newEntries.get(serviceName).checks.size() == 1
@@ -240,7 +240,7 @@ class ConsulMockAutoRegistrationSpec extends Specification {
 
         then:
         conditions.eventually {
-            List<HealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
+            List<ConsulHealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
             entry.size() == 1
             entry[0].service.tags == ['foo', 'bar']
             MockConsulServer.newEntries.get(serviceName).checks.size() == 1
@@ -271,7 +271,7 @@ class ConsulMockAutoRegistrationSpec extends Specification {
         then:
 
         conditions.eventually {
-            List<HealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
+            List<ConsulHealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
             entry.size() == 1
             entry[0].service.tags == ['foo', 'bar']
             MockConsulServer.newEntries.get(serviceName).checks.size() == 1
@@ -301,7 +301,7 @@ class ConsulMockAutoRegistrationSpec extends Specification {
 
         then:
         conditions.eventually {
-            List<HealthEntry> entry = Flux.from(consulClient.getHealthyServices(serviceName)).blockFirst()
+            List<ConsulHealthEntry> entry = Flux.from(consulClient.getHealthyServices(serviceName)).blockFirst()
             entry.size() == 1
         }
 

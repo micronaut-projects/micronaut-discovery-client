@@ -131,11 +131,10 @@ class ConsulClientSpec extends Specification {
 
         when:
         int oldSize = Flux.from(client.getServices()).blockFirst().size()
-        def entry = new NewServiceEntry("test-service")
-                            .address(embeddedServer.getHost())
-                            .port(embeddedServer.getPort())
+
+        ConsulNewServiceEntry entry = new ConsulNewServiceEntry("test-service", embeddedServer.getHost(), embeddedServer.getPort(), null, null, null, null)
         Flux.from(client.register(entry)).blockFirst()
-        Map<String, ServiceEntry> entries = Flux.from(client.getServices()).blockFirst()
+        Map<String, ConsulServiceEntry> entries = Flux.from(client.getServices()).blockFirst()
 
         then:
         entries.size() == oldSize + 1
@@ -163,48 +162,43 @@ class ConsulClientSpec extends Specification {
         check.setHttp(new URL(embeddedServer.getURL(), '/consul/test'))
         check.setTlsSkipVerify(false)
 
-        def entry = new NewServiceEntry("test-service")
-                .tags("foo", "bar")
-                .address(embeddedServer.getHost())
-                .port(embeddedServer.getPort())
-                .check(check)
-                .id('xxxxxxxx')
+        ConsulNewServiceEntry entry = new ConsulNewServiceEntry("test-service", embeddedServer.getHost(), embeddedServer.getPort(), ["foo", "bar"], 'xxxxxxxx', null, [check])
         Flux.from(client.register(entry)).blockFirst()
 
         then:
-        entry.checks.size() == 1
-        entry.checks.first().getInterval() =='5s'
-        entry.checks.first().getDeregisterCriticalServiceAfter() =='90m'
+        entry.checks().size() == 1
+        entry.checks().first().getInterval() =='5s'
+        entry.checks().first().getDeregisterCriticalServiceAfter() =='90m'
 
         when:
-        List<HealthEntry> entries = Flux.from(client.getHealthyServices('test-service')).blockFirst()
+        List<ConsulHealthEntry> entries = Flux.from(client.getHealthyServices('test-service')).blockFirst()
 
         then:
         entries.size() == 1
 
         when:
-        HealthEntry healthEntry = entries[0]
-        ServiceEntry service = healthEntry.service
+        ConsulHealthEntry healthEntry = entries[0]
+        ConsulServiceEntry service = healthEntry.service
 
         then:
-        service.port.getAsInt() == embeddedServer.getPort()
-        service.address.get().hostName == embeddedServer.getHost()
-        service.name == 'test-service'
-        service.tags == ['foo','bar']
-        service.ID.get() == 'xxxxxxxx'
+        service.port() == embeddedServer.getPort()
+        service.address() == embeddedServer.getHost()
+        service.service() == 'test-service'
+        service.tags() == ['foo','bar']
+        service.id() == 'xxxxxxxx'
 
         when:
         List<ServiceInstance> services = Flux.from(discoveryClient.getInstances('test-service')).blockFirst()
 
         then:
         services.size() == 1
-        services[0].id == 'test-service'
+        services[0].id == 'xxxxxxxx'
         services[0].port == embeddedServer.getPort()
         services[0].host == embeddedServer.getHost()
         services[0].URI == embeddedServer.getURI()
 
         when:
-        HttpStatus result = Flux.from(client.deregister(service.ID.get())).blockFirst()
+        HttpStatus result = Flux.from(client.deregister(service.id())).blockFirst()
 
         then:
         result == HttpStatus.OK

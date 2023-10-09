@@ -32,10 +32,10 @@ import io.micronaut.serde.annotation.Serdeable;
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 @Serdeable
 @ReflectiveAccess
-public class HealthEntry {
+public class ConsulHealthEntry {
 
     private NodeEntry node;
-    private ServiceEntry service;
+    private ConsulServiceEntry service;
     private List<ConsulCheck> checks = Collections.emptyList();
 
     /**
@@ -48,7 +48,7 @@ public class HealthEntry {
     /**
      * @return The service for the health entry
      */
-    public ServiceEntry getService() {
+    public ConsulServiceEntry getService() {
         return service;
     }
 
@@ -79,7 +79,7 @@ public class HealthEntry {
      * @param service The service
      */
     @ReflectiveAccess
-    protected void setService(ServiceEntry service) {
+    protected void setService(ConsulServiceEntry service) {
         this.service = service;
     }
 }

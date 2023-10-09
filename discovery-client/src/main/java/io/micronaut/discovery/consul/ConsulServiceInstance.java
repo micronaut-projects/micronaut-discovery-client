@@ -43,28 +43,28 @@ import java.util.stream.Stream;
  */
 public class ConsulServiceInstance implements ServiceInstance {
 
-    private final HealthEntry healthEntry;
+    private final ConsulHealthEntry healthEntry;
     private final URI uri;
     private ConvertibleValues<String> metadata;
 
     /**
-     * Constructs a {@link ConsulServiceInstance} for the given {@link HealthEntry} and scheme.
+     * Constructs a {@link ConsulServiceInstance} for the given {@link ConsulHealthEntry} and scheme.
      *
      * @param healthEntry The health entry
      * @param scheme      The scheme
      */
-    public ConsulServiceInstance(@NonNull HealthEntry healthEntry, @Nullable String scheme) {
-        Objects.requireNonNull(healthEntry, "HealthEntry cannot be null");
+    public ConsulServiceInstance(@NonNull ConsulHealthEntry healthEntry, @Nullable String scheme) {
+        Objects.requireNonNull(healthEntry, "ConsulHealthEntry cannot be null");
         this.healthEntry = healthEntry;
-        ServiceEntry service = healthEntry.getService();
-        Objects.requireNonNull(service, "HealthEntry cannot reference a null service entry");
+        ConsulServiceEntry service = healthEntry.getService();
+        Objects.requireNonNull(service, "ConsulHealthEntry cannot reference a null service entry");
         NodeEntry node = healthEntry.getNode();
-        Objects.requireNonNull(service, "HealthEntry cannot reference a null node entry");
+        Objects.requireNonNull(service, "ConsulHealthEntry cannot reference a null node entry");
 
-        InetAddress inetAddress = service.getAddress().orElse(node.getAddress());
-        int port = service.getPort().orElse(-1);
+        String inetAddress = service.address() != null ? service.address() : node.getAddress().getHostAddress();
+        int port = service.port() != null ? service.port() : -1;
         String portSuffix = port > -1 ? ":" + port : "";
-        String uriStr = (scheme != null ? scheme + "://" : "http://") + inetAddress.getHostName() + portSuffix;
+        String uriStr = (scheme != null ? scheme + "://" : "http://") + inetAddress + portSuffix;
         try {
             this.uri = new URI(uriStr);
         } catch (URISyntaxException e) {
@@ -92,20 +92,20 @@ public class ConsulServiceInstance implements ServiceInstance {
     }
 
     /**
-     * @return The {@link HealthEntry}
+     * @return The {@link ConsulHealthEntry}
      */
-    public HealthEntry getHealthEntry() {
+    public ConsulHealthEntry getConsulHealthEntry() {
         return healthEntry;
     }
 
     @Override
     public String getId() {
-        return healthEntry.getService().getName();
+        return healthEntry.getService().id();
     }
 
     @Override
     public Optional<String> getInstanceId() {
-        return healthEntry.getService().getID();
+        return Optional.ofNullable(healthEntry.getService().id());
     }
 
     @Override
@@ -130,17 +130,20 @@ public class ConsulServiceInstance implements ServiceInstance {
 
     private ConvertibleValues<String> buildMetadata() {
         Map<CharSequence, String> map = new LinkedHashMap<>(healthEntry.getNode().getNodeMetadata());
-        List<String> tags = healthEntry.getService().getTags();
-        for (String tag : tags) {
-            int i = tag.indexOf('=');
-            if (i > -1) {
-                map.put(tag.substring(0, i), tag.substring(i + 1));
+        List<String> tags = healthEntry.getService().tags();
+        if (tags != null) {
+            for (String tag : tags) {
+                int i = tag.indexOf('=');
+                if (i > -1) {
+                    map.put(tag.substring(0, i), tag.substring(i + 1));
+                }
             }
         }
 
-        Map<String, String> meta = healthEntry.getService().getMeta();
-        map.putAll(meta);
-
+        Map<String, String> meta = healthEntry.getService().meta();
+        if (meta != null) {
+            map.putAll(meta);
+        }
         return ConvertibleValues.of(map);
     }
 }
