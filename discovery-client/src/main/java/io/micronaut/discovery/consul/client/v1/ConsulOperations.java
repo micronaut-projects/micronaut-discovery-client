@@ -223,6 +223,7 @@ public interface ConsulOperations {
      * @param tag     The tag
      * @param dc      The dc
      * @return The {@link HealthEntry} instances
+     * @deprecated Use {@link ConsulOperations#findHealthyServices(String, Boolean, String, String)} instead.
      */
     @Get(uri = "/health/service/{service}{?passing,tag,dc}", single = true)
     @Deprecated(forRemoval = true, since = "4.1.0")
