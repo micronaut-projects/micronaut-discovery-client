@@ -1,8 +1,6 @@
 plugins {
+    id("io.micronaut.build.internal.discovery-client-base")
     id "io.micronaut.build.internal.common"
-}
-repositories {
-    mavenCentral()
 }
 
 configurations.all {

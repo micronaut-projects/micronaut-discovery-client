@@ -10,3 +10,6 @@ dependencies {
     implementation(mnTest.micronaut.test.junit5)
     implementation(libs.awaitility)
 }
+tasks.named("checkstyleMain").configure {
+    enabled = false
+}
