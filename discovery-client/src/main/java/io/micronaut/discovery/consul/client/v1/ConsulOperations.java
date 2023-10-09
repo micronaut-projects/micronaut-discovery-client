@@ -165,7 +165,7 @@ public interface ConsulOperations {
         delay = AbstractConsulClient.CONSUL_REGISTRATION_RETRY_DELAY
     )
     @Deprecated(forRemoval = true, since = "4.1.0")
-    Publisher<HttpStatus> register(@NotNull NewServiceEntry entry);
+    Publisher<HttpStatus> register(@NotNull @Body NewServiceEntry entry);
 
     /**
      * Register a new {@link CatalogEntry}. See https://www.consul.io/api/catalog.html.
