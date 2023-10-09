@@ -31,7 +31,7 @@ import java.util.Optional;
  * @since 1.0
  * @deprecated Use {@link io.micronaut.discovery.consul.client.v1.ConsulCatalogEntry} instead.
  */
-@Deprecated
+@Deprecated(since = "4.1.0", forRemoval = true)
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class CatalogEntry extends NodeEntry {
     private NewServiceEntry service;
