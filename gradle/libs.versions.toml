@@ -28,3 +28,7 @@ awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility" 
 spock = { module = 'org.spockframework:spock-core', version.ref = "spock" }
 testcontainers-spock = { module = 'org.testcontainers:spock', version.ref = "testcontainers" }
 testcontainers-vault = { module = 'org.testcontainers:vault', version.ref = "testcontainers" }
+
+junit-jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine' }
+junit-jupiter-api = { module = 'org.junit.jupiter:junit-jupiter-api' }
+junit-platform-engine = { module = "org.junit.platform:junit-platform-suite-engine" }
