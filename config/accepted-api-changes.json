@@ -1,0 +1,132 @@
+[
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$ReflectConfig",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "CheckEntry was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$ReflectConfig",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$CheckEntry$ReflectConfig()",
+    "reason": "CheckEntry was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$ReflectConfig",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "CheckEntry was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$ReflectConfig",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "CheckEntry was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$ReflectConfig",
+    "member": "Implemented interface io.micronaut.core.graal.GraalReflectionConfigurer",
+    "reason": "CheckEntry was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$ReflectConfig",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "CheckEntry was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$ReflectConfig",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "HealthEntry was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$ReflectConfig",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$HealthEntry$ReflectConfig()",
+    "reason": "HealthEntry was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$ReflectConfig",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "HealthEntry was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$ReflectConfig",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "HealthEntry was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$ReflectConfig",
+    "member": "Implemented interface io.micronaut.core.graal.GraalReflectionConfigurer",
+    "reason": "HealthEntry was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$ReflectConfig",
+    "member": "Implemented interface io.micronaut.core.graal.GraalReflectionConfigurer",
+    "reason": "HTTPCheck was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$ReflectConfig",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "HTTPCheck was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$ReflectConfig",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "HTTPCheck was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$ReflectConfig",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$HTTPCheck$ReflectConfig()",
+    "reason": "HTTPCheck was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$ReflectConfig",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "HTTPCheck was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$ReflectConfig",
+    "member": "Implemented interface io.micronaut.core.graal.GraalReflectionConfigurer",
+    "reason": "NewCheck was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$ReflectConfig",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "NewCheck was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$ReflectConfig",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "NewCheck was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$ReflectConfig",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$NewCheck$ReflectConfig()",
+    "reason": "NewCheck was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$ReflectConfig",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "NewCheck was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$ReflectConfig",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "TTLCheck was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$ReflectConfig",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$TTLCheck$ReflectConfig()",
+    "reason": "TTLCheck was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$ReflectConfig",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "TTLCheck was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$ReflectConfig",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "TTLCheck was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$ReflectConfig",
+    "member": "Implemented interface io.micronaut.core.graal.GraalReflectionConfigurer",
+    "reason": "TTLCheck was @Deprecated and no longer used"
+  }
+]
