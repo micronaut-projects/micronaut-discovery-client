@@ -25,7 +25,15 @@ import java.util.Map;
 /**
  * A catalog entry in Consul.
  * @see <a href="https://developer.hashicorp.com/consul/api-docs/catalog#sample-payload">Catalog Sample Payload</a>.
- * @author sdelamo
+ *
+ * @param node Node ID
+ * @param address Address
+ * @param datacenter Datacenter
+ * @param taggedAddresses Tagged addresses
+ * @param nodeMetadata Node metadata
+ * @param service Service
+ *
+ * @author Sergio del Amo
  * @since 4.1.0
  */
 @Serdeable
