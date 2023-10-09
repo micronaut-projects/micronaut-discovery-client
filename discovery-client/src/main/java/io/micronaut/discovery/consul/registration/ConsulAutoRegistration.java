@@ -15,12 +15,10 @@
  */
 package io.micronaut.discovery.consul.registration;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.core.convert.value.ConvertibleMultiValues;
 import io.micronaut.core.convert.value.ConvertibleValues;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.EmbeddedServerInstance;
@@ -28,7 +26,10 @@ import io.micronaut.discovery.ServiceInstance;
 import io.micronaut.discovery.ServiceInstanceIdGenerator;
 import io.micronaut.discovery.client.registration.DiscoveryServiceAutoRegistration;
 import io.micronaut.discovery.consul.ConsulConfiguration;
-import io.micronaut.discovery.consul.client.v1.*;
+import io.micronaut.discovery.consul.client.v1.ConsulCheck;
+import io.micronaut.discovery.consul.client.v1.ConsulCheckStatus;
+import io.micronaut.discovery.consul.client.v1.ConsulClient;
+import io.micronaut.discovery.consul.client.v1.ConsulNewServiceEntry;
 import io.micronaut.discovery.exceptions.DiscoveryException;
 import io.micronaut.discovery.registration.RegistrationException;
 import io.micronaut.health.HealthStatus;
@@ -56,14 +57,12 @@ import java.util.*;
 @Singleton
 @Requires(beans = {ConsulClient.class, ConsulConfiguration.class})
 public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
-
+    private static final String DEFAULT_CHECK_STATUS = ConsulCheckStatus.PASSING.toString();
     private final ConsulClient consulClient;
     private final HeartbeatConfiguration heartbeatConfiguration;
     private final ConsulConfiguration consulConfiguration;
     private final ServiceInstanceIdGenerator idGenerator;
     private final Environment environment;
-
-    private static final String DEFAULT_CHECK_STATUS = ConsulCheckStatus.PASSING.toString();
 
     /**
      * @param environment            The environment

@@ -20,10 +20,13 @@ import io.micronaut.serde.annotation.Serdeable;
 import java.util.List;
 
 /**
- * <a href="https://developer.hashicorp.com/consul/api-docs/health#sample-response-2">Sample Response for list check for service </a>
+ * <a href="https://developer.hashicorp.com/consul/api-docs/health#sample-response-2">Sample Response for list check for service </a>.
  *
  * @author sdelamo
  * @since 4.1.0
+ * @param node Node
+ * @param service Service
+ * @param checks Health checks
  */
 @Serdeable
 public record ConsulHealthEntry(@JsonProperty("Node") NodeEntry node,

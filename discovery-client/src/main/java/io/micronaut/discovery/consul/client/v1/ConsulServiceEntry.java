@@ -19,7 +19,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.serde.annotation.Serdeable;
 
-import java.net.InetAddress;
 import java.util.List;
 import java.util.Map;
 

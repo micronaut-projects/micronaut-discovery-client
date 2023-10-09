@@ -189,7 +189,7 @@ public interface ConsulOperations {
     Publisher<HttpStatus> register(@NotNull @Body NewServiceEntry entry);
 
     /**
-     * De Register a service
+     * Deregister a service.
      *
      * @param service The service to register
      * @return A {@link Publisher} that emits a boolean true if the operation was successful

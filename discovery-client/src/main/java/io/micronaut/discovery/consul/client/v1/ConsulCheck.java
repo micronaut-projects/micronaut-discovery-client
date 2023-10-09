@@ -101,90 +101,178 @@ public class ConsulCheck {
     @Nullable @JsonProperty("Status")
     private String status;
 
+    /**
+     *
+     * @return Specifies the name of the check.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     *
+     * @param name Specifies the name of the check.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     *
+     * @return Specifies a unique ID for this check on the node.
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     *
+     * @param id Specifies a unique ID for this check on the node.
+     */
     public void setId(String id) {
         this.id = id;
     }
 
+    /**
+     *
+     * @return Specifies the frequency at which to run this check. This is required for HTTP, TCP, and UDP checks.
+     */
     public String getInterval() {
         return interval;
     }
 
+    /**
+     *
+     * @param interval Specifies the frequency at which to run this check. This is required for HTTP, TCP, and UDP checks.
+     */
     public void setInterval(String interval) {
         this.interval = interval;
     }
 
+    /**
+     *
+     * @return Specifies arbitrary information for humans. This is not used by Consul internally.
+     */
     public String getNotes() {
         return notes;
     }
 
+    /**
+     *
+     * @param notes Specifies arbitrary information for humans. This is not used by Consul internally.
+     */
     public void setNotes(String notes) {
         this.notes = notes;
     }
 
+    /**
+     *
+     * @return Specifies that checks associated with a service should deregister after this time.
+     */
     public String getDeregisterCriticalServiceAfter() {
         return deregisterCriticalServiceAfter;
     }
 
+    /**
+     *
+     * @param deregisterCriticalServiceAfter Specifies that checks associated with a service should deregister after this time.
+     */
     public void setDeregisterCriticalServiceAfter(String deregisterCriticalServiceAfter) {
         this.deregisterCriticalServiceAfter = deregisterCriticalServiceAfter;
     }
 
+    /**
+     *
+     * @return Specifies an HTTP check to perform a GET request against the value of HTTP (expected to be a URL) every Interval.
+     */
     public URL getHttp() {
         return http;
     }
 
+    /**
+     *
+     * @param http Specifies an HTTP check to perform a GET request against the value of HTTP (expected to be a URL) every Interval.
+     */
     public void setHttp(URL http) {
         this.http = http;
     }
 
+    /**
+     *
+     * @return Specifies a different HTTP method to be used for an HTTP check. When no value is specified, GET is used.
+     */
     public HttpMethod getMethod() {
         return method;
     }
 
+    /**
+     *
+     * @param method Specifies a different HTTP method to be used for an HTTP check. When no value is specified, GET is used.
+     */
     public void setMethod(HttpMethod method) {
         this.method = method;
     }
 
+    /**
+     *
+     * @return Specifies a set of headers that should be set for HTTP checks. Each header can have multiple values.
+     */
     public Map<CharSequence, List<String>> getHeader() {
         return header;
     }
 
+    /**
+     *
+     * @param header Specifies a set of headers that should be set for HTTP checks. Each header can have multiple values.
+     */
     public void setHeader(Map<CharSequence, List<String>> header) {
         this.header = header;
     }
 
+    /**
+     *
+     * @return Specifies if the certificate for an HTTPS check should not be verified.
+     */
     public Boolean getTlsSkipVerify() {
         return tlsSkipVerify;
     }
 
+    /**
+     *
+     * @param tlsSkipVerify Specifies if the certificate for an HTTPS check should not be verified.
+     */
     public void setTlsSkipVerify(Boolean tlsSkipVerify) {
         this.tlsSkipVerify = tlsSkipVerify;
     }
 
+    /**
+     *
+     * @return Specifies this is a TTL check, and the TTL endpoint must be used periodically to update the state of the check. If the check is not set to passing within the specified duration, then the check will be set to the failed state.
+     */
     public String getTtl() {
         return ttl;
     }
 
+    /**
+     *
+     * @param ttl Specifies this is a TTL check, and the TTL endpoint must be used periodically to update the state of the check. If the check is not set to passing within the specified duration, then the check will be set to the failed state.
+     */
     public void setTtl(String ttl) {
         this.ttl = ttl;
     }
 
+    /**
+     *
+     * @return Specifies the initial status of the health check.
+     */
     public String getStatus() {
         return status;
     }
 
+    /**
+     *
+     * @param status Specifies the initial status of the health check.
+     */
     public void setStatus(String status) {
         this.status = status;
     }

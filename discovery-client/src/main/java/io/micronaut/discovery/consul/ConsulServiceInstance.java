@@ -24,8 +24,6 @@ import io.micronaut.discovery.ServiceInstance;
 import io.micronaut.discovery.consul.client.v1.*;
 import io.micronaut.discovery.exceptions.DiscoveryException;
 import io.micronaut.health.HealthStatus;
-
-import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedHashMap;

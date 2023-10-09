@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <a href="https://developer.hashicorp.com/consul/api-docs/agent/service#json-request-body-schema">Register Service - JSON Request Body Schema</a>
+ * <a href="https://developer.hashicorp.com/consul/api-docs/agent/service#json-request-body-schema">Register Service - JSON Request Body Schema</a>.
  *
  * @param name The logical name of hte service
  * @param address The address of the service
