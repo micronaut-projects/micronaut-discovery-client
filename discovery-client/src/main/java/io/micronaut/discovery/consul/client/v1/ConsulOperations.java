@@ -126,8 +126,11 @@ public interface ConsulOperations {
      *
      * @param entry The entry to register
      * @return A {@link Publisher} that emits a boolean true if the operation was successful
+     * @deprecated Use {@link ConsulOperations#register(ConsulCatalogEntry)} instead.
+     *
      */
     @Put(uri = "/catalog/register", single = true)
+    @Deprecated
     Publisher<Boolean> register(@NotNull @Body CatalogEntry entry);
 
     /**
@@ -135,9 +138,28 @@ public interface ConsulOperations {
      *
      * @param entry The entry to register
      * @return A {@link Publisher} that emits a boolean true if the operation was successful
+     * @deprecated Use {@link ConsulOperations#deregister(ConsulCatalogEntry)} instead.
+     */
+    @Deprecated
+    Publisher<Boolean> deregister(@NotNull @Body CatalogEntry entry);
+
+    /**
+     * Register a new {@link CatalogEntry}. See https://www.consul.io/api/catalog.html.
+     *
+     * @param entry The entry to register
+     * @return A {@link Publisher} that emits a boolean true if the operation was successful
+     */
+    @Put(uri = "/catalog/register", single = true)
+    Publisher<Boolean> register(@NotNull @Body ConsulCatalogEntry entry);
+
+    /**
+     * Register a new {@link ConsulCatalogEntry}. See https://www.consul.io/api/catalog.html.
+     *
+     * @param entry The entry to register
+     * @return A {@link Publisher} that emits a boolean true if the operation was successful
      */
     @Put(uri = "/catalog/deregister", single = true)
-    Publisher<Boolean> deregister(@NotNull @Body CatalogEntry entry);
+    Publisher<Boolean> deregister(@NotNull @Body ConsulCatalogEntry entry);
 
     /**
      * Register a new {@link CatalogEntry}. See https://www.consul.io/api/catalog.html.
@@ -153,13 +175,12 @@ public interface ConsulOperations {
     Publisher<HttpStatus> register(@NotNull @Body ConsulNewServiceEntry entry);
 
     /**
-     * Register a new {@link CatalogEntry}. See https://www.consul.io/api/catalog.html.
+     * Register a new {@link NewServiceEntry}. See https://www.consul.io/api/catalog.html.
      *
      * @param entry The entry to register
      * @return A {@link Publisher} that emits a boolean true if the operation was successful
      * @deprecated Use {@link ConsulOperations#register(ConsulNewServiceEntry)} instead.
      */
-    @Put("/agent/service/register")
     @Retryable(
         attempts = AbstractConsulClient.CONSUL_REGISTRATION_RETRY_COUNT,
         delay = AbstractConsulClient.CONSUL_REGISTRATION_RETRY_DELAY
@@ -168,7 +189,7 @@ public interface ConsulOperations {
     Publisher<HttpStatus> register(@NotNull @Body NewServiceEntry entry);
 
     /**
-     * Register a new {@link CatalogEntry}. See https://www.consul.io/api/catalog.html.
+     * De Register a service
      *
      * @param service The service to register
      * @return A {@link Publisher} that emits a boolean true if the operation was successful
@@ -187,9 +208,7 @@ public interface ConsulOperations {
      * @deprecated Use {@link ConsulOperations#findServices()} instead.
      */
     @Deprecated(forRemoval = true, since = "4.1.0")
-    @Get(uri = "/agent/services", single = true)
     Publisher<Map<String, ServiceEntry>> getServices();
-
 
     /**
      * Find every registered services.
@@ -225,7 +244,6 @@ public interface ConsulOperations {
      * @return The {@link HealthEntry} instances
      * @deprecated Use {@link ConsulOperations#findHealthyServices(String, Boolean, String, String)} instead.
      */
-    @Get(uri = "/health/service/{service}{?passing,tag,dc}", single = true)
     @Deprecated(forRemoval = true, since = "4.1.0")
     Publisher<List<HealthEntry>> getHealthyServices(
         @NotNull String service,
@@ -242,6 +260,7 @@ public interface ConsulOperations {
      * @param dc      The dc
      * @return The {@link ConsulHealthEntry} instances
      */
+    @Get(uri = "/health/service/{service}{?passing,tag,dc}", single = true)
     Publisher<List<ConsulHealthEntry>> findHealthyServices(
         @NotNull String service,
         @Nullable Boolean passing,

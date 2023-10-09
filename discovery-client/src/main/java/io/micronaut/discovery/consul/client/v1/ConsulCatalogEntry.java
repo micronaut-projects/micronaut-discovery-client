@@ -29,12 +29,10 @@ import java.util.Optional;
  *
  * @author graemerocher
  * @since 1.0
- * @deprecated Use {@link io.micronaut.discovery.consul.client.v1.ConsulCatalogEntry} instead.
  */
-@Deprecated
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
-public class CatalogEntry extends NodeEntry {
-    private NewServiceEntry service;
+public class ConsulCatalogEntry extends NodeEntry {
+    private ConsulNewServiceEntry service;
 
     /**
      * Create a new catalog entry.
@@ -43,23 +41,23 @@ public class CatalogEntry extends NodeEntry {
      * @param address The node address
      */
     @JsonCreator
-    public CatalogEntry(@JsonProperty("Node") String nodeId, @JsonProperty("Address") InetAddress address) {
+    public ConsulCatalogEntry(@JsonProperty("Node") String nodeId, @JsonProperty("Address") InetAddress address) {
         super(nodeId, address);
     }
 
     @Override
-    public CatalogEntry datacenter(String datacenter) {
-        return (CatalogEntry) super.datacenter(datacenter);
+    public ConsulCatalogEntry datacenter(String datacenter) {
+        return (ConsulCatalogEntry) super.datacenter(datacenter);
     }
 
     @Override
-    public CatalogEntry taggedAddresses(Map<String, String> taggedAddresses) {
-        return (CatalogEntry) super.taggedAddresses(taggedAddresses);
+    public ConsulCatalogEntry taggedAddresses(Map<String, String> taggedAddresses) {
+        return (ConsulCatalogEntry) super.taggedAddresses(taggedAddresses);
     }
 
     @Override
-    public CatalogEntry nodeMetadata(Map<String, String> nodeMetadata) {
-        return (CatalogEntry) super.nodeMetadata(nodeMetadata);
+    public ConsulCatalogEntry nodeMetadata(Map<String, String> nodeMetadata) {
+        return (ConsulCatalogEntry) super.nodeMetadata(nodeMetadata);
     }
 
     /**
@@ -67,7 +65,7 @@ public class CatalogEntry extends NodeEntry {
      *
      * @return The service
      */
-    public Optional<NewServiceEntry> getService() {
+    public Optional<ConsulNewServiceEntry> getService() {
         return Optional.ofNullable(service);
     }
 
@@ -76,15 +74,15 @@ public class CatalogEntry extends NodeEntry {
      *
      * @param service The service
      */
-    public void setService(NewServiceEntry service) {
+    public void setService(ConsulNewServiceEntry service) {
         this.service = service;
     }
 
     /**
      * @param service The service
-     * @return The {@link CatalogEntry} instance
+     * @return The {@link ConsulCatalogEntry} instance
      */
-    public CatalogEntry service(NewServiceEntry service) {
+    public ConsulCatalogEntry service(ConsulNewServiceEntry service) {
         this.service = service;
         return this;
     }

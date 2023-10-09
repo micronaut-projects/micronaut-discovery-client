@@ -99,14 +99,14 @@ class ConsulClientSpec extends Specification {
     void "test register and deregister catalog entry"() {
         when:
         def url = embeddedServer.getURL()
-        def entry = new CatalogEntry("test-node", InetAddress.getByName(url.host))
+        def entry = new ConsulCatalogEntry("test-node", InetAddress.getByName(url.host))
         boolean result = Flux.from(client.register(entry)).blockFirst()
 
         then:
         result
 
         when:
-        List<CatalogEntry> entries = Flux.from(client.getNodes()).blockFirst()
+        List<ConsulCatalogEntry> entries = Flux.from(client.getNodes()).blockFirst()
 
         then:
         entries.size() == 2

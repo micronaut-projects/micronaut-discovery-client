@@ -22,6 +22,7 @@ import io.micronaut.core.async.annotation.SingleResult
 import io.micronaut.core.async.publisher.Publishers
 import io.micronaut.core.util.StringUtils
 import io.micronaut.discovery.consul.client.v1.CatalogEntry
+import io.micronaut.discovery.consul.client.v1.ConsulCatalogEntry
 import io.micronaut.discovery.consul.client.v1.ConsulCheck
 import io.micronaut.discovery.consul.client.v1.ConsulCheckStatus
 import io.micronaut.discovery.consul.client.v1.ConsulNewServiceEntry
@@ -63,7 +64,7 @@ class MockConsulServer implements ConsulOperations {
 
     Map<String, List<KeyValue>> keyvalues = new ConcurrentHashMap<>()
 
-    final CatalogEntry nodeEntry
+    final ConsulCatalogEntry nodeEntry
 
     static Map<String, ConsulNewServiceEntry> newEntries
     static List<String> passingReports = []
@@ -78,7 +79,7 @@ class MockConsulServer implements ConsulOperations {
     MockConsulServer(EmbeddedServer embeddedServer) {
         newEntries = [:]
         passingReports.clear()
-        nodeEntry = new CatalogEntry(UUID.randomUUID().toString(), InetAddress.localHost)
+        nodeEntry = new ConsulCatalogEntry(UUID.randomUUID().toString(), InetAddress.localHost)
     }
 
     void reset() {
@@ -168,13 +169,25 @@ class MockConsulServer implements ConsulOperations {
         return Publishers.just("localhost")
     }
 
+    @Deprecated
     @Override
     Publisher<Boolean> register(@NotNull @Body CatalogEntry entry) {
         return Publishers.just(true)
     }
 
+    @Deprecated
     @Override
     Publisher<Boolean> deregister(@NotNull @Body CatalogEntry entry) {
+        return Publishers.just(true)
+    }
+
+    @Override
+    Publisher<Boolean> register(@NotNull @Body ConsulCatalogEntry entry) {
+        return Publishers.just(true)
+    }
+
+    @Override
+    Publisher<Boolean> deregister(@NotNull @Body ConsulCatalogEntry entry) {
         return Publishers.just(true)
     }
 
