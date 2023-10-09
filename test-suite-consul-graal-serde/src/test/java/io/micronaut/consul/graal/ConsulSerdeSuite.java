@@ -7,5 +7,5 @@ import org.junit.platform.suite.api.SuiteDisplayName;
 @Suite
 @SelectPackages("io.micronaut.consul.graal")
 @SuiteDisplayName("Consul TCK Micronaut Serialization")
-public class ConsulSerdeSuite {
+class ConsulSerdeSuite {
 }
