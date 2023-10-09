@@ -15,71 +15,18 @@
  */
 package io.micronaut.discovery.consul.client.v1;
 
-import java.util.Collections;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micronaut.serde.annotation.Serdeable;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import io.micronaut.core.annotation.ReflectiveAccess;
-import io.micronaut.serde.annotation.Serdeable;
-
 /**
- * Models a Consul Health Entry. See https://www.consul.io/api/health.html.
+ * <a href="https://developer.hashicorp.com/consul/api-docs/health#sample-response-2">Sample Response for list check for service </a>
  *
- * @author graemerocher
- * @since 1.0
+ * @author sdelamo
+ * @since 4.1.0
  */
-@JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 @Serdeable
-@ReflectiveAccess
-public class ConsulHealthEntry {
-
-    private NodeEntry node;
-    private ConsulServiceEntry service;
-    private List<ConsulCheck> checks = Collections.emptyList();
-
-    /**
-     * @return The node for this health entry
-     */
-    public NodeEntry getNode() {
-        return node;
-    }
-
-    /**
-     * @return The service for the health entry
-     */
-    public ConsulServiceEntry getService() {
-        return service;
-    }
-
-    /**
-     * @return The checks
-     */
-    public List<ConsulCheck> getChecks() {
-        return checks;
-    }
-
-    /**
-     * @param checks The list of checks
-     */
-    @ReflectiveAccess
-    void setChecks(List<ConsulCheck> checks) {
-        this.checks = checks;
-    }
-
-    /**
-     * @param node The node
-     */
-    @ReflectiveAccess
-    protected void setNode(NodeEntry node) {
-        this.node = node;
-    }
-
-    /**
-     * @param service The service
-     */
-    @ReflectiveAccess
-    protected void setService(ConsulServiceEntry service) {
-        this.service = service;
-    }
+public record ConsulHealthEntry(@JsonProperty("Node") NodeEntry node,
+                                @JsonProperty("Service") ConsulServiceEntry service,
+                                @JsonProperty("Checks") List<ConsulCheck> checks) {
 }

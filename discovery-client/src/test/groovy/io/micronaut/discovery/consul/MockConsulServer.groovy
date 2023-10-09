@@ -15,7 +15,7 @@
  */
 package io.micronaut.discovery.consul
 
-import com.fasterxml.jackson.annotation.JsonProperty
+
 import io.micronaut.context.annotation.Requires
 import io.micronaut.core.annotation.Nullable
 import io.micronaut.core.async.annotation.SingleResult
@@ -32,7 +32,6 @@ import io.micronaut.discovery.consul.client.v1.KeyValue
 import io.micronaut.discovery.consul.client.v1.LocalAgentConfiguration
 import io.micronaut.discovery.consul.client.v1.MemberEntry
 
-import io.micronaut.discovery.consul.client.v1.MockHealthEntry
 
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.annotation.Body
@@ -221,10 +220,9 @@ class MockConsulServer implements ConsulOperations {
         ConsulServiceEntry serviceEntry = services.get(service)
         List<ConsulHealthEntry> healthEntries = []
         if(serviceEntry != null) {
-            def entry = new MockHealthEntry()
-            entry.setNode(nodeEntry)
-            entry.setService(serviceEntry)
-            entry.setChecks([checks.computeIfAbsent(service, { String key -> {
+            ConsulHealthEntry entry = new ConsulHealthEntry(nodeEntry,
+                    serviceEntry,
+                    [checks.computeIfAbsent(service, { String key -> {
                 ConsulCheck check = new ConsulCheck()
                 check.setStatus(ConsulCheckStatus.PASSING.toString())
                 check.setId(key)

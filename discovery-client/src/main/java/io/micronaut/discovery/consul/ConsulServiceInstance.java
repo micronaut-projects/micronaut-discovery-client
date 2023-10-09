@@ -56,9 +56,9 @@ public class ConsulServiceInstance implements ServiceInstance {
     public ConsulServiceInstance(@NonNull ConsulHealthEntry healthEntry, @Nullable String scheme) {
         Objects.requireNonNull(healthEntry, "ConsulHealthEntry cannot be null");
         this.healthEntry = healthEntry;
-        ConsulServiceEntry service = healthEntry.getService();
+        ConsulServiceEntry service = healthEntry.service();
         Objects.requireNonNull(service, "ConsulHealthEntry cannot reference a null service entry");
-        NodeEntry node = healthEntry.getNode();
+        NodeEntry node = healthEntry.node();
         Objects.requireNonNull(service, "ConsulHealthEntry cannot reference a null node entry");
 
         String inetAddress = service.address() != null ? service.address() : node.getAddress().getHostAddress();
@@ -74,7 +74,7 @@ public class ConsulServiceInstance implements ServiceInstance {
 
     @Override
     public HealthStatus getHealthStatus() {
-        List<ConsulCheck> checks = healthEntry.getChecks();
+        List<ConsulCheck> checks = healthEntry.checks();
         if (CollectionUtils.isNotEmpty(checks)) {
             Stream<ConsulCheck> criticalStream = checks.stream().filter(c -> c.getStatus().equals(ConsulCheckStatus.CRITICAL.toString()));
             Optional<ConsulCheck> first = criticalStream.findFirst();
@@ -100,12 +100,12 @@ public class ConsulServiceInstance implements ServiceInstance {
 
     @Override
     public String getId() {
-        return healthEntry.getService().id();
+        return healthEntry.service().id();
     }
 
     @Override
     public Optional<String> getInstanceId() {
-        return Optional.ofNullable(healthEntry.getService().id());
+        return Optional.ofNullable(healthEntry.service().id());
     }
 
     @Override
@@ -129,8 +129,8 @@ public class ConsulServiceInstance implements ServiceInstance {
     }
 
     private ConvertibleValues<String> buildMetadata() {
-        Map<CharSequence, String> map = new LinkedHashMap<>(healthEntry.getNode().getNodeMetadata());
-        List<String> tags = healthEntry.getService().tags();
+        Map<CharSequence, String> map = new LinkedHashMap<>(healthEntry.node().getNodeMetadata());
+        List<String> tags = healthEntry.service().tags();
         if (tags != null) {
             for (String tag : tags) {
                 int i = tag.indexOf('=');
@@ -140,7 +140,7 @@ public class ConsulServiceInstance implements ServiceInstance {
             }
         }
 
-        Map<String, String> meta = healthEntry.getService().meta();
+        Map<String, String> meta = healthEntry.service().meta();
         if (meta != null) {
             map.putAll(meta);
         }
