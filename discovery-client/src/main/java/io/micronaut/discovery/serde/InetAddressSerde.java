@@ -46,6 +46,9 @@ import java.net.InetAddress;
 /**
  * {@link Serde} implementation of {@link InetAddress}.
  * This is a based on `com.fasterxml.jackson.databind.ser.std.InetAddressSerializer` which is licenced under the Apache 2.0 licence.
+ *
+ * @since 4.1.0
+ * @author Sergio del Amo
  */
 @Internal
 @Singleton
