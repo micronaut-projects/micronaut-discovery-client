@@ -57,7 +57,7 @@ import java.util.stream.Collectors
 class MockConsulServer implements ConsulOperations {
     public static final String ENABLED = 'enable.mock.consul'
 
-    Map<String, ConsulServiceEntry> services = new ConcurrentHashMap<>()
+    Map<String, ConsulServiceEntry> consulServices = new ConcurrentHashMap<>()
     Map<String, ConsulCheck> checks = new ConcurrentHashMap<>()
 
     Map<String, List<KeyValue>> keyvalues = new ConcurrentHashMap<>()
@@ -81,7 +81,7 @@ class MockConsulServer implements ConsulOperations {
     }
 
     void reset() {
-        services.clear()
+        consulServices.clear()
         checks.clear()
         passingReports.clear()
         newEntries = [:]
@@ -181,7 +181,7 @@ class MockConsulServer implements ConsulOperations {
     Publisher<HttpStatus> register(@NotNull @Body ConsulNewServiceEntry entry) {
         String service = entry.name()
         newEntries.put(service, entry)
-        services.put(service, new ConsulServiceEntry(entry.name(),
+        consulServices.put(service, new ConsulServiceEntry(entry.name(),
                 entry.address(),
                 entry.port(),
                 entry.tags(),
@@ -199,25 +199,25 @@ class MockConsulServer implements ConsulOperations {
     @Override
     Publisher<HttpStatus> deregister(@NotNull String service) {
         checks.remove(service)
-        def s = services.find { it.value.id() != null ? it.value.id().equals(service) : it.value.service() == service }
+        def s = consulServices.find { it.value.id() != null ? it.value.id().equals(service) : it.value.service() == service }
         if(s) {
-            services.remove(s.value.service())
+            consulServices.remove(s.value.service())
         }
         else {
-            services.remove(service)
+            consulServices.remove(service)
         }
         return Publishers.just(HttpStatus.OK)
     }
 
     @Override
-    Publisher<Map<String, ConsulServiceEntry>> getServices() {
-        return Publishers.just(services)
+    Publisher<Map<String, ConsulServiceEntry>> findServices() {
+        return Publishers.just(consulServices)
     }
 
     @Override
-    Publisher<List<ConsulHealthEntry>> getHealthyServices(
+    Publisher<List<ConsulHealthEntry>> findHealthServices(
             @NotNull String service, @Nullable Boolean passing, @Nullable String tag, @Nullable String dc) {
-        ConsulServiceEntry serviceEntry = services.get(service)
+        ConsulServiceEntry serviceEntry = consulServices.get(service)
         List<ConsulHealthEntry> healthEntries = []
         if(serviceEntry != null) {
             ConsulHealthEntry entry = new ConsulHealthEntry(nodeEntry,
@@ -245,7 +245,7 @@ class MockConsulServer implements ConsulOperations {
 
     @Override
     Publisher<Map<String, List<String>>> getServiceNames() {
-        return Publishers.just(services.collectEntries { String key, ConsulServiceEntry entry ->
+        return Publishers.just(consulServices.collectEntries { String key, ConsulServiceEntry entry ->
               return [(key): entry.tags()]
         })
     }

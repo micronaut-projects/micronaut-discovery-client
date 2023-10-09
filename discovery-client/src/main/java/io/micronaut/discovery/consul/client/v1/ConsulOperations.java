@@ -155,6 +155,21 @@ public interface ConsulOperations {
     /**
      * Register a new {@link CatalogEntry}. See https://www.consul.io/api/catalog.html.
      *
+     * @param entry The entry to register
+     * @return A {@link Publisher} that emits a boolean true if the operation was successful
+     * @deprecated Use {@link ConsulOperations#register(ConsulNewServiceEntry)} instead.
+     */
+    @Put("/agent/service/register")
+    @Retryable(
+        attempts = AbstractConsulClient.CONSUL_REGISTRATION_RETRY_COUNT,
+        delay = AbstractConsulClient.CONSUL_REGISTRATION_RETRY_DELAY
+    )
+    @Deprecated(forRemoval = true, since = "4.1.0")
+    Publisher<HttpStatus> register(@NotNull NewServiceEntry entry);
+
+    /**
+     * Register a new {@link CatalogEntry}. See https://www.consul.io/api/catalog.html.
+     *
      * @param service The service to register
      * @return A {@link Publisher} that emits a boolean true if the operation was successful
      */
@@ -168,10 +183,21 @@ public interface ConsulOperations {
     /**
      * Gets all of the registered services.
      *
+     * @return The {@link ServiceEntry} instances
+     * @deprecated Use {@link ConsulOperations#findServices()} instead.
+     */
+    @Deprecated(forRemoval = true, since = "4.1.0")
+    @Get(uri = "/agent/services", single = true)
+    Publisher<Map<String, ServiceEntry>> getServices();
+
+
+    /**
+     * Find every registered services.
+     *
      * @return The {@link ConsulServiceEntry} instances
      */
     @Get(uri = "/agent/services", single = true)
-    Publisher<Map<String, ConsulServiceEntry>> getServices();
+    Publisher<Map<String, ConsulServiceEntry>> findServices();
 
     /**
      * Returns the members the agent sees in the cluster gossip pool.
@@ -196,10 +222,26 @@ public interface ConsulOperations {
      * @param passing The passing parameter
      * @param tag     The tag
      * @param dc      The dc
-     * @return The {@link ConsulHealthEntry} instances
+     * @return The {@link HealthEntry} instances
      */
     @Get(uri = "/health/service/{service}{?passing,tag,dc}", single = true)
-    Publisher<List<ConsulHealthEntry>> getHealthyServices(
+    @Deprecated(forRemoval = true, since = "4.1.0")
+    Publisher<List<HealthEntry>> getHealthyServices(
+        @NotNull String service,
+        @Nullable Boolean passing,
+        @Nullable String tag,
+        @Nullable String dc);
+
+    /**
+     * find healthy services that are passing health checks.
+     *
+     * @param service The service
+     * @param passing The passing parameter
+     * @param tag     The tag
+     * @param dc      The dc
+     * @return The {@link ConsulHealthEntry} instances
+     */
+    Publisher<List<ConsulHealthEntry>> findHealthServices(
         @NotNull String service,
         @Nullable Boolean passing,
         @Nullable String tag,

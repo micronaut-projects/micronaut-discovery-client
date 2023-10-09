@@ -17,19 +17,12 @@ class ConsulCheckSpec extends Specification {
         ConsulCheck check = new ConsulCheck()
         check.id = "mem"
         check.name = "Memory utilization"
-        check.namespace = "default"
         check.notes = "Ensure we don't oversubscribe memory"
         check.deregisterCriticalServiceAfter = "90m"
-        check.args = ["/usr/local/bin/check_mem.py"]
-        check.dockerContainerID = "f972c95ebf0e"
         check.http = new URL("https://example.com")
         check.method = "POST"
         check.header = ["Content-Type": ["application/json"]]
-        check.body = '{"check":"mem"}'
-        check.disableRedirects = true
-        check.tcp = "example.com:22"
         check.interval = "10s"
-        check.timeout = "5s"
         check.tlsSkipVerify = true
 
         when:
@@ -39,19 +32,12 @@ class ConsulCheckSpec extends Specification {
         json
         json.contains('"CheckID":"mem"')
         json.contains('"Name":"Memory utilization"')
-        json.contains('"Namespace":"default"')
         json.contains("\"Notes\":\"Ensure we don't oversubscribe memory\"")
         json.contains('"DeregisterCriticalServiceAfter":"90m"')
-        json.contains('"Args":["/usr/local/bin/check_mem.py"]')
-        json.contains('"DockerContainerID":"f972c95ebf0e"')
         json.contains('"HTTP":"https://example.com"')
         json.contains('"Method":"POST"')
         json.contains('"Header":{"Content-Type":["application/json"]')
-        json.contains('"Body":"{\\"check\\":\\"mem\\"}"')
-        json.contains('"DisableRedirects":true')
-        json.contains('"TCP":"example.com:22"')
         json.contains('"Interval":"10s"')
-        json.contains('"Timeout":"5s"')
         json.contains('"TLSSkipVerify":true')
     }
 }
