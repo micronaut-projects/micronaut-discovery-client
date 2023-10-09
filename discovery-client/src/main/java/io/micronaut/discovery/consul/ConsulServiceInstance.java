@@ -70,6 +70,19 @@ public class ConsulServiceInstance implements ServiceInstance {
         }
     }
 
+    /**
+     * Constructs a {@link ConsulServiceInstance} for the given {@link ConsulHealthEntry} and scheme.
+     *
+     * @param healthEntry The health entry
+     * @param scheme      The scheme
+     * @deprecated use {@link ConsulServiceInstance(ConsulHealthEntry, String)} instead.
+     */
+    @Deprecated
+    public ConsulServiceInstance(@NonNull HealthEntry healthEntry, @Nullable String scheme) {
+        this.healthEntry = null;
+        this.uri = null;
+    }
+
     @Override
     public HealthStatus getHealthStatus() {
         List<ConsulCheck> checks = healthEntry.checks();
@@ -91,9 +104,11 @@ public class ConsulServiceInstance implements ServiceInstance {
 
     /**
      * @return The {@link ConsulHealthEntry}
+     * @deprecated not used
      */
-    public ConsulHealthEntry getConsulHealthEntry() {
-        return healthEntry;
+    @Deprecated(forRemoval = true, since = "4.1.0")
+    public HealthEntry getHealthEntry() {
+        return null;
     }
 
     @Override
