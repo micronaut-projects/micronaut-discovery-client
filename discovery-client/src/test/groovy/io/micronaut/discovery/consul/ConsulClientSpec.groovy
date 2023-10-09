@@ -130,11 +130,11 @@ class ConsulClientSpec extends Specification {
         }
 
         when:
-        int oldSize = Flux.from(client.getServices()).blockFirst().size()
+        int oldSize = Flux.from(client.findServices()).blockFirst().size()
 
         ConsulNewServiceEntry entry = new ConsulNewServiceEntry("test-service", embeddedServer.getHost(), embeddedServer.getPort(), null, null, null, null)
         Flux.from(client.register(entry)).blockFirst()
-        Map<String, ConsulServiceEntry> entries = Flux.from(client.getServices()).blockFirst()
+        Map<String, ConsulServiceEntry> entries = Flux.from(client.findServices()).blockFirst()
 
         then:
         entries.size() == oldSize + 1
@@ -143,7 +143,7 @@ class ConsulClientSpec extends Specification {
         when:
         oldSize = entries.size()
         HttpStatus result = Flux.from(client.deregister('test-service')).blockFirst()
-        entries = Flux.from(client.getServices()).blockFirst()
+        entries = Flux.from(client.findServices()).blockFirst()
 
         then:
         result == HttpStatus.OK
@@ -171,14 +171,14 @@ class ConsulClientSpec extends Specification {
         entry.checks().first().getDeregisterCriticalServiceAfter() =='90m'
 
         when:
-        List<ConsulHealthEntry> entries = Flux.from(client.getHealthyServices('test-service')).blockFirst()
+        List<ConsulHealthEntry> entries = Flux.from(client.findHealthyServices('test-service')).blockFirst()
 
         then:
         entries.size() == 1
 
         when:
         ConsulHealthEntry healthEntry = entries[0]
-        ConsulServiceEntry service = healthEntry.service
+        ConsulServiceEntry service = healthEntry.service()
 
         then:
         service.port() == embeddedServer.getPort()

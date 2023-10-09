@@ -28,11 +28,12 @@ import io.micronaut.discovery.consul.client.v1.ConsulNewServiceEntry
 import io.micronaut.discovery.consul.client.v1.ConsulOperations
 import io.micronaut.discovery.consul.client.v1.ConsulServiceEntry
 import io.micronaut.discovery.consul.client.v1.ConsulHealthEntry
+import io.micronaut.discovery.consul.client.v1.HealthEntry
 import io.micronaut.discovery.consul.client.v1.KeyValue
 import io.micronaut.discovery.consul.client.v1.LocalAgentConfiguration
 import io.micronaut.discovery.consul.client.v1.MemberEntry
-
-
+import io.micronaut.discovery.consul.client.v1.NewServiceEntry
+import io.micronaut.discovery.consul.client.v1.ServiceEntry
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
@@ -197,6 +198,11 @@ class MockConsulServer implements ConsulOperations {
     }
 
     @Override
+    Publisher<HttpStatus> register(@NotNull @Body NewServiceEntry entry) {
+        return null
+    }
+
+    @Override
     Publisher<HttpStatus> deregister(@NotNull String service) {
         checks.remove(service)
         def s = consulServices.find { it.value.id() != null ? it.value.id().equals(service) : it.value.service() == service }
@@ -209,13 +215,19 @@ class MockConsulServer implements ConsulOperations {
         return Publishers.just(HttpStatus.OK)
     }
 
+    @Deprecated
+    @Override
+    Publisher<Map<String, ServiceEntry>> getServices() {
+        return null
+    }
+
     @Override
     Publisher<Map<String, ConsulServiceEntry>> findServices() {
         return Publishers.just(consulServices)
     }
 
     @Override
-    Publisher<List<ConsulHealthEntry>> findHealthServices(
+    Publisher<List<ConsulHealthEntry>> findHealthyServices(
             @NotNull String service, @Nullable Boolean passing, @Nullable String tag, @Nullable String dc) {
         ConsulServiceEntry serviceEntry = consulServices.get(service)
         List<ConsulHealthEntry> healthEntries = []
@@ -267,4 +279,11 @@ class MockConsulServer implements ConsulOperations {
             metadata = [ "os_version": "ubuntu_16.04" ]
         })
     }
+
+    @Deprecated
+    @Override
+    Publisher<List<HealthEntry>> getHealthyServices(@NotNull String service, @Nullable Boolean passing, @Nullable String tag, @Nullable String dc) {
+        return null
+    }
+
 }

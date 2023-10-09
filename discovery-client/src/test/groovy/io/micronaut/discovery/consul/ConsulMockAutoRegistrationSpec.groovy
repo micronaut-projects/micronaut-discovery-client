@@ -66,7 +66,7 @@ class ConsulMockAutoRegistrationSpec extends Specification {
         def status = Flux.from(client.register(new ConsulNewServiceEntry("test-service", null, null, null, null, null, null))).blockFirst()
         then:
         status
-        Flux.from(client.services).blockFirst()
+        Flux.from(client.findServices()).blockFirst()
         Flux.from(discoveryClient.getInstances('test-service')).blockFirst()
         Flux.from(client.deregister('test-service')).blockFirst()
     }
@@ -104,9 +104,9 @@ class ConsulMockAutoRegistrationSpec extends Specification {
             instances[0].port == anotherServer.getPort()
             instances[0].host == anotherServer.getHost()
             // TTL check by default so now URL
-            MockConsulServer.newEntries.get(serviceName).checks.size() == 1
-            MockConsulServer.newEntries.get(serviceName).checks[0].getHttp() == null
-            MockConsulServer.newEntries.get(serviceName).checks[0].getStatus() == 'passing'
+            MockConsulServer.newEntries.get(serviceName).checks().size() == 1
+            MockConsulServer.newEntries.get(serviceName).checks()[0].getHttp() == null
+            MockConsulServer.newEntries.get(serviceName).checks()[0].getStatus() == 'passing'
         }
 
         when: "stopping the server"
@@ -132,9 +132,9 @@ class ConsulMockAutoRegistrationSpec extends Specification {
 
         then:
         conditions.eventually {
-            List<ConsulHealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
+            List<ConsulHealthEntry> entry = Flux.from(client.findHealthyServices(serviceName)).blockFirst()
             entry.size() == 1
-            entry[0].service.tags() == ['foo', 'bar']
+            entry[0].service().tags() == ['foo', 'bar']
         }
 
         cleanup:
@@ -154,9 +154,9 @@ class ConsulMockAutoRegistrationSpec extends Specification {
         then:
         Thread.sleep(30000)
         conditions.eventually {
-            List<ConsulHealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
+            List<ConsulHealthEntry> entry = Flux.from(client.findHealthyServices(serviceName)).blockFirst()
             entry.size() == 1
-            entry[0].service.meta() == [foo:'bar',  key:'value']
+            entry[0].service().meta() == [foo:'bar',  key:'value']
         }
 
         cleanup:
@@ -178,9 +178,9 @@ class ConsulMockAutoRegistrationSpec extends Specification {
         then:
 
         conditions.eventually {
-            List<ConsulHealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
+            List<ConsulHealthEntry> entry = Flux.from(client.findHealthyServices(serviceName)).blockFirst()
             entry.size() == 1
-            entry[0].service.tags() == ['foo', 'bar']
+            entry[0].service().tags() == ['foo', 'bar']
             MockConsulServer.newEntries.get(serviceName).checks().size() == 1
             MockConsulServer.newEntries.get(serviceName).tags() == ['foo', 'bar']
             MockConsulServer.newEntries.get(serviceName).meta() == [foo:'bar',  key:'value']
@@ -208,15 +208,15 @@ class ConsulMockAutoRegistrationSpec extends Specification {
         then:
 
         conditions.eventually {
-            List<ConsulHealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
+            List<ConsulHealthEntry> entry = Flux.from(client.findHealthyServices(serviceName)).blockFirst()
             entry.size() == 1
-            entry[0].service.tags == ['foo', 'bar']
-            MockConsulServer.newEntries.get(serviceName).checks.size() == 1
-            MockConsulServer.newEntries.get(serviceName).tags == ['foo', 'bar']
-            MockConsulServer.newEntries.get(serviceName).meta == [key: 'value']
-            MockConsulServer.newEntries.get(serviceName).checks[0].getHttp() == new URL(expectedCheckURI)
-            MockConsulServer.newEntries.get(serviceName).checks[0].getDeregisterCriticalServiceAfter() == '90m'
-            MockConsulServer.newEntries.get(serviceName).checks[0].getStatus() == ConsulCheckStatus.PASSING.toString()
+            entry[0].service().tags == ['foo', 'bar']
+            MockConsulServer.newEntries.get(serviceName).checks().size() == 1
+            MockConsulServer.newEntries.get(serviceName).tags() == ['foo', 'bar']
+            MockConsulServer.newEntries.get(serviceName).meta() == [key: 'value']
+            MockConsulServer.newEntries.get(serviceName).checks()[0].getHttp() == new URL(expectedCheckURI)
+            MockConsulServer.newEntries.get(serviceName).checks()[0].getDeregisterCriticalServiceAfter() == '90m'
+            MockConsulServer.newEntries.get(serviceName).checks()[0].getStatus() == ConsulCheckStatus.PASSING.toString()
         }
 
         cleanup:
@@ -240,15 +240,15 @@ class ConsulMockAutoRegistrationSpec extends Specification {
 
         then:
         conditions.eventually {
-            List<ConsulHealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
+            List<ConsulHealthEntry> entry = Flux.from(client.findHealthyServices(serviceName)).blockFirst()
             entry.size() == 1
             entry[0].service.tags == ['foo', 'bar']
-            MockConsulServer.newEntries.get(serviceName).checks.size() == 1
-            MockConsulServer.newEntries.get(serviceName).tags == ['foo', 'bar']
-            MockConsulServer.newEntries.get(serviceName).meta == [key: 'value']
-            MockConsulServer.newEntries.get(serviceName).checks[0].getHttp() == new URL(expectedCheckURI)
-            MockConsulServer.newEntries.get(serviceName).checks[0].getTlsSkipVerify()
-            MockConsulServer.newEntries.get(serviceName).checks[0].getStatus() == ConsulCheckStatus.PASSING.toString()
+            MockConsulServer.newEntries.get(serviceName).checks().size() == 1
+            MockConsulServer.newEntries.get(serviceName).tags() == ['foo', 'bar']
+            MockConsulServer.newEntries.get(serviceName).meta() == [key: 'value']
+            MockConsulServer.newEntries.get(serviceName).checks()[0].getHttp() == new URL(expectedCheckURI)
+            MockConsulServer.newEntries.get(serviceName).checks()[0].getTlsSkipVerify()
+            MockConsulServer.newEntries.get(serviceName).checks()[0].getStatus() == ConsulCheckStatus.PASSING.toString()
         }
 
         cleanup:
@@ -271,15 +271,15 @@ class ConsulMockAutoRegistrationSpec extends Specification {
         then:
 
         conditions.eventually {
-            List<ConsulHealthEntry> entry = Flux.from(client.getHealthyServices(serviceName)).blockFirst()
+            List<ConsulHealthEntry> entry = Flux.from(client.findHealthyServices(serviceName)).blockFirst()
             entry.size() == 1
             entry[0].service.tags == ['foo', 'bar']
-            MockConsulServer.newEntries.get(serviceName).checks.size() == 1
-            MockConsulServer.newEntries.get(serviceName).tags == ['foo', 'bar']
-            MockConsulServer.newEntries.get(serviceName).meta == [key: 'value']
-            MockConsulServer.newEntries.get(serviceName).checks[0].getHttp() == new URL(expectedCheckURI)
-            MockConsulServer.newEntries.get(serviceName).checks[0].getMethod() == HttpMethod.POST
-            MockConsulServer.newEntries.get(serviceName).checks[0].status == 'passing'
+            MockConsulServer.newEntries.get(serviceName).checks().size() == 1
+            MockConsulServer.newEntries.get(serviceName).tags() == ['foo', 'bar']
+            MockConsulServer.newEntries.get(serviceName).meta() == [key: 'value']
+            MockConsulServer.newEntries.get(serviceName).checks()[0].getHttp() == new URL(expectedCheckURI)
+            MockConsulServer.newEntries.get(serviceName).checks()[0].getMethod() == HttpMethod.POST
+            MockConsulServer.newEntries.get(serviceName).checks()[0].status == 'passing'
         }
 
         cleanup:
@@ -301,7 +301,7 @@ class ConsulMockAutoRegistrationSpec extends Specification {
 
         then:
         conditions.eventually {
-            List<ConsulHealthEntry> entry = Flux.from(consulClient.getHealthyServices(serviceName)).blockFirst()
+            List<ConsulHealthEntry> entry = Flux.from(consulClient.findHealthyServices(serviceName)).blockFirst()
             entry.size() == 1
         }
 

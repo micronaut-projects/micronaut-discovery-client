@@ -241,7 +241,7 @@ public interface ConsulOperations {
      * @param dc      The dc
      * @return The {@link ConsulHealthEntry} instances
      */
-    Publisher<List<ConsulHealthEntry>> findHealthServices(
+    Publisher<List<ConsulHealthEntry>> findHealthyServices(
         @NotNull String service,
         @Nullable Boolean passing,
         @Nullable String tag,
@@ -307,8 +307,20 @@ public interface ConsulOperations {
      *
      * @param service The service
      * @return The {@link ConsulHealthEntry} instances
+     * @deprecated Use {@link ConsulOperations#findHealthyServices(String)} instead.
      */
-    default Publisher<List<ConsulHealthEntry>> getHealthyServices(@NotNull String service) {
+    @Deprecated(forRemoval = true, since = "4.1.0")
+    default Publisher<List<HealthEntry>> getHealthyServices(@NotNull String service) {
         return getHealthyServices(service, null, null, null);
+    }
+
+    /**
+     * Gets service health information. Defaults to return both non-healthy and healthy services.
+     *
+     * @param service The service
+     * @return The {@link ConsulHealthEntry} instances
+     */
+    default Publisher<List<ConsulHealthEntry>> findHealthyServices(@NotNull String service) {
+        return findHealthyServices(service, null, null, null);
     }
 }

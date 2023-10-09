@@ -92,7 +92,7 @@ public abstract class AbstractConsulClient implements ConsulClient {
             String tag = discovery.getTags().get(serviceId);
             Optional<String> scheme = Optional.ofNullable(discovery.getSchemes().get(serviceId));
 
-            Publisher<List<ConsulHealthEntry>> healthyServicesPublisher = findHealthServices(serviceId, passing, tag, datacenter);
+            Publisher<List<ConsulHealthEntry>> healthyServicesPublisher = findHealthyServices(serviceId, passing, tag, datacenter);
             return Publishers.map(healthyServicesPublisher, healthEntries -> {
                 List<ServiceInstance> serviceInstances = new ArrayList<>();
                 for (ConsulHealthEntry healthEntry : healthEntries) {
