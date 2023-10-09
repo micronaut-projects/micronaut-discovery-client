@@ -30,6 +30,7 @@ package io.micronaut.discovery.serde;
  * limitations under the License.
  */
 
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.type.Argument;
@@ -46,6 +47,7 @@ import java.net.InetAddress;
  * {@link Serde} implementation of {@link InetAddress}.
  * This is a based on `com.fasterxml.jackson.databind.ser.std.InetAddressSerializer` which is licenced under the Apache 2.0 licence.
  */
+@Internal
 @Singleton
 public class InetAddressSerde implements Serde<InetAddress> {
     private final boolean asNumeric;
