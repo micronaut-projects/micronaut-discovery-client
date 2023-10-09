@@ -77,7 +77,7 @@ public class ConsulServiceInstance implements ServiceInstance {
      * @param scheme      The scheme
      * @deprecated use {@link ConsulServiceInstance(ConsulHealthEntry, String)} instead.
      */
-    @Deprecated
+    @Deprecated(since = "4.1.0", forRemoval = true)
     public ConsulServiceInstance(@NonNull HealthEntry healthEntry, @Nullable String scheme) {
         this.healthEntry = null;
         this.uri = null;
