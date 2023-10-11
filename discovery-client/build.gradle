@@ -10,16 +10,17 @@ dependencies {
 
     api(mn.micronaut.discovery.core)
     api(mn.micronaut.json.core)
-    api(mn.micronaut.http.client)
+    api(mn.micronaut.http.client.core)
     api(mnValidation.micronaut.validation)
 
-    implementation(mn.reactor)
+    implementation(mnReactor.micronaut.reactor)
     implementation(mn.micronaut.retry)
     compileOnly(mn.micronaut.jackson.databind)
     compileOnly(mnSerde.micronaut.serde.jackson)
     compileOnly(mn.micronaut.management)
 
     testAnnotationProcessor(mn.micronaut.inject.java)
+    testImplementation(mn.micronaut.http.client)
     testImplementation(libs.spock)
     testImplementation(libs.testcontainers.spock) {
         exclude module:'spock-core'
