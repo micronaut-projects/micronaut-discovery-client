@@ -5,6 +5,7 @@ micronaut-platform = "4.1.3"
 micronaut-docs = "2.0.0"
 micronaut-test = "4.0.2"
 micronaut-serde = "2.2.6"
+micronaut-reactor = "3.0.2"
 micronaut-validation = "4.0.3"
 micronaut-logging = "1.1.2"
 
@@ -18,6 +19,7 @@ awaitility = "4.2.0"
 micronaut-core = { module = 'io.micronaut:micronaut-core-bom', version.ref = 'micronaut' }
 
 # Micronaut
+micronaut-reactor = { module = "io.micronaut.reactor:micronaut-reactor-bom", version.ref = "micronaut-reactor" }
 micronaut-serde = { module = "io.micronaut.serde:micronaut-serde-bom", version.ref = "micronaut-serde" }
 micronaut-test = { module = "io.micronaut.test:micronaut-test-bom", version.ref = "micronaut-test" }
 micronaut-validation = { module = "io.micronaut.validation:micronaut-validation-bom", version.ref = "micronaut-validation" }

@@ -13,7 +13,7 @@ dependencies {
     api(mn.micronaut.http.client)
     api(mnValidation.micronaut.validation)
 
-    implementation(mn.reactor)
+    implementation(mnReactor.micronaut.reactor)
     implementation(mn.micronaut.retry)
     compileOnly(mn.micronaut.jackson.databind)
     compileOnly(mnSerde.micronaut.serde.jackson)
