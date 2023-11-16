@@ -82,6 +82,10 @@ datasource.driver=java.SomeDriver
         writeValue("application-other.properties", """
 also.not.here=true
 """)
+        writeValue("test-app.yml", """
+datasource:
+    url: mysql://blah
+""")
         writeValue("test-app-test.yml", """
 datasource:
     url: mysql://overridden
@@ -108,7 +112,7 @@ not:
         List<PropertySource> propertySources = Flux.from(configClient.getPropertySources(env)).collectList().block()
 
         then: "verify property source characteristics"
-        propertySources.size() == 3
+        propertySources.size() == 4
 
 
         when:"The real environment is obtained"
@@ -125,6 +129,65 @@ not:
         applicationContext.close()
     }
 
+    void "test discovery property sources from Consul with YAML handling v2"() {
+
+        given:
+        writeValue("application.properties", """
+datasource.url=mysql://blah
+datasource.driver=java.SomeDriver
+""")
+        writeValue("application-test.json", """
+{ "some": "value" }
+""")
+        writeValue("application-other.properties", """
+also.not.here=true
+""")
+        writeValue("sample-service.yml", """
+datasource:
+    url: mysql://blah
+""")
+        writeValue("sample-service-test.yml", """
+datasource:
+    url: mysql://overridden
+""")
+        writeValue("sample-service-other.yml", """
+not:
+    here: true
+""")
+
+        ApplicationContext applicationContext = ApplicationContext.run(
+                [
+                        (ConfigurationClient.ENABLED): true,
+                        'consul.client.config.path':'some-path/config',
+                        'consul.client.config.format': 'file',
+                        'micronaut.application.name':'sample-service',
+                        'consul.client.host': 'localhost',
+                        'consul.client.port': consulServer.getPort()]
+        )
+        ConfigurationClient configClient = applicationContext.getBean(ConfigurationClient)
+
+        when:
+        def env = Mock(Environment)
+        env.getActiveNames() >> (['test'] as Set)
+        List<PropertySource> propertySources = Flux.from(configClient.getPropertySources(env)).collectList().block()
+
+        then: "verify property source characteristics"
+        propertySources.size() == 4
+
+
+        when:"The real environment is obtained"
+        env = applicationContext.getEnvironment()
+
+        then:"The environment is correct"
+        env.getRequiredProperty('some', String) == 'value'
+        env.getRequiredProperty('datasource.url', String) == 'mysql://overridden'
+        env.getRequiredProperty('datasource.driver', String) == 'java.SomeDriver'
+        !env.getProperty('not.there', Boolean).isPresent()
+        !env.getProperty('also.not.there', Boolean).isPresent()
+
+        cleanup:
+        applicationContext.close()
+    }
 
     private void writeValue(String name, String value) {
         Flux.from(client.putValue("some-path/config/$name", value)).blockFirst()
