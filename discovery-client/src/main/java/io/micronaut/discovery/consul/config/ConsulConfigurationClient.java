@@ -205,7 +205,7 @@ public class ConsulConfigurationClient implements ConfigurationClient {
                                             String finalName = propertySourceName;
                                             byte[] decoded = base64Decoder.decode(value);
                                             Map<String, Object> properties = propertySourceLoader.read(propertySourceName, decoded);
-                                            String envName = ClientUtil.resolveEnvironment(fileName, activeNames);
+                                            String envName = ClientUtil.resolveEnvironment(finalName, activeNames);
                                             LocalSource localSource = propertySources.computeIfAbsent(propertySourceName, s -> new LocalSource(isApplicationSpecificConfigKey, envName, finalName));
                                             localSource.putAll(properties);
                                         }
