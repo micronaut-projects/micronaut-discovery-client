@@ -11,7 +11,7 @@ micronaut-logging = "1.1.2"
 
 groovy = "4.0.17"
 spock = "2.3-groovy-4.0"
-testcontainers = "1.19.3"
+testcontainers = "1.19.4"
 awaitility = "4.2.0"
 
 [libraries]
