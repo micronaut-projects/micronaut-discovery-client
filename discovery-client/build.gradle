@@ -22,11 +22,8 @@ dependencies {
     testAnnotationProcessor(mn.micronaut.inject.java)
     testImplementation(mn.micronaut.http.client)
     testImplementation(libs.spock)
-    testImplementation(libs.testcontainers.spock) {
-        exclude module:'spock-core'
-    }
     testImplementation(mn.micronaut.jackson.databind)
-    testImplementation(libs.testcontainers.vault)
+    testImplementation(mnTestResources.testcontainers.vault)
 
     testImplementation(mn.micronaut.management)
     testImplementation(mn.micronaut.http.server.netty)
