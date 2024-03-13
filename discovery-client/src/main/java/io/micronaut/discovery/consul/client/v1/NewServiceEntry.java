@@ -35,7 +35,7 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class NewServiceEntry extends AbstractServiceEntry {
 
-    private List<NewCheck> checks = new ArrayList<>(1);
+    private List<ConsulCheck> checks = new ArrayList<>(1);
 
     /**
      * @param serviceName The service name
@@ -50,7 +50,7 @@ public class NewServiceEntry extends AbstractServiceEntry {
      *
      * @return The health checks to perform
      */
-    public List<NewCheck> getChecks() {
+    public List<ConsulCheck> getChecks() {
         return checks;
     }
 
@@ -60,7 +60,7 @@ public class NewServiceEntry extends AbstractServiceEntry {
      * @param checks The health checks
      * @return The {@link NewServiceEntry} instance
      */
-    public NewServiceEntry checks(List<NewCheck> checks) {
+    public NewServiceEntry checks(List<ConsulCheck> checks) {
         if (checks != null) {
             this.checks.addAll(checks);
         }
@@ -73,7 +73,7 @@ public class NewServiceEntry extends AbstractServiceEntry {
      * @param check The health check
      * @return The {@link NewServiceEntry} instance
      */
-    public NewServiceEntry check(NewCheck check) {
+    public NewServiceEntry check(ConsulCheck check) {
         if (check != null) {
             this.checks.add(check);
         }
@@ -116,7 +116,7 @@ public class NewServiceEntry extends AbstractServiceEntry {
     /**
      * @param checks The list of Http checks
      */
-    protected void setChecks(List<HTTPCheck> checks) {
+    protected void setChecks(List<ConsulCheck> checks) {
         if (CollectionUtils.isNotEmpty(checks)) {
             this.checks.addAll(checks);
         }

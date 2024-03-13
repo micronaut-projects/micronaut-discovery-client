@@ -128,5 +128,380 @@
     "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$ReflectConfig",
     "member": "Implemented interface io.micronaut.core.graal.GraalReflectionConfigurer",
     "reason": "TTLCheck was @Deprecated and no longer used"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CatalogEntry$IntrospectionRef",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CatalogEntry$IntrospectionRef",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$CatalogEntry$IntrospectionRef()",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CatalogEntry$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CatalogEntry$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CatalogEntry$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.naming.Named",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CatalogEntry$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospectionReference",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$IntrospectionRef",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$IntrospectionRef",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$Check$IntrospectionRef()",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.naming.Named",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospectionReference",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Status$IntrospectionRef",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Status$IntrospectionRef",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$Check$Status$IntrospectionRef()",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Status$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Status$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Status$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.naming.Named",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Status$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospectionReference",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$IntrospectionRef",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$IntrospectionRef",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$CheckEntry$IntrospectionRef()",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.naming.Named",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospectionReference",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$IntrospectionRef",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$IntrospectionRef",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$HealthEntry$IntrospectionRef()",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.naming.Named",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospectionReference",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$IntrospectionRef",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$IntrospectionRef",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$HTTPCheck$IntrospectionRef()",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.naming.Named",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospectionReference",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$IntrospectionRef",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$IntrospectionRef",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$NewCheck$IntrospectionRef()",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.naming.Named",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospectionReference",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$ServiceEntry$IntrospectionRef",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$ServiceEntry$IntrospectionRef",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$ServiceEntry$IntrospectionRef()",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$ServiceEntry$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$ServiceEntry$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$ServiceEntry$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.naming.Named",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$ServiceEntry$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospectionReference",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$IntrospectionRef",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$IntrospectionRef",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$TTLCheck$IntrospectionRef()",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.naming.Named",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$IntrospectionRef",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospectionReference",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.CatalogEntry",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.CatalogEntry(java.lang.String,java.net.InetAddress)",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.Check$Status",
+    "member": "Field PASSING",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.Check$Status",
+    "member": "Field WARNING",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.Check$Status",
+    "member": "Field CRITICAL",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.Check$Status",
+    "member": "Implemented interface java.lang.constant.Constable",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.Check$Status",
+    "member": "Implemented interface java.lang.Comparable",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.Check$Status",
+    "member": "Implemented interface java.io.Serializable",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.CheckEntry",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.CheckEntry(java.lang.String)",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.CheckEntry",
+    "member": "Implemented interface io.micronaut.discovery.consul.client.v1.Check",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.HealthEntry",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.HealthEntry()",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.HTTPCheck",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.HTTPCheck(java.lang.String,java.net.URL)",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.HTTPCheck",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.HTTPCheck(java.net.URL)",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.HTTPCheck",
+    "member": "Implemented interface io.micronaut.discovery.consul.client.v1.Check",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.NewCheck",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.NewCheck(java.lang.String)",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.NewCheck",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.NewCheck()",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.NewCheck",
+    "member": "Implemented interface io.micronaut.discovery.consul.client.v1.Check",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.ServiceEntry",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.ServiceEntry(java.lang.String,java.lang.String)",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.ServiceEntry",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.ServiceEntry(io.micronaut.discovery.consul.client.v1.AbstractServiceEntry)",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.TTLCheck",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.TTLCheck()",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.TTLCheck",
+    "member": "Implemented interface io.micronaut.discovery.consul.client.v1.Check",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.ConsulServiceInstance",
+    "member": "Constructor io.micronaut.discovery.consul.ConsulServiceInstance(io.micronaut.discovery.consul.client.v1.HealthEntry,java.lang.String)",
+    "reason": "Removed deprecated code for Micronaut Framework 5"
   }
 ]

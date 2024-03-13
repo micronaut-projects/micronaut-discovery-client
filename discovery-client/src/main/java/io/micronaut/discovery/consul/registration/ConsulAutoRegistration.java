@@ -46,7 +46,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Auto registration implementation for consul.
@@ -286,17 +291,5 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
             }
         }
         return Optional.empty();
-    }
-
-    /**
-     * Allows sub classes to override and customize the configuration.
-     *
-     * @param instance     The instance
-     * @param serviceEntry The service entry
-     * @deprecated no longer used
-     */
-    @Deprecated(forRemoval = true, since = "4.1.0")
-    protected void customizeServiceEntry(ServiceInstance instance, ConsulNewServiceEntry serviceEntry) {
-        // no-op
     }
 }

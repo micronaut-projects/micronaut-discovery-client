@@ -1,0 +1,85 @@
+This section documents breaking changes between Micronaut Discovery Client versions:
+
+=== Micronaut Discovery Client 5.0.0
+
+The following classes deprecated previously are now removed. The replacements are as follows:
+
+.Deprecated Classes
+[cols=2*]
+|===
+|*Deprecated Class*
+|*Replacement*
+
+|`io.micronaut.discovery.consul.client.v1.CatalogEntry`
+|api:discovery.consul.client.v1.ConsulCatalogEntry[]
+
+|`io.micronaut.discovery.consul.client.v1.Check`
+|api:discovery.consul.client.v1.ConsulCheck[]
+
+|`io.micronaut.discovery.consul.client.v1.CheckEntry`
+|api:discovery.consul.client.v1.ConsulCheck[]
+
+|`io.micronaut.discovery.consul.client.v1.HealthEntry`
+|api:discovery.consul.client.v1.ConsulHealthEntry[]
+
+|`io.micronaut.discovery.consul.client.v1.HTTPCheck`
+|api:discovery.consul.client.v1.ConsulCheck[]
+
+|`io.micronaut.discovery.consul.client.v1.NewCheck`
+|api:discovery.consul.client.v1.ConsulCheck[]
+
+|`io.micronaut.discovery.consul.client.v1.ServiceEntry`
+|api:discovery.consul.client.v1.ConsulServiceEntry[]
+
+|`io.micronaut.discovery.consul.client.v1.TTLCheck`
+|api:discovery.consul.client.v1.ConsulCheck[]
+|===
+
+The following methods of api:discovery.consul.client.v1.ConsulOperations[] deprecated previously are now removed. The replacements are as follows. Note that some have changed return types.
+
+.Deprecated Methods of `ConsulOperations`
+[cols=2*]
+|===
+|*Deprecated Method*
+|*Replacement*
+
+|`Publisher<Boolean> register(CatalogEntry)`
+|`Publisher<Boolean> register(ConsulCatalogEntry)`
+
+|`Publisher<Boolean> deregister(CatalogEntry)`
+|`Publisher<Boolean> deregister(ConsulCatalogEntry)`
+
+|`Publisher<HttpStatus> register(NewServiceEntry)`
+|`Publisher<HttpStatus> register(ConsulNewServiceEntry)`
+
+|`Publisher<Map<String, ServiceEntry>> getServices()`
+|`Publisher<Map<String, ConsulServiceEntry>> findServices()`
+
+|`Publisher<List<HealthEntry>> getHealthyServices(String, Boolean, String, String)`
+|`Publisher<List<ConsulHealthEntry>> findHealthyServices(String, Boolean, String, String)`
+
+|`Publisher<List<HealthEntry>> getHealthyServices(String)`
+|`Publisher<List<ConsulHealthEntry>> findHealthyServices(String)`
+|===
+
+As a consequence of removals, the following api:discovery.consul.client.v1.ConsulOperations[] methods were not deprecated previously, but their return types changed:
+
+.Changed Return Types of `ConsulOperations`
+[cols=2*]
+|===
+|*Method with changed return type*
+|*Replacement*
+
+|`Publisher<List<CatalogEntry>> getNodes()`
+|`Publisher<List<ConsulCatalogEntry>> getNodes()`
+
+|`Publisher<List<CatalogEntry>> getNodes()`
+|`Publisher<List<ConsulCatalogEntry>> getNodes()`
+|===
+
+- The constructor `io.micronaut.discovery.consul.ConsulServiceInstance(HealthEntry, String)` deprecated previously is now removed. Use `ConsulServiceInstance(ConsulHealthEntry, String)` instead.
+
+- The method `io.micronaut.discovery.consul.ConsulServiceInstance.getHealthEntry()` deprecated previously is now removed. It was unused and has no replacement.
+
+- The method `io.micronaut.discovery.consul.registration.ConsulAutoRegistration.customizeServiceEntry(ServiceInstance, ConsulNewServiceEntry)` deprecated previously is now removed. It was unused and has no replacement.
+
