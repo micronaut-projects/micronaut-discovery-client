@@ -105,7 +105,7 @@
         <h1>Micronaut Discovery Client</h1>
         <p></p>
         <p>Adds Service Discovery Features for Eureka and Consul</p>
-        <p><strong>Version:</strong> <select style='max-width: 200px' onChange='window.document.location.href=this.options[this.selectedIndex].value;'><option selected='selected' value='https://micronaut-projects.github.io/micronaut-discovery-client/snapshot/guide/index.html'>SNAPSHOT</option><option value='https://micronaut-projects.github.io/micronaut-discovery-client/latest/guide/index.html'>LATEST</option></select> </p>
+        <p><strong>Version:</strong> 4.3.0-SNAPSHOT </p>
     </div>
     
 <h1 id="introduction"><a class="anchor" href="#introduction"></a>1 Introduction</h1>
@@ -429,9 +429,9 @@ consul:
     name="hello-world"
 [consul]
   [consul.client]
+    defaultZone="${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
     [consul.client.registration]
-      enabled=true
-    defaultZone="${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"</code></pre>
+      enabled=true</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -661,18 +661,18 @@ consul:
     name="hello-world"
 [consul]
   [consul.client]
+    defaultZone="${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
     [consul.client.registration]
       enabled=true
       tags=[
         "hello",
         "world"
       ]
-      [consul.client.registration.meta]
-        some="value"
-        instance_type="t2.medium"
       retry-count=5
       fail-fast=false
-    defaultZone="${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"</code></pre>
+      [consul.client.registration.meta]
+        some="value"
+        instance_type="t2.medium"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1142,9 +1142,9 @@ eureka:
     name="hello-world"
 [eureka]
   [eureka.client]
+    defaultZone="${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}"
     [eureka.client.registration]
-      enabled=true
-    defaultZone="${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}"</code></pre>
+      enabled=true</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1261,16 +1261,16 @@ eureka.client.registration.port=9090</code></pre>
       asgName="myAsg"
       countryId=10
       vipAddress="myapp"
-      [eureka.client.registration.leaseInfo]
-        durationInSecs=60
-      [eureka.client.registration.metadata]
-        foo="bar"
       retry-count=10
       retry-delay="5s"
       appname="some-app-name"
       hostname="foo.example.com"
       ip-addr="1.2.3.4"
-      port=9090</code></pre>
+      port=9090
+      [eureka.client.registration.leaseInfo]
+        durationInSecs=60
+      [eureka.client.registration.metadata]
+        foo="bar"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
