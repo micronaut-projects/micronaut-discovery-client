@@ -77,6 +77,27 @@ As a consequence of removals, the following api:discovery.consul.client.v1.Consu
 |`Publisher<List<ConsulCatalogEntry>> getNodes()`
 |===
 
+As a consequence of removals, the following api:discovery.consul.client.v1.NewServiceEntry[] methods were not deprecated previously, but their method signatures have changed:
+
+.Changed Return Types of `NewServiceEntry`
+[cols=2*]
+|===
+|*Method with changed method signature*
+|*Replacement*
+
+|`List<NewCheck> getChecks()`
+|`List<ConsulCheck> getChecks()`
+
+|`NewServiceEntry checks(List<NewCheck>)`
+|`NewServiceEntry checks(List<ConsulCheck>)`
+
+|`NewServiceEntry check(NewCheck check)`
+|`NewServiceEntry check(ConsulCheck check)`
+
+|`void setChecks(List<HTTPCheck>)`
+|`void setChecks(List<ConsulCheck>)`
+|===
+
 - The constructor `io.micronaut.discovery.consul.ConsulServiceInstance(HealthEntry, String)` deprecated previously is now removed. Use `ConsulServiceInstance(ConsulHealthEntry, String)` instead.
 
 - The method `io.micronaut.discovery.consul.ConsulServiceInstance.getHealthEntry()` deprecated previously is now removed. It was unused and has no replacement.
