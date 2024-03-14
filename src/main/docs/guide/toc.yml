@@ -3,4 +3,5 @@ releaseHistory: Release History
 serviceDiscoveryConsul: Consul Support
 serviceDiscoveryEureka: Eureka Support
 springCloudConfigServer: Spring Cloud Config Server Support
+breaks: Breaking Changes
 repository: Repository

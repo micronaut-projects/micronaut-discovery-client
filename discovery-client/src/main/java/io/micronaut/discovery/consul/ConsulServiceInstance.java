@@ -21,9 +21,14 @@ import io.micronaut.core.convert.value.ConvertibleValues;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.ServiceInstance;
-import io.micronaut.discovery.consul.client.v1.*;
+import io.micronaut.discovery.consul.client.v1.ConsulCatalogEntry;
+import io.micronaut.discovery.consul.client.v1.ConsulCheck;
+import io.micronaut.discovery.consul.client.v1.ConsulCheckStatus;
+import io.micronaut.discovery.consul.client.v1.ConsulHealthEntry;
+import io.micronaut.discovery.consul.client.v1.ConsulServiceEntry;
 import io.micronaut.discovery.exceptions.DiscoveryException;
 import io.micronaut.health.HealthStatus;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
@@ -70,19 +75,6 @@ public class ConsulServiceInstance implements ServiceInstance {
         }
     }
 
-    /**
-     * Constructs a {@link ConsulServiceInstance} for the given {@link ConsulHealthEntry} and scheme.
-     *
-     * @param healthEntry The health entry
-     * @param scheme      The scheme
-     * @deprecated use {@link ConsulServiceInstance(ConsulHealthEntry, String)} instead.
-     */
-    @Deprecated(since = "4.1.0", forRemoval = true)
-    public ConsulServiceInstance(@NonNull HealthEntry healthEntry, @Nullable String scheme) {
-        this.healthEntry = null;
-        this.uri = null;
-    }
-
     @Override
     public HealthStatus getHealthStatus() {
         List<ConsulCheck> checks = healthEntry.checks();
@@ -100,15 +92,6 @@ public class ConsulServiceInstance implements ServiceInstance {
             }
         }
         return HealthStatus.UP;
-    }
-
-    /**
-     * @return The {@link ConsulHealthEntry}
-     * @deprecated not used
-     */
-    @Deprecated(forRemoval = true, since = "4.1.0")
-    public HealthEntry getHealthEntry() {
-        return null;
     }
 
     @Override

@@ -122,29 +122,7 @@ public interface ConsulOperations {
     Publisher<String> status();
 
     /**
-     * Register a new {@link CatalogEntry}. See https://www.consul.io/api/catalog.html.
-     *
-     * @param entry The entry to register
-     * @return A {@link Publisher} that emits a boolean true if the operation was successful
-     * @deprecated Use {@link ConsulOperations#register(ConsulCatalogEntry)} instead.
-     *
-     */
-    @Put(uri = "/catalog/register", single = true)
-    @Deprecated(since = "4.1.0", forRemoval = true)
-    Publisher<Boolean> register(@NotNull @Body CatalogEntry entry);
-
-    /**
-     * Register a new {@link CatalogEntry}. See https://www.consul.io/api/catalog.html.
-     *
-     * @param entry The entry to register
-     * @return A {@link Publisher} that emits a boolean true if the operation was successful
-     * @deprecated Use {@link ConsulOperations#deregister(ConsulCatalogEntry)} instead.
-     */
-    @Deprecated(since = "4.1.0", forRemoval = true)
-    Publisher<Boolean> deregister(@NotNull @Body CatalogEntry entry);
-
-    /**
-     * Register a new {@link CatalogEntry}. See https://www.consul.io/api/catalog.html.
+     * Register a new {@link ConsulCatalogEntry}. See https://www.consul.io/api/catalog.html.
      *
      * @param entry The entry to register
      * @return A {@link Publisher} that emits a boolean true if the operation was successful
@@ -162,7 +140,7 @@ public interface ConsulOperations {
     Publisher<Boolean> deregister(@NotNull @Body ConsulCatalogEntry entry);
 
     /**
-     * Register a new {@link CatalogEntry}. See https://www.consul.io/api/catalog.html.
+     * Register a new {@link ConsulCatalogEntry}. See https://www.consul.io/api/catalog.html.
      *
      * @param entry The entry to register
      * @return A {@link Publisher} that emits a boolean true if the operation was successful
@@ -173,20 +151,6 @@ public interface ConsulOperations {
         delay = AbstractConsulClient.CONSUL_REGISTRATION_RETRY_DELAY
     )
     Publisher<HttpStatus> register(@NotNull @Body ConsulNewServiceEntry entry);
-
-    /**
-     * Register a new {@link NewServiceEntry}. See https://www.consul.io/api/catalog.html.
-     *
-     * @param entry The entry to register
-     * @return A {@link Publisher} that emits a boolean true if the operation was successful
-     * @deprecated Use {@link ConsulOperations#register(ConsulNewServiceEntry)} instead.
-     */
-    @Retryable(
-        attempts = AbstractConsulClient.CONSUL_REGISTRATION_RETRY_COUNT,
-        delay = AbstractConsulClient.CONSUL_REGISTRATION_RETRY_DELAY
-    )
-    @Deprecated(forRemoval = true, since = "4.1.0")
-    Publisher<HttpStatus> register(@NotNull @Body NewServiceEntry entry);
 
     /**
      * Deregister a service.
@@ -200,15 +164,6 @@ public interface ConsulOperations {
         delay = AbstractConsulClient.CONSUL_REGISTRATION_RETRY_DELAY
     )
     Publisher<HttpStatus> deregister(@NotNull String service);
-
-    /**
-     * Gets all of the registered services.
-     *
-     * @return The {@link ServiceEntry} instances
-     * @deprecated Use {@link ConsulOperations#findServices()} instead.
-     */
-    @Deprecated(forRemoval = true, since = "4.1.0")
-    Publisher<Map<String, ServiceEntry>> getServices();
 
     /**
      * Find every registered services.
@@ -235,23 +190,6 @@ public interface ConsulOperations {
     Publisher<LocalAgentConfiguration> getSelf();
 
     /**
-     * Gets the healthy services that are passing health checks.
-     *
-     * @param service The service
-     * @param passing The passing parameter
-     * @param tag     The tag
-     * @param dc      The dc
-     * @return The {@link HealthEntry} instances
-     * @deprecated Use {@link ConsulOperations#findHealthyServices(String, Boolean, String, String)} instead.
-     */
-    @Deprecated(forRemoval = true, since = "4.1.0")
-    Publisher<List<HealthEntry>> getHealthyServices(
-        @NotNull String service,
-        @Nullable Boolean passing,
-        @Nullable String tag,
-        @Nullable String dc);
-
-    /**
      * find healthy services that are passing health checks.
      *
      * @param service The service
@@ -268,12 +206,12 @@ public interface ConsulOperations {
         @Nullable String dc);
 
     /**
-     * Gets all of the registered nodes.
+     * Gets all the registered nodes.
      *
      * @return All the nodes
      */
     @Get(uri = "/catalog/nodes", single = true)
-    Publisher<List<CatalogEntry>> getNodes();
+    Publisher<List<ConsulCatalogEntry>> getNodes();
 
     /**
      * Gets all the nodes for the given data center.
@@ -282,10 +220,10 @@ public interface ConsulOperations {
      * @return A publisher that emits the nodes
      */
     @Get(uri = "/catalog/nodes?dc={datacenter}", single = true)
-    Publisher<List<CatalogEntry>> getNodes(@NotNull String datacenter);
+    Publisher<List<ConsulCatalogEntry>> getNodes(@NotNull String datacenter);
 
     /**
-     * Gets all of the service names and optional tags.
+     * Gets all the service names and optional tags.
      *
      * @return A Map where the keys are service names and the values are service tags
      */
@@ -320,18 +258,6 @@ public interface ConsulOperations {
      */
     default Publisher<HttpStatus> fail(String checkId) {
         return fail(checkId, null);
-    }
-
-    /**
-     * Gets service health information. Defaults to return both non-healthy and healthy services.
-     *
-     * @param service The service
-     * @return The {@link ConsulHealthEntry} instances
-     * @deprecated Use {@link ConsulOperations#findHealthyServices(String)} instead.
-     */
-    @Deprecated(forRemoval = true, since = "4.1.0")
-    default Publisher<List<HealthEntry>> getHealthyServices(@NotNull String service) {
-        return getHealthyServices(service, null, null, null);
     }
 
     /**
