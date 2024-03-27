@@ -12,7 +12,7 @@ micronaut-logging = "1.1.2"
 
 groovy = "4.0.17"
 spock = "2.3-groovy-4.0"
-awaitility = "4.2.0"
+awaitility = "4.2.1"
 
 [libraries]
 # Core
