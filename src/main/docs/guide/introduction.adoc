@@ -33,6 +33,10 @@ The link:{micronautapi}discovery/DiscoveryClient[DiscoveryClient] is fairly simp
 
 Both methods return rs:Publisher[] instances since the operation to retrieve service ID information may result in a blocking network call depending on the underlying implementation.
 
+The link:{micronautapi}discovery/DiscoveryClient[DiscoveryClient] implementations all make use of the https://docs.micronaut.io/latest/guide/index.html#clientAnnotation[Declarative HTTP Client], thus you must also add one of the HTTP Client implementations as an explicit dependency:
+
+dependency:micronaut-http-client[groupId=io.micronaut]
+
 If you are using Micronaut's cache module, the default implementation of the `DiscoveryClient` interface is link:{cacheapi}cache/discovery/CachingCompositeDiscoveryClient[CachingCompositeDiscoveryClient] which merges all other `DiscoveryClient` beans into a single bean and provides caching of the results of the methods. The default behaviour is to cache for 30 seconds. This cache can be disabled in application configuration:
 
 .Disabling the Discovery Client Cache
