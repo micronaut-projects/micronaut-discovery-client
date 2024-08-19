@@ -29,6 +29,7 @@ micronaut-docs-asciidoc-config-props = { module = "io.micronaut.docs:micronaut-d
 awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility" }
 
 spock = { module = 'org.spockframework:spock-core', version.ref = "spock" }
+testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter"}
 
 junit-jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine' }
 junit-platform-engine = { module = "org.junit.platform:junit-platform-suite-engine" }

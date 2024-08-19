@@ -22,9 +22,11 @@ import io.micronaut.discovery.ServiceInstance
 import io.micronaut.discovery.consul.client.v1.ConsulClient
 import io.micronaut.discovery.eureka.client.v2.EurekaClient
 import io.micronaut.runtime.server.EmbeddedServer
+import org.testcontainers.DockerClientFactory
 import org.testcontainers.containers.GenericContainer
 import reactor.core.publisher.Flux
 import spock.lang.AutoCleanup
+import spock.lang.Requires
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
@@ -33,6 +35,7 @@ import spock.util.concurrent.PollingConditions
  * @author graemerocher
  * @since 1.0
  */
+@Requires({ DockerClientFactory.instance().isDockerAvailable() })
 class ConsulAutoRegistrationSpec extends Specification {
 
     @Shared
