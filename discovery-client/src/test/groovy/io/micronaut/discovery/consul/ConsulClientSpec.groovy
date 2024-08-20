@@ -27,9 +27,11 @@ import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Status
 import io.micronaut.runtime.server.EmbeddedServer
+import org.testcontainers.DockerClientFactory
 import org.testcontainers.containers.GenericContainer
 import reactor.core.publisher.Flux
 import spock.lang.AutoCleanup
+import spock.lang.Requires
 import spock.lang.Retry
 import spock.lang.Shared
 import spock.lang.Specification
@@ -39,6 +41,7 @@ import spock.lang.Stepwise
  * @author graemerocher
  * @since 1.0
  */
+@Requires({ DockerClientFactory.instance().isDockerAvailable() })
 @Stepwise
 @Retry
 class ConsulClientSpec extends Specification {

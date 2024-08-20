@@ -28,9 +28,11 @@ import java.time.Duration;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Property(name = "spec.name", value = "ConsulTest")
 @MicronautTest
+@Testcontainers(disabledWithoutDocker = true)
 @SuppressWarnings({
     "java:S5960",
     "java:S5960", // This is a TCK. Assertions are ok.

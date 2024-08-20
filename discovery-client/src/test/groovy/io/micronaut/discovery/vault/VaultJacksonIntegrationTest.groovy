@@ -2,11 +2,14 @@ package io.micronaut.discovery.vault
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.env.Environment
+import org.testcontainers.DockerClientFactory
 import spock.lang.AutoCleanup
+import spock.lang.Requires
 import spock.lang.Shared
 import spock.lang.Specification
 import org.testcontainers.vault.VaultContainer
 
+@Requires({ DockerClientFactory.instance().isDockerAvailable() })
 class VaultJacksonIntegrationTest extends Specification {
     @Shared @AutoCleanup VaultContainer vaultContainer = new VaultContainer("vault:1.2.3")
         .withSecretInVault("secret/myapp",
