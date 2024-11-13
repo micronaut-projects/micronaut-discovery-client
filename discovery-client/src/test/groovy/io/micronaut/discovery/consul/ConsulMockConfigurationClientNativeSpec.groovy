@@ -66,11 +66,16 @@ class ConsulMockConfigurationClientNativeSpec extends Specification {
 
         when:"Properties are read"
         Flux.from(client.putValue("config/application/datasource.driver", "java.SomeDriver")).blockFirst()
+        Flux.from(client.putValue("config/application,h2/datasource.driver", "h2.OtherDriver")).blockFirst()
 
-        List<KeyValue> keyValues = Flux.from(client.readValues("config")).blockFirst()
+        List<KeyValue> matchingKeyValues = Flux.from(client.readValues("config/application")).blockFirst()
+        List<KeyValue> exactKeyValues = Flux.from(client.readValues("config/application", false)).blockFirst()
 
         then:
-        keyValues.size() == 2
+        matchingKeyValues.size() == 3
+        matchingKeyValues.collect {it.key}.toSet() == Set.of("config/application/datasource.url", "config/application/datasource.driver", "config/application,h2/datasource.driver")
+        exactKeyValues.size() == 2
+        exactKeyValues.collect {it.key}.toSet() == Set.of("config/application/datasource.url", "config/application/datasource.driver")
     }
 
     void "test discovery property sources from Consul with native property handling"() {

@@ -101,11 +101,11 @@ class MockConsulServer implements ConsulOperations {
     }
 
     @Override
-    @Get("/kv/{+key}")
     @SingleResult
-    Publisher<List<KeyValue>> readValues(String key) {
+    Publisher<List<KeyValue>> readValues(String key,
+                                         @QueryValue boolean recurse) {
         key = URLDecoder.decode(key, "UTF-8")
-        Map<String, List<KeyValue>> found = keyvalues.findAll { entry -> entry.key.startsWith(key)}
+        Map<String, List<KeyValue>> found = keyvalues.findAll { entry -> recurse ? entry.key.startsWith(key) : entry.key == key }
         if(found) {
             return Flux.just(found.values().stream().flatMap({ values -> values.stream() })
                                    .collect(Collectors.toList()))
@@ -128,8 +128,9 @@ class MockConsulServer implements ConsulOperations {
     @SingleResult
     Publisher<List<KeyValue>> readValues(String key,
                                         @Nullable @QueryValue("dc") String datacenter,
-                                        @Nullable Boolean raw, @Nullable String seperator) {
-        return readValues(key)
+                                        @QueryValue boolean recurse,
+                                        @Nullable Boolean raw, @Nullable String separator) {
+        return readValues(key, recurse)
     }
 
     @Override

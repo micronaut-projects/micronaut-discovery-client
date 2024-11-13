@@ -152,7 +152,7 @@ public class ConsulConfigurationClient implements ConfigurationClient {
         };
 
         Flux<List<KeyValue>> applicationConfig = Flux.from(
-                consulClient.readValues(commonConfigPath, dc, null, null))
+                consulClient.readValues(commonConfigPath, dc, true, null, null))
                 .onErrorResume(errorHandler);
         if (scheduler != null) {
             applicationConfig = applicationConfig.subscribeOn(scheduler);
@@ -161,7 +161,7 @@ public class ConsulConfigurationClient implements ConfigurationClient {
 
         if (hasApplicationSpecificConfig) {
             Flux<List<KeyValue>> appSpecificConfig = Flux.from(
-                    consulClient.readValues(applicationSpecificPath, dc, null, null))
+                    consulClient.readValues(applicationSpecificPath, dc, true, null, null))
                     .onErrorResume(errorHandler);
             if (scheduler != null) {
                 appSpecificConfig = appSpecificConfig.subscribeOn(scheduler);

@@ -16,6 +16,7 @@
 package io.micronaut.discovery.consul.client.v1;
 
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
@@ -28,6 +29,7 @@ import org.reactivestreams.Publisher;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * API operations for Consul.
@@ -48,24 +50,39 @@ public interface ConsulOperations {
     Publisher<Boolean> putValue(String key, @Body String value);
 
     /**
-     * Reads a Key from Consul. See https://www.consul.io/api/kv.html.
+     * Reads a Key from Consul. It will return all KV matching key as prefix.
+     * See <a href="https://www.consul.io/api/kv.html">https://www.consul.io/api/kv.html</a>.
      *
-     * @param key The key to read
+     * @param key     The prefix to match
+     * @return A {@link Publisher} that emits a list of {@link KeyValue}
+     * @see #readValues(String, boolean)
+     */
+    default Publisher<List<KeyValue>> readValues(String key){
+        return readValues(key, true);
+    }
+
+    /**
+     * Reads a Key from Consul. See <a href="https://www.consul.io/api/kv.html">https://www.consul.io/api/kv.html</a>.
+     *
+     * @param key     The key to read
+     * @param recurse Specifies if the lookup should be recursive and treat key as a prefix instead of a literal match.
      * @return A {@link Publisher} that emits a list of {@link KeyValue}
      */
-    @Get(uri = "/kv/{+key}?recurse", single = true)
-    Publisher<List<KeyValue>> readValues(String key);
+    @Get(uri = "/kv/{+key}?{&recurse}", single = true)
+    Publisher<List<KeyValue>> readValues(String key,
+                                         @QueryValue boolean recurse);
 
     /**
      * Reads a Key from Consul. See https://www.consul.io/api/kv.html.
      *
      * @param key        The key
      * @param datacenter The data center
+     * @param recurse    Specifies if the lookup should be recursive and treat key as a prefix instead of a literal match.
      * @param raw        Whether the value should be raw without encoding or metadata
-     * @param seperator  The separator to use
+     * @param separator  The separator to use
      * @return A {@link Publisher} that emits a list of {@link KeyValue}
      */
-    @Get(uri = "/kv/{+key}?recurse=true{&dc}{&raw}{&seperator}", single = true)
+    @Get(uri = "/kv/{+key}?{&recurse}{&dc}{&raw}{&separator}", single = true)
     @Retryable(
         attempts = AbstractConsulClient.EXPR_CONSUL_CONFIG_RETRY_COUNT,
         delay = AbstractConsulClient.EXPR_CONSUL_CONFIG_RETRY_DELAY
@@ -73,8 +90,9 @@ public interface ConsulOperations {
     Publisher<List<KeyValue>> readValues(
         String key,
         @Nullable @QueryValue("dc") String datacenter,
+        @QueryValue boolean recurse,
         @Nullable Boolean raw,
-        @Nullable String seperator);
+        @Nullable String separator);
 
     /**
      * Pass the TTL check. See https://www.consul.io/api/agent/check.html.
