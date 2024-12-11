@@ -32,17 +32,26 @@ import io.micronaut.serde.annotation.Serdeable;
 @Serdeable
 @ReflectiveAccess
 public class KeyValue {
-    private String key;
-    private String value;
+    private final Integer modifyIndex;
+    private final String key;
+    private final String value;
 
     /**
      * @param key   The key
      * @param value The value
      */
     @JsonCreator
-    public KeyValue(@JsonProperty("Key") String key, @JsonProperty("Value") String value) {
+    public KeyValue(@JsonProperty("ModifyIndex") Integer modifyIndex, @JsonProperty("Key") String key, @JsonProperty("Value") String value) {
+        this.modifyIndex = modifyIndex;
         this.key = key;
         this.value = value;
+    }
+
+    /**
+     * @return The modifyIndex
+     */
+    public Integer getModifyIndex() {
+        return modifyIndex;
     }
 
     /**

@@ -88,14 +88,14 @@ class MockConsulServer implements ConsulOperations {
     Publisher<Boolean> putValue(String key, @Body String value) {
         // make sure it isn't a folder
         key = URLDecoder.decode(key, "UTF-8")
-        if(!key.endsWith("/") && StringUtils.hasText(value)) {
+        if (!key.endsWith("/") && StringUtils.hasText(value)) {
             int i = key.lastIndexOf('/')
             String folder = key
-            if(i > -1) {
+            if (i > -1) {
                 folder = key.substring(0, i)
             }
-            List<KeyValue> list = keyvalues.computeIfAbsent(folder, { String k -> []})
-            list.add(new KeyValue(key, Base64.getEncoder().encodeToString(value.bytes)))
+            List<KeyValue> list = keyvalues.computeIfAbsent(folder, { String k -> [] })
+            list.add(new KeyValue(0, key, Base64.getEncoder().encodeToString(value.bytes)))
         }
         return Flux.just(true)
     }
@@ -103,33 +103,35 @@ class MockConsulServer implements ConsulOperations {
     @Override
     @Get("/kv/{+key}")
     @SingleResult
-    Publisher<List<KeyValue>> readValues(String key) {
+    Publisher<List<KeyValue>> readValues(String key, Boolean recurse) {
         key = URLDecoder.decode(key, "UTF-8")
-        Map<String, List<KeyValue>> found = keyvalues.findAll { entry -> entry.key.startsWith(key)}
-        if(found) {
+        Map<String, List<KeyValue>> found = keyvalues.findAll { entry -> recurse ? entry.key.startsWith(key) : entry.key == key }
+        if (found) {
             return Flux.just(found.values().stream().flatMap({ values -> values.stream() })
-                                   .collect(Collectors.toList()))
-        }
-        else {
+                    .collect(Collectors.toList()))
+        } else {
             int i = key.lastIndexOf('/')
-            if(i > -1) {
-                String prefix = key.substring(0,i)
+            if (i > -1) {
+                String prefix = key.substring(0, i)
 
                 List<KeyValue> values = keyvalues.get(prefix)
-                if(values) {
-                    return Flux.just(values.findAll({it.key.startsWith(key)}))
+                if (values) {
+                    return Flux.just(values.findAll({ it.key.startsWith(key) }))
                 }
             }
         }
+
         return Flux.just(Collections.emptyList())
     }
 
     @Override
     @SingleResult
     Publisher<List<KeyValue>> readValues(String key,
-                                        @Nullable @QueryValue("dc") String datacenter,
-                                        @Nullable Boolean raw, @Nullable String seperator) {
-        return readValues(key)
+                                         @Nullable @QueryValue("dc") String datacenter,
+                                         @Nullable Boolean recurse,
+                                         @Nullable Boolean raw,
+                                         @Nullable String separator) {
+        return readValues(key, recurse)
     }
 
     @Override
@@ -142,12 +144,12 @@ class MockConsulServer implements ConsulOperations {
     }
 
     @Override
-    Publisher<HttpStatus> warn(String checkId, @Nullable String  note) {
+    Publisher<HttpStatus> warn(String checkId, @Nullable String note) {
         return Publishers.just(HttpStatus.OK)
     }
 
     @Override
-    Publisher<HttpStatus> fail(String checkId, @Nullable String  note) {
+    Publisher<HttpStatus> fail(String checkId, @Nullable String note) {
         String service = nameFromCheck(checkId)
         checks.get(service)?.setStatus(ConsulCheckStatus.CRITICAL.toString())
         return Publishers.just(HttpStatus.OK)
@@ -184,12 +186,14 @@ class MockConsulServer implements ConsulOperations {
                 entry.tags(),
                 entry.id(),
                 entry.meta()))
-        checks.computeIfAbsent(service, { String key -> {
-            ConsulCheck check = new ConsulCheck()
-            check.setStatus(ConsulCheckStatus.PASSING.toString())
-            check.setId(key)
-            check
-        }})
+        checks.computeIfAbsent(service, { String key ->
+            {
+                ConsulCheck check = new ConsulCheck()
+                check.setStatus(ConsulCheckStatus.PASSING.toString())
+                check.setId(key)
+                check
+            }
+        })
         return Publishers.just(HttpStatus.OK)
     }
 
@@ -197,10 +201,9 @@ class MockConsulServer implements ConsulOperations {
     Publisher<HttpStatus> deregister(@NotNull String service) {
         checks.remove(service)
         def s = consulServices.find { it.value.id() != null ? it.value.id().equals(service) : it.value.service() == service }
-        if(s) {
+        if (s) {
             consulServices.remove(s.value.service())
-        }
-        else {
+        } else {
             consulServices.remove(service)
         }
         return Publishers.just(HttpStatus.OK)
@@ -216,15 +219,17 @@ class MockConsulServer implements ConsulOperations {
             @NotNull String service, @Nullable Boolean passing, @Nullable String tag, @Nullable String dc) {
         ConsulServiceEntry serviceEntry = consulServices.get(service)
         List<ConsulHealthEntry> healthEntries = []
-        if(serviceEntry != null) {
+        if (serviceEntry != null) {
             ConsulHealthEntry entry = new ConsulHealthEntry(nodeEntry,
                     serviceEntry,
-                    [checks.computeIfAbsent(service, { String key -> {
-                ConsulCheck check = new ConsulCheck()
-                check.setStatus(ConsulCheckStatus.PASSING.toString())
-                check.setId(key)
-                check
-            }})])
+                    [checks.computeIfAbsent(service, { String key ->
+                        {
+                            ConsulCheck check = new ConsulCheck()
+                            check.setStatus(ConsulCheckStatus.PASSING.toString())
+                            check.setId(key)
+                            check
+                        }
+                    })])
             healthEntries.add(entry)
         }
         return Publishers.just(healthEntries)
@@ -243,7 +248,7 @@ class MockConsulServer implements ConsulOperations {
     @Override
     Publisher<Map<String, List<String>>> getServiceNames() {
         return Publishers.just(consulServices.collectEntries { String key, ConsulServiceEntry entry ->
-              return [(key): entry.tags()]
+            return [(key): entry.tags()]
         })
     }
 
@@ -256,12 +261,12 @@ class MockConsulServer implements ConsulOperations {
     Publisher<LocalAgentConfiguration> getSelf() {
         return Publishers.just(new LocalAgentConfiguration().tap {
             configuration = [
-                Datacenter: 'dc1',
-                NodeName: 'foobar',
-                NodeId: '9d754d17-d864-b1d3-e758-f3fe25a9874f'
+                    Datacenter: 'dc1',
+                    NodeName  : 'foobar',
+                    NodeId    : '9d754d17-d864-b1d3-e758-f3fe25a9874f'
             ]
             member = agent
-            metadata = [ "os_version": "ubuntu_16.04" ]
+            metadata = ["os_version": "ubuntu_16.04"]
         })
     }
 

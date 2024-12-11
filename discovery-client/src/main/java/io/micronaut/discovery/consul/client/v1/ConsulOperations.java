@@ -15,6 +15,12 @@
  */
 package io.micronaut.discovery.consul.client.v1;
 
+import java.util.List;
+import java.util.Map;
+import jakarta.validation.constraints.NotNull;
+
+import org.reactivestreams.Publisher;
+
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
@@ -23,11 +29,6 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.retry.annotation.Retryable;
-import jakarta.validation.constraints.NotNull;
-import org.reactivestreams.Publisher;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * API operations for Consul.
@@ -48,24 +49,43 @@ public interface ConsulOperations {
     Publisher<Boolean> putValue(String key, @Body String value);
 
     /**
-     * Reads a Key from Consul. See https://www.consul.io/api/kv.html.
+     * Reads a Key from Consul. It will return all KV matching key as prefix.
+     * See <a href="https://www.consul.io/api/kv.html">https://www.consul.io/api/kv.html</a>.
      *
-     * @param key The key to read
+     * @param key The prefix to match
      * @return A {@link Publisher} that emits a list of {@link KeyValue}
+     * @see #readValues(String, Boolean)
      */
-    @Get(uri = "/kv/{+key}?recurse", single = true)
-    Publisher<List<KeyValue>> readValues(String key);
+    default Publisher<List<KeyValue>> readValues(String key) {
+        return readValues(key, true);
+    }
 
     /**
-     * Reads a Key from Consul. See https://www.consul.io/api/kv.html.
+     * Reads a Key from Consul. See <a href="https://www.consul.io/api/kv.html">https://www.consul.io/api/kv.html</a>.
      *
-     * @param key        The key
-     * @param datacenter The data center
-     * @param raw        Whether the value should be raw without encoding or metadata
-     * @param seperator  The separator to use
+     * @param key     The key or prefix to read
+     * @param recurse Specifies if the lookup should be recursive and treat key as a prefix instead of a literal match.
      * @return A {@link Publisher} that emits a list of {@link KeyValue}
      */
-    @Get(uri = "/kv/{+key}?recurse=true{&dc}{&raw}{&seperator}", single = true)
+    @Get(uri = "/kv/{+key}?{&recurse}", single = true)
+    @Retryable(
+        attempts = AbstractConsulClient.EXPR_CONSUL_CONFIG_RETRY_COUNT,
+        delay = AbstractConsulClient.EXPR_CONSUL_CONFIG_RETRY_DELAY
+    )
+     Publisher<List<KeyValue>> readValues(String key,
+                                                 @Nullable Boolean recurse);
+
+    /**
+     * Reads a Key from Consul. See <a href="https://www.consul.io/api/kv.html">https://www.consul.io/api/kv.html</a>.
+     *
+     * @param key        The key or prefix to read
+     * @param datacenter The data center
+     * @param recurse    Specifies if the lookup should be recursive and treat key as a prefix instead of a literal match.
+     * @param raw        Whether the value should be raw without encoding or metadata
+     * @param separator  The separator to use
+     * @return A {@link Publisher} that emits a list of {@link KeyValue}
+     */
+    @Get(uri = "/kv/{+key}?{&recurse}{&dc}{&raw}{&separator}", single = true)
     @Retryable(
         attempts = AbstractConsulClient.EXPR_CONSUL_CONFIG_RETRY_COUNT,
         delay = AbstractConsulClient.EXPR_CONSUL_CONFIG_RETRY_DELAY
@@ -73,8 +93,9 @@ public interface ConsulOperations {
     Publisher<List<KeyValue>> readValues(
         String key,
         @Nullable @QueryValue("dc") String datacenter,
+        @Nullable Boolean recurse,
         @Nullable Boolean raw,
-        @Nullable String seperator);
+        @Nullable String separator);
 
     /**
      * Pass the TTL check. See https://www.consul.io/api/agent/check.html.
@@ -85,8 +106,8 @@ public interface ConsulOperations {
      */
     @Put("/agent/check/pass/{checkId}{?note}")
     @Retryable(
-            attempts = AbstractConsulClient.CONSUL_REGISTRATION_RETRY_COUNT,
-            delay = AbstractConsulClient.CONSUL_REGISTRATION_RETRY_DELAY
+        attempts = AbstractConsulClient.CONSUL_REGISTRATION_RETRY_COUNT,
+        delay = AbstractConsulClient.CONSUL_REGISTRATION_RETRY_DELAY
     )
     Publisher<HttpStatus> pass(String checkId, @Nullable String note);
 
@@ -109,8 +130,8 @@ public interface ConsulOperations {
      */
     @Put("/agent/check/fail/{checkId}{?note}")
     @Retryable(
-            attempts = AbstractConsulClient.CONSUL_REGISTRATION_RETRY_COUNT,
-            delay = AbstractConsulClient.CONSUL_REGISTRATION_RETRY_DELAY
+        attempts = AbstractConsulClient.CONSUL_REGISTRATION_RETRY_COUNT,
+        delay = AbstractConsulClient.CONSUL_REGISTRATION_RETRY_DELAY
     )
     Publisher<HttpStatus> fail(String checkId, @Nullable String note);
 

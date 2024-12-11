@@ -21,8 +21,8 @@ import io.micronaut.context.env.EnvironmentPropertySource
 import io.micronaut.context.env.PropertySource
 import io.micronaut.discovery.config.ConfigurationClient
 import io.micronaut.discovery.consul.client.v1.ConsulClient
-import io.micronaut.discovery.consul.config.ConsulConfigurationClient
 import io.micronaut.discovery.consul.client.v1.KeyValue
+import io.micronaut.discovery.consul.config.ConsulConfigurationClient
 import io.micronaut.runtime.server.EmbeddedServer
 import reactor.core.publisher.Flux
 import spock.lang.AutoCleanup
@@ -39,7 +39,7 @@ class ConsulMockConfigurationClientNativeSpec extends Specification {
     @AutoCleanup
     @Shared
     EmbeddedServer consulServer = ApplicationContext.run(EmbeddedServer, [
-            (MockConsulServer.ENABLED):true
+            (MockConsulServer.ENABLED): true
     ])
 
     @AutoCleanup
@@ -47,8 +47,8 @@ class ConsulMockConfigurationClientNativeSpec extends Specification {
     EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer,
             [
                     (ConfigurationClient.ENABLED): true,
-                    'consul.client.host': 'localhost',
-                    'consul.client.port': consulServer.getPort()]
+                    'consul.client.host'         : 'localhost',
+                    'consul.client.port'         : consulServer.getPort()]
     )
 
     @Shared
@@ -58,19 +58,24 @@ class ConsulMockConfigurationClientNativeSpec extends Specification {
     ConsulConfigurationClient configClient = embeddedServer.applicationContext.getBean(ConsulConfigurationClient)
 
     void "test read and write key values with ConsulClient"() {
-        when:"A property is written"
+        when: "A property is written"
         def result = Flux.from(client.putValue("config/application/datasource.url", "mysql://blah")).blockFirst()
 
-        then:"The operation was successful"
+        then: "The operation was successful"
         result
 
-        when:"Properties are read"
+        when: "Properties are read"
         Flux.from(client.putValue("config/application/datasource.driver", "java.SomeDriver")).blockFirst()
+        Flux.from(client.putValue("config/application,h2/datasource.driver", "h2.OtherDriver")).blockFirst()
 
-        List<KeyValue> keyValues = Flux.from(client.readValues("config")).blockFirst()
+        List<KeyValue> matchingKeyValues = Flux.from(client.readValues("config/application")).blockFirst()
+        List<KeyValue> exactKeyValues = Flux.from(client.readValues("config/application", false)).blockFirst()
 
         then:
-        keyValues.size() == 2
+        matchingKeyValues.size() == 3
+        matchingKeyValues.collect { it.key }.toSet() == Set.of("config/application/datasource.url", "config/application/datasource.driver", "config/application,h2/datasource.driver")
+        exactKeyValues.size() == 2
+        exactKeyValues.collect { it.key }.toSet() == Set.of("config/application/datasource.url", "config/application/datasource.driver")
     }
 
     void "test discovery property sources from Consul with native property handling"() {
@@ -85,7 +90,7 @@ class ConsulMockConfigurationClientNativeSpec extends Specification {
         env.getActiveNames() >> (['test'] as Set)
         List<PropertySource> propertySources = Flux.from(configClient.getPropertySources(env)).collectList().block()
 
-        then:"verify property source characteristics"
+        then: "verify property source characteristics"
         propertySources.size() == 2
         propertySources[0].order > EnvironmentPropertySource.POSITION
         propertySources[0].name == 'consul-application'
