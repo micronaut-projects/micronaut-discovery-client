@@ -22,6 +22,7 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.discovery.spring.config.SpringCloudClientConfiguration;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
+import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.retry.annotation.Retryable;
@@ -43,7 +44,7 @@ public interface BlockingSpringCloudConfigClient {
      * Reads an application configuration from Spring Config Server.
      *
      * @param applicationName The application name
-     * @param profile profile
+     * @param profiles profiles
      * @return A {@link Publisher} that emits a list of {@link ConfigServerResponse}
      */
     @Get("/{applicationName}{/profiles}")
@@ -53,14 +54,14 @@ public interface BlockingSpringCloudConfigClient {
         delay = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-delay:1s}"
     )
     ConfigServerResponse readValues(
-        @NonNull String applicationName,
-        @Nullable String profile);
+        @PathVariable @NonNull String applicationName,
+        @PathVariable @Nullable String profiles);
 
     /**
      * Reads an application configuration from Spring Config Server with authorization parameter.
      *
      * @param applicationName   The application name
-     * @param profile         profile
+     * @param profiles         profiles
      * @param authorization     The Basic authorization header needed to authorize against the server
      * @return A {@link Publisher} that emits a list of {@link ConfigServerResponse}
      */
@@ -71,15 +72,15 @@ public interface BlockingSpringCloudConfigClient {
             delay = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-delay:1s}"
     )
     ConfigServerResponse readValuesAuthorized(
-            @NonNull String applicationName,
-            @Nullable String profile,
+            @PathVariable @NonNull String applicationName,
+            @PathVariable @Nullable String profiles,
             @Header String authorization);
 
     /**
      * Reads a versioned (#label) application configuration from Spring Config Server.
      *
      * @param applicationName   The application name
-     * @param profile           profile
+     * @param profiles           profiles
      * @param label             The label
      * @return A {@link Publisher} that emits a list of {@link ConfigServerResponse}
      */
@@ -90,15 +91,15 @@ public interface BlockingSpringCloudConfigClient {
         delay = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-delay:1s}"
     )
     ConfigServerResponse readValues(
-        @NonNull String applicationName,
-        @Nullable String profile,
+        @PathVariable @NonNull String applicationName,
+        @PathVariable @Nullable String profiles,
         @Nullable String label);
 
     /**
      * Reads a versioned (#label) application configuration from Spring Config Server with authorization parameter.
      *
      * @param applicationName   The application name
-     * @param profile          profile
+     * @param profiles          profiles
      * @param label             The label
      * @param authorization     The Basic authorization header needed to authorize against the server
      * @return A {@link Publisher} that emits a list of {@link ConfigServerResponse}
@@ -110,8 +111,8 @@ public interface BlockingSpringCloudConfigClient {
             delay = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-delay:1s}"
     )
     ConfigServerResponse readValuesAuthorized(
-            @NonNull String applicationName,
-            @Nullable String profile,
+            @PathVariable @NonNull String applicationName,
+            @PathVariable @Nullable String profiles,
             @Nullable String label,
             @Header String authorization);
 
