@@ -21,7 +21,6 @@ import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.ReflectiveAccess;
 import io.micronaut.serde.annotation.Serdeable;
-
 import java.util.Collections;
 import java.util.Map;
 
@@ -74,5 +73,4 @@ public class ConfigServerPropertySource {
     public String toString() {
         return "ConfigServerPropertySource [name=" + name + "]";
     }
-
 }
