@@ -137,9 +137,6 @@ public class SpringCloudConfigurationClient implements ConfigurationClient {
                 LOG.debug("Application Name: {}, Application Profiles: {}, label: {}", applicationName, profiles,
                          springCloudConfiguration.getLabel());
             }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Fetching Spring Cloud configuration for: {} profiles: {} label {}", applicationName, profiles, label);
-            }
             List<ConfigServerPropertySource> springSources = new ArrayList<>(fetchPropertySources(applicationName, profiles, label));
 
             if (CollectionUtils.isEmpty(springSources)) {
