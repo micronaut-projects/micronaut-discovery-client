@@ -48,6 +48,10 @@ import java.util.concurrent.ExecutorService;
 /**
  * A {@link ConfigurationClient} for Spring Cloud client.
  *
+ * NOTE: Because the {@link SpringCloudConfigClient} is invoked in a blocking fashion in  {@link io.micronaut.discovery.client.config.DistributedPropertySourceLocator},
+ * this class uses the blocking implementation of the Spring Cloud Config client - {@link BlockingSpringCloudConfigClient}. Thus, this implementation of {@link ConfigurationClient} is BLOCKING.
+ *
+ * @author Sergio del Amo
  * @author Thiago Locatelli
  * @author graemerocher
  * @since 1.0
