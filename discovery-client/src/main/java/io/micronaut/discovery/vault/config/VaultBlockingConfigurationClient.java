@@ -105,15 +105,14 @@ public class VaultBlockingConfigurationClient implements BlockingConfigurationCl
                                                       String engine,
                                                       String value) {
         try {
-            return Optional.of(configHttpClient.readConfigurationValues(token, engine, value));
-        } catch (Throwable t) {
+            return Optional.ofNullable(configHttpClient.readConfigurationValues(token, engine, value));
+        } catch (Exception t) {
             if (t instanceof HttpClientResponseException hcre) {
-                if (hcre.getStatus() == HttpStatus.NOT_FOUND) {
-                    if (vaultClientConfiguration.isFailFast()) {
+                if (hcre.getStatus() == HttpStatus.NOT_FOUND && vaultClientConfiguration.isFailFast()) {
                         throw new ConfigurationException(
                             "Could not locate PropertySource and the fail fast property is set", t);
                     }
-                }
+
                 return Optional.empty();
             }
             throw new ConfigurationException("Error reading distributed configuration from Vault: " + t.getMessage(), t);
@@ -160,7 +159,7 @@ public class VaultBlockingConfigurationClient implements BlockingConfigurationCl
     }
 
     private String normalizePathPrefix(String prefix) {
-        if (prefix.length() > 0 && prefix.charAt(0) == '/') {
+        if (!prefix.isEmpty() && prefix.charAt(0) == '/') {
             return prefix.substring(1);
         }
         return prefix;

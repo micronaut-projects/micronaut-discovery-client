@@ -15,15 +15,12 @@
  */
 package io.micronaut.discovery.spring.config.client;
 
-import io.micronaut.context.annotation.BootstrapContextCompatible;
-import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.discovery.spring.config.SpringCloudClientConfiguration;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Produces;
-import io.micronaut.http.client.annotation.Client;
 import io.micronaut.retry.annotation.Retryable;
 import org.reactivestreams.Publisher;
 
@@ -34,9 +31,6 @@ import org.reactivestreams.Publisher;
  * @since 1.0
  * @deprecated Not used. Use {@link BlockingSpringCloudConfigClient} instead.
  */
-@Client(value = SpringCloudClientConfiguration.SPRING_CLOUD_CONFIG_ENDPOINT, configuration = SpringCloudClientConfiguration.class)
-@BootstrapContextCompatible
-@Requires(beans = SpringCloudClientConfiguration.class)
 @Deprecated(forRemoval = true, since = "4.6.0")
 public interface SpringCloudConfigClient {
 

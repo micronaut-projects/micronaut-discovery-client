@@ -15,15 +15,12 @@
  */
 package io.micronaut.discovery.vault.config.v2;
 
-import io.micronaut.context.annotation.BootstrapContextCompatible;
 import io.micronaut.core.annotation.NonNull;
-import io.micronaut.discovery.vault.config.VaultClientConfiguration;
 import io.micronaut.discovery.vault.config.VaultClientConfiguration.VaultClientDiscoveryConfiguration;
 import io.micronaut.discovery.vault.config.VaultConfigHttpClient;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Produces;
-import io.micronaut.http.client.annotation.Client;
 import io.micronaut.retry.annotation.Retryable;
 import org.reactivestreams.Publisher;
 
@@ -34,8 +31,6 @@ import org.reactivestreams.Publisher;
  *  @since 1.2.0
  *  @deprecated Use {@link VaultConfigBlockingHttpClientV2} instead.
  */
-@Client(value = VaultClientConfiguration.VAULT_CLIENT_CONFIG_ENDPOINT, configuration = VaultClientConfiguration.class)
-@BootstrapContextCompatible
 @Deprecated(forRemoval = true, since = "4.6.0")
 public interface VaultConfigHttpClientV2 extends VaultConfigHttpClient<VaultResponseV2> {
 

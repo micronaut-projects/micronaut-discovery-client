@@ -17,6 +17,7 @@ package io.micronaut.discovery.vault.config;
 
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.annotation.Header;
+import io.micronaut.http.annotation.PathVariable;
 
 /**
  * A blocking contract for an HTTP client to read configuration from Vault.
@@ -41,7 +42,6 @@ public interface VaultConfigBlockingHttpClient<T extends AbstractVaultResponse<?
      * @return A publisher of the response body
      */
     T readConfigurationValues(@NonNull @Header("X-Vault-Token") String token,
-                                         @NonNull String backend,
-                                         @NonNull String vaultKey);
-
+                              @PathVariable @NonNull String backend,
+                              @PathVariable @NonNull String vaultKey);
 }

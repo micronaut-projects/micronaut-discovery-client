@@ -85,7 +85,6 @@ public interface BlockingSpringCloudConfigClient {
      * @return A {@link Publisher} that emits a list of {@link ConfigServerResponse}
      */
     @Get("/{applicationName}{/profiles}{/label}")
-    @Produces(single = true)
     @Retryable(
         attempts = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-count:3}",
         delay = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-delay:1s}"
@@ -105,7 +104,6 @@ public interface BlockingSpringCloudConfigClient {
      * @return A {@link Publisher} that emits a list of {@link ConfigServerResponse}
      */
     @Get("/{applicationName}{/profiles}{/label}")
-    @Produces(single = true)
     @Retryable(
             attempts = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-count:3}",
             delay = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-delay:1s}"

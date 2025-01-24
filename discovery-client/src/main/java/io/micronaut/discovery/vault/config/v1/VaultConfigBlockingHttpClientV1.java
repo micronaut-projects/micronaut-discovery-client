@@ -21,7 +21,7 @@ import io.micronaut.discovery.vault.config.VaultClientConfiguration;
 import io.micronaut.discovery.vault.config.VaultConfigBlockingHttpClient;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
-import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.retry.annotation.Retryable;
 import org.reactivestreams.Publisher;
@@ -52,7 +52,6 @@ public interface VaultConfigBlockingHttpClientV1 extends VaultConfigBlockingHttp
      * @return A {@link Publisher} that emits a list of {@link VaultResponseV1}
      */
     @Get("/v1/{backend}/{vaultKey}")
-    @Produces(single = true)
     @Retryable(
             attempts = "${" + PREFIX + ".retry-count:3}",
             delay = "${" + PREFIX + ".retry-delay:1s}"
@@ -60,8 +59,8 @@ public interface VaultConfigBlockingHttpClientV1 extends VaultConfigBlockingHttp
     @Override
     VaultResponseV1 readConfigurationValues(
             @NonNull @Header("X-Vault-Token") String token,
-            @NonNull String backend,
-            @NonNull String vaultKey);
+            @PathVariable @NonNull String backend,
+            @PathVariable @NonNull String vaultKey);
 
     @Override
     default String getDescription() {
