@@ -63,6 +63,7 @@ public class SpringCloudConfigurationClient implements ConfigurationClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringCloudConfigurationClient.class);
     private static final String DEFAULT_PROFILE = "default";
+    public static final String COMMA = ",";
 
     private final BlockingSpringCloudConfigClient springCloudConfigClient;
     private final SpringCloudClientConfiguration springCloudConfiguration;
@@ -130,25 +131,17 @@ public class SpringCloudConfigurationClient implements ConfigurationClient {
         } else {
             String applicationName = springCloudConfiguration.getName().orElse(configuredApplicationName.get());
             String label = springCloudConfiguration.getLabel();
-            List<String> profiles = profiles(environment);
+            String profiles = String.join(COMMA, profiles(environment));
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Spring Cloud Config Active: {}", springCloudConfiguration.getUri());
                 LOG.debug("Application Name: {}, Application Profiles: {}, label: {}", applicationName, profiles,
                          springCloudConfiguration.getLabel());
             }
-
-            List<ConfigServerPropertySource> springSources = new ArrayList<>();
-            for (String profile : profiles) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Fetching Spring Cloud configuration for: {} profile: {} label {}", applicationName, profile, label);
-                }
-                List<ConfigServerPropertySource> profileConfigPropertySources = fetchPropertySources(applicationName, profile, label);
-                for (ConfigServerPropertySource profileConfigPropertySource :  profileConfigPropertySources) {
-                    if (springSources.stream().noneMatch(existing -> existing.getName().equals(profileConfigPropertySource.getName()))) {
-                        springSources.add(profileConfigPropertySource);
-                    }
-                }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Fetching Spring Cloud configuration for: {} profiles: {} label {}", applicationName, profiles, label);
             }
+            List<ConfigServerPropertySource> springSources = new ArrayList<>(fetchPropertySources(applicationName, profiles, label));
+
             if (CollectionUtils.isEmpty(springSources)) {
                 return Flux.empty();
             }
@@ -168,11 +161,14 @@ public class SpringCloudConfigurationClient implements ConfigurationClient {
     @NonNull
     private List<String> profiles(@NonNull Environment environment) {
         List<String> profiles = springCloudConfiguration.getProfiles();
-        if (CollectionUtils.isEmpty(profiles)) {
-            profiles.add(DEFAULT_PROFILE);
-            profiles.addAll(environment.getActiveNames());
+        if (!CollectionUtils.isEmpty(profiles)) {
+            return profiles;
         }
-        return profiles;
+        profiles = new ArrayList<>(environment.getActiveNames());
+        if (!CollectionUtils.isEmpty(profiles)) {
+            return profiles;
+        }
+        return Collections.singletonList(DEFAULT_PROFILE);
     }
 
     private List<ConfigServerPropertySource> fetchPropertySources(@NonNull String applicationName, @NonNull String profile, @Nullable String label) {
