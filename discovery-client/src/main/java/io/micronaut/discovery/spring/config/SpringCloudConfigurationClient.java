@@ -63,7 +63,7 @@ public class SpringCloudConfigurationClient implements ConfigurationClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringCloudConfigurationClient.class);
     private static final String DEFAULT_PROFILE = "default";
-    public static final String COMMA = ",";
+    private static final String COMMA = ",";
 
     private final BlockingSpringCloudConfigClient springCloudConfigClient;
     private final SpringCloudClientConfiguration springCloudConfiguration;

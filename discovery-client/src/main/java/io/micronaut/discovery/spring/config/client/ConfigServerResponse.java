@@ -17,7 +17,6 @@ package io.micronaut.discovery.spring.config.client;
 
 import io.micronaut.core.annotation.ReflectiveAccess;
 import io.micronaut.serde.annotation.Serdeable;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,8 +27,8 @@ import java.util.List;
  *  @author Thiago Locatelli
  *  @since 1.0
  */
-@ReflectiveAccess
 @Serdeable
+@ReflectiveAccess
 public class ConfigServerResponse {
 
     private String name;
