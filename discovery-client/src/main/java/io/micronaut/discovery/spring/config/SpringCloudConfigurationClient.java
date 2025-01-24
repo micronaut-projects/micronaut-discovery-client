@@ -15,8 +15,6 @@
  */
 package io.micronaut.discovery.spring.config;
 
-import io.micronaut.context.annotation.BootstrapContextCompatible;
-import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
 import io.micronaut.context.env.EnvironmentPropertySource;
 import io.micronaut.context.env.PropertySource;
@@ -24,8 +22,8 @@ import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.util.CollectionUtils;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.config.ConfigurationClient;
-import io.micronaut.discovery.spring.config.client.BlockingSpringCloudConfigClient;
 import io.micronaut.discovery.spring.config.client.SpringCloudConfigClient;
 import io.micronaut.discovery.spring.config.client.ConfigServerPropertySource;
 import io.micronaut.discovery.spring.config.client.ConfigServerResponse;
@@ -33,14 +31,12 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.runtime.ApplicationConfiguration;
 import io.micronaut.scheduling.TaskExecutors;
-import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -48,75 +44,37 @@ import java.util.concurrent.ExecutorService;
 /**
  * A {@link ConfigurationClient} for Spring Cloud client.
  *
- * NOTE: Because the {@link SpringCloudConfigClient} is invoked in a blocking fashion in  {@link io.micronaut.discovery.client.config.DistributedPropertySourceLocator},
- * this class uses the blocking implementation of the Spring Cloud Config client - {@link BlockingSpringCloudConfigClient}. Thus, this implementation of {@link ConfigurationClient} is BLOCKING.
- *
- * @author Sergio del Amo
  * @author Thiago Locatelli
  * @author graemerocher
  * @since 1.0
+ * @deprecated Use {@link io.micronaut.discovery.spring.config.client.BlockingSpringCloudConfigClient} instead
  */
-@Singleton
-@BootstrapContextCompatible
-@Requires(beans = SpringCloudClientConfiguration.class)
+@Deprecated(forRemoval = true, since = "4.6.0")
 public class SpringCloudConfigurationClient implements ConfigurationClient {
 
+    public static final String DEFAULT_PROFILE = "default";
     private static final Logger LOG = LoggerFactory.getLogger(SpringCloudConfigurationClient.class);
-    private static final String DEFAULT_PROFILE = "default";
-    private static final String COMMA = ",";
 
-    private final BlockingSpringCloudConfigClient springCloudConfigClient;
+    private final SpringCloudConfigClient springCloudConfigClient;
     private final SpringCloudClientConfiguration springCloudConfiguration;
     private final ApplicationConfiguration applicationConfiguration;
+    private ExecutorService executionService;
 
     /**
      * @param springCloudConfigClient  The Spring Cloud client
      * @param springCloudConfiguration The Spring Cloud configuration
      * @param applicationConfiguration The application configuration
      * @param executionService         The executor service to use
-     * @deprecated Use {@link #SpringCloudConfigurationClient(BlockingSpringCloudConfigClient, SpringCloudClientConfiguration, ApplicationConfiguration)} instead
      */
-    @Deprecated(forRemoval = true, since = "4.6.0")
     protected SpringCloudConfigurationClient(SpringCloudConfigClient springCloudConfigClient,
                                              SpringCloudClientConfiguration springCloudConfiguration,
                                              ApplicationConfiguration applicationConfiguration,
                                              @Named(TaskExecutors.IO) @Nullable ExecutorService executionService) {
-        this(new BlockingSpringCloudConfigClient() {
-            @Override
-            public ConfigServerResponse readValues(String applicationName, String profile) {
-                return Mono.from(springCloudConfigClient.readValues(applicationName, profile)).block();
-            }
-
-            @Override
-            public ConfigServerResponse readValuesAuthorized(String applicationName, String profile, String authorization) {
-                return Mono.from(springCloudConfigClient.readValues(applicationName, profile, authorization)).block();
-            }
-
-            @Override
-            public ConfigServerResponse readValues(String applicationName, String profile, String label) {
-                return Mono.from(springCloudConfigClient.readValues(applicationName, profile, label)).block();
-            }
-
-            @Override
-            public ConfigServerResponse readValuesAuthorized(String applicationName, String profile, String label, String authorization) {
-                return Mono.from(springCloudConfigClient.readValuesAuthorized(applicationName, profile, label, authorization)).block();
-            }
-        },  springCloudConfiguration, applicationConfiguration);
-    }
-
-    /**
-     * @param springCloudConfigClient  The Spring Cloud client
-     * @param springCloudConfiguration The Spring Cloud configuration
-     * @param applicationConfiguration The application configuration
-     */
-    @Inject
-    protected SpringCloudConfigurationClient(BlockingSpringCloudConfigClient springCloudConfigClient,
-                                             SpringCloudClientConfiguration springCloudConfiguration,
-                                             ApplicationConfiguration applicationConfiguration) {
 
         this.springCloudConfigClient = springCloudConfigClient;
         this.springCloudConfiguration = springCloudConfiguration;
         this.applicationConfiguration = applicationConfiguration;
+        this.executionService = executionService;
     }
 
     @Override
@@ -130,78 +88,74 @@ public class SpringCloudConfigurationClient implements ConfigurationClient {
             return Flux.empty();
         } else {
             String applicationName = springCloudConfiguration.getName().orElse(configuredApplicationName.get());
-            String label = springCloudConfiguration.getLabel();
-            String profiles = String.join(COMMA, profiles(environment));
+            Set<String> activeNames = environment.getActiveNames();
+            String profiles = Optional.ofNullable(StringUtils.trimToNull(String.join(",", activeNames))).orElse(
+                    DEFAULT_PROFILE);
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Spring Cloud Config Active: {}", springCloudConfiguration.getUri());
                 LOG.debug("Application Name: {}, Application Profiles: {}, label: {}", applicationName, profiles,
-                         springCloudConfiguration.getLabel());
+                        springCloudConfiguration.getLabel());
             }
-            List<ConfigServerPropertySource> springSources = new ArrayList<>(fetchPropertySources(applicationName, profiles, label));
 
-            if (CollectionUtils.isEmpty(springSources)) {
-                return Flux.empty();
+            String authorization = getAuthorization(springCloudConfiguration);
+            Publisher<ConfigServerResponse> responsePublisher;
+
+            if (authorization == null) {
+                responsePublisher =
+                        springCloudConfiguration.getLabel() == null ?
+                                springCloudConfigClient.readValues(applicationName, profiles) :
+                                springCloudConfigClient.readValues(applicationName,
+                                        profiles, springCloudConfiguration.getLabel());
+            } else {
+                responsePublisher =
+                        springCloudConfiguration.getLabel() == null ?
+                                springCloudConfigClient.readValuesAuthorized(applicationName, profiles, authorization) :
+                                springCloudConfigClient.readValuesAuthorized(applicationName,
+                                        profiles, springCloudConfiguration.getLabel(), authorization);
             }
-            int baseOrder = EnvironmentPropertySource.POSITION + 100;
-            List<PropertySource> propertySources = new ArrayList<>(springSources.size());
-            //spring returns the property sources with the highest precedence first
-            //reverse order and increment priority so the last (after reversed) item will
-            //have the highest order
-            for (int i = springSources.size() - 1; i >= 0; i--) {
-                ConfigServerPropertySource springSource = springSources.get(i);
-                propertySources.add(PropertySource.of(springSource.getName(), springSource.getSource(), ++baseOrder));
+
+            Flux<PropertySource> configurationValues = Flux.from(responsePublisher)
+                    .onErrorResume(throwable -> {
+                        if (throwable instanceof HttpClientResponseException httpClientResponseException && httpClientResponseException.getStatus() == HttpStatus.NOT_FOUND) {
+                            if (springCloudConfiguration.isFailFast()) {
+                                return Flux.error(
+                                        new ConfigurationException("Could not locate PropertySource and the fail fast property is set", throwable));
+                            } else {
+                                return Flux.empty();
+                            }
+                        }
+                        return Flux.error(new ConfigurationException("Error reading distributed configuration from Spring Cloud: " + throwable.getMessage(), throwable));
+                    })
+                    .flatMap(response -> {
+                        List<ConfigServerPropertySource> springSources = response.getPropertySources();
+                        if (CollectionUtils.isEmpty(springSources)) {
+                            return Flux.empty();
+                        }
+                        int baseOrder = EnvironmentPropertySource.POSITION + 100;
+                        List<PropertySource> propertySources = new ArrayList<>(springSources.size());
+                        //spring returns the property sources with the highest precedence first
+                        //reverse order and increment priority so the last (after reversed) item will
+                        //have the highest order
+                        for (int i = springSources.size() - 1; i >= 0; i--) {
+                            ConfigServerPropertySource springSource = springSources.get(i);
+                            propertySources.add(PropertySource.of(springSource.getName(), springSource.getSource(), ++baseOrder));
+                        }
+
+                        return Flux.fromIterable(propertySources);
+                    });
+
+            if (executionService != null) {
+                return configurationValues.subscribeOn(Schedulers.fromExecutor(executionService));
+            } else {
+                return configurationValues;
             }
-            return Flux.fromIterable(propertySources);
         }
-    }
-
-    @NonNull
-    private List<String> profiles(@NonNull Environment environment) {
-        List<String> profiles = springCloudConfiguration.getProfiles();
-        if (!CollectionUtils.isEmpty(profiles)) {
-            return profiles;
-        }
-        profiles = new ArrayList<>(environment.getActiveNames());
-        if (!CollectionUtils.isEmpty(profiles)) {
-            return profiles;
-        }
-        return Collections.singletonList(DEFAULT_PROFILE);
-    }
-
-    private List<ConfigServerPropertySource> fetchPropertySources(@NonNull String applicationName, @NonNull String profile, @Nullable String label) {
-        try {
-            ConfigServerResponse response = invoke(applicationName, profile, label);
-            return response.getPropertySources();
-
-        } catch (Throwable throwable) {
-            if (throwable instanceof HttpClientResponseException httpClientResponseException && httpClientResponseException.getStatus() == HttpStatus.NOT_FOUND) {
-                if (springCloudConfiguration.isFailFast()) {
-                    throw new ConfigurationException("Could not locate PropertySource and the fail fast property is set", throwable);
-                }
-                return Collections.emptyList();
-            }
-            throw new ConfigurationException("Error reading distributed configuration from Spring Cloud: " + throwable.getMessage(), throwable);
-        }
-    }
-
-    private ConfigServerResponse invoke(@NonNull String applicationName, @NonNull String profile, @Nullable String label) {
-        String authorization = getAuthorization(springCloudConfiguration);
-        if (authorization == null) {
-            return
-                label == null ?
-                    springCloudConfigClient.readValues(applicationName, profile) :
-                    springCloudConfigClient.readValues(applicationName,
-                        profile, label);
-        }
-        return label == null ?
-                    springCloudConfigClient.readValuesAuthorized(applicationName, profile, authorization) :
-                    springCloudConfigClient.readValuesAuthorized(applicationName,
-                        profile, label, authorization);
     }
 
     @Override
     public final @NonNull String getDescription() {
-        return io.micronaut.discovery.spring.config.client.BlockingSpringCloudConfigClient.CLIENT_DESCRIPTION;
+        return io.micronaut.discovery.spring.config.client.SpringCloudConfigClient.CLIENT_DESCRIPTION;
     }
 
     /**

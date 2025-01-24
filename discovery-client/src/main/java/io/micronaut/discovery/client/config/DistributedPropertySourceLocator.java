@@ -23,14 +23,19 @@ import io.micronaut.context.env.Environment;
 import io.micronaut.context.env.PropertySource;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.annotation.Blocking;
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.config.ConfigurationClient;
+import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 
 import jakarta.inject.Singleton;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
@@ -50,19 +55,35 @@ import java.util.concurrent.TimeoutException;
 public class DistributedPropertySourceLocator implements BootstrapPropertySourceLocator {
     private static final Logger LOG = LoggerFactory.getLogger(DistributedPropertySourceLocator.class);
     private final ConfigurationClient configurationClient;
+    private final List<BlockingConfigurationClient> configurationClients;
     private final Duration readTimeout;
 
     /**
      * @param configurationClient The configuration client
      * @param readTimeout         The read timeout
+     * @deprecated Use {@link #DistributedPropertySourceLocator(ConfigurationClient, Duration)} instead
      */
+    @Deprecated(forRemoval = true, since = "4.6.0")
     public DistributedPropertySourceLocator(
         ConfigurationClient configurationClient,
         @Value("${" + ConfigurationClient.READ_TIMEOUT + ":10s}")
             Duration readTimeout) {
+        this(configurationClient, readTimeout, Collections.emptyList());
+    }
 
+    /**
+     * @param configurationClient Reactive configuration client
+     * @param readTimeout         The read timeout
+     * @param configurationClients configuration clients
+     */
+    @Inject
+    public DistributedPropertySourceLocator(
+        @Nullable  ConfigurationClient configurationClient,
+         @Value("${" + ConfigurationClient.READ_TIMEOUT + ":10s}") Duration readTimeout,
+        @NonNull List<BlockingConfigurationClient> configurationClients) {
         this.configurationClient = configurationClient;
         this.readTimeout = readTimeout;
+        this.configurationClients = configurationClients;
     }
 
     @Override
@@ -74,11 +95,17 @@ public class DistributedPropertySourceLocator implements BootstrapPropertySource
         try {
             Flux<PropertySource> propertySourceFlowable = Flux.from(configurationClient.getPropertySources(environment));
             List<PropertySource> propertySources = propertySourceFlowable
-                    .timeout(Duration.ofMillis(readTimeout.toMillis()))
-                    .collectList()
-                    .block();
+                .timeout(Duration.ofMillis(readTimeout.toMillis()))
+                .collectList()
+                .block();
+            if (propertySources == null) {
+                propertySources = new ArrayList<>();
+            }
             if (LOG.isInfoEnabled()) {
-                LOG.info("Resolved {} configuration sources from client: {}", propertySources != null ? propertySources.size() : 0, configurationClient);
+                LOG.info("Resolved {} configuration sources from client: {}", propertySources.size(), configurationClient);
+            }
+            for (BlockingConfigurationClient cc : configurationClients) {
+                propertySources.addAll(cc.getPropertySources(environment));
             }
             return propertySources;
         } catch (RuntimeException e) {
