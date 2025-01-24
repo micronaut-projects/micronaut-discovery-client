@@ -15,6 +15,8 @@
  */
 package io.micronaut.discovery.vault.config;
 
+import io.micronaut.context.annotation.BootstrapContextCompatible;
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
 import io.micronaut.context.env.EnvironmentPropertySource;
 import io.micronaut.context.env.PropertySource;
@@ -22,25 +24,16 @@ import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.util.StringUtils;
+import io.micronaut.discovery.client.config.BlockingConfigurationClient;
 import io.micronaut.discovery.config.ConfigurationClient;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.runtime.ApplicationConfiguration;
-import io.micronaut.scheduling.TaskExecutors;
-import jakarta.inject.Named;
-import org.reactivestreams.Publisher;
+import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.core.publisher.Flux;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -48,18 +41,18 @@ import java.util.stream.Collectors;
  *
  *  @author thiagolocatelli
  *  @since 1.2.0
- * @deprecated Use {@link VaultConfigBlockingHttpClient} instead.
  */
-@Deprecated(forRemoval = true, since = "4.6.0")
-public class VaultConfigurationClient implements ConfigurationClient {
+@Singleton
+@BootstrapContextCompatible
+@Requires(beans = VaultClientConfiguration.class)
+public class VaultBlockingConfigurationClient implements BlockingConfigurationClient {
 
-    private static final Logger LOG = LoggerFactory.getLogger(VaultConfigurationClient.class);
+    private static final Logger LOG = LoggerFactory.getLogger(VaultBlockingConfigurationClient.class);
     private static final String DEFAULT_APPLICATION = "application";
 
-    private final VaultConfigHttpClient<?> configHttpClient;
+    private final VaultConfigBlockingHttpClient<?> configHttpClient;
     private final VaultClientConfiguration vaultClientConfiguration;
     private final ApplicationConfiguration applicationConfiguration;
-    private final ExecutorService executorService;
 
     /**
      * Default Constructor.
@@ -67,22 +60,20 @@ public class VaultConfigurationClient implements ConfigurationClient {
      * @param configHttpClient          The http client
      * @param vaultClientConfiguration  Vault Client Configuration
      * @param applicationConfiguration  The application configuration
-     * @param executorService           Executor Service
      */
-    public VaultConfigurationClient(VaultConfigHttpClient<?> configHttpClient,
+    public VaultBlockingConfigurationClient(VaultConfigBlockingHttpClient<?> configHttpClient,
                                     VaultClientConfiguration vaultClientConfiguration,
-                                    ApplicationConfiguration applicationConfiguration,
-                                    @Named(TaskExecutors.IO) @Nullable ExecutorService executorService) {
+                                    ApplicationConfiguration applicationConfiguration) {
         this.configHttpClient = configHttpClient;
         this.vaultClientConfiguration = vaultClientConfiguration;
         this.applicationConfiguration = applicationConfiguration;
-        this.executorService = executorService;
     }
 
     @Override
-    public Publisher<PropertySource> getPropertySources(Environment environment) {
+    @NonNull
+    public List<PropertySource> getPropertySources(@NonNull Environment environment) {
         if (!vaultClientConfiguration.getDiscoveryConfiguration().isEnabled()) {
-            return Flux.empty();
+            return Collections.emptyList();
         }
 
         final String applicationName = applicationConfiguration.getName().orElse(null);
@@ -97,38 +88,36 @@ public class VaultConfigurationClient implements ConfigurationClient {
             LOG.debug("Application name: {}, application profiles: {}", applicationName, activeNames);
         }
 
-        List<Flux<PropertySource>> propertySources = new ArrayList<>();
+        List<PropertySource> propertySources = new ArrayList<>();
 
         String token = vaultClientConfiguration.getToken();
         String engine = vaultClientConfiguration.getSecretEngineName();
         String pathPrefix = normalizePathPrefix(vaultClientConfiguration.getPathPrefix());
+        buildVaultKeys(pathPrefix, applicationName, activeNames)
+            .forEach((key, value) -> invoke(token, engine, value)
+                .filter(data -> !data.getSecrets().isEmpty())
+                .map(data -> PropertySource.of(value, data.getSecrets(), key))
+                .ifPresent(propertySources::add));
+        return  propertySources;
+    }
 
-        Scheduler scheduler = executorService != null ? Schedulers.fromExecutor(executorService) : null;
-
-        buildVaultKeys(pathPrefix, applicationName, activeNames).forEach((key, value) -> {
-            Flux<PropertySource> propertySourceFlowable = Flux.from(
-                    configHttpClient.readConfigurationValues(token, engine, value))
-                    .filter(data -> !data.getSecrets().isEmpty())
-                    .map(data -> PropertySource.of(value, data.getSecrets(), key))
-                    .onErrorResume(t -> {
-                        if (t instanceof HttpClientResponseException hcre) {
-                            if (hcre.getStatus() == HttpStatus.NOT_FOUND) {
-                                if (vaultClientConfiguration.isFailFast()) {
-                                    return Flux.error(new ConfigurationException(
-                                            "Could not locate PropertySource and the fail fast property is set", t));
-                                }
-                            }
-                            return Flux.empty();
-                        }
-                        return Flux.error(new ConfigurationException("Error reading distributed configuration from Vault: " + t.getMessage(), t));
-                    });
-            if (scheduler != null) {
-                propertySourceFlowable = propertySourceFlowable.subscribeOn(scheduler);
+    private Optional<AbstractVaultResponse<?>> invoke(String token,
+                                                      String engine,
+                                                      String value) {
+        try {
+            return Optional.of(configHttpClient.readConfigurationValues(token, engine, value));
+        } catch (Throwable t) {
+            if (t instanceof HttpClientResponseException hcre) {
+                if (hcre.getStatus() == HttpStatus.NOT_FOUND) {
+                    if (vaultClientConfiguration.isFailFast()) {
+                        throw new ConfigurationException(
+                            "Could not locate PropertySource and the fail fast property is set", t);
+                    }
+                }
+                return Optional.empty();
             }
-            propertySources.add(propertySourceFlowable);
-        });
-
-        return Flux.merge(propertySources);
+            throw new ConfigurationException("Error reading distributed configuration from Vault: " + t.getMessage(), t);
+        }
     }
 
     /**

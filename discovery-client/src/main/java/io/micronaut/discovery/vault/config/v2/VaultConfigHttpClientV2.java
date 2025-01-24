@@ -32,9 +32,11 @@ import org.reactivestreams.Publisher;
  *
  *  @author thiagolocatelli
  *  @since 1.2.0
+ *  @deprecated Use {@link VaultConfigBlockingHttpClientV2} instead.
  */
 @Client(value = VaultClientConfiguration.VAULT_CLIENT_CONFIG_ENDPOINT, configuration = VaultClientConfiguration.class)
 @BootstrapContextCompatible
+@Deprecated(forRemoval = true, since = "4.6.0")
 public interface VaultConfigHttpClientV2 extends VaultConfigHttpClient<VaultResponseV2> {
 
     /**

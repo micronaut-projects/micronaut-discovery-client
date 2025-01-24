@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.micronaut.discovery.vault.config.v1;
+package io.micronaut.discovery.vault.config.v2;
 
 import io.micronaut.context.annotation.BootstrapContextCompatible;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.discovery.vault.config.VaultClientConfiguration;
-import io.micronaut.discovery.vault.config.VaultConfigHttpClient;
+import io.micronaut.discovery.vault.config.VaultClientConfiguration.VaultClientDiscoveryConfiguration;
+import io.micronaut.discovery.vault.config.VaultConfigBlockingHttpClient;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Produces;
@@ -26,24 +27,20 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.retry.annotation.Retryable;
 import org.reactivestreams.Publisher;
 
-import static io.micronaut.http.client.HttpClientConfiguration.ConnectionPoolConfiguration.PREFIX;
-
 /**
  *  A non-blocking HTTP client for Vault - KV v2.
  *
  *  @author thiagolocatelli
  *  @since 1.2.0
- * @deprecated Use {@link VaultConfigBlockingHttpClientV1} instead.
  */
 @Client(value = VaultClientConfiguration.VAULT_CLIENT_CONFIG_ENDPOINT, configuration = VaultClientConfiguration.class)
 @BootstrapContextCompatible
-@Deprecated(forRemoval = true, since = "4.6.0")
-public interface VaultConfigHttpClientV1 extends VaultConfigHttpClient<VaultResponseV1> {
+public interface VaultConfigBlockingHttpClientV2 extends VaultConfigBlockingHttpClient<VaultResponseV2> {
 
     /**
      * Vault Http Client description.
      */
-    String CLIENT_DESCRIPTION = "vault-config-client-v1";
+    String CLIENT_DESCRIPTION = "vault-config-client-v2";
 
     /**
      * Reads an application configuration from Vault.
@@ -51,16 +48,16 @@ public interface VaultConfigHttpClientV1 extends VaultConfigHttpClient<VaultResp
      * @param token             Vault authentication token
      * @param backend           The name of the secret engine in Vault
      * @param vaultKey          The vault key
-     * @return A {@link Publisher} that emits a list of {@link VaultResponseV1}
+     * @return A {@link Publisher} that emits a list of {@link VaultResponseV2}
      */
-    @Get("/v1/{backend}/{vaultKey}")
+    @Get("/v1/{backend}/data/{vaultKey}")
     @Produces(single = true)
     @Retryable(
-            attempts = "${" + PREFIX + ".retry-count:3}",
-            delay = "${" + PREFIX + ".retry-delay:1s}"
+            attempts = "${" + VaultClientDiscoveryConfiguration.PREFIX + ".retry-count:3}",
+            delay = "${" + VaultClientDiscoveryConfiguration.PREFIX + ".retry-delay:1s}"
     )
     @Override
-    Publisher<VaultResponseV1> readConfigurationValues(
+    VaultResponseV2 readConfigurationValues(
             @NonNull @Header("X-Vault-Token") String token,
             @NonNull String backend,
             @NonNull String vaultKey);
@@ -69,4 +66,5 @@ public interface VaultConfigHttpClientV1 extends VaultConfigHttpClient<VaultResp
     default String getDescription() {
         return CLIENT_DESCRIPTION;
     }
+
 }

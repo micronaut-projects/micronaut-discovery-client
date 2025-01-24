@@ -18,7 +18,7 @@ package io.micronaut.discovery.vault.config.v1;
 import io.micronaut.context.annotation.BootstrapContextCompatible;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.discovery.vault.config.VaultClientConfiguration;
-import io.micronaut.discovery.vault.config.VaultConfigHttpClient;
+import io.micronaut.discovery.vault.config.VaultConfigBlockingHttpClient;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Produces;
@@ -33,12 +33,10 @@ import static io.micronaut.http.client.HttpClientConfiguration.ConnectionPoolCon
  *
  *  @author thiagolocatelli
  *  @since 1.2.0
- * @deprecated Use {@link VaultConfigBlockingHttpClientV1} instead.
  */
 @Client(value = VaultClientConfiguration.VAULT_CLIENT_CONFIG_ENDPOINT, configuration = VaultClientConfiguration.class)
 @BootstrapContextCompatible
-@Deprecated(forRemoval = true, since = "4.6.0")
-public interface VaultConfigHttpClientV1 extends VaultConfigHttpClient<VaultResponseV1> {
+public interface VaultConfigBlockingHttpClientV1 extends VaultConfigBlockingHttpClient<VaultResponseV1> {
 
     /**
      * Vault Http Client description.
@@ -60,7 +58,7 @@ public interface VaultConfigHttpClientV1 extends VaultConfigHttpClient<VaultResp
             delay = "${" + PREFIX + ".retry-delay:1s}"
     )
     @Override
-    Publisher<VaultResponseV1> readConfigurationValues(
+    VaultResponseV1 readConfigurationValues(
             @NonNull @Header("X-Vault-Token") String token,
             @NonNull String backend,
             @NonNull String vaultKey);

@@ -17,18 +17,15 @@ package io.micronaut.discovery.vault.config;
 
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.annotation.Header;
-import org.reactivestreams.Publisher;
 
 /**
- * A contract for an HTTP client to read configuration from Vault.
+ * A blocking contract for an HTTP client to read configuration from Vault.
  *
  * @param <T> The body type
- * @author James Kleeh
- * @since 1.2.0
- * @deprecated Use {@link VaultConfigBlockingHttpClient} instead.
+ * @author Sergio del Amo
+ * @since 4.6.0
  */
-@Deprecated(forRemoval = true, since = "4.6.0")
-public interface VaultConfigHttpClient<T extends AbstractVaultResponse<?>> {
+public interface VaultConfigBlockingHttpClient<T extends AbstractVaultResponse<?>> {
 
     /**
      * @return The client description
@@ -43,7 +40,7 @@ public interface VaultConfigHttpClient<T extends AbstractVaultResponse<?>> {
      * @param vaultKey The vault key
      * @return A publisher of the response body
      */
-    Publisher<T> readConfigurationValues(@NonNull @Header("X-Vault-Token") String token,
+    T readConfigurationValues(@NonNull @Header("X-Vault-Token") String token,
                                          @NonNull String backend,
                                          @NonNull String vaultKey);
 
