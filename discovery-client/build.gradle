@@ -7,6 +7,7 @@ dependencies {
     annotationProcessor(mn.micronaut.graal)
     annotationProcessor(mnValidation.micronaut.validation.processor)
     annotationProcessor(mnSerde.micronaut.serde.processor)
+    annotationProcessor(mn.micronaut.http.validation)
 
     api(mn.micronaut.discovery.core)
     api(mn.micronaut.json.core)
