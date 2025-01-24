@@ -26,6 +26,9 @@ import io.micronaut.http.client.HttpClientConfiguration;
 import io.micronaut.runtime.ApplicationConfiguration;
 
 import jakarta.inject.Inject;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -57,6 +60,8 @@ public class SpringCloudClientConfiguration extends HttpClientConfiguration {
     private String name;
     private String username;
     private String password;
+
+    private List<String> profiles = new ArrayList<>();
 
     private final SpringCloudConnectionPoolConfiguration springCloudConnectionPoolConfiguration;
     private final SpringConfigDiscoveryConfiguration springConfigDiscoveryConfiguration = new SpringConfigDiscoveryConfiguration();
@@ -188,6 +193,24 @@ public class SpringCloudClientConfiguration extends HttpClientConfiguration {
     public void setPassword(@Nullable String password) {
         this.password = password;
     }
+
+    /**
+     * Profiles used to fetch configuration from the Spring Cloud Config Server. If not set by default, the profiles will be the value `default` plus the list of active micronaut environments.
+     * @return Profiles used to fetch configuration from the Spring Cloud Config Server
+     */
+    public List<String> getProfiles() {
+        return profiles;
+    }
+
+    /**
+     * Profiles used to fetch configuration from the Spring Cloud Config Server. If not set by default, the profiles will be the value `default` plus the list of active micronaut environments.
+     *
+     * @param profiles profiles
+     */
+    public void setProfiles(List<String> profiles) {
+        this.profiles = profiles;
+    }
+
 
     /**
      * The default connection pool configuration.

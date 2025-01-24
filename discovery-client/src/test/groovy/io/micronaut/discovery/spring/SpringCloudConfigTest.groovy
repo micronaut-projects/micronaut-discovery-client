@@ -43,11 +43,14 @@ class SpringCloudConfigTest extends Specification {
         ], "first", "second")
 
         expect:
-        1 == context.getRequiredProperty("config-secret-1", Integer.class)
-        1 == context.getRequiredProperty("config-secret-2", Integer.class)
-        1 == context.getRequiredProperty("config-secret-3", Integer.class)
-        1 == context.getRequiredProperty("config-secret-4", Integer.class)
+        // Coming from my-app with highest priority
+        5 == context.getRequiredProperty("config-secret-1", Integer.class)
+        4 == context.getRequiredProperty("config-secret-2", Integer.class)
+        3== context.getRequiredProperty("config-secret-3", Integer.class)
+        2 == context.getRequiredProperty("config-secret-4", Integer.class)
         1 == context.getRequiredProperty("config-secret-5", Integer.class)
+
+        // Coming from application it does not exist in my-app
         1 == context.getRequiredProperty("config-secret-6", Integer.class)
 
         cleanup:

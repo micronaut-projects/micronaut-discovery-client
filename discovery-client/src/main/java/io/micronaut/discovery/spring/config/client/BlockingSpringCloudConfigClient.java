@@ -28,25 +28,22 @@ import io.micronaut.retry.annotation.Retryable;
 import org.reactivestreams.Publisher;
 
 /**
- * A non-blocking HTTP client for Spring Cloud Config Client.
+ * A blocking HTTP client for Spring Cloud Config Client.
  *
- * @author Thiago Locatelli
- * @since 1.0
- * @deprecated Not used. Use {@link BlockingSpringCloudConfigClient} instead.
+ * @author Sergio del Amo
+ * @since 4.6.0
  */
 @Client(value = SpringCloudClientConfiguration.SPRING_CLOUD_CONFIG_ENDPOINT, configuration = SpringCloudClientConfiguration.class)
 @BootstrapContextCompatible
 @Requires(beans = SpringCloudClientConfiguration.class)
-@Deprecated(forRemoval = true, since = "4.6.0")
-public interface SpringCloudConfigClient {
-
+public interface BlockingSpringCloudConfigClient {
     String CLIENT_DESCRIPTION = "spring-cloud-config-client";
 
     /**
      * Reads an application configuration from Spring Config Server.
      *
-     * @param applicationName   The application name
-     * @param profiles          The active profiles
+     * @param applicationName The application name
+     * @param profile profile
      * @return A {@link Publisher} that emits a list of {@link ConfigServerResponse}
      */
     @Get("/{applicationName}{/profiles}")
@@ -55,15 +52,15 @@ public interface SpringCloudConfigClient {
         attempts = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-count:3}",
         delay = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-delay:1s}"
     )
-    Publisher<ConfigServerResponse> readValues(
+    ConfigServerResponse readValues(
         @NonNull String applicationName,
-        @Nullable String profiles);
+        @Nullable String profile);
 
     /**
      * Reads an application configuration from Spring Config Server with authorization parameter.
      *
      * @param applicationName   The application name
-     * @param profiles          The active profiles
+     * @param profile         profile
      * @param authorization     The Basic authorization header needed to authorize against the server
      * @return A {@link Publisher} that emits a list of {@link ConfigServerResponse}
      */
@@ -73,16 +70,16 @@ public interface SpringCloudConfigClient {
             attempts = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-count:3}",
             delay = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-delay:1s}"
     )
-    Publisher<ConfigServerResponse> readValuesAuthorized(
+    ConfigServerResponse readValuesAuthorized(
             @NonNull String applicationName,
-            @Nullable String profiles,
+            @Nullable String profile,
             @Header String authorization);
 
     /**
      * Reads a versioned (#label) application configuration from Spring Config Server.
      *
      * @param applicationName   The application name
-     * @param profiles          The active profiles
+     * @param profile           profile
      * @param label             The label
      * @return A {@link Publisher} that emits a list of {@link ConfigServerResponse}
      */
@@ -92,16 +89,16 @@ public interface SpringCloudConfigClient {
         attempts = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-count:3}",
         delay = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-delay:1s}"
     )
-    Publisher<ConfigServerResponse> readValues(
+    ConfigServerResponse readValues(
         @NonNull String applicationName,
-        @Nullable String profiles,
+        @Nullable String profile,
         @Nullable String label);
 
     /**
      * Reads a versioned (#label) application configuration from Spring Config Server with authorization parameter.
      *
      * @param applicationName   The application name
-     * @param profiles          The active profiles
+     * @param profile          profile
      * @param label             The label
      * @param authorization     The Basic authorization header needed to authorize against the server
      * @return A {@link Publisher} that emits a list of {@link ConfigServerResponse}
@@ -112,9 +109,9 @@ public interface SpringCloudConfigClient {
             attempts = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-count:3}",
             delay = "${" + SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.PREFIX + ".retry-delay:1s}"
     )
-    Publisher<ConfigServerResponse> readValuesAuthorized(
+    ConfigServerResponse readValuesAuthorized(
             @NonNull String applicationName,
-            @Nullable String profiles,
+            @Nullable String profile,
             @Nullable String label,
             @Header String authorization);
 
