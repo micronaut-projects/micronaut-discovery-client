@@ -71,6 +71,10 @@ public class ConfigServerResponse {
         return propertySources;
     }
 
+    public void setPropertySources(List<ConfigServerPropertySource> propertySources) {
+        this.propertySources = propertySources;
+    }
+
     /**
      *
      * @return The name of the property source
