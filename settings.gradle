@@ -18,6 +18,7 @@ include 'test-suite-spring-cloud-config-server'
 include 'test-suite-consul-graal'
 include 'test-suite-consul-graal-serde'
 include 'test-suite-consul-graal-jacksondatabind'
+include 'test-suite-consul-watch'
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 

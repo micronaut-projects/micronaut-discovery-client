@@ -28,6 +28,7 @@ dependencies {
     testImplementation(mn.micronaut.management)
     testImplementation(mn.micronaut.http.server.netty)
     testImplementation(mn.snakeyaml)
+    testImplementation(mnLogging.logback.classic)
 
     testCompileOnly(mn.micronaut.inject.groovy)
 }

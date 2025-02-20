@@ -19,6 +19,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.annotation.ReflectiveAccess;
 import io.micronaut.serde.annotation.Serdeable;
 
@@ -32,17 +34,28 @@ import io.micronaut.serde.annotation.Serdeable;
 @Serdeable
 @ReflectiveAccess
 public class KeyValue {
-    private String key;
-    private String value;
+
+    private final Integer modifyIndex;
+    private final String key;
+    private final String value;
 
     /**
+     * @param modifyIndex The KV index
      * @param key   The key
      * @param value The value
      */
     @JsonCreator
-    public KeyValue(@JsonProperty("Key") String key, @JsonProperty("Value") String value) {
+    public KeyValue(@Nullable @JsonProperty("ModifyIndex") Integer modifyIndex, @JsonProperty("Key") String key, @JsonProperty("Value") String value) {
+        this.modifyIndex = modifyIndex;
         this.key = key;
         this.value = value;
+    }
+
+    /**
+     * @return The modifyIndex
+     */
+    public Integer getModifyIndex() {
+        return modifyIndex;
     }
 
     /**

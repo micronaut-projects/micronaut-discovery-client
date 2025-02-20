@@ -35,7 +35,7 @@ import java.util.Optional;
 @ClientFilter(patterns = "/v1/**", serviceId = ConsulClient.SERVICE_ID)
 @Requires(beans = ConsulConfiguration.class)
 @BootstrapContextCompatible
-public class ConsulAslTokenClientFilter implements Toggleable {
+public final class ConsulAslTokenClientFilter implements Toggleable {
 
     /**
      * Consult header token.

@@ -15,26 +15,12 @@
  */
 package io.micronaut.discovery.consul
 
-
 import io.micronaut.context.annotation.Requires
 import io.micronaut.core.annotation.Nullable
 import io.micronaut.core.async.annotation.SingleResult
 import io.micronaut.core.async.publisher.Publishers
 import io.micronaut.core.util.StringUtils
-import io.micronaut.discovery.consul.client.v1.CatalogEntry
-import io.micronaut.discovery.consul.client.v1.ConsulCatalogEntry
-import io.micronaut.discovery.consul.client.v1.ConsulCheck
-import io.micronaut.discovery.consul.client.v1.ConsulCheckStatus
-import io.micronaut.discovery.consul.client.v1.ConsulNewServiceEntry
-import io.micronaut.discovery.consul.client.v1.ConsulOperations
-import io.micronaut.discovery.consul.client.v1.ConsulServiceEntry
-import io.micronaut.discovery.consul.client.v1.ConsulHealthEntry
-import io.micronaut.discovery.consul.client.v1.HealthEntry
-import io.micronaut.discovery.consul.client.v1.KeyValue
-import io.micronaut.discovery.consul.client.v1.LocalAgentConfiguration
-import io.micronaut.discovery.consul.client.v1.MemberEntry
-import io.micronaut.discovery.consul.client.v1.NewServiceEntry
-import io.micronaut.discovery.consul.client.v1.ServiceEntry
+import io.micronaut.discovery.consul.client.v1.*
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
@@ -43,6 +29,7 @@ import io.micronaut.http.annotation.QueryValue
 import io.micronaut.runtime.server.EmbeddedServer
 import jakarta.validation.constraints.NotNull
 import org.reactivestreams.Publisher
+import org.testcontainers.shaded.org.apache.commons.lang3.RandomUtils
 import reactor.core.publisher.Flux
 
 import java.util.concurrent.ConcurrentHashMap
@@ -100,7 +87,7 @@ class MockConsulServer implements ConsulOperations {
                 folder = key.substring(0, i)
             }
             List<KeyValue> list = keyvalues.computeIfAbsent(folder, { String k -> []})
-            list.add(new KeyValue(key, Base64.getEncoder().encodeToString(value.bytes)))
+            list.add(new KeyValue(RandomUtils.nextInt(), key, Base64.getEncoder().encodeToString(value.bytes)))
         }
         return Flux.just(true)
     }
@@ -133,7 +120,7 @@ class MockConsulServer implements ConsulOperations {
     @SingleResult
     Publisher<List<KeyValue>> readValues(String key,
                                         @Nullable @QueryValue("dc") String datacenter,
-                                        @Nullable Boolean raw, @Nullable String seperator) {
+                                        @Nullable Boolean raw, @Nullable String separator) {
         return readValues(key)
     }
 
