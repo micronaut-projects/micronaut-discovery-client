@@ -56,8 +56,8 @@ class WatcherSpec extends Specification {
 
         watcher = new ConfigurationsWatcher(List.of("path/to/yaml"), consulClient, watchConfiguration, propertiesChangeHandler, propertySourceReader)
 
-        def keyValue = new KeyValue(1234, "path/to/yaml", base64Encoder.encodeToString("foo.bar: value".getBytes()))
-        def newKeyValue = new KeyValue(4567, "path/to/yaml", base64Encoder.encodeToString("foo.bar: value_2".getBytes()))
+        def keyValue = new KeyValue("path/to/yaml", base64Encoder.encodeToString("foo.bar: value".getBytes()), 1234)
+        def newKeyValue = new KeyValue("path/to/yaml", base64Encoder.encodeToString("foo.bar: value_2".getBytes()), 4567)
 
         1 * consulClient.watchValues("path/to/yaml", false, null) >> Mono.just(List.of(keyValue)) // init
         2 * consulClient.watchValues("path/to/yaml", false, 1234) >>> [
@@ -114,12 +114,12 @@ class WatcherSpec extends Specification {
 
         watcher = new NativeWatcher(List.of("path/to/"), consulClient, watchConfiguration, propertiesChangeHandler)
 
-        def previousKeyValue1 = new KeyValue(12, "path/to/foo.bar", base64Encoder.encodeToString("value_a".getBytes()))
-        def previousKeyValue2 = new KeyValue(34, "path/to/other.key", base64Encoder.encodeToString("value_b".getBytes()))
+        def previousKeyValue1 = new KeyValue("path/to/foo.bar", base64Encoder.encodeToString("value_a".getBytes()), 12)
+        def previousKeyValue2 = new KeyValue("path/to/other.key", base64Encoder.encodeToString("value_b".getBytes()), 34)
         def previousKvs = new ArrayList<>(List.of(previousKeyValue1, previousKeyValue2))
 
-        def nextKeyValue1 = new KeyValue(56, "path/to/foo.bar", base64Encoder.encodeToString("value_c".getBytes()))
-        def nextKeyValue2 = new KeyValue(78, "path/to/other.key", base64Encoder.encodeToString("value_b".getBytes()))
+        def nextKeyValue1 = new KeyValue("path/to/foo.bar", base64Encoder.encodeToString("value_c".getBytes()), 56)
+        def nextKeyValue2 = new KeyValue("path/to/other.key", base64Encoder.encodeToString("value_b".getBytes()), 78)
         def nextKvs = new ArrayList<>(List.of(nextKeyValue1, nextKeyValue2))
 
         1 * consulClient.watchValues("path/to/", true, null) >> Mono.just(previousKvs) // init
@@ -183,8 +183,8 @@ class WatcherSpec extends Specification {
 
         watcher = new ConfigurationsWatcher(List.of("path/to/global_error"), consulClient, watchConfiguration, propertiesChangeHandler, propertySourceReader)
 
-        def keyValue = new KeyValue(0, "path/to/global_error", "")
-        def newKeyValue = new KeyValue(1, "path/to/global_error", "incorrect data")
+        def keyValue = new KeyValue("path/to/global_error", "", 0)
+        def newKeyValue = new KeyValue("path/to/global_error", "incorrect data", 1)
         1 * consulClient.watchValues("path/to/global_error", false, null) >> Mono.just(List.of(keyValue)) // init
         1 * consulClient.watchValues("path/to/global_error", false, 0) >> Mono.just(List.of(newKeyValue)) // change
 
@@ -404,7 +404,7 @@ class WatcherSpec extends Specification {
     void "test that stopping Watcher dispose all subscriptions"() {
         given:
         watcher = new ConfigurationsWatcher(List.of("path/to/yaml"), consulClient, watchConfiguration, propertiesChangeHandler, propertySourceReader)
-        def keyValue = new KeyValue(1234, "path/to/yaml", base64Encoder.encodeToString("foo.bar: value".getBytes()))
+        def keyValue = new KeyValue("path/to/yaml", base64Encoder.encodeToString("foo.bar: value".getBytes()), 1234)
 
         // fixme mock result to check the dispose call ?
         1 * consulClient.watchValues("path/to/yaml", false, null) >> Mono.delay(Duration.ofMillis(200))

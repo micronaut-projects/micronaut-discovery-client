@@ -16,11 +16,11 @@ class KvUtilsSpec extends Specification {
         where:
         left                            | right                             | expected
         null                            | null                              | true
-        new KeyValue(0, "key", "value") | null                              | false
-        null                            | new KeyValue(0, "key", "value")   | false
-        new KeyValue(0, "key", "value") | new KeyValue(0, "key_2", "value") | false
-        new KeyValue(0, "key", "value") | new KeyValue(0, "key", "value_2") | false
-        new KeyValue(0, "key", "value") | new KeyValue(0, "key", "value")   | true
+        new KeyValue("key", "value", 0) | null                              | false
+        null                            | new KeyValue("key", "value", 0)   | false
+        new KeyValue("key", "value", 0) | new KeyValue("key_2", "value", 0) | false
+        new KeyValue("key", "value", 0) | new KeyValue("key", "value_2", 0) | false
+        new KeyValue("key", "value", 0) | new KeyValue("key", "value", 0)   | true
     }
 
     void "test comparison between 2 lists of KeyValues"(final List<KeyValue> left, final List<KeyValue> right, final boolean expected) {
@@ -33,14 +33,14 @@ class KvUtilsSpec extends Specification {
         where:
         left                                                                           | right                                                                          | expected
         null                                                                           | null                                                                           | true
-        createList(new KeyValue(0, "key", "value"))                                    | null                                                                           | false
-        null                                                                           | createList(new KeyValue(0, "key", "value"))                                    | false
-        createList(new KeyValue(0, "key", "value"))                                    | createList(new KeyValue(0, "key_2", "value"))                                  | false
-        createList(new KeyValue(0, "key", "value"), new KeyValue(0, "key_2", "value")) | createList(new KeyValue(0, "key_2", "value"))                                  | false
-        createList(new KeyValue(0, "key", "value"))                                    | createList(new KeyValue(0, "key", "value"), new KeyValue(0, "key_2", "value")) | false
-        createList(new KeyValue(0, "key", "value"))                                    | createList(new KeyValue(0, "key", "value_2"))                                  | false
-        createList(new KeyValue(0, "key", "value"))                                    | createList(new KeyValue(0, "key", "value"))                                    | true
-        createList(new KeyValue(0, "key", "value"), new KeyValue(0, "key_2", "value")) | createList(new KeyValue(0, "key_2", "value"), new KeyValue(0, "key", "value")) | true
+        createList(new KeyValue("key", "value", 0))                                    | null                                                                           | false
+        null                                                                           | createList(new KeyValue( "key", "value", 0))                                    | false
+        createList(new KeyValue("key", "value", 0))                                    | createList(new KeyValue("key_2", "value", 0))                                  | false
+        createList(new KeyValue("key", "value", 0), new KeyValue("key_2", "value", 0)) | createList(new KeyValue("key_2", "value", 0))                                  | false
+        createList(new KeyValue("key", "value", 0))                                    | createList(new KeyValue("key", "value", 0), new KeyValue("key_2", "value", 0)) | false
+        createList(new KeyValue("key", "value", 0))                                    | createList(new KeyValue("key", "value_2", 0))                                  | false
+        createList(new KeyValue("key", "value", 0))                                    | createList(new KeyValue("key", "value", 0))                                    | true
+        createList(new KeyValue("key", "value", 0), new KeyValue("key_2", "value", 0)) | createList(new KeyValue("key_2", "value", 0), new KeyValue("key", "value", 0)) | true
     }
 
     private static List<KeyValue> createList(KeyValue... keyValues) {

@@ -11,6 +11,7 @@ dependencies {
     implementation(libs.awaitility)
     implementation(platform(mnTestResources.boms.testcontainers))
     implementation(libs.testcontainers.junit.jupiter)
+    implementation(libs.jsonassert)
 }
 tasks.named("checkstyleMain").configure {
     enabled = false

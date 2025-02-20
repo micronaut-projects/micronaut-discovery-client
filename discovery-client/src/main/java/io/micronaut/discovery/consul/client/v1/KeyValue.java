@@ -15,14 +15,15 @@
  */
 package io.micronaut.discovery.consul.client.v1;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
+import io.micronaut.core.annotation.Creator;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.annotation.ReflectiveAccess;
 import io.micronaut.serde.annotation.Serdeable;
+import jakarta.inject.Inject;
 
 /**
  * Represents a Key/Value pair returned from Consul via /kv/:key.
@@ -34,21 +35,36 @@ import io.micronaut.serde.annotation.Serdeable;
 @Serdeable
 @ReflectiveAccess
 public class KeyValue {
-
-    private final Integer modifyIndex;
+    @JsonProperty("Key")
     private final String key;
+
+    @JsonProperty("Value")
     private final String value;
+
+    @Nullable
+    @JsonProperty("ModifyIndex")
+    private final Integer modifyIndex;
 
     /**
      * @param modifyIndex The KV index
      * @param key   The key
      * @param value The value
      */
-    @JsonCreator
-    public KeyValue(@Nullable @JsonProperty("ModifyIndex") Integer modifyIndex, @JsonProperty("Key") String key, @JsonProperty("Value") String value) {
-        this.modifyIndex = modifyIndex;
+    @Creator
+    public KeyValue(String key, String value, Integer modifyIndex) {
         this.key = key;
         this.value = value;
+        this.modifyIndex = modifyIndex;
+    }
+
+    /**
+     * @param key   The key
+     * @param value The value
+     * @deprecated Use {@link KeyValue#KeyValue(String, String, Integer)} instead.
+     */
+    @Deprecated(forRemoval = true, since = "4.6.0")
+    public KeyValue(String key, String value) {
+        this(key, value, null);
     }
 
     /**

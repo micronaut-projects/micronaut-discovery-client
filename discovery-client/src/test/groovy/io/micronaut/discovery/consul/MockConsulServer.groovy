@@ -87,7 +87,7 @@ class MockConsulServer implements ConsulOperations {
                 folder = key.substring(0, i)
             }
             List<KeyValue> list = keyvalues.computeIfAbsent(folder, { String k -> []})
-            list.add(new KeyValue(RandomUtils.nextInt(), key, Base64.getEncoder().encodeToString(value.bytes)))
+            list.add(new KeyValue(key, Base64.getEncoder().encodeToString(value.bytes), RandomUtils.nextInt()))
         }
         return Flux.just(true)
     }
