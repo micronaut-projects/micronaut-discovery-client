@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import io.micronaut.core.annotation.Internal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +42,7 @@ import reactor.core.publisher.Mono;
  * @author LE GALL Benoît
  * @since 4.6.0
  */
+@Internal
 final class NativeWatcher extends AbstractWatcher<List<KeyValue>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(NativeWatcher.class);
