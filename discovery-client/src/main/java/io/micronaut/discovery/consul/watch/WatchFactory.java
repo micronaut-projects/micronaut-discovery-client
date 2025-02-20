@@ -21,6 +21,7 @@ import static io.micronaut.discovery.config.ConfigDiscoveryConfiguration.DEFAULT
 import java.util.ArrayList;
 import java.util.List;
 
+import io.micronaut.core.annotation.Internal;
 import jakarta.inject.Singleton;
 
 import io.micronaut.context.annotation.Factory;
@@ -41,7 +42,8 @@ import io.micronaut.jackson.core.env.JsonPropertySourceLoader;
  * @since 4.6.0
  */
 @Factory
-public final class WatchFactory {
+@Internal
+final class WatchFactory {
 
     private static final String CONSUL_PATH_SEPARATOR = "/";
 
@@ -50,7 +52,7 @@ public final class WatchFactory {
     private final BlockingQueriesConfiguration blockingQueriesConfiguration;
     private final PropertiesChangeHandler propertiesChangeHandler;
 
-    public WatchFactory(final Environment environment,
+    WatchFactory(final Environment environment,
                         final BlockedQueriesConsulClient consulClient,
                         final BlockingQueriesConfiguration blockingQueriesConfiguration,
                         final PropertiesChangeHandler propertiesChangeHandler) {
