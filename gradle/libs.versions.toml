@@ -11,6 +11,7 @@ micronaut-validation = "4.9.0"
 micronaut-logging = "1.4.0"
 
 commons-lang3 = "3.17.0"
+jsonassert = "1.5.0"
 
 groovy = "4.0.17"
 spock = "2.3-groovy-4.0"
@@ -32,6 +33,7 @@ micronaut-docs-asciidoc-config-props = { module = "io.micronaut.docs:micronaut-d
 awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility" }
 
 commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang3" }
+jsonassert = { module = "org.skyscreamer:jsonassert", version.ref = "jsonassert"}
 
 spock = { module = 'org.spockframework:spock-core', version.ref = "spock" }
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter"}
