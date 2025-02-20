@@ -88,6 +88,23 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Models application info exposed by Eureka.</div>
 </div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab7"><a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockedQueries.html" title="annotation interface in io.micronaut.discovery.consul.client.v1.blockingqueries">BlockedQueries</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab7">
+<div class="block">Annotation to handle the <code>wait</code> parameter for <a href="https://developer.hashicorp.com/consul/api-docs/features/blocking">Consul Blocking Queries</a>.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockedQueriesConsulClient.html" title="interface in io.micronaut.discovery.consul.client.v1.blockingqueries">BlockedQueriesConsulClient</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="block">A non-blocking HTTP client for Consul, using <a href="https://developer.hashicorp.com/consul/api-docs/features/blocking">Blocking Queries</a> feature
+ to wait for potential changes using long polling.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockedQueryClientFilter.html" title="class in io.micronaut.discovery.consul.client.v1.blockingqueries">BlockedQueryClientFilter</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Filter to add the <code>wait</code> parameter for <a href="https://developer.hashicorp.com/consul/api-docs/features/blocking">Consul Blocking Queries</a> for request annotated with <a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockedQueries.html" title="annotation interface in io.micronaut.discovery.consul.client.v1.blockingqueries"><code>BlockedQueries</code></a>.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html" title="class in io.micronaut.discovery.consul.client.v1.blockingqueries">BlockingQueriesConfiguration</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Configuration for <a href="https://developer.hashicorp.com/consul/api-docs/features/blocking">Consul Blocking Queries</a>.</div>
+</div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/consul/client/v1/CatalogEntry.html" title="class in io.micronaut.discovery.consul.client.v1">CatalogEntry</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">Deprecated, for removal: This API element is subject to removal in a future version.
 <div class="deprecation-comment">Use <a href="io/micronaut/discovery/consul/client/v1/ConsulCatalogEntry.html" title="class in io.micronaut.discovery.consul.client.v1"><code>ConsulCatalogEntry</code></a> instead.</div>
@@ -328,89 +345,103 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html" title="class in io.micronaut.discovery.consul.client.v1">NodeEntry</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab7"><a href="io/micronaut/discovery/consul/condition/RequiresConsul.html" title="annotation interface in io.micronaut.discovery.consul.condition">RequiresConsul</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab7">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/consul/watch/PropertiesChangeHandler.html" title="class in io.micronaut.discovery.consul.watch">PropertiesChangeHandler</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Handle properties' configuration changes to be notified into the Micronaut context.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab7"><a href="io/micronaut/discovery/consul/condition/RequiresConsul.html" title="annotation interface in io.micronaut.discovery.consul.condition">RequiresConsul</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab7">
 <div class="block">Meta annotation for Consul requirements.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab7"><a href="io/micronaut/discovery/eureka/condition/RequiresEureka.html" title="annotation interface in io.micronaut.discovery.eureka.condition">RequiresEureka</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab7">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab7"><a href="io/micronaut/discovery/eureka/condition/RequiresEureka.html" title="annotation interface in io.micronaut.discovery.eureka.condition">RequiresEureka</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab7">
 <div class="block">Meta annotation for that can be added to any component that requires Eureka to load.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/eureka/condition/RequiresEurekaCondition.html" title="class in io.micronaut.discovery.eureka.condition">RequiresEurekaCondition</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/eureka/condition/RequiresEurekaCondition.html" title="class in io.micronaut.discovery.eureka.condition">RequiresEurekaCondition</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Determines if eureka is enabled.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/consul/client/v1/ServiceEntry.html" title="class in io.micronaut.discovery.consul.client.v1">ServiceEntry</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">Deprecated, for removal: This API element is subject to removal in a future version.
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/consul/client/v1/ServiceEntry.html" title="class in io.micronaut.discovery.consul.client.v1">ServiceEntry</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">Deprecated, for removal: This API element is subject to removal in a future version.
 <div class="deprecation-comment">Use <a href="io/micronaut/discovery/consul/client/v1/ConsulServiceEntry.html" title="class in io.micronaut.discovery.consul.client.v1"><code>ConsulServiceEntry</code></a> instead.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/spring/config/SpringCloudClientConfiguration.html" title="class in io.micronaut.discovery.spring.config">SpringCloudClientConfiguration</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/spring/config/SpringCloudClientConfiguration.html" title="class in io.micronaut.discovery.spring.config">SpringCloudClientConfiguration</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A <code>HttpClientConfiguration</code> for Spring Cloud Config.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/spring/config/SpringCloudClientConfiguration.SpringCloudConnectionPoolConfiguration.html" title="class in io.micronaut.discovery.spring.config">SpringCloudClientConfiguration.SpringCloudConnectionPoolConfiguration</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/spring/config/SpringCloudClientConfiguration.SpringCloudConnectionPoolConfiguration.html" title="class in io.micronaut.discovery.spring.config">SpringCloudClientConfiguration.SpringCloudConnectionPoolConfiguration</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">The default connection pool configuration.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/spring/config/SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.html" title="class in io.micronaut.discovery.spring.config">SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/spring/config/SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.html" title="class in io.micronaut.discovery.spring.config">SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Configuration class for Consul client config.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="io/micronaut/discovery/spring/config/client/SpringCloudConfigClient.html" title="interface in io.micronaut.discovery.spring.config.client">SpringCloudConfigClient</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="io/micronaut/discovery/spring/config/client/SpringCloudConfigClient.html" title="interface in io.micronaut.discovery.spring.config.client">SpringCloudConfigClient</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
 <div class="block">A non-blocking HTTP client for Spring Cloud Config Client.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/spring/config/SpringCloudConfigurationClient.html" title="class in io.micronaut.discovery.spring.config">SpringCloudConfigurationClient</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/spring/config/SpringCloudConfigurationClient.html" title="class in io.micronaut.discovery.spring.config">SpringCloudConfigurationClient</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A <code>ConfigurationClient</code> for Spring Cloud client.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/consul/client/v1/TTLCheck.html" title="class in io.micronaut.discovery.consul.client.v1">TTLCheck</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">Deprecated, for removal: This API element is subject to removal in a future version.
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/consul/client/v1/TTLCheck.html" title="class in io.micronaut.discovery.consul.client.v1">TTLCheck</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">Deprecated, for removal: This API element is subject to removal in a future version.
 <div class="deprecation-comment">Use <a href="io/micronaut/discovery/consul/client/v1/ConsulCheck.html" title="class in io.micronaut.discovery.consul.client.v1"><code>ConsulCheck</code></a> instead.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/vault/config/VaultClientConfiguration.html" title="class in io.micronaut.discovery.vault.config">VaultClientConfiguration</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/vault/config/VaultClientConfiguration.html" title="class in io.micronaut.discovery.vault.config">VaultClientConfiguration</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A <code>HttpClientConfiguration</code> for Vault Client.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/vault/config/VaultClientConfiguration.VaultClientConnectionPoolConfiguration.html" title="class in io.micronaut.discovery.vault.config">VaultClientConfiguration.VaultClientConnectionPoolConfiguration</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/vault/config/VaultClientConfiguration.VaultClientConnectionPoolConfiguration.html" title="class in io.micronaut.discovery.vault.config">VaultClientConfiguration.VaultClientConnectionPoolConfiguration</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">The Http Pool Connection Configuration class for Vault.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/vault/config/VaultClientConfiguration.VaultClientDiscoveryConfiguration.html" title="class in io.micronaut.discovery.vault.config">VaultClientConfiguration.VaultClientDiscoveryConfiguration</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/vault/config/VaultClientConfiguration.VaultClientDiscoveryConfiguration.html" title="class in io.micronaut.discovery.vault.config">VaultClientConfiguration.VaultClientDiscoveryConfiguration</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">The Discovery Configuration class for Vault.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab3"><a href="io/micronaut/discovery/vault/config/VaultClientConfiguration.VaultKvVersion.html" title="enum class in io.micronaut.discovery.vault.config">VaultClientConfiguration.VaultKvVersion</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab3">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab3"><a href="io/micronaut/discovery/vault/config/VaultClientConfiguration.VaultKvVersion.html" title="enum class in io.micronaut.discovery.vault.config">VaultClientConfiguration.VaultKvVersion</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab3">
 <div class="block">Vault Secret Engine versions.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="io/micronaut/discovery/vault/config/VaultConfigHttpClient.html" title="interface in io.micronaut.discovery.vault.config">VaultConfigHttpClient</a>&lt;<a href="io/micronaut/discovery/vault/config/VaultConfigHttpClient.html" title="type parameter in VaultConfigHttpClient">T</a> extends <a href="io/micronaut/discovery/vault/config/AbstractVaultResponse.html" title="class in io.micronaut.discovery.vault.config">AbstractVaultResponse</a>&lt;?&gt;&gt;</div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="io/micronaut/discovery/vault/config/VaultConfigHttpClient.html" title="interface in io.micronaut.discovery.vault.config">VaultConfigHttpClient</a>&lt;<a href="io/micronaut/discovery/vault/config/VaultConfigHttpClient.html" title="type parameter in VaultConfigHttpClient">T</a> extends <a href="io/micronaut/discovery/vault/config/AbstractVaultResponse.html" title="class in io.micronaut.discovery.vault.config">AbstractVaultResponse</a>&lt;?&gt;&gt;</div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">A contract for an HTTP client to read configuration from Vault.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="io/micronaut/discovery/vault/config/v1/VaultConfigHttpClientV1.html" title="interface in io.micronaut.discovery.vault.config.v1">VaultConfigHttpClientV1</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="io/micronaut/discovery/vault/config/v1/VaultConfigHttpClientV1.html" title="interface in io.micronaut.discovery.vault.config.v1">VaultConfigHttpClientV1</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="block">A non-blocking HTTP client for Vault - KV v2.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="io/micronaut/discovery/vault/config/v2/VaultConfigHttpClientV2.html" title="interface in io.micronaut.discovery.vault.config.v2">VaultConfigHttpClientV2</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">A non-blocking HTTP client for Vault - KV v2.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="io/micronaut/discovery/vault/config/v2/VaultConfigHttpClientV2.html" title="interface in io.micronaut.discovery.vault.config.v2">VaultConfigHttpClientV2</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
-<div class="block">A non-blocking HTTP client for Vault - KV v2.</div>
-</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/vault/config/VaultConfigurationClient.html" title="class in io.micronaut.discovery.vault.config">VaultConfigurationClient</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/vault/config/VaultConfigurationClient.html" title="class in io.micronaut.discovery.vault.config">VaultConfigurationClient</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A <code>ConfigurationClient</code> for Vault Configuration.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/vault/config/v2/VaultResponseData.html" title="class in io.micronaut.discovery.vault.config.v2">VaultResponseData</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/vault/config/v2/VaultResponseData.html" title="class in io.micronaut.discovery.vault.config.v2">VaultResponseData</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Vault Data object.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/vault/config/v1/VaultResponseV1.html" title="class in io.micronaut.discovery.vault.config.v1">VaultResponseV1</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/vault/config/v1/VaultResponseV1.html" title="class in io.micronaut.discovery.vault.config.v1">VaultResponseV1</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Vault Response Envelope.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/vault/config/v2/VaultResponseV2.html" title="class in io.micronaut.discovery.vault.config.v2">VaultResponseV2</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Vault Response Envelope.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/vault/config/v2/VaultResponseV2.html" title="class in io.micronaut.discovery.vault.config.v2">VaultResponseV2</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/consul/watch/WatchConfiguration.html" title="class in io.micronaut.discovery.consul.watch">WatchConfiguration</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Vault Response Envelope.</div>
+<div class="block">Configuration for Consul <a href="io/micronaut/discovery/consul/watch/Watcher.html" title="interface in io.micronaut.discovery.consul.watch"><code>Watcher</code></a>.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="io/micronaut/discovery/consul/watch/Watcher.html" title="interface in io.micronaut.discovery.consul.watch">Watcher</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="io/micronaut/discovery/consul/watch/WatchFactory.html" title="class in io.micronaut.discovery.consul.watch">WatchFactory</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Create needed Consul <a href="io/micronaut/discovery/consul/watch/Watcher.html" title="interface in io.micronaut.discovery.consul.watch"><code>Watcher</code></a> based on configuration.</div>
 </div>
 </div>
 </div>

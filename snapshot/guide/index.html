@@ -1071,6 +1071,197 @@ consul.client.registration.check.http=true</code></pre>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_consul_watch">Consul Watch</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The watcher calls the <a href="https://developer.hashicorp.com/consul/api-docs/kv">KV Store API</a> to watch all keys used for the distributed configurations,
+using <a href="https://developer.hashicorp.com/consul/api-docs/features/blocking">Blocking Queries</a>
+to wait for any changes made on those keys.
+If no change occurred during the <code>max-wait-duration</code>, the query will be re-executed after the <code>delay-duration</code>.
+When a change is detected in a KV used for configurations,
+the corresponding <code>PropertySource</code> will be updated and a <code>RefreshEvent</code> published.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="https://docs.micronaut.io/latest/guide/index.html#refreshable">Micronaut &gt; Refreshable Scope</a> for more details</p>
+</div>
+<div class="sect2">
+<h3 id="_configuration">Configuration</h3>
+<div class="paragraph">
+<p>The watcher can be configured using</p>
+</div>
+<div class="openblock">
+<div class="title">Consul Watch Configuration</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.application.name=hello-world
+micronaut.config-client.enabled=true
+consul.client.defaultZone=${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}
+consul.client.config.format=YAML
+consul.client.config.path=/config
+consul.client.watch.enabled=true
+consul.client.blocking-queries.max-wait-duration=10m
+consul.client.blocking-queries.delay-duration=50ms</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
+  application:
+    name: hello-world
+  config-client:
+    enabled: true
+
+consul:
+  client:
+    defaultZone: "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+    config:
+      format: YAML
+      path: /config
+    watch:
+      enabled: true
+    blocking-queries:
+      max-wait-duration: 10m
+      delay-duration: 50ms</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.application]
+    name="hello-world"
+  [micronaut.config-client]
+    enabled=true
+[consul]
+  [consul.client]
+    defaultZone="${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+    [consul.client.config]
+      format="YAML"
+      path="/config"
+    [consul.client.watch]
+      enabled=true
+    [consul.client.blocking-queries]
+      max-wait-duration="10m"
+      delay-duration="50ms"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  application {
+    name = "hello-world"
+  }
+  configClient {
+    enabled = true
+  }
+}
+consul {
+  client {
+    defaultZone = "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+    config {
+      format = "YAML"
+      path = "/config"
+    }
+    watch {
+      enabled = true
+    }
+    blockingQueries {
+      maxWaitDuration = "10m"
+      delayDuration = "50ms"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    application {
+      name = "hello-world"
+    }
+    config-client {
+      enabled = true
+    }
+  }
+  consul {
+    client {
+      defaultZone = "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+      config {
+        format = "YAML"
+        path = "/config"
+      }
+      watch {
+        enabled = true
+      }
+      blocking-queries {
+        max-wait-duration = "10m"
+        delay-duration = "50ms"
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "application": {
+      "name": "hello-world"
+    },
+    "config-client": {
+      "enabled": true
+    }
+  },
+  "consul": {
+    "client": {
+      "defaultZone": "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}",
+      "config": {
+        "format": "YAML",
+        "path": "/config"
+      },
+      "watch": {
+        "enabled": true
+      },
+      "blocking-queries": {
+        "max-wait-duration": "10m",
+        "delay-duration": "50ms"
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Formats supported are</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>NATIVE</code></p>
+</li>
+<li>
+<p><code>JSON</code></p>
+</li>
+<li>
+<p><code>PROPERTIES</code></p>
+</li>
+<li>
+<p><code>YAML</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Read <a href="https://docs.micronaut.io/latest/guide/index.html#distributedConfigurationConsul">Micronaut &gt; Distributed Configuration &gt; HashiCorp Consul Support</a>
+for more details.</p>
+</div>
+</div>
+</div>
+</div>
 
 <h1 id="serviceDiscoveryEureka"><a class="anchor" href="#serviceDiscoveryEureka"></a>4 Eureka Support</h1>
 

@@ -141,6 +141,29 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:B">B</h2>
 <dl class="index">
+<dt><a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockedQueries.html" class="type-name-link" title="annotation interface in io.micronaut.discovery.consul.client.v1.blockingqueries">BlockedQueries</a> - Annotation Interface in <a href="io/micronaut/discovery/consul/client/v1/blockingqueries/package-summary.html">io.micronaut.discovery.consul.client.v1.blockingqueries</a></dt>
+<dd>
+<div class="block">Annotation to handle the <code>wait</code> parameter for <a href="https://developer.hashicorp.com/consul/api-docs/features/blocking">Consul Blocking Queries</a>.</div>
+</dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockedQueriesConsulClient.html" class="type-name-link" title="interface in io.micronaut.discovery.consul.client.v1.blockingqueries">BlockedQueriesConsulClient</a> - Interface in <a href="io/micronaut/discovery/consul/client/v1/blockingqueries/package-summary.html">io.micronaut.discovery.consul.client.v1.blockingqueries</a></dt>
+<dd>
+<div class="block">A non-blocking HTTP client for Consul, using <a href="https://developer.hashicorp.com/consul/api-docs/features/blocking">Blocking Queries</a> feature
+ to wait for potential changes using long polling.</div>
+</dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockedQueryClientFilter.html" class="type-name-link" title="class in io.micronaut.discovery.consul.client.v1.blockingqueries">BlockedQueryClientFilter</a> - Class in <a href="io/micronaut/discovery/consul/client/v1/blockingqueries/package-summary.html">io.micronaut.discovery.consul.client.v1.blockingqueries</a></dt>
+<dd>
+<div class="block">Filter to add the <code>wait</code> parameter for <a href="https://developer.hashicorp.com/consul/api-docs/features/blocking">Consul Blocking Queries</a> for request annotated with <a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockedQueries.html" title="annotation interface in io.micronaut.discovery.consul.client.v1.blockingqueries"><code>BlockedQueries</code></a>.</div>
+</dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockedQueryClientFilter.html#%3Cinit%3E(io.micronaut.discovery.consul.client.v1.blockingqueries.BlockingQueriesConfiguration)" class="member-name-link">BlockedQueryClientFilter(BlockingQueriesConfiguration)</a> - Constructor for class io.micronaut.discovery.consul.client.v1.blockingqueries.<a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockedQueryClientFilter.html" title="class in io.micronaut.discovery.consul.client.v1.blockingqueries">BlockedQueryClientFilter</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html" class="type-name-link" title="class in io.micronaut.discovery.consul.client.v1.blockingqueries">BlockingQueriesConfiguration</a> - Class in <a href="io/micronaut/discovery/consul/client/v1/blockingqueries/package-summary.html">io.micronaut.discovery.consul.client.v1.blockingqueries</a></dt>
+<dd>
+<div class="block">Configuration for <a href="https://developer.hashicorp.com/consul/api-docs/features/blocking">Consul Blocking Queries</a>.</div>
+</dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html#%3Cinit%3E(io.micronaut.discovery.consul.ConsulConfiguration,io.micronaut.core.convert.ConversionService)" class="member-name-link">BlockingQueriesConfiguration(ConsulConfiguration, ConversionService)</a> - Constructor for class io.micronaut.discovery.consul.client.v1.blockingqueries.<a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html" title="class in io.micronaut.discovery.consul.client.v1.blockingqueries">BlockingQueriesConfiguration</a></dt>
+<dd>
+<div class="block">Default constructor.</div>
+</dd>
 <dt><a href="io/micronaut/discovery/eureka/client/v2/AmazonInfo.Builder.html#build()" class="member-name-link">build()</a> - Method in class io.micronaut.discovery.eureka.client.v2.<a href="io/micronaut/discovery/eureka/client/v2/AmazonInfo.Builder.html" title="class in io.micronaut.discovery.eureka.client.v2">AmazonInfo.Builder</a></dt>
 <dd>
 <div class="block">Build the <a href="io/micronaut/discovery/eureka/client/v2/InstanceInfo.html" title="class in io.micronaut.discovery.eureka.client.v2"><code>InstanceInfo</code></a> information.</div>
@@ -440,7 +463,15 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">US by default.</div>
 </dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html#DEFAULT_DELAY_DURATION_MILLISECONDS" class="member-name-link">DEFAULT_DELAY_DURATION_MILLISECONDS</a> - Static variable in class io.micronaut.discovery.consul.client.v1.blockingqueries.<a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html" title="class in io.micronaut.discovery.consul.client.v1.blockingqueries">BlockingQueriesConfiguration</a></dt>
+<dd>
+<div class="block">The default delay duration in milliseconds.</div>
+</dd>
 <dt><a href="io/micronaut/discovery/consul/ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration.html#DEFAULT_ENABLED" class="member-name-link">DEFAULT_ENABLED</a> - Static variable in class io.micronaut.discovery.consul.<a href="io/micronaut/discovery/consul/ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration.html" title="class in io.micronaut.discovery.consul">ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration</a></dt>
+<dd>
+<div class="block">The default enable value.</div>
+</dd>
+<dt><a href="io/micronaut/discovery/consul/watch/WatchConfiguration.html#DEFAULT_ENABLED" class="member-name-link">DEFAULT_ENABLED</a> - Static variable in class io.micronaut.discovery.consul.watch.<a href="io/micronaut/discovery/consul/watch/WatchConfiguration.html" title="class in io.micronaut.discovery.consul.watch">WatchConfiguration</a></dt>
 <dd>
 <div class="block">The default enable value.</div>
 </dd>
@@ -467,6 +498,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="io/micronaut/discovery/eureka/client/v2/LeaseInfo.html#DEFAULT_LEASE_RENEWAL_INTERVAL" class="member-name-link">DEFAULT_LEASE_RENEWAL_INTERVAL</a> - Static variable in class io.micronaut.discovery.eureka.client.v2.<a href="io/micronaut/discovery/eureka/client/v2/LeaseInfo.html" title="class in io.micronaut.discovery.eureka.client.v2">LeaseInfo</a></dt>
 <dd>
 <div class="block">Default lease renewal interval.</div>
+</dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html#DEFAULT_MAX_WAIT_DURATION_MINUTES" class="member-name-link">DEFAULT_MAX_WAIT_DURATION_MINUTES</a> - Static variable in class io.micronaut.discovery.consul.client.v1.blockingqueries.<a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html" title="class in io.micronaut.discovery.consul.client.v1.blockingqueries">BlockingQueriesConfiguration</a></dt>
+<dd>
+<div class="block">The default max wait duration in minutes.</div>
 </dd>
 <dt><a href="io/micronaut/discovery/eureka/client/v2/InstanceInfo.html#DEFAULT_PORT" class="member-name-link">DEFAULT_PORT</a> - Static variable in class io.micronaut.discovery.eureka.client.v2.<a href="io/micronaut/discovery/eureka/client/v2/InstanceInfo.html" title="class in io.micronaut.discovery.eureka.client.v2">InstanceInfo</a></dt>
 <dd>
@@ -744,6 +779,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/spring/config/SpringCloudClientConfiguration.html#getConfiguration()" class="member-name-link">getConfiguration()</a> - Method in class io.micronaut.discovery.spring.config.<a href="io/micronaut/discovery/spring/config/SpringCloudClientConfiguration.html" title="class in io.micronaut.discovery.spring.config">SpringCloudClientConfiguration</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html#getConnectionPoolConfiguration()" class="member-name-link">getConnectionPoolConfiguration()</a> - Method in class io.micronaut.discovery.consul.client.v1.blockingqueries.<a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html" title="class in io.micronaut.discovery.consul.client.v1.blockingqueries">BlockingQueriesConfiguration</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/consul/ConsulConfiguration.html#getConnectionPoolConfiguration()" class="member-name-link">getConnectionPoolConfiguration()</a> - Method in class io.micronaut.discovery.consul.<a href="io/micronaut/discovery/consul/ConsulConfiguration.html" title="class in io.micronaut.discovery.consul">ConsulConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/eureka/EurekaConfiguration.html#getConnectionPoolConfiguration()" class="member-name-link">getConnectionPoolConfiguration()</a> - Method in class io.micronaut.discovery.eureka.<a href="io/micronaut/discovery/eureka/EurekaConfiguration.html" title="class in io.micronaut.discovery.eureka">EurekaConfiguration</a></dt>
@@ -789,6 +826,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="io/micronaut/discovery/consul/client/v1/LocalAgentConfiguration.html#getDebugConfiguration()" class="member-name-link">getDebugConfiguration()</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/LocalAgentConfiguration.html" title="class in io.micronaut.discovery.consul.client.v1">LocalAgentConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/client/DiscoveryClientConfiguration.html#getDefaultZone()" class="member-name-link">getDefaultZone()</a> - Method in class io.micronaut.discovery.client.<a href="io/micronaut/discovery/client/DiscoveryClientConfiguration.html" title="class in io.micronaut.discovery.client">DiscoveryClientConfiguration</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html#getDelayDuration()" class="member-name-link">getDelayDuration()</a> - Method in class io.micronaut.discovery.consul.client.v1.blockingqueries.<a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html" title="class in io.micronaut.discovery.consul.client.v1.blockingqueries">BlockingQueriesConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/consul/client/v1/ConsulCheck.html#getDeregisterCriticalServiceAfter()" class="member-name-link">getDeregisterCriticalServiceAfter()</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/ConsulCheck.html" title="class in io.micronaut.discovery.consul.client.v1">ConsulCheck</a></dt>
 <dd>&nbsp;</dd>
@@ -988,6 +1027,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The <a href="io/micronaut/discovery/eureka/client/v2/LeaseInfo.html" title="class in io.micronaut.discovery.eureka.client.v2"><code>LeaseInfo</code></a> instance.</div>
 </dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html#getMaxWaitDuration()" class="member-name-link">getMaxWaitDuration()</a> - Method in class io.micronaut.discovery.consul.client.v1.blockingqueries.<a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html" title="class in io.micronaut.discovery.consul.client.v1.blockingqueries">BlockingQueriesConfiguration</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/consul/client/v1/LocalAgentConfiguration.html#getMember()" class="member-name-link">getMember()</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/LocalAgentConfiguration.html" title="class in io.micronaut.discovery.consul.client.v1">LocalAgentConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/consul/client/v1/ConsulOperations.html#getMembers()" class="member-name-link">getMembers()</a> - Method in interface io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/ConsulOperations.html" title="interface in io.micronaut.discovery.consul.client.v1">ConsulOperations</a></dt>
@@ -1024,6 +1065,8 @@ loadScripts(document, 'script');</script>
 <div class="block">See https://www.consul.io/api/agent/service.html#method.</div>
 </dd>
 <dt><a href="io/micronaut/discovery/consul/ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration.html#getMethod()" class="member-name-link">getMethod()</a> - Method in class io.micronaut.discovery.consul.<a href="io/micronaut/discovery/consul/ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration.html" title="class in io.micronaut.discovery.consul">ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/KeyValue.html#getModifyIndex()" class="member-name-link">getModifyIndex()</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/KeyValue.html" title="class in io.micronaut.discovery.consul.client.v1">KeyValue</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/consul/client/v1/AbstractServiceEntry.html#getName()" class="member-name-link">getName()</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/AbstractServiceEntry.html" title="class in io.micronaut.discovery.consul.client.v1">AbstractServiceEntry</a></dt>
 <dd>
@@ -1137,6 +1180,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="io/micronaut/discovery/spring/config/SpringCloudConfigurationClient.html#getPropertySources(io.micronaut.context.env.Environment)" class="member-name-link">getPropertySources(Environment)</a> - Method in class io.micronaut.discovery.spring.config.<a href="io/micronaut/discovery/spring/config/SpringCloudConfigurationClient.html" title="class in io.micronaut.discovery.spring.config">SpringCloudConfigurationClient</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/vault/config/VaultConfigurationClient.html#getPropertySources(io.micronaut.context.env.Environment)" class="member-name-link">getPropertySources(Environment)</a> - Method in class io.micronaut.discovery.vault.config.<a href="io/micronaut/discovery/vault/config/VaultConfigurationClient.html" title="class in io.micronaut.discovery.vault.config">VaultConfigurationClient</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html#getReadTimeout()" class="member-name-link">getReadTimeout()</a> - Method in class io.micronaut.discovery.consul.client.v1.blockingqueries.<a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html" title="class in io.micronaut.discovery.consul.client.v1.blockingqueries">BlockingQueriesConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/eureka/EurekaServiceInstance.html#getRegion()" class="member-name-link">getRegion()</a> - Method in class io.micronaut.discovery.eureka.<a href="io/micronaut/discovery/eureka/EurekaServiceInstance.html" title="class in io.micronaut.discovery.eureka">EurekaServiceInstance</a></dt>
 <dd>&nbsp;</dd>
@@ -1500,6 +1545,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Consul client service operations.</div>
 </dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/blockingqueries/package-summary.html">io.micronaut.discovery.consul.client.v1.blockingqueries</a> - package io.micronaut.discovery.consul.client.v1.blockingqueries</dt>
+<dd>
+<div class="block">Consul Blocked Queries Client classes.</div>
+</dd>
 <dt><a href="io/micronaut/discovery/consul/condition/package-summary.html">io.micronaut.discovery.consul.condition</a> - package io.micronaut.discovery.consul.condition</dt>
 <dd>
 <div class="block">Consul annotation.</div>
@@ -1515,6 +1564,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="io/micronaut/discovery/consul/registration/package-summary.html">io.micronaut.discovery.consul.registration</a> - package io.micronaut.discovery.consul.registration</dt>
 <dd>
 <div class="block">Consul discovery registration.</div>
+</dd>
+<dt><a href="io/micronaut/discovery/consul/watch/package-summary.html">io.micronaut.discovery.consul.watch</a> - package io.micronaut.discovery.consul.watch</dt>
+<dd>
+<div class="block">This package contains a Consul Watcher that will update the Context when application properties are changed in a Consul KV.</div>
 </dd>
 <dt><a href="io/micronaut/discovery/eureka/package-summary.html">io.micronaut.discovery.eureka</a> - package io.micronaut.discovery.eureka</dt>
 <dd>
@@ -1570,6 +1623,8 @@ loadScripts(document, 'script');</script>
 &nbsp;</dd>
 <dt><a href="io/micronaut/discovery/consul/ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration.html#isEnabled()" class="member-name-link">isEnabled()</a> - Method in class io.micronaut.discovery.consul.<a href="io/micronaut/discovery/consul/ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration.html" title="class in io.micronaut.discovery.consul">ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/micronaut/discovery/consul/watch/WatchConfiguration.html#isEnabled()" class="member-name-link">isEnabled()</a> - Method in class io.micronaut.discovery.consul.watch.<a href="io/micronaut/discovery/consul/watch/WatchConfiguration.html" title="class in io.micronaut.discovery.consul.watch">WatchConfiguration</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/eureka/EurekaConfiguration.EurekaRegistrationConfiguration.html#isExplicitInstanceId()" class="member-name-link">isExplicitInstanceId()</a> - Method in class io.micronaut.discovery.eureka.<a href="io/micronaut/discovery/eureka/EurekaConfiguration.EurekaRegistrationConfiguration.html" title="class in io.micronaut.discovery.eureka">EurekaConfiguration.EurekaRegistrationConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/spring/config/SpringCloudClientConfiguration.html#isFailFast()" class="member-name-link">isFailFast()</a> - Method in class io.micronaut.discovery.spring.config.<a href="io/micronaut/discovery/spring/config/SpringCloudClientConfiguration.html" title="class in io.micronaut.discovery.spring.config">SpringCloudClientConfiguration</a></dt>
@@ -1598,6 +1653,8 @@ loadScripts(document, 'script');</script>
 &nbsp;</dd>
 <dt><a href="io/micronaut/discovery/eureka/EurekaConfiguration.EurekaDiscoveryConfiguration.html#isUseSecurePort()" class="member-name-link">isUseSecurePort()</a> - Method in class io.micronaut.discovery.eureka.<a href="io/micronaut/discovery/eureka/EurekaConfiguration.EurekaDiscoveryConfiguration.html" title="class in io.micronaut.discovery.eureka">EurekaConfiguration.EurekaDiscoveryConfiguration</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/micronaut/discovery/consul/watch/Watcher.html#isWatching()" class="member-name-link">isWatching()</a> - Method in interface io.micronaut.discovery.consul.watch.<a href="io/micronaut/discovery/consul/watch/Watcher.html" title="interface in io.micronaut.discovery.consul.watch">Watcher</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:K">K</h2>
 <dl class="index">
@@ -1605,7 +1662,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Represents a Key/Value pair returned from Consul via /kv/:key.</div>
 </dd>
-<dt><a href="io/micronaut/discovery/consul/client/v1/KeyValue.html#%3Cinit%3E(java.lang.String,java.lang.String)" class="member-name-link">KeyValue(String, String)</a> - Constructor for class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/KeyValue.html" title="class in io.micronaut.discovery.consul.client.v1">KeyValue</a></dt>
+<dt><a href="io/micronaut/discovery/consul/client/v1/KeyValue.html#%3Cinit%3E(java.lang.Integer,java.lang.String,java.lang.String)" class="member-name-link">KeyValue(Integer, String, String)</a> - Constructor for class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/KeyValue.html" title="class in io.micronaut.discovery.consul.client.v1">KeyValue</a></dt>
 <dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:L">L</h2>
@@ -1793,6 +1850,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Configuration property name for preferring Eureka instance IP address registration.</div>
 </dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html#PREFIX" class="member-name-link">PREFIX</a> - Static variable in class io.micronaut.discovery.consul.client.v1.blockingqueries.<a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html" title="class in io.micronaut.discovery.consul.client.v1.blockingqueries">BlockingQueriesConfiguration</a></dt>
+<dd>
+<div class="block">The prefix to use for all Consul's blocked queries settings.</div>
+</dd>
 <dt><a href="io/micronaut/discovery/consul/ConsulConfiguration.ConsulConfigDiscoveryConfiguration.html#PREFIX" class="member-name-link">PREFIX</a> - Static variable in class io.micronaut.discovery.consul.<a href="io/micronaut/discovery/consul/ConsulConfiguration.ConsulConfigDiscoveryConfiguration.html" title="class in io.micronaut.discovery.consul">ConsulConfiguration.ConsulConfigDiscoveryConfiguration</a></dt>
 <dd>
 <div class="block">The full prefix for this configuration.</div>
@@ -1804,6 +1865,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="io/micronaut/discovery/consul/ConsulConfiguration.html#PREFIX" class="member-name-link">PREFIX</a> - Static variable in class io.micronaut.discovery.consul.<a href="io/micronaut/discovery/consul/ConsulConfiguration.html" title="class in io.micronaut.discovery.consul">ConsulConfiguration</a></dt>
 <dd>
 <div class="block">The prefix to use for all Consul settings.</div>
+</dd>
+<dt><a href="io/micronaut/discovery/consul/watch/WatchConfiguration.html#PREFIX" class="member-name-link">PREFIX</a> - Static variable in class io.micronaut.discovery.consul.watch.<a href="io/micronaut/discovery/consul/watch/WatchConfiguration.html" title="class in io.micronaut.discovery.consul.watch">WatchConfiguration</a></dt>
+<dd>
+<div class="block">The prefix to use for Consul's watcher settings.</div>
 </dd>
 <dt><a href="io/micronaut/discovery/eureka/EurekaConfiguration.EurekaRegistrationConfiguration.html#PREFIX" class="member-name-link">PREFIX</a> - Static variable in class io.micronaut.discovery.eureka.<a href="io/micronaut/discovery/eureka/EurekaConfiguration.EurekaRegistrationConfiguration.html" title="class in io.micronaut.discovery.eureka">EurekaConfiguration.EurekaRegistrationConfiguration</a></dt>
 <dd>
@@ -1823,6 +1888,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/vault/config/VaultClientConfiguration.VaultClientDiscoveryConfiguration.html#PREFIX" class="member-name-link">PREFIX</a> - Static variable in class io.micronaut.discovery.vault.config.<a href="io/micronaut/discovery/vault/config/VaultClientConfiguration.VaultClientDiscoveryConfiguration.html" title="class in io.micronaut.discovery.vault.config">VaultClientConfiguration.VaultClientDiscoveryConfiguration</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/micronaut/discovery/consul/watch/PropertiesChangeHandler.html" class="type-name-link" title="class in io.micronaut.discovery.consul.watch">PropertiesChangeHandler</a> - Class in <a href="io/micronaut/discovery/consul/watch/package-summary.html">io.micronaut.discovery.consul.watch</a></dt>
+<dd>
+<div class="block">Handle properties' configuration changes to be notified into the Micronaut context.</div>
+</dd>
 <dt><a href="io/micronaut/discovery/eureka/client/v2/AmazonInfo.MetaDataKey.html#publicHostname" class="member-name-link">publicHostname</a> - Enum constant in enum class io.micronaut.discovery.eureka.client.v2.<a href="io/micronaut/discovery/eureka/client/v2/AmazonInfo.MetaDataKey.html" title="enum class in io.micronaut.discovery.eureka.client.v2">AmazonInfo.MetaDataKey</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/eureka/client/v2/AmazonInfo.MetaDataKey.html#publicIpv4" class="member-name-link">publicIpv4</a> - Enum constant in enum class io.micronaut.discovery.eureka.client.v2.<a href="io/micronaut/discovery/eureka/client/v2/AmazonInfo.MetaDataKey.html" title="enum class in io.micronaut.discovery.eureka.client.v2">AmazonInfo.MetaDataKey</a></dt>
@@ -2039,6 +2108,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Sets the Discovery servers to use for the default zone.</div>
 </dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html#setDelayDuration(java.time.Duration)" class="member-name-link">setDelayDuration(Duration)</a> - Method in class io.micronaut.discovery.consul.client.v1.blockingqueries.<a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html" title="class in io.micronaut.discovery.consul.client.v1.blockingqueries">BlockingQueriesConfiguration</a></dt>
+<dd>
+<div class="block">Sets the delay before each call to avoid flooding.</div>
+</dd>
 <dt><a href="io/micronaut/discovery/consul/client/v1/ConsulCheck.html#setDeregisterCriticalServiceAfter(java.lang.String)" class="member-name-link">setDeregisterCriticalServiceAfter(String)</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/ConsulCheck.html" title="class in io.micronaut.discovery.consul.client.v1">ConsulCheck</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/consul/client/v1/NewCheck.html#setDeregisterCriticalServiceAfter(java.lang.String)" class="member-name-link">setDeregisterCriticalServiceAfter(String)</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/NewCheck.html" title="class in io.micronaut.discovery.consul.client.v1">NewCheck</a></dt>
@@ -2058,6 +2131,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="io/micronaut/discovery/consul/ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration.html#setEnabled(boolean)" class="member-name-link">setEnabled(boolean)</a> - Method in class io.micronaut.discovery.consul.<a href="io/micronaut/discovery/consul/ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration.html" title="class in io.micronaut.discovery.consul">ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration</a></dt>
 <dd>
 <div class="block">Default value (<a href="io/micronaut/discovery/consul/ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration.html#DEFAULT_ENABLED">true</a>).</div>
+</dd>
+<dt><a href="io/micronaut/discovery/consul/watch/WatchConfiguration.html#setEnabled(boolean)" class="member-name-link">setEnabled(boolean)</a> - Method in class io.micronaut.discovery.consul.watch.<a href="io/micronaut/discovery/consul/watch/WatchConfiguration.html" title="class in io.micronaut.discovery.consul.watch">WatchConfiguration</a></dt>
+<dd>
+<div class="block">Sets whether Configuration watching is enabled.</div>
 </dd>
 <dt><a href="io/micronaut/discovery/eureka/client/v2/LeaseInfo.Builder.html#setEvictionTimestamp(long)" class="member-name-link">setEvictionTimestamp(long)</a> - Method in class io.micronaut.discovery.eureka.client.v2.<a href="io/micronaut/discovery/eureka/client/v2/LeaseInfo.Builder.html" title="class in io.micronaut.discovery.eureka.client.v2">LeaseInfo.Builder</a></dt>
 <dd>
@@ -2161,6 +2238,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="io/micronaut/discovery/eureka/client/v2/InstanceInfo.html#setLeaseInfo(io.micronaut.discovery.eureka.client.v2.LeaseInfo)" class="member-name-link">setLeaseInfo(LeaseInfo)</a> - Method in class io.micronaut.discovery.eureka.client.v2.<a href="io/micronaut/discovery/eureka/client/v2/InstanceInfo.html" title="class in io.micronaut.discovery.eureka.client.v2">InstanceInfo</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html#setMaxWaitDuration(java.lang.String)" class="member-name-link">setMaxWaitDuration(String)</a> - Method in class io.micronaut.discovery.consul.client.v1.blockingqueries.<a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockingQueriesConfiguration.html" title="class in io.micronaut.discovery.consul.client.v1.blockingqueries">BlockingQueriesConfiguration</a></dt>
+<dd>
+<div class="block">Specify the maximum duration for the blocking request.</div>
+</dd>
 <dt><a href="io/micronaut/discovery/consul/client/v1/LocalAgentConfiguration.html#setMember(io.micronaut.discovery.consul.client.v1.MemberEntry)" class="member-name-link">setMember(MemberEntry)</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/LocalAgentConfiguration.html" title="class in io.micronaut.discovery.consul.client.v1">LocalAgentConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/consul/client/v1/AbstractServiceEntry.html#setMeta(java.util.Map)" class="member-name-link">setMeta(Map&lt;String, String&gt;)</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/AbstractServiceEntry.html" title="class in io.micronaut.discovery.consul.client.v1">AbstractServiceEntry</a></dt>
@@ -2442,6 +2523,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/spring/config/SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.html#%3Cinit%3E()" class="member-name-link">SpringConfigDiscoveryConfiguration()</a> - Constructor for class io.micronaut.discovery.spring.config.<a href="io/micronaut/discovery/spring/config/SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration.html" title="class in io.micronaut.discovery.spring.config">SpringCloudClientConfiguration.SpringConfigDiscoveryConfiguration</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/micronaut/discovery/consul/watch/Watcher.html#start()" class="member-name-link">start()</a> - Method in interface io.micronaut.discovery.consul.watch.<a href="io/micronaut/discovery/consul/watch/Watcher.html" title="interface in io.micronaut.discovery.consul.watch">Watcher</a></dt>
+<dd>
+<div class="block">Start the watching.</div>
+</dd>
 <dt><a href="io/micronaut/discovery/eureka/client/v2/InstanceInfo.Status.html#STARTING" class="member-name-link">STARTING</a> - Enum constant in enum class io.micronaut.discovery.eureka.client.v2.<a href="io/micronaut/discovery/eureka/client/v2/InstanceInfo.Status.html" title="enum class in io.micronaut.discovery.eureka.client.v2">InstanceInfo.Status</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/consul/client/v1/Check.html#status()" class="member-name-link">status()</a> - Method in interface io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/Check.html" title="interface in io.micronaut.discovery.consul.client.v1">Check</a></dt>
@@ -2466,6 +2551,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
 &nbsp;</dd>
+<dt><a href="io/micronaut/discovery/consul/watch/Watcher.html#stop()" class="member-name-link">stop()</a> - Method in interface io.micronaut.discovery.consul.watch.<a href="io/micronaut/discovery/consul/watch/Watcher.html" title="interface in io.micronaut.discovery.consul.watch">Watcher</a></dt>
+<dd>
+<div class="block">Stop the watching.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:T">T</h2>
 <dl class="index">
@@ -2730,6 +2819,24 @@ the order they are declared.</div>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/vault/config/AbstractVaultResponse.html#warnings" class="member-name-link">warnings</a> - Variable in class io.micronaut.discovery.vault.config.<a href="io/micronaut/discovery/vault/config/AbstractVaultResponse.html" title="class in io.micronaut.discovery.vault.config">AbstractVaultResponse</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/micronaut/discovery/consul/watch/WatchConfiguration.html" class="type-name-link" title="class in io.micronaut.discovery.consul.watch">WatchConfiguration</a> - Class in <a href="io/micronaut/discovery/consul/watch/package-summary.html">io.micronaut.discovery.consul.watch</a></dt>
+<dd>
+<div class="block">Configuration for Consul <a href="io/micronaut/discovery/consul/watch/Watcher.html" title="interface in io.micronaut.discovery.consul.watch"><code>Watcher</code></a>.</div>
+</dd>
+<dt><a href="io/micronaut/discovery/consul/watch/WatchConfiguration.html#%3Cinit%3E()" class="member-name-link">WatchConfiguration()</a> - Constructor for class io.micronaut.discovery.consul.watch.<a href="io/micronaut/discovery/consul/watch/WatchConfiguration.html" title="class in io.micronaut.discovery.consul.watch">WatchConfiguration</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/micronaut/discovery/consul/watch/Watcher.html" class="type-name-link" title="interface in io.micronaut.discovery.consul.watch">Watcher</a> - Interface in <a href="io/micronaut/discovery/consul/watch/package-summary.html">io.micronaut.discovery.consul.watch</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/micronaut/discovery/consul/watch/WatchFactory.html" class="type-name-link" title="class in io.micronaut.discovery.consul.watch">WatchFactory</a> - Class in <a href="io/micronaut/discovery/consul/watch/package-summary.html">io.micronaut.discovery.consul.watch</a></dt>
+<dd>
+<div class="block">Create needed Consul <a href="io/micronaut/discovery/consul/watch/Watcher.html" title="interface in io.micronaut.discovery.consul.watch"><code>Watcher</code></a> based on configuration.</div>
+</dd>
+<dt><a href="io/micronaut/discovery/consul/watch/WatchFactory.html#%3Cinit%3E(io.micronaut.context.env.Environment,io.micronaut.discovery.consul.client.v1.blockingqueries.BlockedQueriesConsulClient,io.micronaut.discovery.consul.client.v1.blockingqueries.BlockingQueriesConfiguration,io.micronaut.discovery.consul.watch.PropertiesChangeHandler)" class="member-name-link">WatchFactory(Environment, BlockedQueriesConsulClient, BlockingQueriesConfiguration, PropertiesChangeHandler)</a> - Constructor for class io.micronaut.discovery.consul.watch.<a href="io/micronaut/discovery/consul/watch/WatchFactory.html" title="class in io.micronaut.discovery.consul.watch">WatchFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockedQueriesConsulClient.html#watchValues(java.lang.String,java.lang.Boolean,java.lang.Integer)" class="member-name-link">watchValues(String, Boolean, Integer)</a> - Method in interface io.micronaut.discovery.consul.client.v1.blockingqueries.<a href="io/micronaut/discovery/consul/client/v1/blockingqueries/BlockedQueriesConsulClient.html" title="interface in io.micronaut.discovery.consul.client.v1.blockingqueries">BlockedQueriesConsulClient</a></dt>
+<dd>
+<div class="block">Reads a Key from Consul.</div>
+</dd>
 <dt><a href="io/micronaut/discovery/vault/config/AbstractVaultResponse.html#wrapInfo" class="member-name-link">wrapInfo</a> - Variable in class io.micronaut.discovery.vault.config.<a href="io/micronaut/discovery/vault/config/AbstractVaultResponse.html" title="class in io.micronaut.discovery.vault.config">AbstractVaultResponse</a></dt>
 <dd>&nbsp;</dd>
 </dl>

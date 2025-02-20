@@ -224,7 +224,7 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#readValues(java.lang.String,java.lang.String,java.lang.Boolean,java.lang.String)" class="member-name-link">readValues</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;datacenter,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&nbsp;raw,
- @Nullable <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;seperator)</code></div>
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;separator)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Reads a Key from Consul.</div>
 </div>
@@ -317,7 +317,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="readValues(java.lang.String,java.lang.String,java.lang.Boolean,java.lang.String)">
 <h3>readValues</h3>
-<div class="member-signature"><span class="annotations">@Get(uri="/kv/{+key}?recurse=true{&amp;dc}{&amp;raw}{&amp;seperator}",
+<div class="member-signature"><span class="annotations">@Get(uri="/kv/{+key}?recurse=true{&amp;dc}{&amp;raw}{&amp;separator}",
      single=true)
 @Retryable(attempts="${consul.client.config.retry-count:3}",
            delay="${consul.client.config.retry-delay:1s}")
@@ -327,14 +327,14 @@ loadScripts(document, 'script');</script>
  @Nullable
  @Nullable <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&nbsp;raw,
  @Nullable
- @Nullable <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;seperator)</span></div>
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;separator)</span></div>
 <div class="block">Reads a Key from Consul. See https://www.consul.io/api/kv.html.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>key</code> - The key</dd>
 <dd><code>datacenter</code> - The data center</dd>
 <dd><code>raw</code> - Whether the value should be raw without encoding or metadata</dd>
-<dd><code>seperator</code> - The separator to use</dd>
+<dd><code>separator</code> - The separator to use</dd>
 <dt>Returns:</dt>
 <dd>A <code>Publisher</code> that emits a list of <a href="KeyValue.html" title="class in io.micronaut.discovery.consul.client.v1"><code>KeyValue</code></a></dd>
 </dl>
