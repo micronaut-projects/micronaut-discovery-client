@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import io.micronaut.core.annotation.Internal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +40,7 @@ import reactor.core.publisher.Mono;
  * @author LE GALL Benoît
  * @since 4.6.0
  */
+@Internal
 final class ConfigurationsWatcher extends AbstractWatcher<KeyValue> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationsWatcher.class);
