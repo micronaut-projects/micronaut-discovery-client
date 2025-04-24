@@ -15,7 +15,7 @@ jsonassert = "1.5.3"
 
 groovy = "4.0.17"
 spock = "2.3-groovy-4.0"
-awaitility = "4.2.2"
+awaitility = "4.3.0"
 sonatype-scan = "3.0.0"
 
 [libraries]
