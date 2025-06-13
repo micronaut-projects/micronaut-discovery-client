@@ -1,6 +1,6 @@
 plugins {
     id("io.micronaut.build.internal.discovery-client-base")
-    id("io.micronaut.minimal.library") version "4.4.5"
+    id("io.micronaut.minimal.library") version "4.5.3"
 }
 
 dependencies {
