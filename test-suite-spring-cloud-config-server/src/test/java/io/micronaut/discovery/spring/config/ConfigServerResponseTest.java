@@ -35,13 +35,11 @@ class ConfigServerResponseTest {
         assertDoesNotThrow(() -> BeanIntrospection.getIntrospection(ConfigServerResponse.class));
     }
 
-
     @Test
     void jsonDeserialization(JsonMapper jsonMapper) throws IOException {
         String json = """
     {"name":"micronautguide","profiles":["spain"],"label":null,"version":"b071c1570f225343ac49823e67bdc85cba52ca1d","state":"","propertySources":[{"name":"https://github.com/sdelamo/spring-cloud-config-server-demo.git/micronautguide-spain.properties","source":{"vat.country":"Spain","vat.rate":"21"}},{"name":"https://github.com/sdelamo/spring-cloud-config-server-demo.git/micronautguide.properties","source":{"vat.country":"Switzerland","vat.rate":"7.7"}}]}""";
         ConfigServerResponse configServerResponse = jsonMapper.readValue(json, ConfigServerResponse.class);
         assertEquals(2, configServerResponse.getPropertySources().size());
-
     }
 }
