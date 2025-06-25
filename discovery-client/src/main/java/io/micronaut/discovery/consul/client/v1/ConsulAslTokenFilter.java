@@ -15,10 +15,13 @@
  */
 package io.micronaut.discovery.consul.client.v1;
 
+import io.micronaut.context.annotation.BootstrapContextCompatible;
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.util.Toggleable;
 import io.micronaut.discovery.consul.ConsulConfiguration;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpRequest;
+import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.ClientFilterChain;
 import io.micronaut.http.filter.HttpClientFilter;
 import org.reactivestreams.Publisher;
@@ -30,9 +33,10 @@ import java.util.Optional;
  *
  * @author Graeme Rocher
  * @since 1.0
- * @deprecated No longer used
  */
-@Deprecated(forRemoval = true, since = "4.5")
+@Filter(patterns = "/v1/**", serviceId = ConsulClient.SERVICE_ID)
+@Requires(beans = ConsulConfiguration.class)
+@BootstrapContextCompatible
 public class ConsulAslTokenFilter implements HttpClientFilter, Toggleable {
 
     /**
