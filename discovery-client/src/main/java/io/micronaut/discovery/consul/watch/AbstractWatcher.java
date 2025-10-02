@@ -146,7 +146,7 @@ abstract sealed class AbstractWatcher<V> implements Watcher permits Configuratio
 
     private void onError(final String kvPath, final Throwable throwable) {
         if (throwable instanceof final HttpClientResponseException e && e.getStatus() == HttpStatus.NOT_FOUND) {
-            LOG.trace("No KV found with kvPath={}", kvPath);
+            LOG.warn("No KV found with kvPath={}", kvPath);
             listeners.remove(kvPath);
         } else if (throwable instanceof ReadTimeoutException) {
             LOG.warn("Timeout for kvPath={}", kvPath);
