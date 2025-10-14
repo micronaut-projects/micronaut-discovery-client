@@ -25,10 +25,12 @@ import io.micronaut.discovery.eureka.client.v2.InstanceInfo
 import io.micronaut.http.HttpStatus
 import io.micronaut.runtime.server.EmbeddedServer
 import jakarta.validation.ConstraintViolationException
+import org.testcontainers.DockerClientFactory
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy
 import reactor.core.publisher.Flux
 import spock.lang.AutoCleanup
+import spock.lang.Requires
 import spock.lang.Retry
 import spock.lang.Shared
 import spock.lang.Specification
@@ -39,6 +41,7 @@ import spock.util.concurrent.PollingConditions
  * @author graemerocher
  * @since 1.0
  */
+@Requires({ DockerClientFactory.instance().isDockerAvailable() })
 @Stepwise
 class EurekaClientSpec extends Specification {
 

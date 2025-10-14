@@ -16,7 +16,7 @@
 package io.micronaut.discovery.spring.config.client;
 
 import io.micronaut.core.annotation.ReflectiveAccess;
-
+import io.micronaut.serde.annotation.Serdeable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +27,7 @@ import java.util.List;
  *  @author Thiago Locatelli
  *  @since 1.0
  */
+@Serdeable
 @ReflectiveAccess
 public class ConfigServerResponse {
 
@@ -67,6 +68,14 @@ public class ConfigServerResponse {
      */
     public List<ConfigServerPropertySource> getPropertySources() {
         return propertySources;
+    }
+
+    /**
+     *
+     * @param propertySources The list of property sources to be set
+     */
+    public void setPropertySources(List<ConfigServerPropertySource> propertySources) {
+        this.propertySources = propertySources;
     }
 
     /**

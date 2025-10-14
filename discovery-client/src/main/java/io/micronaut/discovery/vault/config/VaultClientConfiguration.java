@@ -42,8 +42,13 @@ public class VaultClientConfiguration extends HttpClientConfiguration {
      */
     public static final String VAULT_CLIENT_CONFIG_ENDPOINT = "${" + VaultClientConfiguration.PREFIX + ".uri}";
 
+    /**
+     * Default value for Fail fast.
+     */
+    @SuppressWarnings("WeakerAccess")
+    public static final boolean DEFAULT_FAIL_FAST = false;
+
     private static final String DEFAULT_URI = "http://locahost:8200";
-    private static final Boolean DEFAULT_FAIL_FAST = false;
     private static final String DEFAULT_SECRET_ENGINE = "secret";
     private static final String DEFAULT_PATH_PREFIX = "";
     private static final VaultKvVersion DEFAULT_KV_VERSION = VaultKvVersion.V2;

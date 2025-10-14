@@ -26,14 +26,14 @@ import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
-
 import java.time.Duration
-import java.util.concurrent.TimeUnit
-
+import org.testcontainers.DockerClientFactory
+import spock.lang.Requires
 /**
  * @author graemerocher
  * @since 1.0
  */
+@Requires({ DockerClientFactory.instance().isDockerAvailable() })
 class EurekaAutoRegistrationSpec extends Specification{
 
     @Shared

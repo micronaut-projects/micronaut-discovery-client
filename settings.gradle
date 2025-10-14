@@ -6,7 +6,7 @@ pluginManagement {
 }
 
 plugins {
-    id("io.micronaut.build.shared.settings") version "6.7.0"
+    id("io.micronaut.build.shared.settings") version "7.6.4"
 }
 
 rootProject.name = 'discovery-client-parent'
@@ -14,9 +14,11 @@ rootProject.name = 'discovery-client-parent'
 include 'discovery-client-bom'
 include 'discovery-client'
 include 'discovery-client-tests'
+include 'test-suite-spring-cloud-config-server'
 include 'test-suite-consul-graal'
 include 'test-suite-consul-graal-serde'
 include 'test-suite-consul-graal-jacksondatabind'
+include 'test-suite-consul-watch'
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
@@ -25,7 +27,6 @@ micronautBuild {
     importMicronautCatalog()
     importMicronautCatalog("micronaut-serde")
     importMicronautCatalog("micronaut-reactor")
-    importMicronautCatalog("micronaut-test")
     importMicronautCatalog("micronaut-test-resources")
     importMicronautCatalog("micronaut-validation")
 }

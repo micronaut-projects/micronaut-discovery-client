@@ -62,10 +62,10 @@ public interface ConsulOperations {
      * @param key        The key
      * @param datacenter The data center
      * @param raw        Whether the value should be raw without encoding or metadata
-     * @param seperator  The separator to use
+     * @param separator  The separator to use
      * @return A {@link Publisher} that emits a list of {@link KeyValue}
      */
-    @Get(uri = "/kv/{+key}?recurse=true{&dc}{&raw}{&seperator}", single = true)
+    @Get(uri = "/kv/{+key}?recurse=true{&dc}{&raw}{&separator}", single = true)
     @Retryable(
         attempts = AbstractConsulClient.EXPR_CONSUL_CONFIG_RETRY_COUNT,
         delay = AbstractConsulClient.EXPR_CONSUL_CONFIG_RETRY_DELAY
@@ -74,7 +74,7 @@ public interface ConsulOperations {
         String key,
         @Nullable @QueryValue("dc") String datacenter,
         @Nullable Boolean raw,
-        @Nullable String seperator);
+        @Nullable String separator);
 
     /**
      * Pass the TTL check. See https://www.consul.io/api/agent/check.html.

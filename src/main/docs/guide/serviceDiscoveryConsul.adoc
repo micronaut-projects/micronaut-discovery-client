@@ -169,3 +169,50 @@ consul:
       check:
         http: true
 ----
+
+== Consul Watch
+
+The watcher calls the https://developer.hashicorp.com/consul/api-docs/kv[KV Store API] to watch all keys used for the distributed configurations,
+using https://developer.hashicorp.com/consul/api-docs/features/blocking[Blocking Queries]
+to wait for any changes made on those keys.
+If no change occurred during the `max-wait-duration`, the query will be re-executed after the `delay-duration`.
+When a change is detected in a KV used for configurations,
+the corresponding `PropertySource` will be updated and a `RefreshEvent` published.
+
+See https://docs.micronaut.io/latest/guide/index.html#refreshable[Micronaut > Refreshable Scope] for more details
+
+=== Configuration
+
+The watcher can be configured using
+
+.Consul Watch Configuration
+[configuration]
+----
+micronaut:
+  application:
+    name: hello-world
+  config-client:
+    enabled: true
+
+consul:
+  client:
+    defaultZone: "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+    config:
+      format: YAML
+      path: /config
+    watch:
+      enabled: true
+    blocking-queries:
+      max-wait-duration: 10m
+      delay-duration: 50ms
+----
+
+Formats supported are
+
+- `NATIVE`
+- `JSON`
+- `PROPERTIES`
+- `YAML`
+
+Read https://docs.micronaut.io/latest/guide/index.html#distributedConfigurationConsul[Micronaut > Distributed Configuration > HashiCorp Consul Support]
+for more details.

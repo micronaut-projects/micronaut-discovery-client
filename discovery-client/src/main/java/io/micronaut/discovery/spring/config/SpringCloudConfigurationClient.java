@@ -56,6 +56,7 @@ import java.util.concurrent.ExecutorService;
 @Requires(beans = SpringCloudClientConfiguration.class)
 public class SpringCloudConfigurationClient implements ConfigurationClient {
 
+    public static final String DEFAULT_PROFILE = "default";
     private static final Logger LOG = LoggerFactory.getLogger(SpringCloudConfigurationClient.class);
 
     private final SpringCloudConfigClient springCloudConfigClient;
@@ -92,7 +93,8 @@ public class SpringCloudConfigurationClient implements ConfigurationClient {
         } else {
             String applicationName = springCloudConfiguration.getName().orElse(configuredApplicationName.get());
             Set<String> activeNames = environment.getActiveNames();
-            String profiles = StringUtils.trimToNull(String.join(",", activeNames));
+            String profiles = Optional.ofNullable(StringUtils.trimToNull(String.join(",", activeNames))).orElse(
+                DEFAULT_PROFILE);
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Spring Cloud Config Active: {}", springCloudConfiguration.getUri());

@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.ReflectiveAccess;
-
+import io.micronaut.serde.annotation.Serdeable;
 import java.util.Collections;
 import java.util.Map;
 
@@ -31,6 +31,7 @@ import java.util.Map;
  *  @since 1.1.0
  */
 @ReflectiveAccess
+@Serdeable
 public class ConfigServerPropertySource {
 
     private final String name;
@@ -72,5 +73,4 @@ public class ConfigServerPropertySource {
     public String toString() {
         return "ConfigServerPropertySource [name=" + name + "]";
     }
-
 }
