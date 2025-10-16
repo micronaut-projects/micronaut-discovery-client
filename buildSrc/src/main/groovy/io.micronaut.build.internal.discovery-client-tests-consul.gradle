@@ -15,7 +15,7 @@ dependencies {
 
     testImplementation(mn.snakeyaml)
     testImplementation(libs.junit.platform.engine)
-    testImplementation(libs.junit.jupiter.engine)
+    testImplementation(mnTest.junit.jupiter.engine)
 
     testRuntimeOnly(mnLogging.logback.classic)
 }
