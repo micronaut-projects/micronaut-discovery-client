@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
     testImplementation(mn.micronaut.jackson.databind)
+    testRuntimeOnly(mnTest.junit.platform.suite)
 }
 
 micronaut {
