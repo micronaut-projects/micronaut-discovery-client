@@ -39,6 +39,4 @@ spock = { module = 'org.spockframework:spock-core', version.ref = "spock" }
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter"}
 testcontainers-consul = { module = "org.testcontainers:consul" }
 
-junit-jupiter-engine = { module = 'org.junit.jupiter:junit-jupiter-engine' }
 junit-platform-engine = { module = "org.junit.platform:junit-platform-suite-engine" }
-sonatype-scan = { module = "org.sonatype.gradle.plugins:scan-gradle-plugin", version.ref = "sonatype-scan" }

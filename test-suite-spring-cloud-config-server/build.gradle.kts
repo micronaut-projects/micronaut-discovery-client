@@ -10,7 +10,7 @@ dependencies {
     testImplementation(projects.micronautDiscoveryClient)
     testAnnotationProcessor(mn.micronaut.inject.java)
     testImplementation(mnTest.micronaut.test.junit5)
-    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(mnTest.junit.jupiter.engine)
 }
 tasks.withType<Test> {
     useJUnitPlatform()
