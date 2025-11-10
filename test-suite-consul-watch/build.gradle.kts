@@ -10,6 +10,7 @@ dependencies {
     implementation(mnTest.micronaut.test.junit5)
     implementation(mnTest.assertj.core)
     implementation(mnSerde.micronaut.serde.jackson)
+    implementation(libs.micronaut.jackson.databind)
     implementation(libs.testcontainers.junit.jupiter)
     implementation(libs.testcontainers.consul)
     implementation(libs.awaitility)
