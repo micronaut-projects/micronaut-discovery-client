@@ -253,6 +253,7 @@ class WatcherSpec extends Specification {
 
         when:
         watcher.start()
+        Thread.sleep(100)
 
         then:
         def logs = listAppender.list.stream()
@@ -283,6 +284,7 @@ class WatcherSpec extends Specification {
 
         when:
         watcher.start()
+        Thread.sleep(100)
 
         then:
         def logs = listAppender.list.stream()
@@ -312,6 +314,7 @@ class WatcherSpec extends Specification {
 
         when:
         watcher.start()
+        Thread.sleep(100)
 
         then:
         def logs = listAppender.list.stream()
