@@ -16,7 +16,7 @@
 package io.micronaut.discovery.vault.config.v1;
 
 import io.micronaut.context.annotation.BootstrapContextCompatible;
-import io.micronaut.core.annotation.NonNull;
+import org.jspecify.annotations.NonNull;
 import io.micronaut.discovery.vault.config.VaultClientConfiguration;
 import io.micronaut.discovery.vault.config.VaultConfigHttpClient;
 import io.micronaut.http.annotation.Get;
