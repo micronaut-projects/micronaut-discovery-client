@@ -16,8 +16,8 @@
 package io.micronaut.discovery.spring;
 
 import io.micronaut.context.annotation.Requires;
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.core.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.discovery.spring.config.client.ConfigServerPropertySource;
 import io.micronaut.discovery.spring.config.client.ConfigServerResponse;

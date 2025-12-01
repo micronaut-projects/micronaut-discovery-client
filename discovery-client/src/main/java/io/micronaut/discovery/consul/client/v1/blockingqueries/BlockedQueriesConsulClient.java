@@ -20,7 +20,7 @@ import java.util.List;
 import org.reactivestreams.Publisher;
 
 import io.micronaut.context.annotation.Requires;
-import io.micronaut.core.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import io.micronaut.discovery.consul.client.v1.ConsulClient;
 import io.micronaut.discovery.consul.client.v1.KeyValue;
 import io.micronaut.http.annotation.Get;

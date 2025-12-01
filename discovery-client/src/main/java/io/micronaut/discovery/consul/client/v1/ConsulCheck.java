@@ -16,7 +16,7 @@
 package io.micronaut.discovery.consul.client.v1;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.micronaut.core.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import io.micronaut.http.HttpMethod;
 import io.micronaut.serde.annotation.Serdeable;
 
