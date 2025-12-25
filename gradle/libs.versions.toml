@@ -14,7 +14,7 @@ commons-lang3 = "3.17.0"
 jsonassert = "1.5.3"
 
 groovy = "4.0.17"
-spock = "2.3-groovy-4.0"
+spock = "2.4-groovy-5.0"
 awaitility = "4.3.0"
 sonatype-scan = "3.1.4"
 
