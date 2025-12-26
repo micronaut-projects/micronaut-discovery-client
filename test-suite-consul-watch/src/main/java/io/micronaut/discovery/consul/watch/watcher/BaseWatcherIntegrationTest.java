@@ -25,7 +25,7 @@ import io.micronaut.context.BeanContext;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.context.event.ApplicationEventListener;
-import io.micronaut.core.annotation.NonNull;
+import org.jspecify.annotations.NonNull;
 import io.micronaut.discovery.consul.watch.Watcher;
 import io.micronaut.runtime.context.scope.Refreshable;
 import io.micronaut.runtime.context.scope.refresh.RefreshEvent;

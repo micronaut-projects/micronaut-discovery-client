@@ -15,7 +15,7 @@
  */
 package io.micronaut.discovery.vault.config;
 
-import io.micronaut.core.annotation.NonNull;
+import org.jspecify.annotations.NonNull;
 import io.micronaut.http.annotation.Header;
 import org.reactivestreams.Publisher;
 

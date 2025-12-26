@@ -23,7 +23,7 @@ import static tools.jackson.databind.SerializationFeature.WRITE_SINGLE_ELEM_ARRA
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import io.micronaut.core.annotation.NonNull;
+import org.jspecify.annotations.NonNull;
 import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.core.naming.NameUtils;
 import io.micronaut.discovery.ServiceInstance;
