@@ -15,13 +15,16 @@
  */
 package io.micronaut.discovery.eureka.client.v2;
 
-import com.fasterxml.jackson.databind.DatabindContext;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.jsontype.impl.ClassNameIdResolver;
-import com.fasterxml.jackson.databind.type.TypeFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DatabindContext;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.jsontype.NamedType;
+import tools.jackson.databind.jsontype.impl.ClassNameIdResolver;
+import tools.jackson.databind.type.TypeFactory;
 import io.micronaut.core.annotation.Introspected;
 
 import java.io.IOException;
+import java.util.Collections;
 
 /**
  * Forked from original Netflix code.
@@ -41,11 +44,11 @@ class DataCenterTypeInfoResolver extends ClassNameIdResolver {
      * Default constructor.
      */
     public DataCenterTypeInfoResolver() {
-        super(TypeFactory.defaultInstance().constructType(DataCenterInfo.class), TypeFactory.defaultInstance());
+        super(TypeFactory.createDefaultInstance().constructType(DataCenterInfo.class), Collections.<NamedType>emptyList(), null);
     }
 
     @Override
-    public JavaType typeFromId(DatabindContext context, String id) throws IOException {
+    public JavaType typeFromId(DatabindContext context, String id) throws JacksonException {
         if (MY_DATA_CENTER_INFO_TYPE_MARKER.equals(id)) {
             return context.getTypeFactory().constructType(MyDataCenterInfo.class);
         }
@@ -53,7 +56,7 @@ class DataCenterTypeInfoResolver extends ClassNameIdResolver {
     }
 
     @Override
-    public String idFromValue(Object value) {
+    public String idFromValue(DatabindContext context, Object value) {
         if (value.getClass().getSimpleName().equals(AmazonInfo.class.getSimpleName())) {
             return AmazonInfo.class.getName();
         }

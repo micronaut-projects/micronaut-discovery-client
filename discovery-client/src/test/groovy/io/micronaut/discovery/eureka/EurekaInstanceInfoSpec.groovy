@@ -15,7 +15,7 @@
  */
 package io.micronaut.discovery.eureka
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import tools.jackson.databind.ObjectMapper
 import io.micronaut.context.ApplicationContext
 import io.micronaut.discovery.eureka.client.v2.AmazonInfo
 import io.micronaut.discovery.eureka.client.v2.InstanceInfo

@@ -15,10 +15,10 @@
  */
 package io.micronaut.discovery.eureka.client.v2;
 
-import static com.fasterxml.jackson.databind.DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY;
-import static com.fasterxml.jackson.databind.DeserializationFeature.UNWRAP_ROOT_VALUE;
-import static com.fasterxml.jackson.databind.SerializationFeature.WRAP_ROOT_VALUE;
-import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED;
+import static tools.jackson.databind.DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY;
+import static tools.jackson.databind.DeserializationFeature.UNWRAP_ROOT_VALUE;
+import static tools.jackson.databind.SerializationFeature.WRAP_ROOT_VALUE;
+import static tools.jackson.databind.SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
