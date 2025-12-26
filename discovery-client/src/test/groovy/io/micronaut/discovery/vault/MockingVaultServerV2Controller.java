@@ -16,7 +16,7 @@
 package io.micronaut.discovery.vault;
 
 import io.micronaut.context.annotation.Requires;
-import io.micronaut.core.annotation.NonNull;
+import org.jspecify.annotations.NonNull;
 import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.discovery.vault.config.v2.VaultResponseData;
 import io.micronaut.discovery.vault.config.v2.VaultResponseV2;
