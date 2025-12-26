@@ -17,8 +17,8 @@ package io.micronaut.discovery.consul.registration;
 
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.core.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import io.micronaut.core.convert.value.ConvertibleValues;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.EmbeddedServerInstance;
@@ -179,7 +179,7 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
 
     @NonNull
     private List<String> tags(@NonNull ServiceInstance instance,
-                              @NonNull ConsulConfiguration.ConsulRegistrationConfiguration registration) {
+                              ConsulConfiguration.@NonNull ConsulRegistrationConfiguration registration) {
         List<String> tags = new ArrayList<>(registration.getTags());
         if (instance instanceof EmbeddedServerInstance embeddedServerInstance) {
             ApplicationConfiguration applicationConfiguration = embeddedServerInstance.getEmbeddedServer().getApplicationConfiguration();
@@ -207,7 +207,7 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
 
     @NonNull
     private List<ConsulCheck> createChecks(@NonNull ServiceInstance instance,
-                                           @NonNull ConsulConfiguration.ConsulRegistrationConfiguration registration,
+                                           ConsulConfiguration.@NonNull ConsulRegistrationConfiguration registration,
                                            String address) {
         ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration checkConfig = registration.getCheck();
         if (checkConfig.isEnabled()) {
@@ -217,7 +217,7 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
     }
 
     private String address(@NonNull ServiceInstance instance,
-                           @NonNull ConsulConfiguration.ConsulRegistrationConfiguration registration) {
+                           ConsulConfiguration.@NonNull ConsulRegistrationConfiguration registration) {
         String address = null;
         if (registration.isPreferIpAddress()) {
             address = registration.getIpAddr().orElseGet(() -> {
@@ -236,10 +236,10 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
         return address;
     }
 
-    private ConsulCheck createCheck(@NonNull ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration checkConfig,
-                              @NonNull ServiceInstance instance,
-                              @NonNull ConsulConfiguration.ConsulRegistrationConfiguration registration,
-                              @Nullable String address) {
+    private ConsulCheck createCheck(ConsulConfiguration.ConsulRegistrationConfiguration.@NonNull CheckConfiguration checkConfig,
+                                    @NonNull ServiceInstance instance,
+                                    ConsulConfiguration.@NonNull ConsulRegistrationConfiguration registration,
+                                    @Nullable String address) {
 
         ConsulCheck check = new ConsulCheck();
         check.setDeregisterCriticalServiceAfter(deregisterCriticalServiceAfterCheck(checkConfig));
@@ -259,17 +259,17 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
     }
 
     @Nullable
-    private String deregisterCriticalServiceAfterCheck(@NonNull ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration checkConfig) {
+    private String deregisterCriticalServiceAfterCheck(ConsulConfiguration.ConsulRegistrationConfiguration.@NonNull CheckConfiguration checkConfig) {
         return checkConfig.getDeregisterCriticalServiceAfter().map(d -> d.toMinutes() + "m").orElse(null);
     }
 
     @Nullable
-    private String checkInternal(@NonNull ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration checkConfig) {
+    private String checkInternal(ConsulConfiguration.ConsulRegistrationConfiguration.@NonNull CheckConfiguration checkConfig) {
         return checkConfig.getInterval().toSeconds() + "s";
     }
 
     private Optional<URL> httpCheckUrl(@NonNull ServiceInstance instance,
-                                       @NonNull ConsulConfiguration.ConsulRegistrationConfiguration registration,
+                                       ConsulConfiguration.@NonNull ConsulRegistrationConfiguration registration,
                                        @Nullable String address) {
         if (instance instanceof EmbeddedServerInstance embeddedServerInstance) {
             EmbeddedServer embeddedServer = embeddedServerInstance.getEmbeddedServer();
