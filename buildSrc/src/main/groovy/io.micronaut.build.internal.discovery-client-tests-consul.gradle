@@ -9,7 +9,6 @@ dependencies {
     testImplementation(mn.micronaut.http.server.netty)
     testImplementation(projects.testSuiteConsulGraal)
 
-
     testImplementation(platform(mnTest.micronaut.test.bom))
     testImplementation(mnTest.micronaut.test.junit5)
 

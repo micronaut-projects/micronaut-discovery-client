@@ -39,10 +39,10 @@ import io.micronaut.http.annotation.QueryValue
 import io.micronaut.runtime.server.EmbeddedServer
 import jakarta.validation.constraints.NotNull
 import org.reactivestreams.Publisher
-import org.testcontainers.shaded.org.apache.commons.lang3.RandomUtils
 import reactor.core.publisher.Flux
 
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ThreadLocalRandom
 import java.util.stream.Collectors
 
 /**
@@ -97,9 +97,13 @@ class MockConsulServer implements ConsulOperations {
                 folder = key.substring(0, i)
             }
             List<KeyValue> list = keyvalues.computeIfAbsent(folder, { String k -> []})
-            list.add(new KeyValue(RandomUtils.nextInt(), key, Base64.getEncoder().encodeToString(value.bytes)))
+            list.add(new KeyValue(nextInt(), key, Base64.getEncoder().encodeToString(value.bytes)))
         }
         return Flux.just(true)
+    }
+
+    static int nextInt() {
+        return ThreadLocalRandom.current().nextInt();
     }
 
     @Override
