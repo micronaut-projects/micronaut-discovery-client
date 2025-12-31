@@ -141,9 +141,9 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="annotations">@Get(uri="/kv/{+key}?{&amp;recurse}{&amp;index}",
      single=true)
 </span><span class="return-type">reactor.core.publisher.Mono&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../KeyValue.html" title="class in io.micronaut.discovery.consul.client.v1">KeyValue</a>&gt;&gt;</span>&nbsp;<span class="element-name">watchValues</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
- @Nullable @QueryValue
+ @QueryValue
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&nbsp;recurse,
- @Nullable @QueryValue
+ @QueryValue
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&nbsp;index)</span></div>
 <div class="block">Reads a Key from Consul. See <a href="https://developer.hashicorp.com/consul/api-docs/kv#read-key">KV Store - ReadKey API</a>.</div>
 <dl class="notes">

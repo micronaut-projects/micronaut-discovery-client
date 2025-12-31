@@ -186,11 +186,9 @@ extends <a href="../VaultConfigHttpClient.html" title="interface in io.micronaut
 @Produces(single=true)
 @Retryable(attempts="${pool.retry-count:3}",
            delay="${pool.retry-delay:1s}")
-</span><span class="return-type">org.reactivestreams.Publisher&lt;<a href="VaultResponseV1.html" title="class in io.micronaut.discovery.vault.config.v1">VaultResponseV1</a>&gt;</span>&nbsp;<span class="element-name">readConfigurationValues</span><wbr><span class="parameters">(@NonNull @Header("X-Vault-Token")
+</span><span class="return-type">org.reactivestreams.Publisher&lt;<a href="VaultResponseV1.html" title="class in io.micronaut.discovery.vault.config.v1">VaultResponseV1</a>&gt;</span>&nbsp;<span class="element-name">readConfigurationValues</span><wbr><span class="parameters">(@Header("X-Vault-Token")
  @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;token,
- @NonNull
  @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;backend,
- @NonNull
  @NonNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;vaultKey)</span></div>
 <div class="block">Reads an application configuration from Vault.</div>
 <dl class="notes">

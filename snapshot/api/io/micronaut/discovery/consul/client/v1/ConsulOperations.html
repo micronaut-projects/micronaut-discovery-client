@@ -290,11 +290,9 @@ loadScripts(document, 'script');</script>
 @Retryable(attempts="${consul.client.config.retry-count:3}",
            delay="${consul.client.config.retry-delay:1s}")
 </span><span class="return-type">org.reactivestreams.Publisher&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="KeyValue.html" title="class in io.micronaut.discovery.consul.client.v1">KeyValue</a>&gt;&gt;</span>&nbsp;<span class="element-name">readValues</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
- @Nullable @QueryValue("dc")
+ @QueryValue("dc")
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;datacenter,
- @Nullable
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&nbsp;raw,
- @Nullable
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;separator)</span></div>
 <div class="block">Reads a Key from Consul. See https://www.consul.io/api/kv.html.</div>
 <dl class="notes">
@@ -315,7 +313,6 @@ loadScripts(document, 'script');</script>
 @Retryable(attempts="${consul.client.registration.retry-count:3}",
            delay="${consul.client.registration.retry-delay:3s}")
 </span><span class="return-type">org.reactivestreams.Publisher&lt;io.micronaut.http.HttpStatus&gt;</span>&nbsp;<span class="element-name">pass</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;checkId,
- @Nullable
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;note)</span></div>
 <div class="block">Pass the TTL check. See https://www.consul.io/api/agent/check.html.</div>
 <dl class="notes">
@@ -332,7 +329,6 @@ loadScripts(document, 'script');</script>
 <h3>warn</h3>
 <div class="member-signature"><span class="annotations">@Put("/agent/check/warn/{checkId}{?note}")
 </span><span class="return-type">org.reactivestreams.Publisher&lt;io.micronaut.http.HttpStatus&gt;</span>&nbsp;<span class="element-name">warn</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;checkId,
- @Nullable
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;note)</span></div>
 <div class="block">Warn the TTL check. See https://www.consul.io/api/agent/check.html.</div>
 <dl class="notes">
@@ -351,7 +347,6 @@ loadScripts(document, 'script');</script>
 @Retryable(attempts="${consul.client.registration.retry-count:3}",
            delay="${consul.client.registration.retry-delay:3s}")
 </span><span class="return-type">org.reactivestreams.Publisher&lt;io.micronaut.http.HttpStatus&gt;</span>&nbsp;<span class="element-name">fail</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;checkId,
- @Nullable
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;note)</span></div>
 <div class="block">Fail the TTL check. See https://www.consul.io/api/agent/check.html.</div>
 <dl class="notes">
@@ -488,11 +483,8 @@ loadScripts(document, 'script');</script>
      single=true)
 </span><span class="return-type">org.reactivestreams.Publisher&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="ConsulHealthEntry.html" title="class in io.micronaut.discovery.consul.client.v1">ConsulHealthEntry</a>&gt;&gt;</span>&nbsp;<span class="element-name">findHealthyServices</span><wbr><span class="parameters">(@NotNull
  @NotNull <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;service,
- @Nullable
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&nbsp;passing,
- @Nullable
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;tag,
- @Nullable
  @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;dc)</span></div>
 <div class="block">find healthy services that are passing health checks.</div>
 <dl class="notes">
