@@ -12,6 +12,7 @@ dependencies {
     implementation(platform(mnTest.boms.testcontainers))
     implementation(libs.testcontainers.junit.jupiter)
     implementation(libs.jsonassert)
+    implementation(projects.testSuiteConsulUtils)
 }
 tasks.named("checkstyleMain").configure {
     enabled = false

@@ -16,28 +16,39 @@
 package io.micronaut.consul.graal;
 
 import io.micronaut.context.annotation.Property;
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.discovery.consul.testcontainers.Consul;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import io.micronaut.test.support.TestPropertyProvider;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
+import java.util.Map;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.TestInstance;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Property(name = "spec.name", value = "ConsulTest")
 @MicronautTest
 @Testcontainers(disabledWithoutDocker = true)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SuppressWarnings({
     "java:S5960",
     "java:S5960", // This is a TCK. Assertions are ok.
 })
-class ConsulTest {
+class ConsulTest implements TestPropertyProvider {
+    @Override
+    public @NonNull Map<String, String> getProperties() {
+        return Consul.getProperties();
+    }
 
     @Inject
     @Client("/")

@@ -15,22 +15,32 @@
  */
 package io.micronaut.consul.graal;
 
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.discovery.consul.client.v1.KeyValue;
+import io.micronaut.discovery.consul.testcontainers.Consul;
 import io.micronaut.json.JsonMapper;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import io.micronaut.test.support.TestPropertyProvider;
 import jakarta.inject.Inject;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.io.IOException;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @MicronautTest(startApplication = false)
-class KeyValueTest {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class KeyValueTest implements TestPropertyProvider {
+    @Override
+    public @NonNull Map<String, String> getProperties() {
+        return Consul.getProperties();
+    }
 
     @Inject
     JsonMapper jsonMapper;

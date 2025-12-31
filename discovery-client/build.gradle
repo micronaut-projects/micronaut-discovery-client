@@ -22,7 +22,6 @@ dependencies {
     testImplementation(mn.micronaut.http.client)
     testImplementation(mnTest.micronaut.test.spock)
     testImplementation(mn.micronaut.jackson.databind)
-    testImplementation(mnTestResources.testcontainers.vault)
 
     testImplementation(mn.micronaut.management)
     testImplementation(mn.micronaut.http.server.netty)
@@ -30,6 +29,8 @@ dependencies {
     testImplementation(mnLogging.logback.classic)
 
     testCompileOnly(mn.micronaut.inject.groovy)
+    testImplementation(platform(mnTest.boms.testcontainers))
+    testImplementation(libs.testcontainers.vault)
 }
 
 spotless {
