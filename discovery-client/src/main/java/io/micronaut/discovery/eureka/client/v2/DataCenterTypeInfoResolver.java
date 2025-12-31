@@ -19,12 +19,10 @@ import tools.jackson.core.JacksonException;
 import tools.jackson.databind.DatabindContext;
 import tools.jackson.databind.JavaType;
 import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
-import tools.jackson.databind.jsontype.NamedType;
 import tools.jackson.databind.jsontype.impl.ClassNameIdResolver;
 import tools.jackson.databind.type.TypeFactory;
 import io.micronaut.core.annotation.Introspected;
 
-import java.io.IOException;
 import java.util.Collections;
 
 /**
