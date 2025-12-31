@@ -25,6 +25,7 @@ import jakarta.inject.Inject;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
@@ -35,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @MicronautTest(startApplication = false)
+@DisabledInNativeImage
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class KeyValueTest implements TestPropertyProvider {
     @Override

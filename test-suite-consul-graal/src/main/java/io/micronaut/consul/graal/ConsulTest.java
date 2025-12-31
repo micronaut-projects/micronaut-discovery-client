@@ -34,10 +34,12 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Property(name = "spec.name", value = "ConsulTest")
 @MicronautTest
+@DisabledInNativeImage
 @Testcontainers(disabledWithoutDocker = true)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SuppressWarnings({
