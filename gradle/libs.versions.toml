@@ -29,7 +29,7 @@ commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "co
 jsonassert = { module = "org.skyscreamer:jsonassert", version.ref = "jsonassert"}
 
 spock = { module = 'org.spockframework:spock-core', version.ref = "spock" }
-testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter"}
-testcontainers-consul = { module = "org.testcontainers:consul" }
+testcontainers-junit-jupiter = { module = "org.testcontainers:testcontainers-junit-jupiter"}
+testcontainers-consul = { module = "org.testcontainers:testcontainers-consul" }
 
 junit-platform-engine = { module = "org.junit.platform:junit-platform-suite-engine" }
