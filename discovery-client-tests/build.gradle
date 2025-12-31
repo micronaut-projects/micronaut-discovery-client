@@ -11,5 +11,5 @@ dependencies {
     testImplementation(mn.micronaut.http.client)
     testImplementation(mnTestResources.testcontainers.vault)
     testCompileOnly(mn.micronaut.inject.groovy)
-    testImplementation(libs.spock)
+    testImplementation(mnTest.micronaut.test.spock)
 }

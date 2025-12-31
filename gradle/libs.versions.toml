@@ -28,7 +28,6 @@ awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility" 
 commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang3" }
 jsonassert = { module = "org.skyscreamer:jsonassert", version.ref = "jsonassert"}
 
-spock = { module = 'org.spockframework:spock-core', version.ref = "spock" }
 testcontainers-junit-jupiter = { module = "org.testcontainers:testcontainers-junit-jupiter"}
 testcontainers-consul = { module = "org.testcontainers:testcontainers-consul" }
 

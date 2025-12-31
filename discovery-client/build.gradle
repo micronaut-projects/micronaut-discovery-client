@@ -21,7 +21,7 @@ dependencies {
 
     testAnnotationProcessor(mn.micronaut.inject.java)
     testImplementation(mn.micronaut.http.client)
-    testImplementation(libs.spock)
+    testImplementation(mnTest.micronaut.test.spock)
     testImplementation(mn.micronaut.jackson.databind)
     testImplementation(mnTestResources.testcontainers.vault)
 
