@@ -18,7 +18,7 @@ package io.micronaut.discovery.eureka.client.v2;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
+import tools.jackson.databind.annotation.JsonTypeIdResolver;
 import io.micronaut.core.annotation.ReflectiveAccess;
 
 /**

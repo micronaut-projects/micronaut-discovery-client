@@ -9,7 +9,8 @@ dependencies {
     testImplementation(mnSerde.micronaut.serde.jackson)
 
     testImplementation(mn.micronaut.http.client)
-    testImplementation(mnTestResources.testcontainers.vault)
     testCompileOnly(mn.micronaut.inject.groovy)
-    testImplementation(libs.spock)
+    testImplementation(mnTest.micronaut.test.spock)
+    testImplementation(platform(mnTest.boms.testcontainers))
+    testImplementation(libs.testcontainers.vault)
 }

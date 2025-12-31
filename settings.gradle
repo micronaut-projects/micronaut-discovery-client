@@ -19,6 +19,7 @@ include 'test-suite-consul-graal'
 include 'test-suite-consul-graal-serde'
 include 'test-suite-consul-graal-jacksondatabind'
 include 'test-suite-consul-watch'
+include 'test-suite-consul-utils'
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
@@ -27,7 +28,6 @@ micronautBuild {
     importMicronautCatalog()
     importMicronautCatalog("micronaut-serde")
     importMicronautCatalog("micronaut-reactor")
-    importMicronautCatalog("micronaut-test-resources")
     importMicronautCatalog("micronaut-validation")
 }
 

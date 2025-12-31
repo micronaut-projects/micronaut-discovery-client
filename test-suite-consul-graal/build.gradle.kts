@@ -9,9 +9,10 @@ dependencies {
     implementation(mn.micronaut.http.client.core)
     implementation(mnTest.micronaut.test.junit5)
     implementation(libs.awaitility)
-    implementation(platform(mnTestResources.boms.testcontainers))
+    implementation(platform(mnTest.boms.testcontainers))
     implementation(libs.testcontainers.junit.jupiter)
     implementation(libs.jsonassert)
+    implementation(projects.testSuiteConsulUtils)
 }
 tasks.named("checkstyleMain").configure {
     enabled = false

@@ -34,7 +34,7 @@ import spock.lang.Requires
  * @since 1.0
  */
 @Requires({ DockerClientFactory.instance().isDockerAvailable() })
-class EurekaAutoRegistrationSpec extends Specification{
+class EurekaAutoRegistrationSpec extends Specification {
 
     @Shared
     @AutoCleanup
@@ -84,7 +84,7 @@ class EurekaAutoRegistrationSpec extends Specification{
         )
 
         // run a Eureka client
-        EurekaClient eurekaClient = ApplicationContext.builder(eurekaConfiguration).run(EurekaClient)
+        EurekaClient eurekaClient = ApplicationContext.builder(eurekaConfiguration).environments("eureka").run(EurekaClient)
 
         // since Eureka is eventually consistent a long timeout/delay is required slowing this test down significantly
         PollingConditions conditions = new PollingConditions(timeout: 60, delay: 1)

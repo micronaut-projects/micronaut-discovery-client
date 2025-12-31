@@ -33,13 +33,12 @@ class EurekaHealthIndicatorSpec extends Specification {
     void "test eureka health indicator"() {
         given:
         Map eurekaServerMap = [
-                'jackson.serialization.WRAP_ROOT_VALUE': true,
                 (MockEurekaServer.ENABLED)             : true
         ]
-        EmbeddedServer eurekaServer = ApplicationContext.run(EmbeddedServer, eurekaServerMap, Environment.TEST)
+        EmbeddedServer eurekaServer = ApplicationContext.run(EmbeddedServer, eurekaServerMap, Environment.TEST, "eureka")
 
         Map applicationContextMap = ['eureka.client.defaultZone': eurekaServer.getURL()]
-        ApplicationContext applicationContext = ApplicationContext.run(applicationContextMap, Environment.TEST)
+        ApplicationContext applicationContext = ApplicationContext.run(applicationContextMap, Environment.TEST, "eureka")
 
         EurekaHealthIndicator healthIndicator = applicationContext.getBean(EurekaHealthIndicator)
 
