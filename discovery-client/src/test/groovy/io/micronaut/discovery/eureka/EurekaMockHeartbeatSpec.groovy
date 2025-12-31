@@ -36,10 +36,8 @@ class EurekaMockHeartbeatSpec extends Specification {
 
         given:
         EmbeddedServer eurekaServer = ApplicationContext.run(EmbeddedServer, [
-                'jackson.serialization.WRAP_ROOT_VALUE'    : true,
-                'jackson.deserialization.UNWRAP_ROOT_VALUE': true,
                 (MockEurekaServer.ENABLED)                 : true
-        ])
+        ], "eureka")
 
         when: "An application is started and eureka configured"
         String serviceId = 'heartbeatService'
@@ -48,10 +46,9 @@ class EurekaMockHeartbeatSpec extends Specification {
                 ['consul.client.enabled'                    : false,
                  'eureka.client.host'                       : eurekaServer.getHost(),
                  'eureka.client.port'                       : eurekaServer.getPort(),
-                 'jackson.deserialization.UNWRAP_ROOT_VALUE': true,
                  'micronaut.application.name'               : serviceId,
                  'micronaut.heartbeat.interval'             : '1s']
-        )
+                , "eureka")
 
         DiscoveryClient discoveryClient = application.applicationContext.getBean(EurekaClient)
         PollingConditions conditions = new PollingConditions(timeout: 10)

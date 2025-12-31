@@ -35,17 +35,14 @@ class EurekaMockBasicAuthSpec extends Specification {
         given: "a mock server with auth enabled"
         EmbeddedServer eurekaServer = ApplicationContext.run(EmbeddedServer, [
                 'test.eureka.userinfo'                      : 'foo:bar',
-                'jackson.serialization.WRAP_ROOT_VALUE'     : true,
-                'jackson.deserialization.UNWRAP_ROOT_VALUE' : true,
                 (MockEurekaServer.ENABLED)                  : true
-        ])
+        ], "eureka")
 
         and: "A client with the token"
         def serviceName = 'authenticated-server'
         EmbeddedServer anotherServer = ApplicationContext.run(EmbeddedServer, ['micronaut.application.name'  : serviceName,
                                                                                'consul.client.enabled': false,
-                                                                               'jackson.deserialization.UNWRAP_ROOT_VALUE': true,
-                                                                               'eureka.client.defaultZone'  : "http://foo:bar@localhost:${eurekaServer.port}"])
+                                                                               'eureka.client.defaultZone'  : "http://foo:bar@localhost:${eurekaServer.port}"], "eureka")
 
         EurekaClient eurekaClient = anotherServer.applicationContext.getBean(EurekaClient)
 

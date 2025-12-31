@@ -76,7 +76,7 @@ class EurekaClientSpec extends Specification {
                 'eureka.client.readTimeout': '5s',
                 'eureka.client.defaultZone'                : "http://admin:admin@${eurekaHost}:${eurekaPort}"
         ] as Map<String, Object>
-        embeddedServer = ApplicationContext.run(EmbeddedServer, embeddedServerConfig, Environment.TEST)
+        embeddedServer = ApplicationContext.run(EmbeddedServer, embeddedServerConfig, Environment.TEST, "eureka")
         client = embeddedServer.applicationContext.getBean(EurekaClient)
         discoveryClient = embeddedServer.applicationContext.getBean(DiscoveryClient)
     }

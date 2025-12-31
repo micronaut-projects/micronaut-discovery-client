@@ -42,11 +42,9 @@ class EurekaMockAutoRegistrationSpec extends Specification {
     void "test that an application can be registered and de-registered with Eureka hyphenated"() {
         given:
         Map eurekaServerConfig = [
-                'jackson.serialization.WRAP_ROOT_VALUE'    : true,
-                'jackson.deserialization.UNWRAP_ROOT_VALUE': true,
                 (MockEurekaServer.ENABLED)                 : true
         ]
-        EmbeddedServer eurekaServer = ApplicationContext.run(EmbeddedServer, eurekaServerConfig, Environment.TEST)
+        EmbeddedServer eurekaServer = ApplicationContext.run(EmbeddedServer, eurekaServerConfig, Environment.TEST, "eureka")
 
         when: "An application is started and eureka configured"
         String serviceId = 'gr8crm-tag-service'
@@ -54,13 +52,12 @@ class EurekaMockAutoRegistrationSpec extends Specification {
                                  "micronaut.caches.discoveryClient.enabled"  : false,
                                  'eureka.client.host'                        : eurekaServer.getHost(),
                                  'eureka.client.port'                        : eurekaServer.getPort(),
-                                 'jackson.deserialization.UNWRAP_ROOT_VALUE' : true,
                                  'micronaut.application.name'                : serviceId]
-        EmbeddedServer application1 = ApplicationContext.run(EmbeddedServer, applicationConfig, Environment.TEST)
+        EmbeddedServer application1 = ApplicationContext.run(EmbeddedServer, applicationConfig, Environment.TEST, "eureka")
 
         Map applicationConfig2 = new HashMap(applicationConfig)
         applicationConfig2.put('micronaut.application.name', 'gr8crm-notification-service')
-        EmbeddedServer application2 = ApplicationContext.run(EmbeddedServer, applicationConfig2, Environment.TEST)
+        EmbeddedServer application2 = ApplicationContext.run(EmbeddedServer, applicationConfig2, Environment.TEST, "eureka")
 
         EurekaClient eurekaClient = application1.applicationContext.getBean(EurekaClient)
         PollingConditions conditions = new PollingConditions(timeout: 5, delay: 0.5)
@@ -87,11 +84,9 @@ class EurekaMockAutoRegistrationSpec extends Specification {
     void "test that an application can be registered and de-registered with Eureka"() {
         given:
         Map eurekaServerConfig = [
-                'jackson.serialization.WRAP_ROOT_VALUE'    : true,
-                'jackson.deserialization.UNWRAP_ROOT_VALUE': true,
                 (MockEurekaServer.ENABLED)                 : true
         ]
-        EmbeddedServer eurekaServer = ApplicationContext.run(EmbeddedServer, eurekaServerConfig, Environment.TEST)
+        EmbeddedServer eurekaServer = ApplicationContext.run(EmbeddedServer, eurekaServerConfig, Environment.TEST, "eureka")
 
         when: "An application is started and eureka configured"
         String serviceId = 'myService'
@@ -99,9 +94,8 @@ class EurekaMockAutoRegistrationSpec extends Specification {
                                  "micronaut.caches.discoveryClient.enabled"  : false,
                                  'eureka.client.host'                        : eurekaServer.getHost(),
                                  'eureka.client.port'                        : eurekaServer.getPort(),
-                                 'jackson.deserialization.UNWRAP_ROOT_VALUE' : true,
                                  'micronaut.application.name'                : serviceId]
-        EmbeddedServer application = ApplicationContext.run(EmbeddedServer, applicationConfig, Environment.TEST)
+        EmbeddedServer application = ApplicationContext.run(EmbeddedServer, applicationConfig, Environment.TEST, "eureka")
 
         EurekaClient eurekaClient = application.applicationContext.getBean(EurekaClient)
         PollingConditions conditions = new PollingConditions(timeout: 5, delay: 0.5)
@@ -161,15 +155,12 @@ class EurekaMockAutoRegistrationSpec extends Specification {
 
         given:
         EmbeddedServer eurekaServer = ApplicationContext.run(EmbeddedServer, [
-                'jackson.serialization.WRAP_ROOT_VALUE'    : true,
-                'jackson.deserialization.UNWRAP_ROOT_VALUE': true,
                 (MockEurekaServer.ENABLED)                 : true
-        ])
+        ], "eureka")
 
         def map = ['consul.client.enabled'              : false,
                    'eureka.client.host'                       : eurekaServer.getHost(),
                    'eureka.client.port'                       : eurekaServer.getPort(),
-                   'jackson.deserialization.UNWRAP_ROOT_VALUE': true,
                    'micronaut.application.name'                : serviceId]
 
         for(entry in configuration) {
@@ -178,7 +169,8 @@ class EurekaMockAutoRegistrationSpec extends Specification {
 
         EmbeddedServer application = ApplicationContext.run(
                 EmbeddedServer,
-                map
+                map,
+                "eureka"
         )
 
         DiscoveryClient discoveryClient = application.applicationContext.getBean(EurekaClient)
