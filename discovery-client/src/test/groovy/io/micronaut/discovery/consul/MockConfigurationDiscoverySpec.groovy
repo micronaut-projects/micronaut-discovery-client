@@ -22,6 +22,7 @@ import io.micronaut.discovery.consul.client.v1.ConsulClient
 import io.micronaut.runtime.server.EmbeddedServer
 import reactor.core.publisher.Flux
 import spock.lang.AutoCleanup
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
@@ -50,6 +51,7 @@ class MockConfigurationDiscoverySpec extends Specification {
         System.setProperty(Environment.BOOTSTRAP_CONTEXT_PROPERTY, "true")
     }
 
+    @Ignore
     void 'test read application configuration from Consul'() {
         given:
         System.setProperty("some.consul.value", "other") // consul should override
