@@ -3,6 +3,7 @@ package io.micronaut.discovery.consul.watch.watcher;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import jakarta.inject.Inject;
@@ -17,8 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.consul.ConsulContainer;
-import org.testcontainers.junit.jupiter.Container;
+import io.micronaut.discovery.consul.testcontainers.Consul;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import io.micronaut.context.BeanContext;
@@ -50,33 +50,28 @@ abstract class BaseWatcherIntegrationTest implements TestPropertyProvider {
     @Inject
     private RefreshableInnerProperty refreshableInnerProperty;
 
-    @Container
-    protected static final ConsulContainer CONSUL_CONTAINER = new ConsulContainer("hashicorp/consul:1.18.1");
-
     @Override
     public @NonNull Map<String, String> getProperties() {
-        final var consulHost = CONSUL_CONTAINER.getHost();
-        final var consulPort = CONSUL_CONTAINER.getMappedPort(8500);
-        return Map.of(
+        Map<String, String> result = new HashMap<>(Consul.getProperties());
+        result.putAll(Map.of(
             "micronaut.application.name", "consul-watcher",
             "micronaut.config-client.enabled", "true",
             "consul.client.watch.enabled", "true",
             "consul.client.blocking-queries.max-wait-duration", "5s",
-            "consul.client.config.path", "test",
-            "consul.client.host", consulHost,
-            "consul.client.port", String.valueOf(consulPort)
-        );
+            "consul.client.config.path", "test"
+        ));
+        return result;
     }
 
     protected static void consulKvPut(final String key, final String data) throws Exception {
-        CONSUL_CONTAINER.execInContainer("consul", "kv", "put", key, data);
+        Consul.getContainer().execInContainer("consul", "kv", "put", key, data);
     }
 
     protected abstract void updateConsul(final String foo, final String bar) throws Exception;
 
     @AfterEach
     void cleanUp() {
-        CONSUL_CONTAINER.withConsulCommand("kv delete " + ROOT);
+        Consul.getContainer().withConsulCommand("kv delete " + ROOT);
     }
 
     @Test
