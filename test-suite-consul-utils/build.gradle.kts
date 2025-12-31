@@ -1,7 +1,8 @@
 plugins {
     id("io.micronaut.build.internal.java-base")
+    `java-library`
 }
 dependencies {
     implementation(platform(mnTest.boms.testcontainers))
-    implementation(libs.testcontainers.consul)
+    api(libs.testcontainers.consul)
 }

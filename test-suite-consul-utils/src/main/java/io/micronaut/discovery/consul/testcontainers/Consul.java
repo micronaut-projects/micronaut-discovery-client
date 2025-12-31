@@ -17,7 +17,7 @@ public class Consul {
     private static final String IMAGE_NAME = "consul:1.9.0";
     private static ConsulContainer container;
 
-    public static Map<String, String> getProperties() {
+    public static ConsulContainer getContainer() {
         if (container == null) {
             container = new ConsulContainer(DockerImageName.parse(IMAGE_NAME));
             container.waitingFor(new HttpWaitStrategy().forStatusCode(200).forPath("/v1/status/leader"));
@@ -29,10 +29,14 @@ public class Consul {
                     throw new RuntimeException(e);
                 }
             } while(!container.isRunning());
-            return getProperties(container);
+            return container;
         } else {
-            return getProperties(container);
+            return container;
         }
+    }
+
+    public static Map<String, String> getProperties() {
+        return getProperties(getContainer());
     }
 
     private static Map<String, String> getProperties(ConsulContainer container) {
