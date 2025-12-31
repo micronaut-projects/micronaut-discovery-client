@@ -22,7 +22,6 @@ micronaut-serde = { module = "io.micronaut.serde:micronaut-serde-bom", version.r
 micronaut-test-resources = { module = "io.micronaut.testresources:micronaut-test-resources-bom", version.ref = "micronaut-test-resources" }
 micronaut-validation = { module = "io.micronaut.validation:micronaut-validation-bom", version.ref = "micronaut-validation" }
 
-micronaut-docs-asciidoc-config-props = { module = "io.micronaut.docs:micronaut-docs-asciidoc-config-props", version.ref = "micronaut-docs" }
 awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility" }
 
 commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang3" }
