@@ -36,7 +36,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @MicronautTest(startApplication = false)
-@DisabledInNativeImage
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class KeyValueTest implements TestPropertyProvider {
     @Override
@@ -47,6 +46,7 @@ class KeyValueTest implements TestPropertyProvider {
     @Inject
     JsonMapper jsonMapper;
 
+    @DisabledInNativeImage
     @Test
     void testJsonSerializationOfKeyValue() throws IOException, JSONException {
         //given:

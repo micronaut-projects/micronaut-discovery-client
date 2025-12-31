@@ -39,7 +39,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Property(name = "spec.name", value = "ConsulTest")
 @MicronautTest
-@DisabledInNativeImage
 @Testcontainers(disabledWithoutDocker = true)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SuppressWarnings({
@@ -56,6 +55,7 @@ class ConsulTest implements TestPropertyProvider {
     @Client("/")
     HttpClient client;
 
+    @DisabledInNativeImage
     @Test
     void test() {
         String hello = client.toBlocking().retrieve("/hello/Micronaut");
