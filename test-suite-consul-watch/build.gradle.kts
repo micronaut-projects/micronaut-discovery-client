@@ -9,14 +9,6 @@ dependencies {
     implementation(projects.micronautDiscoveryClient)
     implementation(mnTest.micronaut.test.junit5)
     implementation(mnTest.assertj.core)
-
-    implementation(mn.micronaut.jackson.databind)
-    /**
-     * without this dependency, the following error is observed:
-    Caused by: java.lang.NoClassDefFoundError: io/micronaut/jackson/env/JsonPropertySourceLoader
-     *
-     */
-
     implementation(mnSerde.micronaut.serde.jackson)
     implementation(platform(mnTest.boms.testcontainers))
     implementation(libs.testcontainers.junit.jupiter)
