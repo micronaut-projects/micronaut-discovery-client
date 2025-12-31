@@ -18,6 +18,7 @@ package io.micronaut.discovery.eureka.client.v2;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.DatabindContext;
 import tools.jackson.databind.JavaType;
+import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import tools.jackson.databind.jsontype.NamedType;
 import tools.jackson.databind.jsontype.impl.ClassNameIdResolver;
 import tools.jackson.databind.type.TypeFactory;
@@ -44,7 +45,9 @@ class DataCenterTypeInfoResolver extends ClassNameIdResolver {
      * Default constructor.
      */
     public DataCenterTypeInfoResolver() {
-        super(TypeFactory.createDefaultInstance().constructType(DataCenterInfo.class), Collections.<NamedType>emptyList(), null);
+        super(TypeFactory.createDefaultInstance().constructType(DataCenterInfo.class),
+            Collections.emptyList(),
+            BasicPolymorphicTypeValidator.builder().allowIfSubType(DataCenterInfo.class).build());
     }
 
     @Override
