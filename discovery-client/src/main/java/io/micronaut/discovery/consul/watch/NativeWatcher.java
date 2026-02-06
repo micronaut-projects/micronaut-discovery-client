@@ -25,15 +25,15 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import io.micronaut.core.annotation.Internal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.consul.client.v1.KeyValue;
-import io.micronaut.discovery.consul.client.v1.blockingqueries.BlockingQueriesConfiguration;
 import io.micronaut.discovery.consul.client.v1.blockingqueries.BlockedQueriesConsulClient;
+import io.micronaut.discovery.consul.client.v1.blockingqueries.BlockingQueriesConfiguration;
 import reactor.core.publisher.Mono;
 
 /**
@@ -53,20 +53,21 @@ final class NativeWatcher extends AbstractWatcher<List<KeyValue>> {
      * Default constructor.
      */
     NativeWatcher(final List<String> kvPaths,
-                         final BlockedQueriesConsulClient consulClient,
-                         final BlockingQueriesConfiguration blockingQueriesConfiguration,
-                         final PropertiesChangeHandler propertiesChangeHandler) {
-        super(kvPaths, consulClient, blockingQueriesConfiguration, propertiesChangeHandler);
+                  final BlockedQueriesConsulClient consulClient,
+                  final BlockingQueriesConfiguration blockingQueriesConfiguration,
+                  final PropertiesChangeHandler propertiesChangeHandler,
+                  final WatchConfiguration watchConfiguration) {
+        super(kvPaths, consulClient, blockingQueriesConfiguration, propertiesChangeHandler, watchConfiguration);
     }
 
     @Override
     protected Mono<List<KeyValue>> watchValue(final String kvPath) {
         final var modifiedIndex = Optional.ofNullable(kvHolder.get(kvPath))
-                .stream()
-                .flatMap(List::stream)
-                .map(KeyValue::getModifyIndex)
-                .max(Integer::compareTo)
-                .orElse(NO_INDEX);
+            .stream()
+            .flatMap(List::stream)
+            .map(KeyValue::getModifyIndex)
+            .max(Integer::compareTo)
+            .orElse(NO_INDEX);
         LOG.debug("Watching kvPath={} with index={}", kvPath, modifiedIndex);
         return consulClient.watchValues(kvPath, true, modifiedIndex);
     }
@@ -83,9 +84,9 @@ final class NativeWatcher extends AbstractWatcher<List<KeyValue>> {
         }
 
         return keyValues.stream()
-                .filter(Objects::nonNull)
-                .filter(kv -> StringUtils.isNotEmpty(kv.getValue()))
-                .collect(Collectors.toMap(this::pathToPropertyKey, keyValue -> new String(decodeValue(keyValue))));
+            .filter(Objects::nonNull)
+            .filter(kv -> StringUtils.isNotEmpty(kv.getValue()))
+            .collect(Collectors.toMap(this::pathToPropertyKey, keyValue -> new String(decodeValue(keyValue))));
     }
 
     private String pathToPropertyKey(final KeyValue kv) {

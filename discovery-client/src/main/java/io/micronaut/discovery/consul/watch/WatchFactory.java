@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.micronaut.core.annotation.Internal;
+
 import jakarta.inject.Singleton;
 
 import io.micronaut.context.annotation.Factory;
@@ -51,15 +52,18 @@ final class WatchFactory {
     private final BlockedQueriesConsulClient consulClient;
     private final BlockingQueriesConfiguration blockingQueriesConfiguration;
     private final PropertiesChangeHandler propertiesChangeHandler;
+    private final WatchConfiguration watchConfiguration;
 
     WatchFactory(final Environment environment,
-                        final BlockedQueriesConsulClient consulClient,
-                        final BlockingQueriesConfiguration blockingQueriesConfiguration,
-                        final PropertiesChangeHandler propertiesChangeHandler) {
+                 final BlockedQueriesConsulClient consulClient,
+                 final BlockingQueriesConfiguration blockingQueriesConfiguration,
+                 final PropertiesChangeHandler propertiesChangeHandler,
+                 final WatchConfiguration watchConfiguration) {
         this.environment = environment;
         this.consulClient = consulClient;
         this.blockingQueriesConfiguration = blockingQueriesConfiguration;
         this.propertiesChangeHandler = propertiesChangeHandler;
+        this.watchConfiguration = watchConfiguration;
     }
 
     @Singleton
@@ -120,12 +124,12 @@ final class WatchFactory {
     private Watcher watchNative(final List<String> keyPaths) {
         // adding '/' at the end of the kvPath to distinct 'kvPath/' from 'kvPath,profile/'
         final var kvPaths = keyPaths.stream().map(path -> path + CONSUL_PATH_SEPARATOR).toList();
-        return new NativeWatcher(kvPaths, consulClient, blockingQueriesConfiguration, propertiesChangeHandler);
+        return new NativeWatcher(kvPaths, consulClient, blockingQueriesConfiguration, propertiesChangeHandler, watchConfiguration);
     }
 
     private Watcher watchConfigurations(final List<String> kvPaths,
                                         final PropertySourceLoader propertySourceLoader) {
-        return new ConfigurationsWatcher(kvPaths, consulClient, blockingQueriesConfiguration, propertiesChangeHandler, propertySourceLoader);
+        return new ConfigurationsWatcher(kvPaths, consulClient, blockingQueriesConfiguration, propertiesChangeHandler, propertySourceLoader, watchConfiguration);
     }
 
 }
