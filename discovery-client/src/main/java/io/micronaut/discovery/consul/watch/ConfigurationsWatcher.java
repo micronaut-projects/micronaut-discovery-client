@@ -22,15 +22,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import io.micronaut.core.annotation.Internal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.micronaut.context.env.PropertySourceReader;
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.consul.client.v1.KeyValue;
-import io.micronaut.discovery.consul.client.v1.blockingqueries.BlockingQueriesConfiguration;
 import io.micronaut.discovery.consul.client.v1.blockingqueries.BlockedQueriesConsulClient;
+import io.micronaut.discovery.consul.client.v1.blockingqueries.BlockingQueriesConfiguration;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -51,24 +51,25 @@ final class ConfigurationsWatcher extends AbstractWatcher<KeyValue> {
      * Default constructor.
      */
     ConfigurationsWatcher(final List<String> kvPaths,
-                                 final BlockedQueriesConsulClient consulClient,
-                                 final BlockingQueriesConfiguration blockingQueriesConfiguration,
-                                 final PropertiesChangeHandler propertiesChangeHandler,
-                                 final PropertySourceReader propertySourceReader) {
-        super(kvPaths, consulClient, blockingQueriesConfiguration, propertiesChangeHandler);
+                          final BlockedQueriesConsulClient consulClient,
+                          final BlockingQueriesConfiguration blockingQueriesConfiguration,
+                          final PropertiesChangeHandler propertiesChangeHandler,
+                          final PropertySourceReader propertySourceReader,
+                          final WatchConfiguration watchConfiguration) {
+        super(kvPaths, consulClient, blockingQueriesConfiguration, propertiesChangeHandler, watchConfiguration);
         this.propertySourceReader = propertySourceReader;
     }
 
     @Override
     protected Mono<KeyValue> watchValue(final String kvPath) {
         final var modifiedIndex = Optional.ofNullable(kvHolder.get(kvPath))
-                .map(KeyValue::getModifyIndex)
-                .orElse(NO_INDEX);
+            .map(KeyValue::getModifyIndex)
+            .orElse(NO_INDEX);
         LOG.debug("Watching kvPath={} with index={}", kvPath, modifiedIndex);
         return consulClient.watchValues(kvPath, false, modifiedIndex)
-                .flatMapMany(Flux::fromIterable)
-                .filter(kv -> kvPath.equals(kv.getKey()))
-                .singleOrEmpty();
+            .flatMapMany(Flux::fromIterable)
+            .filter(kv -> kvPath.equals(kv.getKey()))
+            .singleOrEmpty();
     }
 
     @Override

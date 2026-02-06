@@ -28,6 +28,9 @@ consul:
       path: /config
     watch:
       enabled: true
+      max-retry-attempts: 3
+      retry-delay-ms: 50
+      kv-not-found-log-level: WARN
     blocking-queries:
       max-wait-duration: 10m
       delay-duration: 50ms

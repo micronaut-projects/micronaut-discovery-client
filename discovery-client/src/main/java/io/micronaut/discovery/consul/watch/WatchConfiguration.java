@@ -15,7 +15,10 @@
  */
 package io.micronaut.discovery.consul.watch;
 
+import org.slf4j.event.Level;
+
 import io.micronaut.context.annotation.ConfigurationProperties;
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.util.Toggleable;
 import io.micronaut.discovery.consul.ConsulConfiguration;
 
@@ -41,6 +44,18 @@ public class WatchConfiguration implements Toggleable {
      * The default enable value.
      */
     public static final boolean DEFAULT_ENABLED = false;
+    /**
+     * The default maxRetryAttempts value.
+     */
+    public static final Integer DEFAULT_MAX_RETRIES = 3;
+    /**
+     * The default retryDelayMs value.
+     */
+    public static final Integer DEFAULT_RETRY_DELAY = 500;
+    /**
+     * The default kvNotFoundLogLevel value.
+     */
+    public static final Level DEFAULT_KV_NOT_FOUND_LOG_LEVEL = Level.INFO;
 
     /**
      * Internal property used to carry importer-derived watch paths into the Consul watcher.
@@ -59,6 +74,12 @@ public class WatchConfiguration implements Toggleable {
     private boolean enabled = DEFAULT_ENABLED;
     private String importedPaths;
     private String importedFormat;
+
+    private Integer maxRetryAttempts = DEFAULT_MAX_RETRIES;
+
+    private Integer retryDelayMs = DEFAULT_RETRY_DELAY;
+
+    private Level kvNotFoundLogLevel = DEFAULT_KV_NOT_FOUND_LOG_LEVEL;
 
     @Override
     public boolean isEnabled() {
@@ -112,5 +133,53 @@ public class WatchConfiguration implements Toggleable {
      */
     public void setImportedFormat(String importedFormat) {
         this.importedFormat = importedFormat;
+    }
+
+    /**
+     * @return Maximum number of retry attempts. Default to {@value DEFAULT_MAX_RETRIES}
+     * @since 4.7.2
+     */
+    public @NonNull Integer getMaxRetryAttempts() {
+        return maxRetryAttempts;
+    }
+
+    /**
+     * @param maxRetryAttempts Maximum number of retry attempts.
+     * @since 4.7.2
+     */
+    public void setMaxRetryAttempts(@NonNull final Integer maxRetryAttempts) {
+        this.maxRetryAttempts = maxRetryAttempts;
+    }
+
+    /**
+     * @return Delay in milliseconds between retry attempts. Default to {@value DEFAULT_RETRY_DELAY}
+     * @since 4.7.2
+     */
+    public @NonNull Integer getRetryDelayMs() {
+        return retryDelayMs;
+    }
+
+    /**
+     * @param retryDelayMs Delay in milliseconds between retry attempts
+     * @since 4.7.2
+     */
+    public void setRetryDelayMs(@NonNull final Integer retryDelayMs) {
+        this.retryDelayMs = retryDelayMs;
+    }
+
+    /**
+     * @return Level to use to log NOT_FOUND KeyValue. Default to {@link Level#INFO}
+     * @since 4.7.2
+     */
+    public @NonNull Level getKvNotFoundLogLevel() {
+        return kvNotFoundLogLevel;
+    }
+
+    /**
+     * @param kvNotFoundLogLevel Level to use to log NOT_FOUND KeyValue
+     * @since 4.7.2
+     */
+    public void setKvNotFoundLogLevel(@NonNull final Level kvNotFoundLogLevel) {
+        this.kvNotFoundLogLevel = kvNotFoundLogLevel;
     }
 }
