@@ -34,6 +34,7 @@ import io.micronaut.discovery.consul.ConsulConfiguration;
 import io.micronaut.discovery.consul.client.v1.ConsulClient;
 import io.micronaut.discovery.consul.client.v1.KeyValue;
 import io.micronaut.discovery.consul.condition.RequiresConsul;
+import io.micronaut.discovery.imports.LegacyConfigurationClientDeprecationLogger;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.jackson.env.JsonPropertySourceLoader;
@@ -109,6 +110,8 @@ public class ConsulConfigurationClient implements ConfigurationClient {
     @SuppressWarnings("MagicNumber")
     @Override
     public Publisher<PropertySource> getPropertySources(Environment environment) {
+        LegacyConfigurationClientDeprecationLogger.warn(org.slf4j.LoggerFactory.getLogger(ConsulConfigurationClient.class), "consul-configuration-client-legacy-use",
+            "Consul distributed configuration via ConfigurationClient/bootstrap is deprecated. Prefer micronaut.config.import=consul://...");
         if (!consulConfiguration.getConfiguration().isEnabled()) {
             return Flux.empty();
         }

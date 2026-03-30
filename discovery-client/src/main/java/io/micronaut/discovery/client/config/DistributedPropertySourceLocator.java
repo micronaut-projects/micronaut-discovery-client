@@ -25,6 +25,7 @@ import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.annotation.Blocking;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.config.ConfigurationClient;
+import io.micronaut.discovery.imports.LegacyConfigurationClientDeprecationLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
@@ -68,6 +69,8 @@ public class DistributedPropertySourceLocator implements BootstrapPropertySource
     @Override
     @Blocking
     public Iterable<PropertySource> findPropertySources(Environment environment) throws ConfigurationException {
+        LegacyConfigurationClientDeprecationLogger.warn(LOG, "distributed-property-source-locator-legacy-use",
+            "Distributed configuration via ConfigurationClient/bootstrap is deprecated. Prefer micronaut.config.import with consul://, vault://, or springcloud://.");
         if (LOG.isDebugEnabled()) {
             LOG.debug("Resolving configuration sources from client: {}", configurationClient);
         }

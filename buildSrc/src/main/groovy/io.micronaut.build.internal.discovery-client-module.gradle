@@ -3,13 +3,13 @@ plugins {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
 configurations.all {
     resolutionStrategy.preferProjectModules()
 }
-
 
 
 

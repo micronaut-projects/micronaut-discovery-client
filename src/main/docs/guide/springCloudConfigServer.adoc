@@ -2,13 +2,45 @@ https://github.com/spring-cloud/spring-cloud-config[Spring Cloud Config Server] 
 
 A Micronaut application can be a Spring Cloud Config client to consume Spring Cloud Config Server configurations.
 
+The legacy bootstrap `ConfigurationClient` approach is deprecated. Prefer `micronaut.config.import` for new applications and migrations.
+
 == Setup
 
 The quickest way to start a Spring Cloud Config Server is to use to use https://github.com/spring-cloud/spring-cloud-config#quick-start[Spring Boot's Quick Start].
 
 == Loading configurations from config server
 
-The process to consume configurations in a Micronaut application from a Spring Cloud Config Server is very strait forward, simply add the necessary configurations. A complete example can be seen below:
+The preferred process to consume configurations in a Micronaut application from a Spring Cloud Config Server is to use an explicit import URI:
+
+.Importing configuration from Spring Cloud Config Server
+[configuration]
+----
+micronaut:
+  config:
+    import: "springcloud://configserver:9000/hello-world/default"
+----
+
+To target multiple profiles or a Git label:
+
+.Importing configuration with multiple profiles and label
+[configuration]
+----
+micronaut:
+  config:
+    import: "springcloud://configserver:9000/hello-world/first,second?label=main"
+----
+
+For secured servers, pass credentials as query parameters:
+
+.Importing from a secured Spring Cloud Config Server
+[configuration]
+----
+micronaut:
+  config:
+    import: "springcloud://configserver:9000/hello-world/default?username=user&password=secret"
+----
+
+The legacy bootstrap/client configuration is still available during migration. A complete example can be seen below:
 
 .Registering your application as a Spring Cloud Config client
 [configuration]
@@ -27,4 +59,4 @@ spring:
 
 ----
 
-The field name is optional, if it's not informed, the value in micronaut.application.name will be used.
+The field name is optional in the legacy configuration. With `micronaut.config.import`, the application name and profiles are explicit in the URI path.

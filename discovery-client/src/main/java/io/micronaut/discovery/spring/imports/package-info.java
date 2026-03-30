@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2026 original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 /**
- *  Classes related to using HashiCorp Vault as a distributed configuration client.
- *
- *  @author thiagolocatelli
- *  @since 1.2.0
+ * Spring Cloud Config distributed configuration import support.
  */
-@Requires(property = VaultClientConfiguration.PREFIX + "." + ConfigDiscoveryConfiguration.PREFIX + ".enabled", value = "true")
-@Configuration
-package io.micronaut.discovery.vault.config;
-
-import io.micronaut.context.annotation.Configuration;
-import io.micronaut.context.annotation.Requires;
-import io.micronaut.discovery.config.ConfigDiscoveryConfiguration;
+@org.jspecify.annotations.NullMarked
+package io.micronaut.discovery.spring.imports;

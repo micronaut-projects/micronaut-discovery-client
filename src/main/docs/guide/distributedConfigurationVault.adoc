@@ -1,0 +1,45 @@
+HashiCorp Vault can be used as a distributed configuration source for Micronaut applications.
+
+The legacy bootstrap `ConfigurationClient` approach is deprecated. Prefer `micronaut.config.import` with explicit Vault paths.
+
+== Importing configuration from Vault
+
+.Importing a Vault secret path
+[configuration]
+----
+micronaut:
+  config:
+    import: "vault://localhost:8200/application?token=testtoken"
+----
+
+.Importing an environment-specific Vault secret path
+[configuration]
+----
+micronaut:
+  config:
+    import: "vault://localhost:8200/application/prod?token=testtoken"
+----
+
+.Importing from Vault KV v2 with an explicit path prefix
+[configuration]
+----
+micronaut:
+  config:
+    import: "vault://localhost:8200/application?token=testtoken&kv-version=V2&secret-engine-name=backendv2-prefixed&path-prefix=mock/v2/path/prefix"
+----
+
+Supported importer query parameters include the common resiliency settings (`retry-attempts`, `retry-delay`, `read-timeout`, `connect-timeout`) plus Vault-specific options such as `token`, `kv-version`, `secret-engine-name`, `path-prefix`, and `fail-fast`.
+
+During migration, the older bootstrap configuration is still available:
+
+.Legacy bootstrap Vault configuration
+[configuration]
+----
+vault:
+  client:
+    uri: http://localhost:8200
+    config:
+      enabled: true
+----
+
+Prefer the importer-based configuration for new applications and migrations.

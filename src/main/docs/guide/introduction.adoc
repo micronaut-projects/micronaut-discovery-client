@@ -26,6 +26,8 @@ dependency:micronaut-discovery-client[groupId=io.micronaut.discovery]
 
 The `discovery-client` dependency provides implementations of the link:{micronautapi}discovery/DiscoveryClient[DiscoveryClient] interface.
 
+It also provides distributed configuration integrations for Consul, Vault, and Spring Cloud Config Server. The preferred way to consume those remote configuration sources is with explicit `micronaut.config.import` URIs instead of the deprecated bootstrap `ConfigurationClient` path.
+
 The link:{micronautapi}discovery/DiscoveryClient[DiscoveryClient] is fairly simple and provides two main entry points:
 
 * link:{micronautapi}discovery/DiscoveryClient.html#getServiceIds--[DiscoveryClient.getServiceIds()] - Returns all discovered service IDs

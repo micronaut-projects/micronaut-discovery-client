@@ -183,7 +183,43 @@ See https://docs.micronaut.io/latest/guide/index.html#refreshable[Micronaut > Re
 
 === Configuration
 
-The watcher can be configured using
+The legacy bootstrap `ConfigurationClient` approach is deprecated. Prefer `micronaut.config.import` for distributed configuration and reserve the watcher settings below for applications that still use the legacy bootstrap path during migration.
+
+The importer-first equivalent is:
+
+.Importing Consul configuration with micronaut.config.import
+[configuration]
+----
+micronaut:
+  config:
+    import: "consul://localhost:8500/config/application"
+----
+
+To load structured data formats from an explicit namespace:
+
+.Importing structured Consul configuration
+[configuration]
+----
+micronaut:
+  config:
+    import: "consul://localhost:8500/config/application?format=json"
+----
+
+Supported importer query parameters include the common resiliency settings (`retry-attempts`, `retry-delay`, `read-timeout`, `connect-timeout`) plus Consul-specific options such as `format`, `dc`, `acl-token`, and `fail-fast`.
+
+To enable refresh for an explicit importer path, append `watch=true`:
+
+.Importing Consul configuration with refresh enabled
+[configuration]
+----
+micronaut:
+  config:
+    import: "consul://localhost:8500/config/application?watch=true"
+----
+
+When `watch=true` is used, Consul change notifications trigger an environment refresh so the imported configuration is reloaded and a `RefreshEvent` is published.
+
+The legacy watcher can be configured using
 
 .Consul Watch Configuration
 [configuration]

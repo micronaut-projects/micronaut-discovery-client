@@ -31,8 +31,10 @@ import io.micronaut.context.env.PropertySourceLoader;
 import io.micronaut.context.env.yaml.YamlPropertySourceLoader;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.discovery.consul.ConsulConfiguration;
+import io.micronaut.discovery.imports.RemoteConfigImportMetadata;
 import io.micronaut.discovery.consul.client.v1.blockingqueries.BlockingQueriesConfiguration;
 import io.micronaut.discovery.consul.client.v1.blockingqueries.BlockedQueriesConsulClient;
+import io.micronaut.discovery.config.ConfigDiscoveryConfiguration.Format;
 import io.micronaut.jackson.core.env.JsonPropertySourceLoader;
 
 /**
@@ -65,8 +67,11 @@ final class WatchFactory {
     @Singleton
     Watcher createWatcher(final ConsulConfiguration consulConfiguration) {
         final var kvPaths = computeKvPaths(consulConfiguration);
+        final var watchConfiguration = resolveWatchConfiguration();
 
-        final var format = consulConfiguration.getConfiguration().getFormat();
+        final var format = watchConfiguration != null && watchConfiguration.getImportedFormat().isPresent()
+            ? Format.valueOf(watchConfiguration.getImportedFormat().get())
+            : consulConfiguration.getConfiguration().getFormat();
 
         return switch (format) {
             case NATIVE -> watchNative(kvPaths);
@@ -79,6 +84,10 @@ final class WatchFactory {
     }
 
     List<String> computeKvPaths(final ConsulConfiguration consulConfiguration) {
+        final var watchConfiguration = resolveWatchConfiguration();
+        if (watchConfiguration != null && watchConfiguration.getImportedPaths().isPresent()) {
+            return watchConfiguration.getImportedPaths().get();
+        }
         final var applicationName = consulConfiguration.getServiceId().orElseThrow();
         final var configurationPath = getConfigurationPath(consulConfiguration);
 
@@ -118,14 +127,41 @@ final class WatchFactory {
     }
 
     private Watcher watchNative(final List<String> keyPaths) {
-        // adding '/' at the end of the kvPath to distinct 'kvPath/' from 'kvPath,profile/'
-        final var kvPaths = keyPaths.stream().map(path -> path + CONSUL_PATH_SEPARATOR).toList();
-        return new NativeWatcher(kvPaths, consulClient, blockingQueriesConfiguration, propertiesChangeHandler);
+        return new NativeWatcher(keyPaths, consulClient, blockingQueriesConfiguration, propertiesChangeHandler);
     }
 
     private Watcher watchConfigurations(final List<String> kvPaths,
                                         final PropertySourceLoader propertySourceLoader) {
         return new ConfigurationsWatcher(kvPaths, consulClient, blockingQueriesConfiguration, propertiesChangeHandler, propertySourceLoader);
+    }
+
+    private WatchConfiguration resolveWatchConfiguration() {
+        final var watchConfigurationProperty = environment.getProperty(WatchConfiguration.PREFIX, WatchConfiguration.class);
+        final var watchConfiguration = watchConfigurationProperty != null ? watchConfigurationProperty.orElse(null) : null;
+        if (watchConfiguration != null && (watchConfiguration.getImportedPaths().isPresent() || watchConfiguration.getImportedFormat().isPresent())) {
+            return watchConfiguration;
+        }
+        return resolveImportedWatchConfiguration();
+    }
+
+    private WatchConfiguration resolveImportedWatchConfiguration() {
+        final var watchEnabledProperty = environment.getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_ENABLED, Boolean.class);
+        final var watchEnabled = watchEnabledProperty != null && watchEnabledProperty.orElse(false);
+        if (!watchEnabled) {
+            return null;
+        }
+        final var watchPathProperty = environment.getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_PATH, String.class);
+        final var watchPath = watchPathProperty != null ? watchPathProperty.orElse(null) : null;
+        if (watchPath == null) {
+            return null;
+        }
+        final var watchConfiguration = new WatchConfiguration();
+        watchConfiguration.setImportedPaths(watchPath);
+        final var watchFormatProperty = environment.getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_FORMAT, String.class);
+        if (watchFormatProperty != null) {
+            watchFormatProperty.ifPresent(watchConfiguration::setImportedFormat);
+        }
+        return watchConfiguration;
     }
 
 }

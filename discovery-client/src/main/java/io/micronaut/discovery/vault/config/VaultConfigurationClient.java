@@ -25,6 +25,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.config.ConfigurationClient;
+import io.micronaut.discovery.imports.LegacyConfigurationClientDeprecationLogger;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.runtime.ApplicationConfiguration;
@@ -54,6 +55,7 @@ import java.util.stream.Collectors;
  */
 @Singleton
 @BootstrapContextCompatible
+@Requires(property = ConfigurationClient.ENABLED, value = StringUtils.TRUE, defaultValue = StringUtils.FALSE)
 @Requires(beans = VaultClientConfiguration.class)
 public class VaultConfigurationClient implements ConfigurationClient {
 
@@ -85,6 +87,8 @@ public class VaultConfigurationClient implements ConfigurationClient {
 
     @Override
     public Publisher<PropertySource> getPropertySources(Environment environment) {
+        LegacyConfigurationClientDeprecationLogger.warn(LOG, "vault-configuration-client-legacy-use",
+            "Vault distributed configuration via ConfigurationClient/bootstrap is deprecated. Prefer micronaut.config.import=vault://...");
         if (!vaultClientConfiguration.getDiscoveryConfiguration().isEnabled()) {
             return Flux.empty();
         }

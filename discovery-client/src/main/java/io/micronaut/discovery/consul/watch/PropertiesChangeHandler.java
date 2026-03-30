@@ -23,8 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
 
 import jakarta.inject.Singleton;
+import jakarta.inject.Named;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,8 @@ import io.micronaut.context.event.ApplicationEventPublisher;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.discovery.consul.client.v1.ConsulClient;
+import io.micronaut.discovery.imports.RemoteConfigImportMetadata;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.runtime.context.scope.refresh.RefreshEvent;
 
 /**
@@ -51,13 +55,16 @@ public class PropertiesChangeHandler {
 
     private final Environment environment;
     private final ApplicationEventPublisher<RefreshEvent> eventPublisher;
+    private final ExecutorService blockingExecutor;
 
     private final Map<String, String> propertySourceNames = new ConcurrentHashMap<>();
 
     PropertiesChangeHandler(final Environment environment,
-                            final ApplicationEventPublisher<RefreshEvent> eventPublisher) {
+                            final ApplicationEventPublisher<RefreshEvent> eventPublisher,
+                            @Named(TaskExecutors.BLOCKING) final ExecutorService blockingExecutor) {
         this.environment = environment;
         this.eventPublisher = eventPublisher;
+        this.blockingExecutor = blockingExecutor;
     }
 
     /**
@@ -93,9 +100,15 @@ public class PropertiesChangeHandler {
             if (differences.isEmpty()) {
                 LOG.debug("No properties differences found for update of kvPath={}", kvPath);
             } else {
-                updatePropertySources(kvPath, next);
-
-                publishDifferences(differences);
+                if (isImportedWatchPath(kvPath)) {
+                    blockingExecutor.execute(() -> {
+                        final var changes = environment.refreshAndDiff();
+                        publishDifferences(changes);
+                    });
+                } else {
+                    updatePropertySources(kvPath, next);
+                    publishDifferences(differences);
+                }
             }
         } catch (final Exception e) {
             LOG.error("Unable to apply configuration changes", e);
@@ -109,8 +122,12 @@ public class PropertiesChangeHandler {
         final var updatedPropertySources = new ArrayList<PropertySource>();
         for (final var propertySource : environment.getPropertySources()) {
             if (propertySource.getName().equals(propertySourceName)) {
-                // creating a new PropertySource with new values but keeping the order
-                updatedPropertySources.add(PropertySource.of(propertySourceName, newValues, propertySource.getOrder()));
+                final var mergedValues = new LinkedHashMap<String, Object>();
+                for (final String key : propertySource) {
+                    mergedValues.put(key, propertySource.get(key));
+                }
+                mergedValues.putAll(newValues);
+                updatedPropertySources.add(PropertySource.of(propertySourceName, mergedValues, propertySource.getOrder()));
             } else {
                 updatedPropertySources.add(propertySource);
             }
@@ -123,10 +140,48 @@ public class PropertiesChangeHandler {
     }
 
     private String toPropertySourceName(final String kvPath) {
-        return propertySourceNames.computeIfAbsent(kvPath, PropertiesChangeHandler::resolvePropertySourceName);
+        if (isImportedWatchPath(kvPath)) {
+            return resolvePropertySourceName(kvPath);
+        }
+        return propertySourceNames.computeIfAbsent(kvPath, this::resolvePropertySourceName);
     }
 
-    private static String resolvePropertySourceName(final String kvPath) {
+    private boolean isImportedWatchPath(final String kvPath) {
+        final var importedWatchPathProperty = environment.getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_PATH, String.class);
+        final var importedWatchPath = importedWatchPathProperty != null ? importedWatchPathProperty.orElse(null) : null;
+        return importedWatchPath != null && kvPath.equals(importedWatchPath);
+    }
+
+    private String resolvePropertySourceName(final String kvPath) {
+        final var importedWatchPathProperty = environment.getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_PATH, String.class);
+        final var importedWatchPath = importedWatchPathProperty != null ? importedWatchPathProperty.orElse(null) : null;
+        if (importedWatchPath != null && kvPath.equals(importedWatchPath)) {
+            final var propertySourceProperty = environment.getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_PROPERTY_SOURCE, String.class);
+            if (propertySourceProperty != null) {
+                final var propertySourceName = propertySourceProperty.orElse(null);
+                if (propertySourceName != null) {
+                    return propertySourceName;
+                }
+            }
+            return canonicalImportLocation();
+        }
+        final var propertySources = environment.getPropertySources();
+        if (propertySources == null) {
+            return fallbackPropertySourceName(kvPath);
+        }
+        for (final PropertySource propertySource : propertySources) {
+            final var watchPath = propertySource.get(RemoteConfigImportMetadata.CONSUL_WATCH_PATH);
+            if (watchPath != null && kvPath.equals(String.valueOf(watchPath))) {
+                final var watchEnabled = propertySource.get(RemoteConfigImportMetadata.CONSUL_WATCH_ENABLED);
+                if (Boolean.parseBoolean(String.valueOf(watchEnabled))) {
+                    return propertySource.getName();
+                }
+            }
+        }
+        return fallbackPropertySourceName(kvPath);
+    }
+
+    private static String fallbackPropertySourceName(final String kvPath) {
         final var propertySourceName = CollectionUtils.last(List.of(kvPath.split("/")));
         final var tokens = propertySourceName.split(",");
         if (tokens.length == 1) {
@@ -137,6 +192,14 @@ public class PropertiesChangeHandler {
         final var envName = tokens[1];
 
         return ConsulClient.SERVICE_ID + '-' + name + '[' + envName + ']';
+    }
+
+    private String canonicalImportLocation() {
+        final var imports = environment.getProperty("micronaut.config.import", String.class).orElse(null);
+        if (imports == null) {
+            return ConsulClient.SERVICE_ID + "-message";
+        }
+        return imports;
     }
 
     private void publishDifferences(final Map<String, Object> changes) {

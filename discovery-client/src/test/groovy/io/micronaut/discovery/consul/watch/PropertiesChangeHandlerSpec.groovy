@@ -3,15 +3,18 @@ package io.micronaut.discovery.consul.watch
 import io.micronaut.context.env.Environment
 import io.micronaut.context.env.PropertySource
 import io.micronaut.context.event.ApplicationEventPublisher
+import io.micronaut.discovery.imports.RemoteConfigImportMetadata
 import io.micronaut.runtime.context.scope.refresh.RefreshEvent
+import java.util.concurrent.ExecutorService
 import spock.lang.Specification
 
 class PropertiesChangeHandlerSpec extends Specification {
 
     Environment environment = Mock()
     ApplicationEventPublisher<RefreshEvent> eventPublisher = Mock()
+    ExecutorService blockingExecutor = Mock()
 
-    PropertiesChangeHandler propertiesChangeHandler = new PropertiesChangeHandler(environment, eventPublisher)
+    PropertiesChangeHandler propertiesChangeHandler = new PropertiesChangeHandler(environment, eventPublisher, blockingExecutor)
 
     void "test that Context is updated and RefreshEvent is published"() {
         given:
@@ -33,7 +36,7 @@ class PropertiesChangeHandlerSpec extends Specification {
         final var propertySources = new ArrayList<PropertySource>()
         propertySources.add(PropertySource.of("consul-consul-watcher[test]", previous, 99))
         propertySources.add(PropertySource.of("consul-application", Map.of("key_a", "value_a"), 66))
-        1 * environment.getPropertySources() >> propertySources
+        2 * environment.getPropertySources() >> propertySources
 
         when:
         propertiesChangeHandler.handleChanges("config/consul-watcher,test", previous, next)
@@ -92,7 +95,7 @@ class PropertiesChangeHandlerSpec extends Specification {
 
         final var propertySources = new ArrayList<PropertySource>()
         propertySources.add(PropertySource.of("consul-application", Map.of("key_int", 1), 66))
-        1 * environment.getPropertySources() >> propertySources
+        2 * environment.getPropertySources() >> propertySources
 
         when:
         propertiesChangeHandler.handleChanges("config/application", previous, next)
@@ -103,6 +106,39 @@ class PropertiesChangeHandlerSpec extends Specification {
             it instanceof RefreshEvent
             def refreshEvent = it as RefreshEvent
             refreshEvent.getSource().get("key_int").toString() == "1"
+        })
+    }
+
+    void "test that importer watch metadata maps kv path back to imported property source"() {
+        given:
+        def capturedProperties = new ArrayList<PropertySource>()
+        final Map<String, Object> previous = Map.of("message", "hello")
+        final Map<String, Object> next = Map.of("message", "goodbye")
+
+        final var imported = PropertySource.of("consul://localhost:8500/config/application?watch=true", [
+            (RemoteConfigImportMetadata.CONSUL_WATCH_ENABLED): true,
+            (RemoteConfigImportMetadata.CONSUL_WATCH_PATH): 'config/application/message',
+            (RemoteConfigImportMetadata.CONSUL_WATCH_FORMAT): 'NATIVE',
+            (RemoteConfigImportMetadata.CONSUL_WATCH_PROPERTY_SOURCE): 'consul://localhost:8500/config/application?watch=true',
+            message: 'hello'
+        ], 100)
+        final var propertySources = new ArrayList<PropertySource>()
+        propertySources.add(imported)
+        2 * environment.getPropertySources() >> propertySources
+        when:
+        propertiesChangeHandler.handleChanges('config/application/message', previous, next)
+
+        then:
+        1 * environment.addPropertySource(_ as PropertySource) >> { arguments ->
+            capturedProperties.add(arguments[0])
+            return environment
+        }
+        capturedProperties[0].getName() == 'consul://localhost:8500/config/application?watch=true'
+        capturedProperties[0].get('message') == 'goodbye'
+        capturedProperties[0].get(RemoteConfigImportMetadata.CONSUL_WATCH_PATH) == 'config/application/message'
+        1 * eventPublisher.publishEvent({
+            it instanceof RefreshEvent
+            (it as RefreshEvent).source.get('message') == 'hello'
         })
     }
 
