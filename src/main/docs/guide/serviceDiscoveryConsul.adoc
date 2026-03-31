@@ -205,7 +205,25 @@ micronaut:
     import: "consul://localhost:8500/config/application?format=json"
 ----
 
-Supported importer query parameters include the common resiliency settings (`retry-attempts`, `retry-delay`, `read-timeout`, `connect-timeout`) plus Consul-specific options such as `format`, `dc`, `acl-token`, and `fail-fast`.
+For ACL-protected Consul instances, prefer URI user-info:
+
+.Importing Consul configuration with an ACL token
+[configuration]
+----
+micronaut:
+  config:
+    import: "consul://token@localhost:8500/config/application"
+----
+
+Query-parameter ACL tokens are also supported during migration:
+
+.Importing Consul configuration with an ACL token query parameter
+[configuration]
+----
+micronaut:
+  config:
+    import: "consul://localhost:8500/config/application?acl-token=token"
+----
 
 To enable refresh for an explicit importer path, append `watch=true`:
 
@@ -218,6 +236,80 @@ micronaut:
 ----
 
 When `watch=true` is used, Consul change notifications trigger an environment refresh so the imported configuration is reloaded and a `RefreshEvent` is published.
+
+Treat import URIs with embedded credentials as sensitive values and store them accordingly.
+
+=== Consul import URI reference
+
+[cols="1,1,3"]
+|===
+|ConnectionString part |Example |Meaning
+
+|Scheme
+|`consul://`
+|Selects the Consul importer.
+
+|User info
+|`consul://token@localhost:8500/config/application`
+|Optional Consul ACL token. The importer binds the URI username as the Consul ACL token.
+
+|Host and port
+|`localhost:8500`
+|Consul host and port.
+
+|Path
+|`/config/application`
+|Required explicit Consul KV/config path.
+
+|Query string
+|`?format=json&watch=true`
+|Optional importer settings.
+|===
+
+[cols="1,1,3"]
+|===
+|Option |Example |Description
+
+|`format`
+|`?format=json`
+|Consul config format. Supported values are `native`, `json`, `yaml`, `yml`, `properties`, and `file`.
+
+|`dc`
+|`?dc=dc1`
+|Consul datacenter.
+
+|`acl-token`
+|`?acl-token=token`
+|Consul ACL token. Prefer URI user-info instead.
+
+|`fail-fast`
+|`?fail-fast=false`
+|Whether failures should abort startup immediately.
+
+|`watch`
+|`?watch=true`
+|Enables importer-driven refresh for the explicit Consul import path.
+
+|`retry-attempts`
+|`?retry-attempts=3`
+|Number of retry attempts for remote config loading.
+
+|`retry-count`
+|`?retry-count=3`
+|Alias for `retry-attempts`.
+
+|`retry-delay`
+|`?retry-delay=1s`
+|Delay between retries.
+
+|`read-timeout`
+|`?read-timeout=5s`
+|Read timeout for remote calls.
+
+|`connect-timeout`
+|`?connect-timeout=5s`
+|Connection timeout for remote calls.
+|===
 
 The legacy watcher can be configured using
 

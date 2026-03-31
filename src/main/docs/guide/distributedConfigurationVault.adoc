@@ -9,7 +9,7 @@ The legacy bootstrap `ConfigurationClient` approach is deprecated. Prefer `micro
 ----
 micronaut:
   config:
-    import: "vault://localhost:8200/application?token=testtoken"
+    import: "vault://testtoken@localhost:8200/application"
 ----
 
 .Importing an environment-specific Vault secret path
@@ -17,7 +17,7 @@ micronaut:
 ----
 micronaut:
   config:
-    import: "vault://localhost:8200/application/prod?token=testtoken"
+    import: "vault://testtoken@localhost:8200/application/prod"
 ----
 
 .Importing from Vault KV v2 with an explicit path prefix
@@ -25,10 +25,92 @@ micronaut:
 ----
 micronaut:
   config:
-    import: "vault://localhost:8200/application?token=testtoken&kv-version=V2&secret-engine-name=backendv2-prefixed&path-prefix=mock/v2/path/prefix"
+    import: "vault://testtoken@localhost:8200/application?kv-version=V2&secret-engine-name=backendv2-prefixed&path-prefix=mock/v2/path/prefix"
 ----
 
-Supported importer query parameters include the common resiliency settings (`retry-attempts`, `retry-delay`, `read-timeout`, `connect-timeout`) plus Vault-specific options such as `token`, `kv-version`, `secret-engine-name`, `path-prefix`, and `fail-fast`.
+Query-parameter tokens are also supported during migration, but URI user-info is preferred:
+
+.Importing a Vault secret path with a query-parameter token
+[configuration]
+----
+micronaut:
+  config:
+    import: "vault://localhost:8200/application?token=testtoken"
+----
+
+Treat import URIs with embedded credentials as sensitive values and store them accordingly.
+
+=== Vault import URI reference
+
+[cols="1,1,3"]
+|===
+|ConnectionString part |Example |Meaning
+
+|Scheme
+|`vault://`
+|Selects the Vault importer.
+
+|User info
+|`vault://testtoken@localhost:8200/application`
+|Optional Vault token. The importer binds the URI username as `vault.client.token`.
+
+|Host and port
+|`localhost:8200`
+|Vault host and port.
+
+|Path
+|`/application/prod`
+|Required explicit secret path. Leading `/` is optional in practice, but the path must identify the secret to load.
+
+|Query string
+|`?kv-version=V2&path-prefix=config`
+|Optional importer settings.
+|===
+
+[cols="1,1,3"]
+|===
+|Option |Example |Description
+
+|`token`
+|`?token=testtoken`
+|Vault token. Prefer URI user-info instead.
+
+|`kv-version`
+|`?kv-version=V2`
+|Vault KV engine version.
+
+|`secret-engine-name`
+|`?secret-engine-name=backendv2-prefixed`
+|Vault secret engine name.
+
+|`path-prefix`
+|`?path-prefix=mock/v2/path/prefix`
+|Optional path prefix prepended before the explicit secret path.
+
+|`fail-fast`
+|`?fail-fast=false`
+|Whether failures should abort startup immediately.
+
+|`retry-attempts`
+|`?retry-attempts=3`
+|Number of retry attempts for remote config loading.
+
+|`retry-count`
+|`?retry-count=3`
+|Alias for `retry-attempts`.
+
+|`retry-delay`
+|`?retry-delay=1s`
+|Delay between retries.
+
+|`read-timeout`
+|`?read-timeout=5s`
+|Read timeout for remote calls.
+
+|`connect-timeout`
+|`?connect-timeout=5s`
+|Connection timeout for remote calls.
+|===
 
 During migration, the older bootstrap configuration is still available:
 

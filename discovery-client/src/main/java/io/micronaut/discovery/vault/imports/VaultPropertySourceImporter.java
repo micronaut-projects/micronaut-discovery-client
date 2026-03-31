@@ -17,7 +17,10 @@ package io.micronaut.discovery.vault.imports;
 
 import io.micronaut.context.env.PropertySource;
 import io.micronaut.context.env.PropertySourceImporter;
+import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.convert.value.ConvertibleValues;
+import io.micronaut.core.util.ConnectionString;
 import io.micronaut.discovery.imports.RemoteConfigImporterContextFactory;
 import io.micronaut.discovery.imports.RemoteConfigImportOptionBinder;
 import io.micronaut.discovery.vault.config.VaultClientConfiguration;
@@ -33,7 +36,7 @@ import java.util.Optional;
  * Property source importer for explicit Vault secret paths.
  */
 @Internal
-public final class VaultPropertySourceImporter implements PropertySourceImporter {
+public final class VaultPropertySourceImporter implements PropertySourceImporter<VaultPropertySourceImporter.VaultImport> {
 
     private final RemoteConfigImportOptionBinder optionBinder = new RemoteConfigImportOptionBinder();
     private final RemoteConfigImporterContextFactory contextFactory = new RemoteConfigImporterContextFactory();
@@ -42,16 +45,52 @@ public final class VaultPropertySourceImporter implements PropertySourceImporter
     private Map<String, Object> cachedContextProperties;
 
     @Override
-    public String getProtocol() {
+    public String getProvider() {
         return "vault";
     }
 
     @Override
-    public Optional<PropertySource> importPropertySource(ImportContext context) {
-        Map<String, Object> properties = buildContextProperties(context);
+    public VaultImport newImportDeclaration(ConnectionString connectionString) {
+        return new VaultImport(
+            connectionString,
+            buildContextProperties(connectionString),
+            connectionString.getPath(),
+            connectionString.isOptional()
+        );
+    }
+
+    @Override
+    public VaultImport newImportDeclaration(ConvertibleValues<Object> values) {
+        String uri = values.get("uri", String.class)
+            .or(() -> values.get("url", String.class))
+            .filter(v -> !v.isBlank())
+            .orElseThrow(() -> new ConfigurationException("Config import provider [vault] requires non-blank ['uri']"));
+        String secretPath = values.get("path", String.class)
+            .filter(v -> !v.isBlank())
+            .orElseThrow(() -> new ConfigurationException("Config import provider [vault] requires non-blank ['path']"));
+        Map<String, Object> properties = new LinkedHashMap<>();
+        properties.put(VaultClientConfiguration.PREFIX + ".uri", uri);
+        values.get("token", String.class).ifPresent(v -> properties.put("vault.client.token", v));
+        values.get("kv-version", String.class).ifPresent(v -> properties.put("vault.client.kv-version", v));
+        values.get("secret-engine-name", String.class).ifPresent(v -> properties.put("vault.client.secret-engine-name", v));
+        values.get("path-prefix", String.class).ifPresent(v -> properties.put("vault.client.path-prefix", v));
+        values.get("fail-fast", Boolean.class).ifPresent(v -> properties.put("vault.client.fail-fast", v));
+        values.get("retry-attempts", Integer.class).ifPresent(v -> properties.put("micronaut.http.services.vault.retry-attempts", v));
+        values.get("retry-count", Integer.class).ifPresent(v -> properties.put("micronaut.http.services.vault.retry-attempts", v));
+        values.get("retry-delay", String.class).ifPresent(v -> properties.put("micronaut.http.services.vault.retry-delay", v));
+        values.get("read-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.vault.read-timeout", v));
+        values.get("connect-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.vault.connect-timeout", v));
+
+        return new VaultImport(null, properties, secretPath, values.get("optional", Boolean.class).orElse(false));
+    }
+
+    @Override
+    public Optional<PropertySource> importPropertySource(ImportContext<VaultImport> context) {
+        VaultImport declaration = context.importDeclaration();
+        Map<String, Object> properties = declaration.properties();
 
         ApplicationContext importerContext = getOrCreateContext(properties);
-        Map<String, Object> imported = importSupport.load(importerContext, context.connectionString().getPath(), context.connectionString().isOptional());
+        Map<String, Object> imported = importSupport.load(importerContext, declaration.secretPath(), declaration.optional());
         if (imported.isEmpty()) {
             return Optional.empty();
         }
@@ -67,10 +106,10 @@ public final class VaultPropertySourceImporter implements PropertySourceImporter
         }
     }
 
-    private Map<String, Object> buildContextProperties(ImportContext context) {
+    private Map<String, Object> buildContextProperties(ConnectionString connectionString) {
         Map<String, Object> properties = new LinkedHashMap<>();
-        properties.put(VaultClientConfiguration.PREFIX + ".uri", "http://" + context.connectionString().getHosts().get(0).host() + ':' + context.connectionString().getHosts().get(0).port());
-        properties.putAll(optionBinder.bind(context.connectionString()));
+        properties.put(VaultClientConfiguration.PREFIX + ".uri", "http://" + connectionString.getHosts().get(0).host() + ':' + connectionString.getHosts().get(0).port());
+        properties.putAll(optionBinder.bind(connectionString));
         return properties;
     }
 
@@ -81,5 +120,11 @@ public final class VaultPropertySourceImporter implements PropertySourceImporter
             applicationContext = contextFactory.build(properties);
         }
         return applicationContext;
+    }
+
+    public record VaultImport(ConnectionString connectionString,
+                              Map<String, Object> properties,
+                              String secretPath,
+                              boolean optional) {
     }
 }

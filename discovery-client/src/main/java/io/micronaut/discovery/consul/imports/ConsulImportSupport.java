@@ -63,12 +63,7 @@ final class ConsulImportSupport {
         if (!RemoteConfigImportOptionBinder.FORMAT_NATIVE.equalsIgnoreCase(format) || importedValues.isEmpty()) {
             return Optional.empty();
         }
-        if (importedValues.size() == 1) {
-            return importedValues.keySet().stream()
-                .findFirst()
-                .map(key -> path.endsWith("/") ? path + key : path + '/' + key);
-        }
-        return Optional.of(path.endsWith("/") ? path : path + '/');
+        return Optional.of(path);
     }
 
     private Map<String, Object> asNativeMap(String path, List<KeyValue> keyValues) {

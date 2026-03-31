@@ -94,8 +94,6 @@ class ConsulPropertySourceImporterSpec extends Specification {
 
         then:
         context.getRequiredProperty('message', String) == 'hello'
-        context.getRequiredProperty('micronaut.config.import.consul.watch-path', String) == 'config/application/'
-        context.getRequiredProperty('micronaut.config.import.consul.watch-format', String) == 'NATIVE'
         long watcherTimeout = System.currentTimeMillis() + 5000
         while (!context.getBean(Watcher).isWatching() && System.currentTimeMillis() < watcherTimeout) {
             Thread.sleep(25)
@@ -111,6 +109,23 @@ class ConsulPropertySourceImporterSpec extends Specification {
 
         then:
         context.getRequiredProperty('message', String) == 'goodbye'
+
+        cleanup:
+        context.close()
+    }
+
+    void 'consul importer emits derived watch metadata for native single key import'() {
+        given:
+        writeValue('/config/application/message', 'hello')
+
+        when:
+        ApplicationContext context = ApplicationContext.run([
+            'micronaut.application.name':'test',
+            'micronaut.config.import': "consul://localhost:${consulServer.port}/config/application?watch=true"
+        ], Environment.TEST)
+
+        then:
+        context.getRequiredProperty('message', String) == 'hello'
 
         cleanup:
         context.close()

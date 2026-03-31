@@ -17,7 +17,10 @@ package io.micronaut.discovery.spring.imports;
 
 import io.micronaut.context.env.PropertySource;
 import io.micronaut.context.env.PropertySourceImporter;
+import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.convert.value.ConvertibleValues;
+import io.micronaut.core.util.ConnectionString;
 import io.micronaut.discovery.imports.RemoteConfigImporterContextFactory;
 import io.micronaut.discovery.imports.RemoteConfigImportOptionBinder;
 import io.micronaut.discovery.spring.config.SpringCloudClientConfiguration;
@@ -33,7 +36,7 @@ import java.util.Optional;
  * Property source importer for explicit Spring Cloud Config Server paths.
  */
 @Internal
-public final class SpringCloudPropertySourceImporter implements PropertySourceImporter {
+public final class SpringCloudPropertySourceImporter implements PropertySourceImporter<SpringCloudPropertySourceImporter.SpringCloudImport> {
 
     private final RemoteConfigImportOptionBinder optionBinder = new RemoteConfigImportOptionBinder();
     private final RemoteConfigImporterContextFactory contextFactory = new RemoteConfigImporterContextFactory();
@@ -42,24 +45,61 @@ public final class SpringCloudPropertySourceImporter implements PropertySourceIm
     private Map<String, Object> cachedContextProperties;
 
     @Override
-    public String getProtocol() {
+    public String getProvider() {
         return "springcloud";
     }
 
     @Override
-    public Optional<PropertySource> importPropertySource(ImportContext context) {
-        Map<String, Object> properties = buildContextProperties(context);
-
-        String[] segments = context.connectionString().getPath().split("/");
+    public SpringCloudImport newImportDeclaration(ConnectionString connectionString) {
+        Map<String, Object> properties = buildContextProperties(connectionString);
+        String[] segments = connectionString.getPath().split("/");
         if (segments.length < 2) {
-            return Optional.empty();
+            return new SpringCloudImport(connectionString, properties, null, null, (String) properties.get("spring.cloud.config.label"), connectionString.isOptional());
         }
         String applicationName = segments[0];
         String profiles = segments[1];
         String label = (String) properties.get("spring.cloud.config.label");
+        return new SpringCloudImport(connectionString, properties, applicationName, profiles, label, connectionString.isOptional());
+    }
+
+    @Override
+    public SpringCloudImport newImportDeclaration(ConvertibleValues<Object> values) {
+        String uri = values.get("uri", String.class)
+            .or(() -> values.get("url", String.class))
+            .filter(v -> !v.isBlank())
+            .orElseThrow(() -> new ConfigurationException("Config import provider [springcloud] requires non-blank ['uri']"));
+        String applicationName = values.get("application", String.class)
+            .filter(v -> !v.isBlank())
+            .orElseThrow(() -> new ConfigurationException("Config import provider [springcloud] requires non-blank ['application']"));
+        String profiles = values.get("profiles", String.class)
+            .filter(v -> !v.isBlank())
+            .orElseThrow(() -> new ConfigurationException("Config import provider [springcloud] requires non-blank ['profiles']"));
+
+        Map<String, Object> properties = new LinkedHashMap<>();
+        properties.put(SpringCloudClientConfiguration.PREFIX + ".uri", uri);
+        values.get("label", String.class).ifPresent(v -> properties.put("spring.cloud.config.label", v));
+        values.get("username", String.class).ifPresent(v -> properties.put("spring.cloud.config.username", v));
+        values.get("password", String.class).ifPresent(v -> properties.put("spring.cloud.config.password", v));
+        values.get("fail-fast", Boolean.class).ifPresent(v -> properties.put("spring.cloud.config.fail-fast", v));
+        values.get("retry-attempts", Integer.class).ifPresent(v -> properties.put("micronaut.http.services.springcloudconfig.retry-attempts", v));
+        values.get("retry-count", Integer.class).ifPresent(v -> properties.put("micronaut.http.services.springcloudconfig.retry-attempts", v));
+        values.get("retry-delay", String.class).ifPresent(v -> properties.put("micronaut.http.services.springcloudconfig.retry-delay", v));
+        values.get("read-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.springcloudconfig.read-timeout", v));
+        values.get("connect-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.springcloudconfig.connect-timeout", v));
+
+        return new SpringCloudImport(null, properties, applicationName, profiles, (String) properties.get("spring.cloud.config.label"), values.get("optional", Boolean.class).orElse(false));
+    }
+
+    @Override
+    public Optional<PropertySource> importPropertySource(ImportContext<SpringCloudImport> context) {
+        SpringCloudImport declaration = context.importDeclaration();
+        if (declaration.applicationName() == null || declaration.profiles() == null) {
+            return Optional.empty();
+        }
+        Map<String, Object> properties = declaration.properties();
 
         ApplicationContext importerContext = getOrCreateContext(properties);
-        Map<String, Object> imported = importSupport.load(importerContext, applicationName, profiles, label, context.connectionString().isOptional());
+        Map<String, Object> imported = importSupport.load(importerContext, declaration.applicationName(), declaration.profiles(), declaration.label(), declaration.optional());
         if (imported.isEmpty()) {
             return Optional.empty();
         }
@@ -75,10 +115,10 @@ public final class SpringCloudPropertySourceImporter implements PropertySourceIm
         }
     }
 
-    private Map<String, Object> buildContextProperties(ImportContext context) {
+    private Map<String, Object> buildContextProperties(ConnectionString connectionString) {
         Map<String, Object> properties = new LinkedHashMap<>();
-        properties.put(SpringCloudClientConfiguration.PREFIX + ".uri", "http://" + context.connectionString().getHosts().get(0).host() + ':' + context.connectionString().getHosts().get(0).port());
-        properties.putAll(optionBinder.bind(context.connectionString()));
+        properties.put(SpringCloudClientConfiguration.PREFIX + ".uri", "http://" + connectionString.getHosts().get(0).host() + ':' + connectionString.getHosts().get(0).port());
+        properties.putAll(optionBinder.bind(connectionString));
         return properties;
     }
 
@@ -89,5 +129,13 @@ public final class SpringCloudPropertySourceImporter implements PropertySourceIm
             applicationContext = contextFactory.build(properties);
         }
         return applicationContext;
+    }
+
+    public record SpringCloudImport(ConnectionString connectionString,
+                                    Map<String, Object> properties,
+                                    String applicationName,
+                                    String profiles,
+                                    String label,
+                                    boolean optional) {
     }
 }

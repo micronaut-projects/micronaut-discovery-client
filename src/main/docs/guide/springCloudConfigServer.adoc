@@ -30,15 +30,95 @@ micronaut:
     import: "springcloud://configserver:9000/hello-world/first,second?label=main"
 ----
 
-For secured servers, pass credentials as query parameters:
+For secured servers, prefer credentials in the URI authority:
 
 .Importing from a secured Spring Cloud Config Server
 [configuration]
 ----
 micronaut:
   config:
+    import: "springcloud://user:password@configserver:9000/hello-world/default"
+----
+
+Query-parameter credentials are also supported during migration, but URI user-info is preferred:
+
+.Importing from a secured Spring Cloud Config Server with query parameters
+[configuration]
+----
+micronaut:
+  config:
     import: "springcloud://configserver:9000/hello-world/default?username=user&password=secret"
 ----
+
+Treat import URIs with embedded credentials as sensitive values and store them accordingly.
+
+=== Spring Cloud Config import URI reference
+
+[cols="1,1,3"]
+|===
+|ConnectionString part |Example |Meaning
+
+|Scheme
+|`springcloud://`
+|Selects the Spring Cloud Config importer.
+
+|User info
+|`springcloud://user:password@configserver:9000/...`
+|Optional Basic-auth credentials. `username` and `password` query parameters are also supported, but user-info is preferred.
+
+|Host and port
+|`configserver:9000`
+|Spring Cloud Config Server host and port.
+
+|Path
+|`/hello-world/default`
+|Required. The first path segment is the application name and the second is the profile list. Multiple profiles may be comma-separated.
+
+|Query string
+|`?label=main&fail-fast=false`
+|Optional importer settings.
+|===
+
+[cols="1,1,3"]
+|===
+|Option |Example |Description
+
+|`label`
+|`?label=main`
+|Optional Git label or branch requested from the Config Server.
+
+|`fail-fast`
+|`?fail-fast=false`
+|Whether failures should abort startup immediately.
+
+|`username`
+|`?username=user`
+|Optional Basic-auth username. Prefer URI user-info instead.
+
+|`password`
+|`?password=secret`
+|Optional Basic-auth password. Prefer URI user-info instead.
+
+|`retry-attempts`
+|`?retry-attempts=3`
+|Number of retry attempts for remote config loading.
+
+|`retry-count`
+|`?retry-count=3`
+|Alias for `retry-attempts`.
+
+|`retry-delay`
+|`?retry-delay=1s`
+|Delay between retries.
+
+|`read-timeout`
+|`?read-timeout=5s`
+|Read timeout for remote calls.
+
+|`connect-timeout`
+|`?connect-timeout=5s`
+|Connection timeout for remote calls.
+|===
 
 The legacy bootstrap/client configuration is still available during migration. A complete example can be seen below:
 

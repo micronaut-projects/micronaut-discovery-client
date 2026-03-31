@@ -3,7 +3,6 @@ package io.micronaut.discovery.consul.watch
 import io.micronaut.context.env.Environment
 import io.micronaut.context.env.PropertySource
 import io.micronaut.context.event.ApplicationEventPublisher
-import io.micronaut.discovery.imports.RemoteConfigImportMetadata
 import io.micronaut.runtime.context.scope.refresh.RefreshEvent
 import java.util.concurrent.ExecutorService
 import spock.lang.Specification
@@ -114,31 +113,32 @@ class PropertiesChangeHandlerSpec extends Specification {
         def capturedProperties = new ArrayList<PropertySource>()
         final Map<String, Object> previous = Map.of("message", "hello")
         final Map<String, Object> next = Map.of("message", "goodbye")
+        propertiesChangeHandler.registerImportedWatchPaths(List.of('config/application/message'))
 
-        final var imported = PropertySource.of("consul://localhost:8500/config/application?watch=true", [
-            (RemoteConfigImportMetadata.CONSUL_WATCH_ENABLED): true,
-            (RemoteConfigImportMetadata.CONSUL_WATCH_PATH): 'config/application/message',
-            (RemoteConfigImportMetadata.CONSUL_WATCH_FORMAT): 'NATIVE',
-            (RemoteConfigImportMetadata.CONSUL_WATCH_PROPERTY_SOURCE): 'consul://localhost:8500/config/application?watch=true',
-            message: 'hello'
-        ], 100)
+        final var imported = PropertySource.of("consul://localhost:8500/config/application?watch=true", [message: 'hello'], 100)
         final var propertySources = new ArrayList<PropertySource>()
         propertySources.add(imported)
-        2 * environment.getPropertySources() >> propertySources
+        1 * environment.getProperty('micronaut.config.import', String) >> Optional.of('consul://localhost:8500/config/application?watch=true')
+        1 * environment.getPropertySources() >> propertySources
+        1 * blockingExecutor.execute(_ as Runnable) >> { arguments ->
+            Runnable runnable = arguments[0] as Runnable
+            runnable.run()
+        }
+
         when:
         propertiesChangeHandler.handleChanges('config/application/message', previous, next)
 
         then:
+        1 * environment.refreshAndDiff() >> [message: 'goodbye']
         1 * environment.addPropertySource(_ as PropertySource) >> { arguments ->
             capturedProperties.add(arguments[0])
             return environment
         }
         capturedProperties[0].getName() == 'consul://localhost:8500/config/application?watch=true'
         capturedProperties[0].get('message') == 'goodbye'
-        capturedProperties[0].get(RemoteConfigImportMetadata.CONSUL_WATCH_PATH) == 'config/application/message'
         1 * eventPublisher.publishEvent({
             it instanceof RefreshEvent
-            (it as RefreshEvent).source.get('message') == 'hello'
+            (it as RefreshEvent).source.get('message') == 'goodbye'
         })
     }
 

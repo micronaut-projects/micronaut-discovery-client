@@ -27,6 +27,7 @@ import spock.lang.AutoCleanup
 import spock.lang.Requires
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.util.concurrent.PollingConditions
 
 @Requires({ DockerClientFactory.instance().isDockerAvailable() })
 class ConsulPropertySourceImporterIntegrationSpec extends Specification {
@@ -79,23 +80,22 @@ class ConsulPropertySourceImporterIntegrationSpec extends Specification {
             'consul.client.blocking-queries.delay-duration': '10ms'
         ], Environment.TEST)
 
+        PollingConditions conditions = new PollingConditions(timeout: 5, delay: 0.5)
+
         then:
         context.getRequiredProperty('message', String) == 'hello-from-consul'
-        long watcherTimeout = System.currentTimeMillis() + 5000
-        while (!context.getBean(Watcher).isWatching() && System.currentTimeMillis() < watcherTimeout) {
-            Thread.sleep(25)
+        conditions.eventually {
+            context.getBean(Watcher).isWatching()
         }
-        context.getBean(Watcher).isWatching()
 
         when:
         Flux.from(consulClient.putValue('/config/application/message', 'goodbye-from-consul')).blockFirst()
-        long timeout = System.currentTimeMillis() + 5000
-        while (context.getProperty('message', String).orElse('') != 'goodbye-from-consul' && System.currentTimeMillis() < timeout) {
-            Thread.sleep(100)
-        }
 
         then:
-        context.getRequiredProperty('message', String) == 'goodbye-from-consul'
+        conditions.eventually {
+            context.getRequiredProperty('message', String) == 'goodbye-from-consul'
+        }
+
 
         cleanup:
         context.close()
