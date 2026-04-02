@@ -2,7 +2,7 @@
 # Micronaut
 micronaut = "5.0.0-M10"
 micronaut-platform = "4.10.6"
-micronaut-serde = "3.0.0-M2"
+micronaut-serde = "3.0.0-M6"
 micronaut-test = "5.0.0-M3"
 micronaut-reactor = "4.0.0-M1"
 micronaut-validation = "5.0.0-M1"
