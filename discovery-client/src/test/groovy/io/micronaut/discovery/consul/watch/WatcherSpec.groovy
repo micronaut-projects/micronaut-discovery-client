@@ -255,6 +255,7 @@ class WatcherSpec extends Specification {
         watcher.start()
 
         then:
+        Thread.sleep(500)
         def logs = listAppender.list.stream()
                 .filter(event -> Level.ERROR == event.getLevel())
                 .toList()
