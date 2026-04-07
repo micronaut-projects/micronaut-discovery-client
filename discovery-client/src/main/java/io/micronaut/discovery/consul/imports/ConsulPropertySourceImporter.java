@@ -33,6 +33,8 @@ import java.util.Locale;
 
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.env.EnvironmentPropertySource;
+import org.jspecify.annotations.Nullable;
+
 import java.util.Map;
 import java.util.Optional;
 
@@ -42,15 +44,19 @@ import java.util.Optional;
 @Internal
 public final class ConsulPropertySourceImporter extends RetryablePropertySourceImporter<ConsulPropertySourceImporter.ConsulImport> {
 
+    private static final String PROVIDER = "consul";
+    private static final String CONSUL_HOST = ConsulConfiguration.PREFIX + ".host";
+    private static final String CONSUL_PORT = ConsulConfiguration.PREFIX + ".port";
+
     private final RemoteConfigImportOptionBinder optionBinder = new RemoteConfigImportOptionBinder();
     private final RemoteConfigImporterContextFactory contextFactory = new RemoteConfigImporterContextFactory();
     private final ConsulImportSupport importSupport = new ConsulImportSupport();
-    private ApplicationContext applicationContext;
-    private Map<String, Object> cachedContextProperties;
+    private @Nullable ApplicationContext applicationContext;
+    private @Nullable Map<String, Object> cachedContextProperties;
 
     @Override
     public String getProvider() {
-        return "consul";
+        return PROVIDER;
     }
 
     @Override
@@ -77,8 +83,8 @@ public final class ConsulPropertySourceImporter extends RetryablePropertySourceI
         boolean watchEnabled = values.get("watch", Boolean.class).orElse(false);
 
         Map<String, Object> properties = new LinkedHashMap<>();
-        properties.put(ConsulConfiguration.PREFIX + ".host", host);
-        properties.put(ConsulConfiguration.PREFIX + ".port", port);
+        properties.put(CONSUL_HOST, host);
+        properties.put(CONSUL_PORT, port);
         properties.put(ConsulConfiguration.PREFIX + ".config.format", format);
         if (datacenter != null) {
             properties.put(ConsulConfiguration.PREFIX + ".config.datacenter", datacenter);
@@ -110,7 +116,7 @@ public final class ConsulPropertySourceImporter extends RetryablePropertySourceI
             String watchPath = importSupport.resolveWatchPath(importPath, format, imported).orElse(null);
             imported.put(WatchConfiguration.PREFIX + ".enabled", true);
             imported.putAll(properties.entrySet().stream()
-                .filter(e -> e.getKey().equals(ConsulConfiguration.PREFIX + ".host") || e.getKey().equals(ConsulConfiguration.PREFIX + ".port"))
+                .filter(e -> e.getKey().equals(CONSUL_HOST) || e.getKey().equals(CONSUL_PORT))
                 .collect(java.util.stream.Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
             if (watchPath != null) {
                 imported.put(WatchConfiguration.IMPORTED_PATHS, watchPath);
@@ -132,9 +138,9 @@ public final class ConsulPropertySourceImporter extends RetryablePropertySourceI
     private Map<String, Object> buildContextProperties(ConnectionString connectionString) {
         Map<String, Object> properties = new LinkedHashMap<>();
         ConnectionString.HostPort hostPort = connectionString.getHosts().getFirst();
-        properties.put(ConsulConfiguration.PREFIX + ".host", hostPort.host());
+        properties.put(CONSUL_HOST, hostPort.host());
         if (hostPort.port() != null) {
-            properties.put(ConsulConfiguration.PREFIX + ".port", hostPort.port());
+            properties.put(CONSUL_PORT, hostPort.port());
         }
         properties.putAll(optionBinder.bind(connectionString));
         return properties;

@@ -28,6 +28,7 @@ import io.micronaut.retry.RetryPolicy;
 
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.env.EnvironmentPropertySource;
+import org.jspecify.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -39,15 +40,18 @@ import java.util.Optional;
 @Internal
 public final class SpringCloudPropertySourceImporter extends RetryablePropertySourceImporter<SpringCloudPropertySourceImporter.SpringCloudImport> {
 
+    private static final String PROVIDER = "springcloud";
+    private static final String LABEL = "spring.cloud.config.label";
+
     private final RemoteConfigImportOptionBinder optionBinder = new RemoteConfigImportOptionBinder();
     private final RemoteConfigImporterContextFactory contextFactory = new RemoteConfigImporterContextFactory();
     private final SpringCloudImportSupport importSupport = new SpringCloudImportSupport();
-    private ApplicationContext applicationContext;
-    private Map<String, Object> cachedContextProperties;
+    private @Nullable ApplicationContext applicationContext;
+    private @Nullable Map<String, Object> cachedContextProperties;
 
     @Override
     public String getProvider() {
-        return "springcloud";
+        return PROVIDER;
     }
 
     @Override
@@ -55,11 +59,11 @@ public final class SpringCloudPropertySourceImporter extends RetryablePropertySo
         Map<String, Object> properties = buildContextProperties(connectionString);
         String[] segments = connectionString.getPath().split("/");
         if (segments.length < 2) {
-            return new SpringCloudImport(connectionString, properties, null, null, (String) properties.get("spring.cloud.config.label"), connectionString.isOptional(), retryPolicy);
+            return new SpringCloudImport(connectionString, properties, null, null, (String) properties.get(LABEL), connectionString.isOptional(), retryPolicy);
         }
         String applicationName = segments[0];
         String profiles = segments[1];
-        String label = (String) properties.get("spring.cloud.config.label");
+        String label = (String) properties.get(LABEL);
         return new SpringCloudImport(connectionString, properties, applicationName, profiles, label, connectionString.isOptional(), retryPolicy);
     }
 
@@ -78,14 +82,14 @@ public final class SpringCloudPropertySourceImporter extends RetryablePropertySo
 
         Map<String, Object> properties = new LinkedHashMap<>();
         properties.put(SpringCloudClientConfiguration.PREFIX + ".uri", uri);
-        values.get("label", String.class).ifPresent(v -> properties.put("spring.cloud.config.label", v));
+        values.get("label", String.class).ifPresent(v -> properties.put(LABEL, v));
         values.get("username", String.class).ifPresent(v -> properties.put("spring.cloud.config.username", v));
         values.get("password", String.class).ifPresent(v -> properties.put("spring.cloud.config.password", v));
         values.get("fail-fast", Boolean.class).ifPresent(v -> properties.put("spring.cloud.config.fail-fast", v));
         values.get("read-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.springcloudconfig.read-timeout", v));
         values.get("connect-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.springcloudconfig.connect-timeout", v));
 
-        return new SpringCloudImport(null, properties, applicationName, profiles, (String) properties.get("spring.cloud.config.label"), values.get("optional", Boolean.class).orElse(false), retryPolicy);
+        return new SpringCloudImport(null, properties, applicationName, profiles, (String) properties.get(LABEL), values.get("optional", Boolean.class).orElse(false), retryPolicy);
     }
 
     @Override

@@ -26,8 +26,11 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import reactor.core.publisher.Flux;
 
+import org.jspecify.annotations.Nullable;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Optional;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,12 +61,14 @@ final class SpringCloudImportSupport {
                                                                      SpringCloudClientConfiguration configuration,
                                                                      String applicationName,
                                                                      String profiles,
-                                                                     String label) {
-        String authorization = getAuthorization(configuration);
-        if (authorization == null) {
+                                                                     @Nullable String label) {
+        Optional<String> authorization = getAuthorization(configuration);
+        if (authorization.isEmpty()) {
             return label == null ? client.readValues(applicationName, profiles) : client.readValues(applicationName, profiles, label);
         }
-        return label == null ? client.readValuesAuthorized(applicationName, profiles, authorization) : client.readValuesAuthorized(applicationName, profiles, label, authorization);
+        return label == null
+            ? client.readValuesAuthorized(applicationName, profiles, authorization.get())
+            : client.readValuesAuthorized(applicationName, profiles, label, authorization.get());
     }
 
     private Map<String, Object> merge(List<ConfigServerPropertySource> propertySources) {
@@ -74,11 +79,13 @@ final class SpringCloudImportSupport {
         return merged;
     }
 
-    private String getAuthorization(SpringCloudClientConfiguration configuration) {
-        if (configuration.getUsername().isPresent() && configuration.getPassword().isPresent()) {
-            String basicAuth = configuration.getUsername().get() + ':' + configuration.getPassword().get();
-            return "Basic " + Base64.getEncoder().encodeToString(basicAuth.getBytes(StandardCharsets.UTF_8));
+    private Optional<String> getAuthorization(SpringCloudClientConfiguration configuration) {
+        Optional<String> username = configuration.getUsername();
+        Optional<String> password = configuration.getPassword();
+        if (username.isPresent() && password.isPresent()) {
+            String basicAuth = username.get() + ':' + password.get();
+            return Optional.of("Basic " + Base64.getEncoder().encodeToString(basicAuth.getBytes(StandardCharsets.UTF_8)));
         }
-        return null;
+        return Optional.empty();
     }
 }

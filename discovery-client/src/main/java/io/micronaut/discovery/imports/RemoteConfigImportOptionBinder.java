@@ -36,34 +36,44 @@ public final class RemoteConfigImportOptionBinder {
     public static final String FORMAT_PROPERTIES = "properties";
     public static final String FORMAT_FILE = "file";
 
+    private static final String RETRY_ATTEMPTS = "retry-attempts";
+    private static final String FAIL_FAST = "fail-fast";
+    private static final String PROVIDER_CONSUL = "consul";
+    private static final String PROVIDER_VAULT = "vault";
+    private static final String PROVIDER_SPRING_CLOUD = "springcloud";
+    private static final String CONSUL_ACL_TOKEN = "consul.client.asl-token";
+    private static final String VAULT_TOKEN = "vault.client.token";
+    private static final String SPRING_CLOUD_CONFIG_USERNAME = "spring.cloud.config.username";
+    private static final String SPRING_CLOUD_CONFIG_PASSWORD = "spring.cloud.config.password";
+
     private static final Map<String, String> COMMON_OPTIONS = Map.of(
-        "retry-attempts", "retry-attempts",
-        "retry-count", "retry-attempts",
+        RETRY_ATTEMPTS, RETRY_ATTEMPTS,
+        "retry-count", RETRY_ATTEMPTS,
         "retry-delay", "retry-delay",
         "read-timeout", "read-timeout",
         "connect-timeout", "connect-timeout"
     );
 
     private static final Map<String, Map<String, String>> PROVIDER_OPTIONS = Map.of(
-        "consul", Map.of(
+        PROVIDER_CONSUL, Map.of(
             "format", "consul.client.config.format",
             "dc", "consul.client.config.datacenter",
-            "acl-token", "consul.client.asl-token",
-            "fail-fast", "consul.client.config.fail-fast",
+            "acl-token", CONSUL_ACL_TOKEN,
+            FAIL_FAST, "consul.client.config.fail-fast",
             "watch", "micronaut.discovery.consul.import.watch"
         ),
-        "vault", Map.of(
-            "token", "vault.client.token",
+        PROVIDER_VAULT, Map.of(
+            "token", VAULT_TOKEN,
             "kv-version", "vault.client.kv-version",
             "secret-engine-name", "vault.client.secret-engine-name",
             "path-prefix", "vault.client.path-prefix",
-            "fail-fast", "vault.client.fail-fast"
+            FAIL_FAST, "vault.client.fail-fast"
         ),
-        "springcloud", Map.of(
+        PROVIDER_SPRING_CLOUD, Map.of(
             "label", "spring.cloud.config.label",
-            "username", "spring.cloud.config.username",
-            "password", "spring.cloud.config.password",
-            "fail-fast", "spring.cloud.config.fail-fast"
+            "username", SPRING_CLOUD_CONFIG_USERNAME,
+            "password", SPRING_CLOUD_CONFIG_PASSWORD,
+            FAIL_FAST, "spring.cloud.config.fail-fast"
         )
     );
 
@@ -80,7 +90,7 @@ public final class RemoteConfigImportOptionBinder {
             String key = option.getKey();
             String normalizedCommon = COMMON_OPTIONS.get(key);
             if (normalizedCommon != null) {
-                if (!bound.containsKey(normalizedCommon) || "retry-attempts".equals(key)) {
+                if (!bound.containsKey(normalizedCommon) || RETRY_ATTEMPTS.equals(key)) {
                     bound.put(normalizedCommon, option.getValue());
                 }
                 continue;
@@ -100,22 +110,22 @@ public final class RemoteConfigImportOptionBinder {
         String username = connectionString.getUsername().orElse(null);
         String password = connectionString.getPassword().orElse(null);
         switch (protocol) {
-            case "consul" -> {
+            case PROVIDER_CONSUL -> {
                 if (username != null && !username.isEmpty()) {
-                    bound.put("consul.client.asl-token", username);
+                    bound.put(CONSUL_ACL_TOKEN, username);
                 }
             }
-            case "vault" -> {
+            case PROVIDER_VAULT -> {
                 if (username != null && !username.isEmpty()) {
-                    bound.put("vault.client.token", username);
+                    bound.put(VAULT_TOKEN, username);
                 }
             }
-            case "springcloud" -> {
+            case PROVIDER_SPRING_CLOUD -> {
                 if (username != null && !username.isEmpty()) {
-                    bound.put("spring.cloud.config.username", username);
+                    bound.put(SPRING_CLOUD_CONFIG_USERNAME, username);
                 }
                 if (password != null && !password.isEmpty()) {
-                    bound.put("spring.cloud.config.password", password);
+                    bound.put(SPRING_CLOUD_CONFIG_PASSWORD, password);
                 }
             }
             default -> {

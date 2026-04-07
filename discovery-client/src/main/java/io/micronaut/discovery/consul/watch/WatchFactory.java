@@ -69,8 +69,8 @@ final class WatchFactory {
         final var kvPaths = computeKvPaths(consulConfiguration);
         final var watchConfiguration = resolveWatchConfiguration();
 
-        final var format = watchConfiguration != null && watchConfiguration.getImportedFormat().isPresent()
-            ? Format.valueOf(watchConfiguration.getImportedFormat().get())
+        final var format = watchConfiguration != null
+            ? watchConfiguration.getImportedFormat().map(Format::valueOf).orElse(consulConfiguration.getConfiguration().getFormat())
             : consulConfiguration.getConfiguration().getFormat();
 
         return switch (format) {
@@ -85,8 +85,11 @@ final class WatchFactory {
 
     List<String> computeKvPaths(final ConsulConfiguration consulConfiguration) {
         final var watchConfiguration = resolveWatchConfiguration();
-        if (watchConfiguration != null && watchConfiguration.getImportedPaths().isPresent()) {
-            return watchConfiguration.getImportedPaths().get();
+        if (watchConfiguration != null) {
+            final var importedPaths = watchConfiguration.getImportedPaths();
+            if (importedPaths.isPresent()) {
+                return importedPaths.get();
+            }
         }
         final var applicationName = consulConfiguration.getServiceId().orElseThrow();
         final var configurationPath = getConfigurationPath(consulConfiguration);
@@ -136,8 +139,7 @@ final class WatchFactory {
     }
 
     private WatchConfiguration resolveWatchConfiguration() {
-        final var watchConfigurationProperty = environment.getProperty(WatchConfiguration.PREFIX, WatchConfiguration.class);
-        final var watchConfiguration = watchConfigurationProperty != null ? watchConfigurationProperty.orElse(null) : null;
+        final var watchConfiguration = environment.getProperty(WatchConfiguration.PREFIX, WatchConfiguration.class).orElse(null);
         if (watchConfiguration != null && (watchConfiguration.getImportedPaths().isPresent() || watchConfiguration.getImportedFormat().isPresent())) {
             return watchConfiguration;
         }
@@ -145,22 +147,18 @@ final class WatchFactory {
     }
 
     private WatchConfiguration resolveImportedWatchConfiguration() {
-        final var watchEnabledProperty = environment.getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_ENABLED, Boolean.class);
-        final var watchEnabled = watchEnabledProperty != null && watchEnabledProperty.orElse(false);
+        final var watchEnabled = environment.getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_ENABLED, Boolean.class).orElse(false);
         if (!watchEnabled) {
             return null;
         }
-        final var watchPathProperty = environment.getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_PATH, String.class);
-        final var watchPath = watchPathProperty != null ? watchPathProperty.orElse(null) : null;
+        final var watchPath = environment.getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_PATH, String.class).orElse(null);
         if (watchPath == null) {
             return null;
         }
         final var watchConfiguration = new WatchConfiguration();
         watchConfiguration.setImportedPaths(watchPath);
-        final var watchFormatProperty = environment.getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_FORMAT, String.class);
-        if (watchFormatProperty != null) {
-            watchFormatProperty.ifPresent(watchConfiguration::setImportedFormat);
-        }
+        environment.getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_FORMAT, String.class)
+            .ifPresent(watchConfiguration::setImportedFormat);
         return watchConfiguration;
     }
 

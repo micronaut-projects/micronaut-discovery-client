@@ -28,6 +28,7 @@ import io.micronaut.retry.RetryPolicy;
 
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.env.EnvironmentPropertySource;
+import org.jspecify.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -42,8 +43,8 @@ public final class VaultPropertySourceImporter extends RetryablePropertySourceIm
     private final RemoteConfigImportOptionBinder optionBinder = new RemoteConfigImportOptionBinder();
     private final RemoteConfigImporterContextFactory contextFactory = new RemoteConfigImporterContextFactory();
     private final VaultImportSupport importSupport = new VaultImportSupport();
-    private ApplicationContext applicationContext;
-    private Map<String, Object> cachedContextProperties;
+    private @Nullable ApplicationContext applicationContext;
+    private @Nullable Map<String, Object> cachedContextProperties;
 
     @Override
     public String getProvider() {

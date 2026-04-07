@@ -28,6 +28,9 @@ import java.util.Map;
 
 final class VaultImportSupport {
 
+    private static final String DESERIALIZATION_ERROR_FRAGMENT = "Cannot deserialize value of type";
+    private static final String ARRAY_VALUE_FRAGMENT = "from Array value";
+
     Map<String, Object> load(ApplicationContext context, String secretPath, boolean optional) {
         VaultClientConfiguration configuration = context.getBean(VaultClientConfiguration.class);
         @SuppressWarnings("unchecked")
@@ -43,20 +46,26 @@ final class VaultImportSupport {
             return response != null ? response.getSecrets() : Map.of();
         } catch (RuntimeException e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
-            if (optional && e instanceof HttpClientResponseException hcre && hcre.getStatus() == HttpStatus.NOT_FOUND) {
-                return Map.of();
-            }
-            if (cause instanceof HttpClientResponseException hcre && hcre.getStatus() == HttpStatus.NOT_FOUND && optional) {
-                return Map.of();
-            }
-            if (optional && e instanceof HttpClientResponseException hcre && hcre.getMessage() != null && hcre.getMessage().contains("Cannot deserialize value of type") && hcre.getMessage().contains("from Array value")) {
-                return Map.of();
-            }
-            if (optional && cause instanceof HttpClientResponseException hcre && hcre.getMessage() != null && hcre.getMessage().contains("Cannot deserialize value of type") && hcre.getMessage().contains("from Array value")) {
+            if (shouldReturnEmptyForOptional(e, optional) || shouldReturnEmptyForOptional(cause, optional)) {
                 return Map.of();
             }
             throw new ConfigurationException("Error reading distributed configuration from Vault: " + cause.getMessage(), cause);
         }
+    }
+
+    private boolean shouldReturnEmptyForOptional(Throwable throwable, boolean optional) {
+        if (!optional || !(throwable instanceof HttpClientResponseException exception)) {
+            return false;
+        }
+        if (exception.getStatus() == HttpStatus.NOT_FOUND) {
+            return true;
+        }
+        return isDeserializationError(exception);
+    }
+
+    private boolean isDeserializationError(HttpClientResponseException exception) {
+        String message = exception.getMessage();
+        return message != null && message.contains(DESERIALIZATION_ERROR_FRAGMENT) && message.contains(ARRAY_VALUE_FRAGMENT);
     }
 
     private String buildVaultKey(VaultClientConfiguration configuration, String secretPath) {
