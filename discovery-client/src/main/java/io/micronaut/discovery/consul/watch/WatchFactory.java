@@ -20,6 +20,7 @@ import static io.micronaut.discovery.config.ConfigDiscoveryConfiguration.DEFAULT
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import io.micronaut.core.annotation.Internal;
 import jakarta.inject.Singleton;
@@ -139,8 +140,7 @@ final class WatchFactory {
     }
 
     private WatchConfiguration resolveWatchConfiguration() {
-        final var watchConfigurationProperty = environment.getProperty(WatchConfiguration.PREFIX, WatchConfiguration.class);
-        final var watchConfiguration = watchConfigurationProperty != null ? watchConfigurationProperty.orElse(null) : null;
+        final var watchConfiguration = getProperty(WatchConfiguration.PREFIX, WatchConfiguration.class).orElse(null);
         if (watchConfiguration != null && (watchConfiguration.getImportedPaths().isPresent() || watchConfiguration.getImportedFormat().isPresent())) {
             return watchConfiguration;
         }
@@ -148,23 +148,23 @@ final class WatchFactory {
     }
 
     private WatchConfiguration resolveImportedWatchConfiguration() {
-        final var watchEnabledProperty = environment.getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_ENABLED, Boolean.class);
-        final var watchEnabled = watchEnabledProperty != null && watchEnabledProperty.orElse(false);
-        if (!watchEnabled) {
+        if (!getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_ENABLED, Boolean.class).orElse(false)) {
             return null;
         }
-        final var watchPathProperty = environment.getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_PATH, String.class);
-        final var watchPath = watchPathProperty != null ? watchPathProperty.orElse(null) : null;
+        final var watchPath = getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_PATH, String.class).orElse(null);
         if (watchPath == null) {
             return null;
         }
         final var watchConfiguration = new WatchConfiguration();
         watchConfiguration.setImportedPaths(watchPath);
-        final var watchFormatProperty = environment.getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_FORMAT, String.class);
-        if (watchFormatProperty != null) {
-            watchFormatProperty.ifPresent(watchConfiguration::setImportedFormat);
-        }
+        getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_FORMAT, String.class)
+            .ifPresent(watchConfiguration::setImportedFormat);
         return watchConfiguration;
+    }
+
+    private <T> Optional<T> getProperty(String key, Class<T> propertyType) {
+        return Optional.ofNullable(environment.getProperty(key, propertyType))
+            .flatMap(property -> property);
     }
 
 }
