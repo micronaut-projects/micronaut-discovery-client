@@ -1208,5 +1208,690 @@
     "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$Introspection",
     "member": "Implemented interface io.micronaut.core.type.ArgumentCoercible",
     "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.UnsafeBeanInstantiationIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.naming.Named",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataDelegate",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.order.Ordered",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadata",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.type.ArgumentCoercible",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospectionReference",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.watch.WatchConfiguration",
+    "member": "Field DEFAULT_KV_NOT_FOUND_LOG_LEVEL",
+    "reason": "Legacy watcher retry/logging constant removed during watch configuration simplification"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.watch.WatchConfiguration",
+    "member": "Field DEFAULT_MAX_RETRIES",
+    "reason": "Legacy watcher retry/logging constant removed during watch configuration simplification"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.watch.WatchConfiguration",
+    "member": "Field DEFAULT_RETRY_DELAY",
+    "reason": "Legacy watcher retry/logging constant removed during watch configuration simplification"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CatalogEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanInfo",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CatalogEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.UnsafeBeanInstantiationIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CatalogEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataDelegate",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CatalogEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.order.Ordered",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CatalogEntry$Introspection",
+    "member": "Implemented interface io.micronaut.discovery.consul.client.v1.Check",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CatalogEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CatalogEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadata",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CatalogEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.type.ArgumentCoercible",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CatalogEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospectionReference",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Introspection",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Introspection",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$Check$Introspection()",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanInfo",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.UnsafeBeanInstantiationIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataDelegate",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Introspection",
+    "member": "Implemented interface io.micronaut.core.order.Ordered",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadata",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Introspection",
+    "member": "Implemented interface io.micronaut.core.type.ArgumentCoercible",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Status$Introspection",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Status$Introspection",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$Check$Status$Introspection()",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Status$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Status$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Status$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanInfo",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Status$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.UnsafeBeanInstantiationIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Status$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataDelegate",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Status$Introspection",
+    "member": "Implemented interface io.micronaut.core.order.Ordered",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Status$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Status$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadata",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Status$Introspection",
+    "member": "Implemented interface io.micronaut.core.type.ArgumentCoercible",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$Check$Status$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.EnumBeanIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$Introspection",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$Introspection",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$CheckEntry$Introspection()",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanInfo",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.UnsafeBeanInstantiationIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataDelegate",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.order.Ordered",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadata",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.type.ArgumentCoercible",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CheckEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospectionReference",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$Introspection",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$Introspection",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$HealthEntry$Introspection()",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanInfo",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.UnsafeBeanInstantiationIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataDelegate",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.order.Ordered",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadata",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.type.ArgumentCoercible",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospectionReference",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$Introspection",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$Introspection",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$HTTPCheck$Introspection()",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanInfo",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.UnsafeBeanInstantiationIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataDelegate",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.order.Ordered",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadata",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.type.ArgumentCoercible",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospectionReference",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$Introspection",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$Introspection",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$NewCheck$Introspection()",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanInfo",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.UnsafeBeanInstantiationIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataDelegate",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.order.Ordered",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadata",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.type.ArgumentCoercible",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospectionReference",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$ServiceEntry$Introspection",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$ServiceEntry$Introspection",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$ServiceEntry$Introspection()",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$ServiceEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$ServiceEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$ServiceEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanInfo",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$ServiceEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.UnsafeBeanInstantiationIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$ServiceEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataDelegate",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$ServiceEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.order.Ordered",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$ServiceEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$ServiceEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadata",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$ServiceEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.type.ArgumentCoercible",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$ServiceEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospectionReference",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$Introspection",
+    "member": "Field $ANNOTATION_METADATA",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$Introspection",
+    "member": "Constructor io.micronaut.discovery.consul.client.v1.$TTLCheck$Introspection()",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationSource",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataProvider",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanInfo",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.UnsafeBeanInstantiationIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataDelegate",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.order.Ordered",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadata",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.type.ArgumentCoercible",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$TTLCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospectionReference",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$CatalogEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.naming.Named",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.UnsafeBeanInstantiationIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataDelegate",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.order.Ordered",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadata",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.type.ArgumentCoercible",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HealthEntry$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospectionReference",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.UnsafeBeanInstantiationIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataDelegate",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.order.Ordered",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadata",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.type.ArgumentCoercible",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$HTTPCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospectionReference",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.UnsafeBeanInstantiationIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadataDelegate",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.order.Ordered",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospection",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.annotation.AnnotationMetadata",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.type.ArgumentCoercible",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
+  },
+  {
+    "type": "io.micronaut.discovery.consul.client.v1.$NewCheck$Introspection",
+    "member": "Implemented interface io.micronaut.core.beans.BeanIntrospectionReference",
+    "reason": "Generated Introspection class updated for Micronaut Framework 5"
   }
 ]

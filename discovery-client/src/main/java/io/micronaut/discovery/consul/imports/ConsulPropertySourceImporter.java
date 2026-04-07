@@ -158,6 +158,8 @@ public final class ConsulPropertySourceImporter implements PropertySourceImporte
      * @param format The Consul config format
      * @param datacenter The optional Consul datacenter
      * @param watchEnabled Whether importer-driven watch refresh is enabled
+     * @param path The explicit Consul import path
+     * @param optional Whether the import is optional
      */
     public record ConsulImport(Map<String, Object> properties,
                                String format,

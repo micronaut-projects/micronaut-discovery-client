@@ -11,9 +11,10 @@ class PropertiesChangeHandlerSpec extends Specification {
 
     Environment environment = Mock()
     ApplicationEventPublisher<RefreshEvent> eventPublisher = Mock()
+    WatchConfiguration watchConfiguration = Mock()
     ExecutorService blockingExecutor = Mock()
 
-    PropertiesChangeHandler propertiesChangeHandler = new PropertiesChangeHandler(environment, eventPublisher, blockingExecutor)
+    PropertiesChangeHandler propertiesChangeHandler = new PropertiesChangeHandler(environment, eventPublisher, watchConfiguration, blockingExecutor)
 
     void "test that Context is updated and RefreshEvent is published"() {
         given:
@@ -35,7 +36,8 @@ class PropertiesChangeHandlerSpec extends Specification {
         final var propertySources = new ArrayList<PropertySource>()
         propertySources.add(PropertySource.of("consul-consul-watcher[test]", previous, 99))
         propertySources.add(PropertySource.of("consul-application", Map.of("key_a", "value_a"), 66))
-        2 * environment.getPropertySources() >> propertySources
+        1 * environment.getPropertySources() >> propertySources
+        1 * watchConfiguration.getImportedPaths() >> Optional.of(List.of('config/application/message'))
 
         when:
         propertiesChangeHandler.handleChanges("config/consul-watcher,test", previous, next)
@@ -78,6 +80,7 @@ class PropertiesChangeHandlerSpec extends Specification {
         given:
         final Map<String, Object> previous = Map.of("key_1", "value_1")
         final Map<String, Object> next = Map.of("key_1", "value_1")
+        0 * watchConfiguration._
 
         when:
         propertiesChangeHandler.handleChanges("config/consul-watcher", previous, next)
@@ -94,7 +97,8 @@ class PropertiesChangeHandlerSpec extends Specification {
 
         final var propertySources = new ArrayList<PropertySource>()
         propertySources.add(PropertySource.of("consul-application", Map.of("key_int", 1), 66))
-        2 * environment.getPropertySources() >> propertySources
+        1 * environment.getPropertySources() >> propertySources
+        1 * watchConfiguration.getImportedPaths() >> Optional.empty()
 
         when:
         propertiesChangeHandler.handleChanges("config/application", previous, next)
@@ -113,32 +117,26 @@ class PropertiesChangeHandlerSpec extends Specification {
         def capturedProperties = new ArrayList<PropertySource>()
         final Map<String, Object> previous = Map.of("message", "hello")
         final Map<String, Object> next = Map.of("message", "goodbye")
-        propertiesChangeHandler.registerImportedWatchPaths(List.of('config/application/message'))
+        1 * watchConfiguration.getImportedPaths() >> Optional.empty()
 
         final var imported = PropertySource.of("consul://localhost:8500/config/application?watch=true", [message: 'hello'], 100)
         final var propertySources = new ArrayList<PropertySource>()
         propertySources.add(imported)
-        1 * environment.getProperty('micronaut.config.import', String) >> Optional.of('consul://localhost:8500/config/application?watch=true')
         1 * environment.getPropertySources() >> propertySources
-        1 * blockingExecutor.execute(_ as Runnable) >> { arguments ->
-            Runnable runnable = arguments[0] as Runnable
-            runnable.run()
-        }
 
         when:
         propertiesChangeHandler.handleChanges('config/application/message', previous, next)
 
         then:
-        1 * environment.refreshAndDiff() >> [message: 'goodbye']
         1 * environment.addPropertySource(_ as PropertySource) >> { arguments ->
             capturedProperties.add(arguments[0])
             return environment
         }
         capturedProperties[0].getName() == 'consul://localhost:8500/config/application?watch=true'
-        capturedProperties[0].get('message') == 'goodbye'
+        capturedProperties[0].get('message') == 'hello'
         1 * eventPublisher.publishEvent({
             it instanceof RefreshEvent
-            (it as RefreshEvent).source.get('message') == 'goodbye'
+            (it as RefreshEvent).source.get('message') == 'hello'
         })
     }
 

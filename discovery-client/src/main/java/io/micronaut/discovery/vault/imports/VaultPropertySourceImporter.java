@@ -122,6 +122,14 @@ public final class VaultPropertySourceImporter implements PropertySourceImporter
         return applicationContext;
     }
 
+    /**
+     * Typed Vault import declaration.
+     *
+     * @param connectionString The parsed import connection string, if available
+     * @param properties The importer child-context properties
+     * @param secretPath The explicit Vault secret path
+     * @param optional Whether the import is optional
+     */
     public record VaultImport(ConnectionString connectionString,
                               Map<String, Object> properties,
                               String secretPath,

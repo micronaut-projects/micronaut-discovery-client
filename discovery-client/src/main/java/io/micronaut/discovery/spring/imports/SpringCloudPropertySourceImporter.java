@@ -131,6 +131,16 @@ public final class SpringCloudPropertySourceImporter implements PropertySourceIm
         return applicationContext;
     }
 
+    /**
+     * Typed Spring Cloud Config import declaration.
+     *
+     * @param connectionString The parsed import connection string, if available
+     * @param properties The importer child-context properties
+     * @param applicationName The target application name
+     * @param profiles The target profile list
+     * @param label The optional Config Server label
+     * @param optional Whether the import is optional
+     */
     public record SpringCloudImport(ConnectionString connectionString,
                                     Map<String, Object> properties,
                                     String applicationName,
