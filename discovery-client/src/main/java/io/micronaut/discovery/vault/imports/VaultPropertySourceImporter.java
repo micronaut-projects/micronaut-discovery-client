@@ -16,14 +16,15 @@
 package io.micronaut.discovery.vault.imports;
 
 import io.micronaut.context.env.PropertySource;
-import io.micronaut.context.env.PropertySourceImporter;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.convert.value.ConvertibleValues;
 import io.micronaut.core.util.ConnectionString;
+import io.micronaut.discovery.config.RetryablePropertySourceImporter;
 import io.micronaut.discovery.imports.RemoteConfigImporterContextFactory;
 import io.micronaut.discovery.imports.RemoteConfigImportOptionBinder;
 import io.micronaut.discovery.vault.config.VaultClientConfiguration;
+import io.micronaut.retry.RetryPolicy;
 
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.env.EnvironmentPropertySource;
@@ -36,7 +37,7 @@ import java.util.Optional;
  * Property source importer for explicit Vault secret paths.
  */
 @Internal
-public final class VaultPropertySourceImporter implements PropertySourceImporter<VaultPropertySourceImporter.VaultImport> {
+public final class VaultPropertySourceImporter extends RetryablePropertySourceImporter<VaultPropertySourceImporter.VaultImport> {
 
     private final RemoteConfigImportOptionBinder optionBinder = new RemoteConfigImportOptionBinder();
     private final RemoteConfigImporterContextFactory contextFactory = new RemoteConfigImporterContextFactory();
@@ -50,17 +51,18 @@ public final class VaultPropertySourceImporter implements PropertySourceImporter
     }
 
     @Override
-    public VaultImport newImportDeclaration(ConnectionString connectionString) {
+    protected VaultImport newImportDeclaration(ConnectionString connectionString, RetryPolicy retryPolicy) {
         return new VaultImport(
             connectionString,
             buildContextProperties(connectionString),
             connectionString.getPath(),
-            connectionString.isOptional()
+            connectionString.isOptional(),
+            retryPolicy
         );
     }
 
     @Override
-    public VaultImport newImportDeclaration(ConvertibleValues<Object> values) {
+    protected VaultImport newImportDeclaration(ConvertibleValues<Object> values, RetryPolicy retryPolicy) {
         String uri = values.get("uri", String.class)
             .or(() -> values.get("url", String.class))
             .filter(v -> !v.isBlank())
@@ -75,17 +77,14 @@ public final class VaultPropertySourceImporter implements PropertySourceImporter
         values.get("secret-engine-name", String.class).ifPresent(v -> properties.put("vault.client.secret-engine-name", v));
         values.get("path-prefix", String.class).ifPresent(v -> properties.put("vault.client.path-prefix", v));
         values.get("fail-fast", Boolean.class).ifPresent(v -> properties.put("vault.client.fail-fast", v));
-        values.get("retry-attempts", Integer.class).ifPresent(v -> properties.put("micronaut.http.services.vault.retry-attempts", v));
-        values.get("retry-count", Integer.class).ifPresent(v -> properties.put("micronaut.http.services.vault.retry-attempts", v));
-        values.get("retry-delay", String.class).ifPresent(v -> properties.put("micronaut.http.services.vault.retry-delay", v));
         values.get("read-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.vault.read-timeout", v));
         values.get("connect-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.vault.connect-timeout", v));
 
-        return new VaultImport(null, properties, secretPath, values.get("optional", Boolean.class).orElse(false));
+        return new VaultImport(null, properties, secretPath, values.get("optional", Boolean.class).orElse(false), retryPolicy);
     }
 
     @Override
-    public Optional<PropertySource> importPropertySource(ImportContext<VaultImport> context) {
+    protected Optional<PropertySource> importRetryablePropertySource(ImportContext<VaultImport> context) {
         VaultImport declaration = context.importDeclaration();
         Map<String, Object> properties = declaration.properties();
 
@@ -98,7 +97,7 @@ public final class VaultPropertySourceImporter implements PropertySourceImporter
     }
 
     @Override
-    public void close() {
+    protected void closeRetryableImporter() {
         if (applicationContext != null) {
             applicationContext.close();
             applicationContext = null;
@@ -129,10 +128,12 @@ public final class VaultPropertySourceImporter implements PropertySourceImporter
      * @param properties The importer child-context properties
      * @param secretPath The explicit Vault secret path
      * @param optional Whether the import is optional
+     * @param retryPolicy The resolved import retry policy
      */
     public record VaultImport(ConnectionString connectionString,
                               Map<String, Object> properties,
                               String secretPath,
-                              boolean optional) {
+                              boolean optional,
+                              RetryPolicy retryPolicy) {
     }
 }

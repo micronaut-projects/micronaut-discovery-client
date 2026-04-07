@@ -16,14 +16,15 @@
 package io.micronaut.discovery.spring.imports;
 
 import io.micronaut.context.env.PropertySource;
-import io.micronaut.context.env.PropertySourceImporter;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.convert.value.ConvertibleValues;
 import io.micronaut.core.util.ConnectionString;
+import io.micronaut.discovery.config.RetryablePropertySourceImporter;
 import io.micronaut.discovery.imports.RemoteConfigImporterContextFactory;
 import io.micronaut.discovery.imports.RemoteConfigImportOptionBinder;
 import io.micronaut.discovery.spring.config.SpringCloudClientConfiguration;
+import io.micronaut.retry.RetryPolicy;
 
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.env.EnvironmentPropertySource;
@@ -36,7 +37,7 @@ import java.util.Optional;
  * Property source importer for explicit Spring Cloud Config Server paths.
  */
 @Internal
-public final class SpringCloudPropertySourceImporter implements PropertySourceImporter<SpringCloudPropertySourceImporter.SpringCloudImport> {
+public final class SpringCloudPropertySourceImporter extends RetryablePropertySourceImporter<SpringCloudPropertySourceImporter.SpringCloudImport> {
 
     private final RemoteConfigImportOptionBinder optionBinder = new RemoteConfigImportOptionBinder();
     private final RemoteConfigImporterContextFactory contextFactory = new RemoteConfigImporterContextFactory();
@@ -50,20 +51,20 @@ public final class SpringCloudPropertySourceImporter implements PropertySourceIm
     }
 
     @Override
-    public SpringCloudImport newImportDeclaration(ConnectionString connectionString) {
+    protected SpringCloudImport newImportDeclaration(ConnectionString connectionString, RetryPolicy retryPolicy) {
         Map<String, Object> properties = buildContextProperties(connectionString);
         String[] segments = connectionString.getPath().split("/");
         if (segments.length < 2) {
-            return new SpringCloudImport(connectionString, properties, null, null, (String) properties.get("spring.cloud.config.label"), connectionString.isOptional());
+            return new SpringCloudImport(connectionString, properties, null, null, (String) properties.get("spring.cloud.config.label"), connectionString.isOptional(), retryPolicy);
         }
         String applicationName = segments[0];
         String profiles = segments[1];
         String label = (String) properties.get("spring.cloud.config.label");
-        return new SpringCloudImport(connectionString, properties, applicationName, profiles, label, connectionString.isOptional());
+        return new SpringCloudImport(connectionString, properties, applicationName, profiles, label, connectionString.isOptional(), retryPolicy);
     }
 
     @Override
-    public SpringCloudImport newImportDeclaration(ConvertibleValues<Object> values) {
+    protected SpringCloudImport newImportDeclaration(ConvertibleValues<Object> values, RetryPolicy retryPolicy) {
         String uri = values.get("uri", String.class)
             .or(() -> values.get("url", String.class))
             .filter(v -> !v.isBlank())
@@ -81,17 +82,14 @@ public final class SpringCloudPropertySourceImporter implements PropertySourceIm
         values.get("username", String.class).ifPresent(v -> properties.put("spring.cloud.config.username", v));
         values.get("password", String.class).ifPresent(v -> properties.put("spring.cloud.config.password", v));
         values.get("fail-fast", Boolean.class).ifPresent(v -> properties.put("spring.cloud.config.fail-fast", v));
-        values.get("retry-attempts", Integer.class).ifPresent(v -> properties.put("micronaut.http.services.springcloudconfig.retry-attempts", v));
-        values.get("retry-count", Integer.class).ifPresent(v -> properties.put("micronaut.http.services.springcloudconfig.retry-attempts", v));
-        values.get("retry-delay", String.class).ifPresent(v -> properties.put("micronaut.http.services.springcloudconfig.retry-delay", v));
         values.get("read-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.springcloudconfig.read-timeout", v));
         values.get("connect-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.springcloudconfig.connect-timeout", v));
 
-        return new SpringCloudImport(null, properties, applicationName, profiles, (String) properties.get("spring.cloud.config.label"), values.get("optional", Boolean.class).orElse(false));
+        return new SpringCloudImport(null, properties, applicationName, profiles, (String) properties.get("spring.cloud.config.label"), values.get("optional", Boolean.class).orElse(false), retryPolicy);
     }
 
     @Override
-    public Optional<PropertySource> importPropertySource(ImportContext<SpringCloudImport> context) {
+    protected Optional<PropertySource> importRetryablePropertySource(ImportContext<SpringCloudImport> context) {
         SpringCloudImport declaration = context.importDeclaration();
         if (declaration.applicationName() == null || declaration.profiles() == null) {
             return Optional.empty();
@@ -107,7 +105,7 @@ public final class SpringCloudPropertySourceImporter implements PropertySourceIm
     }
 
     @Override
-    public void close() {
+    protected void closeRetryableImporter() {
         if (applicationContext != null) {
             applicationContext.close();
             applicationContext = null;
@@ -140,12 +138,14 @@ public final class SpringCloudPropertySourceImporter implements PropertySourceIm
      * @param profiles The target profile list
      * @param label The optional Config Server label
      * @param optional Whether the import is optional
+     * @param retryPolicy The resolved import retry policy
      */
     public record SpringCloudImport(ConnectionString connectionString,
                                     Map<String, Object> properties,
                                     String applicationName,
                                     String profiles,
                                     String label,
-                                    boolean optional) {
+                                    boolean optional,
+                                    RetryPolicy retryPolicy) {
     }
 }

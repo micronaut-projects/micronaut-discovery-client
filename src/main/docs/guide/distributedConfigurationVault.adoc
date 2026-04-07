@@ -93,7 +93,7 @@ Treat import URIs with embedded credentials as sensitive values and store them a
 
 |`retry-attempts`
 |`?retry-attempts=3`
-|Number of retry attempts for remote config loading.
+|Number of config import retry attempts handled by Micronaut's retryable importer support.
 
 |`retry-count`
 |`?retry-count=3`
@@ -101,7 +101,19 @@ Treat import URIs with embedded credentials as sensitive values and store them a
 
 |`retry-delay`
 |`?retry-delay=1s`
-|Delay between retries.
+|Delay between import retries.
+
+|`retry-max-delay`
+|`?retry-max-delay=30s`
+|Maximum overall retry delay.
+
+|`retry-multiplier`
+|`?retry-multiplier=2.0`
+|Multiplier applied between retry delays.
+
+|`retry-jitter`
+|`?retry-jitter=0.2`
+|Retry jitter factor from `0.0` to `1.0`.
 
 |`read-timeout`
 |`?read-timeout=5s`

@@ -16,7 +16,6 @@
 package io.micronaut.discovery.consul.imports;
 
 import io.micronaut.context.env.PropertySource;
-import io.micronaut.context.env.PropertySourceImporter;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.convert.value.ConvertibleValues;
@@ -25,7 +24,9 @@ import io.micronaut.discovery.consul.ConsulConfiguration;
 import io.micronaut.discovery.imports.RemoteConfigImporterContextFactory;
 import io.micronaut.discovery.imports.RemoteConfigImportOptionBinder;
 import io.micronaut.discovery.config.ConfigDiscoveryConfiguration;
+import io.micronaut.discovery.config.RetryablePropertySourceImporter;
 import io.micronaut.discovery.consul.watch.WatchConfiguration;
+import io.micronaut.retry.RetryPolicy;
 
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -39,7 +40,7 @@ import java.util.Optional;
  * Property source importer for explicit Consul configuration paths.
  */
 @Internal
-public final class ConsulPropertySourceImporter implements PropertySourceImporter<ConsulPropertySourceImporter.ConsulImport> {
+public final class ConsulPropertySourceImporter extends RetryablePropertySourceImporter<ConsulPropertySourceImporter.ConsulImport> {
 
     private final RemoteConfigImportOptionBinder optionBinder = new RemoteConfigImportOptionBinder();
     private final RemoteConfigImporterContextFactory contextFactory = new RemoteConfigImporterContextFactory();
@@ -53,16 +54,16 @@ public final class ConsulPropertySourceImporter implements PropertySourceImporte
     }
 
     @Override
-    public ConsulImport newImportDeclaration(ConnectionString connectionString) {
+    protected ConsulImport newImportDeclaration(ConnectionString connectionString, RetryPolicy retryPolicy) {
         Map<String, Object> properties = buildContextProperties(connectionString);
         String format = String.valueOf(properties.getOrDefault(ConsulConfiguration.PREFIX + ".config.format", ConfigDiscoveryConfiguration.Format.NATIVE.name().toLowerCase(Locale.ENGLISH)));
         String datacenter = (String) properties.get(ConsulConfiguration.PREFIX + ".config.datacenter");
         boolean watchEnabled = Boolean.parseBoolean(connectionString.getOptions().getOrDefault("watch", "false"));
-        return new ConsulImport(properties, format, datacenter, watchEnabled, connectionString.getPath(), connectionString.isOptional());
+        return new ConsulImport(properties, format, datacenter, watchEnabled, connectionString.getPath(), connectionString.isOptional(), retryPolicy);
     }
 
     @Override
-    public ConsulImport newImportDeclaration(ConvertibleValues<Object> values) {
+    protected ConsulImport newImportDeclaration(ConvertibleValues<Object> values, RetryPolicy retryPolicy) {
         String host = values.get("host", String.class)
             .filter(v -> !v.isBlank())
             .orElseThrow(() -> new ConfigurationException("Config import provider [consul] requires non-blank ['host']"));
@@ -84,17 +85,14 @@ public final class ConsulPropertySourceImporter implements PropertySourceImporte
         }
         values.get("acl-token", String.class).ifPresent(v -> properties.put("consul.client.acl-token", v));
         values.get("fail-fast", Boolean.class).ifPresent(v -> properties.put("consul.client.fail-fast", v));
-        values.get("retry-attempts", Integer.class).ifPresent(v -> properties.put("micronaut.http.services.consul.retry-attempts", v));
-        values.get("retry-count", Integer.class).ifPresent(v -> properties.put("micronaut.http.services.consul.retry-attempts", v));
-        values.get("retry-delay", String.class).ifPresent(v -> properties.put("micronaut.http.services.consul.retry-delay", v));
         values.get("read-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.consul.read-timeout", v));
         values.get("connect-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.consul.connect-timeout", v));
 
-        return new ConsulImport(properties, format, datacenter, watchEnabled, path, values.get("optional", Boolean.class).orElse(false));
+        return new ConsulImport(properties, format, datacenter, watchEnabled, path, values.get("optional", Boolean.class).orElse(false), retryPolicy);
     }
 
     @Override
-    public Optional<PropertySource> importPropertySource(ImportContext<ConsulImport> context) {
+    protected Optional<PropertySource> importRetryablePropertySource(ImportContext<ConsulImport> context) {
         ConsulImport declaration = context.importDeclaration();
         Map<String, Object> properties = declaration.properties();
         String format = declaration.format();
@@ -123,7 +121,7 @@ public final class ConsulPropertySourceImporter implements PropertySourceImporte
     }
 
     @Override
-    public void close() {
+    protected void closeRetryableImporter() {
         if (applicationContext != null) {
             applicationContext.close();
             applicationContext = null;
@@ -160,12 +158,14 @@ public final class ConsulPropertySourceImporter implements PropertySourceImporte
      * @param watchEnabled Whether importer-driven watch refresh is enabled
      * @param path The explicit Consul import path
      * @param optional Whether the import is optional
+     * @param retryPolicy The resolved import retry policy
      */
     public record ConsulImport(Map<String, Object> properties,
                                String format,
                                String datacenter,
                                boolean watchEnabled,
                                String path,
-                               boolean optional) {
+                               boolean optional,
+                               RetryPolicy retryPolicy) {
     }
 }
