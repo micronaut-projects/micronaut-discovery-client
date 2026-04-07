@@ -50,6 +50,9 @@ class ConfigurationClientDeprecationAndCoexistenceSpec extends Specification {
 
     void 'legacy distributed configuration warns once with config import alternatives'() {
         given:
+        def warnedKeysField = LegacyConfigurationClientDeprecationLogger.class.getDeclaredField('WARNED_KEYS')
+        warnedKeysField.accessible = true
+        ((Set<String>) warnedKeysField.get(null)).clear()
         System.setProperty(Environment.BOOTSTRAP_CONTEXT_PROPERTY, 'true')
         Flux.from(consulClient.putValue('/config/application/message', 'hello')).blockFirst()
 

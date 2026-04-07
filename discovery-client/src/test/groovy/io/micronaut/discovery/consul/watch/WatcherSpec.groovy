@@ -195,9 +195,12 @@ class WatcherSpec extends Specification {
 
         then:
         Thread.sleep(500)
-        listAppender.list.size() == 1
-        def loggingEvent = listAppender.list.get(0)
-        loggingEvent.getFormattedMessage() == "Watching kvPath=path/to/global_error failed"
+        def errorLogs = listAppender.list.stream()
+                .filter(event -> Level.ERROR == event.getLevel())
+                .filter(event -> event.getFormattedMessage() == "Watching kvPath=path/to/global_error failed")
+                .toList()
+        errorLogs.size() == 1
+        def loggingEvent = errorLogs.get(0)
         with((ThrowableProxy) loggingEvent.getThrowableProxy()) {
             def throwable = it.getThrowable()
             throwable instanceof IllegalArgumentException
