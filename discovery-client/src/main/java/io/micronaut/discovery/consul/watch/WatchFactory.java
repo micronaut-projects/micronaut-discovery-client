@@ -139,7 +139,8 @@ final class WatchFactory {
     }
 
     private WatchConfiguration resolveWatchConfiguration() {
-        final var watchConfiguration = environment.getProperty(WatchConfiguration.PREFIX, WatchConfiguration.class).orElse(null);
+        final var watchConfigurationProperty = environment.getProperty(WatchConfiguration.PREFIX, WatchConfiguration.class);
+        final var watchConfiguration = watchConfigurationProperty != null ? watchConfigurationProperty.orElse(null) : null;
         if (watchConfiguration != null && (watchConfiguration.getImportedPaths().isPresent() || watchConfiguration.getImportedFormat().isPresent())) {
             return watchConfiguration;
         }
@@ -147,18 +148,22 @@ final class WatchFactory {
     }
 
     private WatchConfiguration resolveImportedWatchConfiguration() {
-        final var watchEnabled = environment.getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_ENABLED, Boolean.class).orElse(false);
+        final var watchEnabledProperty = environment.getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_ENABLED, Boolean.class);
+        final var watchEnabled = watchEnabledProperty != null && watchEnabledProperty.orElse(false);
         if (!watchEnabled) {
             return null;
         }
-        final var watchPath = environment.getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_PATH, String.class).orElse(null);
+        final var watchPathProperty = environment.getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_PATH, String.class);
+        final var watchPath = watchPathProperty != null ? watchPathProperty.orElse(null) : null;
         if (watchPath == null) {
             return null;
         }
         final var watchConfiguration = new WatchConfiguration();
         watchConfiguration.setImportedPaths(watchPath);
-        environment.getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_FORMAT, String.class)
-            .ifPresent(watchConfiguration::setImportedFormat);
+        final var watchFormatProperty = environment.getProperty(RemoteConfigImportMetadata.CONSUL_WATCH_FORMAT, String.class);
+        if (watchFormatProperty != null) {
+            watchFormatProperty.ifPresent(watchConfiguration::setImportedFormat);
+        }
         return watchConfiguration;
     }
 
