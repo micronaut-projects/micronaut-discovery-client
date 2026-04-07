@@ -114,9 +114,6 @@ abstract sealed class AbstractWatcher<V> implements Watcher permits Configuratio
 
     private void watchKvPath(final String kvPath) {
         Duration delayDuration = blockingQueriesConfiguration.getDelayDuration();
-        if (delayDuration == null) {
-            delayDuration = Duration.ofMillis(BlockingQueriesConfiguration.DEFAULT_DELAY_DURATION_MILLISECONDS);
-        }
         // delaying to avoid flood caused by multiple consecutive calls
         final var disposable = Mono.delay(delayDuration)
             .then(watchValue(kvPath))
