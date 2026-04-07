@@ -113,10 +113,6 @@ abstract sealed class AbstractWatcher<V> implements Watcher permits Configuratio
     }
 
     private void watchKvPath(final String kvPath) {
-        if (!started) {
-            LOG.warn("Watcher is not started");
-            return;
-        }
         Duration delayDuration = blockingQueriesConfiguration.getDelayDuration();
         if (delayDuration == null) {
             delayDuration = Duration.ofMillis(BlockingQueriesConfiguration.DEFAULT_DELAY_DURATION_MILLISECONDS);
