@@ -255,6 +255,7 @@ class WatcherSpec extends Specification {
         watcher.start()
 
         then:
+        Thread.sleep(500)
         def logs = listAppender.list.stream()
                 .filter(event -> Level.ERROR == event.getLevel())
                 .toList()
@@ -279,12 +280,14 @@ class WatcherSpec extends Specification {
 
         def exception = ReadTimeoutException.TIMEOUT_EXCEPTION
         2 * consulClient.watchValues("path/to/timeout", false, null) >> Mono.error(exception)
-        watchConfiguration.getDelayDuration() >>> [Duration.ZERO, Duration.ofSeconds(5)]
+        _ * watchConfiguration.getDelayDuration() >>> [Duration.ZERO, Duration.ofSeconds(5), Duration.ofSeconds(5)]
 
         when:
         watcher.start()
 
         then:
+        Thread.sleep(500)
+        watcher.stop()
         def logs = listAppender.list.stream()
                 .filter(event -> Level.WARN == event.getLevel())
                 .toList()
@@ -314,6 +317,7 @@ class WatcherSpec extends Specification {
         watcher.start()
 
         then:
+        Thread.sleep(500)
         def logs = listAppender.list.stream()
                 .filter(event -> Level.ERROR == event.getLevel())
                 .toList()
