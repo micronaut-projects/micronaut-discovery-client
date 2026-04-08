@@ -1,3 +1,4 @@
+[[distributedConfigurationVault]]
 HashiCorp Vault can be used as a distributed configuration source for Micronaut applications.
 
 The legacy bootstrap `ConfigurationClient` approach is deprecated. Prefer `micronaut.config.import` with explicit Vault paths.
@@ -129,6 +130,12 @@ During migration, the older bootstrap configuration is still available:
 .Legacy bootstrap Vault configuration
 [configuration]
 ----
+micronaut:
+  application:
+    name: hello-world
+  config-client:
+    enabled: true
+
 vault:
   client:
     uri: http://localhost:8200
@@ -137,3 +144,24 @@ vault:
 ----
 
 Prefer the importer-based configuration for new applications and migrations.
+
+The legacy bootstrap integration uses the configured `micronaut.application.name` to look up property sources from Vault.
+
+.Legacy Vault configuration resolution precedence
+|===
+|Secret Path|Description
+
+|`/application`
+|Configuration shared by all applications
+
+|`/[APPLICATION_NAME]`
+|Application-specific configuration
+
+|`/application/[ENV_NAME]`
+|Configuration shared by all applications for an active environment
+
+|`/[APPLICATION_NAME]/[ENV_NAME]`
+|Application-specific configuration for an active environment
+|===
+
+With `micronaut.config.import`, the secret path is explicit in the import URI, so those default lookup paths are no longer implied. See the https://developer.hashicorp.com/vault/api-docs/secret/kv[HashiCorp Vault KV documentation] for server setup and secret storage details.

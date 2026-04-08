@@ -170,22 +170,23 @@ consul:
         http: true
 ----
 
-== Consul Watch
+[[distributedConfigurationConsul]]
+== Distributed Configuration with Consul
 
-The watcher calls the https://developer.hashicorp.com/consul/api-docs/kv[KV Store API] to watch all keys used for the distributed configurations,
-using https://developer.hashicorp.com/consul/api-docs/features/blocking[Blocking Queries]
-to wait for any changes made on those keys.
-If no change occurred during the `max-wait-duration`, the query will be re-executed after the `delay-duration`.
-When a change is detected in a KV used for configurations,
-the corresponding `PropertySource` will be updated and a `RefreshEvent` published.
+[TIP]
+.Using the CLI
+====
+If you create your project using the Micronaut CLI, supply the `config-consul` feature to enable Consul distributed configuration in your project:
+----
+$ mn create-app my-app --features config-consul
+----
+====
 
-See https://docs.micronaut.io/latest/guide/index.html#refreshable[Micronaut > Refreshable Scope] for more details
+The legacy bootstrap `ConfigurationClient` approach is deprecated. Prefer `micronaut.config.import` for distributed configuration and use the legacy bootstrap path only during migration.
 
-=== Configuration
+=== Importing Consul configuration
 
-The legacy bootstrap `ConfigurationClient` approach is deprecated. Prefer `micronaut.config.import` for distributed configuration and reserve the watcher settings below for applications that still use the legacy bootstrap path during migration.
-
-The importer-first equivalent is:
+The preferred approach is to import explicit Consul KV paths with `micronaut.config.import`:
 
 .Importing Consul configuration with micronaut.config.import
 [configuration]
@@ -325,6 +326,111 @@ Treat import URIs with embedded credentials as sensitive values and store them a
 
 Consul config import retries are now handled by Micronaut core's retryable importer support. Do not combine these import retry settings with separate Consul client retry configuration for the same import path, or retries will be duplicated.
 
+=== Legacy bootstrap configuration
+
+To enable the legacy bootstrap integration, create a `src/main/resources/bootstrap.[yml/toml/properties]` file with the following configuration:
+
+[configuration]
+----
+micronaut:
+  application:
+    name: hello-world
+  config-client:
+    enabled: true
+consul:
+  client:
+    defaultZone: "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+----
+
+After enabling distributed configuration, store the configuration to share in Consul's key/value store.
+
+==== Storing configuration as key/value pairs
+
+One option is to store keys and values directly in Consul. In this mode, Micronaut looks for configuration in the Consul `/config` directory by default.
+
+TIP: You can alter the path by setting `consul.client.config.path`.
+
+Within the configured path, Micronaut resolves values from the following directories in order of precedence:
+
+.Legacy Consul configuration resolution precedence
+|===
+|Directory|Description
+
+|`/config/application`
+|Configuration shared by all applications
+
+|`/config/application,prod`
+|Configuration shared by all applications for the `prod` environment
+
+|`/config/[APPLICATION_NAME]`
+|Application-specific configuration, for example `/config/hello-world`
+
+|`/config/[APPLICATION_NAME],prod`
+|Application-specific configuration for an active environment
+|===
+
+The value of `APPLICATION_NAME` comes from `micronaut.application.name` in `bootstrap` configuration.
+
+For example, this cURL command stores `foo.bar=myvalue` in `/config/application`:
+
+.Using cURL to write a value
+[source,bash]
+----
+curl -X PUT -d @- localhost:8500/v1/kv/config/application/foo.bar <<< myvalue
+----
+
+With the legacy bootstrap integration enabled, `@Value("${foo.bar}")` and `environment.getProperty(..)` can then resolve the value from Consul.
+
+==== Storing configuration in YAML, JSON, or properties format
+
+Some Consul setups store configuration in a structured blob instead of individual keys. The legacy bootstrap integration supports YAML, JSON, and Java properties formats.
+
+Configure the format with `consul.client.config.format`. For example, to use JSON:
+
+[configuration]
+----
+consul:
+  client:
+    config:
+      format: JSON
+----
+
+Then write the configuration as JSON to Consul:
+
+.Using cURL to write JSON
+[source,bash]
+----
+curl -X PUT localhost:8500/v1/kv/config/application \
+-d @- << EOF
+{ "foo": { "bar": "myvalue" } }
+EOF
+----
+
+==== Storing configuration as file references
+
+Another option is to mirror a Git repository into Consul using a tool such as https://github.com/breser/git2consul[git2consul].
+
+In that setup, keys in Consul represent files such as `/config/application.yml` or `/config/hello-world-test.json`. Configure the legacy bootstrap integration to use the `FILE` format:
+
+[configuration]
+----
+consul:
+  client:
+    config:
+      format: FILE
+----
+
+== Consul Watch
+
+The watcher calls the https://developer.hashicorp.com/consul/api-docs/kv[KV Store API] to watch all keys used for the distributed configurations,
+using https://developer.hashicorp.com/consul/api-docs/features/blocking[Blocking Queries]
+to wait for any changes made on those keys.
+If no change occurred during the `max-wait-duration`, the query will be re-executed after the `delay-duration`.
+When a change is detected in a KV used for configurations,
+the corresponding `PropertySource` will be updated and a `RefreshEvent` published.
+
+See https://docs.micronaut.io/latest/guide/index.html#refreshable[Micronaut > Refreshable Scope] for more details
+
 The legacy watcher can be configured using
 
 .Consul Watch Configuration
@@ -355,6 +461,3 @@ Formats supported are
 - `JSON`
 - `PROPERTIES`
 - `YAML`
-
-Read https://docs.micronaut.io/latest/guide/index.html#distributedConfigurationConsul[Micronaut > Distributed Configuration > HashiCorp Consul Support]
-for more details.
