@@ -1,6 +1,7 @@
-https://github.com/spring-cloud/spring-cloud-config[Spring Cloud Config Server] Spring Cloud Config provides server-side and client-side support for externalized configuration in a distributed system. With the Config Server, you have a central place to manage external properties for applications across all environments.
+[[distributedConfigurationSpringCloud]]
+https://github.com/spring-cloud/spring-cloud-config[Spring Cloud Config Server] provides server-side and client-side support for externalized configuration in a distributed system. With the Config Server, you have a central place to manage external properties for applications across all environments.
 
-A Micronaut application can be a Spring Cloud Config client to consume Spring Cloud Config Server configurations.
+Micronaut includes native Spring Cloud Config client support for consuming Spring Cloud Config Server configuration.
 
 The legacy bootstrap `ConfigurationClient` approach is deprecated. Prefer `micronaut.config.import` for new applications and migrations.
 
@@ -151,4 +152,11 @@ spring:
 
 ----
 
-The field name is optional in the legacy configuration. With `micronaut.config.import`, the application name and profiles are explicit in the URI path.
+Optional legacy retry settings are also supported:
+
+- `retry-attempts` specifies the number of retries
+- `retry-delay` specifies the delay between retries
+
+The legacy integration uses the configured `micronaut.application.name` to look up property sources from the server configured via `spring.cloud.config.uri`.
+
+The `name` field is optional in the legacy configuration. With `micronaut.config.import`, the application name and profiles are explicit in the URI path. See the https://spring.io/projects/spring-cloud-config/[Spring Cloud Config documentation] for server setup details.
