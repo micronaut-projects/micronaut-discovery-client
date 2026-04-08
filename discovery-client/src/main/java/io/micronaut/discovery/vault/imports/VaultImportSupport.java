@@ -33,8 +33,7 @@ final class VaultImportSupport {
 
     Map<String, Object> load(ApplicationContext context, String secretPath, boolean optional) {
         VaultClientConfiguration configuration = context.getBean(VaultClientConfiguration.class);
-        @SuppressWarnings("unchecked")
-        VaultConfigHttpClient<AbstractVaultResponse<?>> client = (VaultConfigHttpClient<AbstractVaultResponse<?>>) context.getBean(VaultConfigHttpClient.class);
+        VaultConfigHttpClient<?> client = context.getBean(VaultConfigHttpClient.class);
         String vaultKey = buildVaultKey(configuration, secretPath);
 
         try {

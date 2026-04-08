@@ -39,7 +39,7 @@ class RemoteConfigImportOptionsSpec extends Specification {
         binder.bind(ConnectionString.parse('consul://localhost:8500/config/application?format=json&dc=dc1&acl-token=token&fail-fast=true')) == [
             'consul.client.config.format': 'json',
             'consul.client.config.datacenter': 'dc1',
-            'consul.client.asl-token': 'token',
+            'consul.client.acl-token': 'token',
             'consul.client.config.fail-fast': 'true'
         ]
 

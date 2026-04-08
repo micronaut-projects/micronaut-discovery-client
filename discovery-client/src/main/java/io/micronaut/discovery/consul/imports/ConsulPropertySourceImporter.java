@@ -111,7 +111,14 @@ public final class ConsulPropertySourceImporter extends RetryablePropertySourceI
             return Optional.empty();
         }
         boolean watchEnabled = declaration.watchEnabled();
-        String propertySourceName = watchEnabled ? importPath : (context.connectionString() != null ? context.getCanonicalLocation() : getProvider() + "://" + importPath);
+        String propertySourceName;
+        if (watchEnabled) {
+            propertySourceName = importPath;
+        } else if (context.connectionString() != null) {
+            propertySourceName = context.getCanonicalLocation();
+        } else {
+            propertySourceName = getProvider() + "://" + importPath;
+        }
         if (watchEnabled) {
             String watchPath = importSupport.resolveWatchPath(importPath, format, imported).orElse(null);
             imported.put(WatchConfiguration.PREFIX + ".enabled", true);
@@ -168,7 +175,7 @@ public final class ConsulPropertySourceImporter extends RetryablePropertySourceI
      */
     public record ConsulImport(Map<String, Object> properties,
                                String format,
-                               String datacenter,
+                               @Nullable String datacenter,
                                boolean watchEnabled,
                                String path,
                                boolean optional,

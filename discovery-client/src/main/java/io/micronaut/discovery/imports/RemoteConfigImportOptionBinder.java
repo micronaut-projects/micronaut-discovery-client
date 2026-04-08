@@ -41,7 +41,7 @@ public final class RemoteConfigImportOptionBinder {
     private static final String PROVIDER_CONSUL = "consul";
     private static final String PROVIDER_VAULT = "vault";
     private static final String PROVIDER_SPRING_CLOUD = "springcloud";
-    private static final String CONSUL_ACL_TOKEN = "consul.client.asl-token";
+    private static final String CONSUL_ACL_TOKEN = "consul.client.acl-token";
     private static final String VAULT_TOKEN = "vault.client.token";
     private static final String SPRING_CLOUD_CONFIG_USERNAME = "spring.cloud.config.username";
     private static final String SPRING_CLOUD_CONFIG_PASSWORD = "spring.cloud.config.password";
@@ -90,8 +90,10 @@ public final class RemoteConfigImportOptionBinder {
             String key = option.getKey();
             String normalizedCommon = COMMON_OPTIONS.get(key);
             if (normalizedCommon != null) {
-                if (!bound.containsKey(normalizedCommon) || RETRY_ATTEMPTS.equals(key)) {
+                if (RETRY_ATTEMPTS.equals(key)) {
                     bound.put(normalizedCommon, option.getValue());
+                } else {
+                    bound.computeIfAbsent(normalizedCommon, ignored -> option.getValue());
                 }
                 continue;
             }
@@ -111,24 +113,25 @@ public final class RemoteConfigImportOptionBinder {
         String password = connectionString.getPassword().orElse(null);
         switch (protocol) {
             case PROVIDER_CONSUL -> {
-                if (username != null && !username.isEmpty()) {
-                    bound.put(CONSUL_ACL_TOKEN, username);
+                if (username instanceof String value && !value.isEmpty()) {
+                    bound.put(CONSUL_ACL_TOKEN, value);
                 }
             }
             case PROVIDER_VAULT -> {
-                if (username != null && !username.isEmpty()) {
-                    bound.put(VAULT_TOKEN, username);
+                if (username instanceof String value && !value.isEmpty()) {
+                    bound.put(VAULT_TOKEN, value);
                 }
             }
             case PROVIDER_SPRING_CLOUD -> {
-                if (username != null && !username.isEmpty()) {
-                    bound.put(SPRING_CLOUD_CONFIG_USERNAME, username);
+                if (username instanceof String value && !value.isEmpty()) {
+                    bound.put(SPRING_CLOUD_CONFIG_USERNAME, value);
                 }
-                if (password != null && !password.isEmpty()) {
-                    bound.put(SPRING_CLOUD_CONFIG_PASSWORD, password);
+                if (password instanceof String value && !value.isEmpty()) {
+                    bound.put(SPRING_CLOUD_CONFIG_PASSWORD, value);
                 }
             }
             default -> {
+                // No user-info binding for other protocols.
             }
         }
     }

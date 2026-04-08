@@ -108,9 +108,15 @@ public final class VaultPropertySourceImporter extends RetryablePropertySourceIm
 
     private Map<String, Object> buildContextProperties(ConnectionString connectionString) {
         Map<String, Object> properties = new LinkedHashMap<>();
-        properties.put(VaultClientConfiguration.PREFIX + ".uri", "http://" + connectionString.getHosts().get(0).host() + ':' + connectionString.getHosts().get(0).port());
+        properties.put(VaultClientConfiguration.PREFIX + ".uri", buildUri(connectionString));
         properties.putAll(optionBinder.bind(connectionString));
         return properties;
+    }
+
+    private String buildUri(ConnectionString connectionString) {
+        ConnectionString.HostPort hostPort = connectionString.getHosts().getFirst();
+        Integer port = hostPort.port();
+        return port == null ? "http://" + hostPort.host() : "http://" + hostPort.host() + ':' + port;
     }
 
     private ApplicationContext getOrCreateContext(Map<String, Object> properties) {

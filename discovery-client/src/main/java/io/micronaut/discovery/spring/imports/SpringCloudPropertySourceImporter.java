@@ -59,7 +59,7 @@ public final class SpringCloudPropertySourceImporter extends RetryablePropertySo
         Map<String, Object> properties = buildContextProperties(connectionString);
         String[] segments = connectionString.getPath().split("/");
         if (segments.length < 2) {
-            return new SpringCloudImport(connectionString, properties, null, null, (String) properties.get(LABEL), connectionString.isOptional(), retryPolicy);
+            return new SpringCloudImport(connectionString, properties, null, null, label(properties), connectionString.isOptional(), retryPolicy);
         }
         String applicationName = segments[0];
         String profiles = segments[1];
@@ -89,19 +89,21 @@ public final class SpringCloudPropertySourceImporter extends RetryablePropertySo
         values.get("read-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.springcloudconfig.read-timeout", v));
         values.get("connect-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.springcloudconfig.connect-timeout", v));
 
-        return new SpringCloudImport(null, properties, applicationName, profiles, (String) properties.get(LABEL), values.get("optional", Boolean.class).orElse(false), retryPolicy);
+        return new SpringCloudImport(null, properties, applicationName, profiles, label(properties), values.get("optional", Boolean.class).orElse(false), retryPolicy);
     }
 
     @Override
     protected Optional<PropertySource> importRetryablePropertySource(ImportContext<SpringCloudImport> context) {
         SpringCloudImport declaration = context.importDeclaration();
-        if (declaration.applicationName() == null || declaration.profiles() == null) {
+        String applicationName = declaration.applicationName();
+        String profiles = declaration.profiles();
+        if (applicationName == null || profiles == null) {
             return Optional.empty();
         }
         Map<String, Object> properties = declaration.properties();
 
         ApplicationContext importerContext = getOrCreateContext(properties);
-        Map<String, Object> imported = importSupport.load(importerContext, declaration.applicationName(), declaration.profiles(), declaration.label(), declaration.optional());
+        Map<String, Object> imported = importSupport.load(importerContext, applicationName, profiles, declaration.label(), declaration.optional());
         if (imported.isEmpty()) {
             return Optional.empty();
         }
@@ -119,9 +121,19 @@ public final class SpringCloudPropertySourceImporter extends RetryablePropertySo
 
     private Map<String, Object> buildContextProperties(ConnectionString connectionString) {
         Map<String, Object> properties = new LinkedHashMap<>();
-        properties.put(SpringCloudClientConfiguration.PREFIX + ".uri", "http://" + connectionString.getHosts().get(0).host() + ':' + connectionString.getHosts().get(0).port());
+        properties.put(SpringCloudClientConfiguration.PREFIX + ".uri", buildUri(connectionString));
         properties.putAll(optionBinder.bind(connectionString));
         return properties;
+    }
+
+    private @Nullable String label(Map<String, Object> properties) {
+        return (String) properties.get(LABEL);
+    }
+
+    private String buildUri(ConnectionString connectionString) {
+        ConnectionString.HostPort hostPort = connectionString.getHosts().getFirst();
+        Integer port = hostPort.port();
+        return port == null ? "http://" + hostPort.host() : "http://" + hostPort.host() + ':' + port;
     }
 
     private ApplicationContext getOrCreateContext(Map<String, Object> properties) {
