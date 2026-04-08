@@ -27,6 +27,7 @@ import io.micronaut.discovery.consul.client.v1.KeyValue;
 import io.micronaut.discovery.imports.RemoteConfigImportOptionBinder;
 import io.micronaut.discovery.imports.RemoteConfigImportMetadata;
 import io.micronaut.jackson.env.JsonPropertySourceLoader;
+import org.jspecify.annotations.Nullable;
 import reactor.core.publisher.Flux;
 
 import java.util.Base64;
@@ -42,7 +43,7 @@ import java.util.Optional;
 @Internal
 final class ConsulImportSupport {
 
-    public Map<String, Object> load(ApplicationContext context, String path, String format, String datacenter) {
+    public Map<String, Object> load(ApplicationContext context, String path, String format, @Nullable String datacenter) {
         ConsulClient consulClient = context.getBean(ConsulClient.class);
         List<KeyValue> keyValues = Flux.from(consulClient.readValues(path, datacenter, null, null)).blockFirst();
         if (keyValues == null || keyValues.isEmpty()) {

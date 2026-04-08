@@ -137,7 +137,7 @@ public final class VaultPropertySourceImporter extends RetryablePropertySourceIm
      * @param optional Whether the import is optional
      * @param retryPolicy The resolved import retry policy
      */
-    public record VaultImport(ConnectionString connectionString,
+    public record VaultImport(@Nullable ConnectionString connectionString,
                               Map<String, Object> properties,
                               String secretPath,
                               boolean optional,

@@ -122,16 +122,18 @@ public class ConsulConfiguration extends DiscoveryClientConfiguration {
 
     /**
      * @return The token to include in all requests as the {@code X-Consul-Token} header
+     * @deprecated Use {@link #getAclToken()}.
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public Optional<String> getAslToken() {
         return Optional.ofNullable(aclToken);
     }
 
     /**
      * @param aslToken The asl token
+     * @deprecated Use {@link #setAclToken(String)}.
      */
-    @Deprecated
+    @Deprecated(since = "5.0", forRemoval = true)
     public void setAslToken(String aslToken) {
         this.aclToken = aslToken;
     }

@@ -97,9 +97,6 @@ public final class SpringCloudPropertySourceImporter extends RetryablePropertySo
         SpringCloudImport declaration = context.importDeclaration();
         String applicationName = declaration.applicationName();
         String profiles = declaration.profiles();
-        if (applicationName == null || profiles == null) {
-            return Optional.empty();
-        }
         Map<String, Object> properties = declaration.properties();
 
         ApplicationContext importerContext = getOrCreateContext(properties);
@@ -156,11 +153,11 @@ public final class SpringCloudPropertySourceImporter extends RetryablePropertySo
      * @param optional Whether the import is optional
      * @param retryPolicy The resolved import retry policy
      */
-    public record SpringCloudImport(ConnectionString connectionString,
+    public record SpringCloudImport(@Nullable ConnectionString connectionString,
                                     Map<String, Object> properties,
                                     String applicationName,
                                     String profiles,
-                                    String label,
+                                    @Nullable String label,
                                     boolean optional,
                                     RetryPolicy retryPolicy) {
     }
