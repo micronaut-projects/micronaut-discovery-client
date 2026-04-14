@@ -18,6 +18,8 @@ package io.micronaut.discovery.vault
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.env.Environment
 import io.micronaut.context.exceptions.ConfigurationException
+import io.micronaut.core.util.ConnectionString
+import io.micronaut.discovery.vault.imports.VaultPropertySourceImporter
 import io.micronaut.runtime.server.EmbeddedServer
 import spock.lang.AutoCleanup
 import spock.lang.Shared
@@ -94,5 +96,16 @@ class VaultPropertySourceImporterSpec extends Specification {
 
         then:
         thrown(ConfigurationException)
+    }
+
+    void 'vault importer defaults uri port to 8200 when omitted'() {
+        given:
+        def importer = new VaultPropertySourceImporter()
+
+        when:
+        def declaration = importer.newImportDeclaration(ConnectionString.parse('vault://localhost/application'), null)
+
+        then:
+        declaration.properties()['vault.client.uri'] == 'http://localhost:8200'
     }
 }

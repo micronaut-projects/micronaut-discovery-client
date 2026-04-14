@@ -17,8 +17,10 @@ package io.micronaut.discovery.consul
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.env.Environment
+import io.micronaut.core.convert.value.ConvertibleValues
 import io.micronaut.discovery.consul.watch.Watcher
 import io.micronaut.discovery.consul.client.v1.ConsulClient
+import io.micronaut.discovery.consul.imports.ConsulPropertySourceImporter
 import io.micronaut.runtime.server.EmbeddedServer
 import reactor.core.publisher.Flux
 import spock.lang.AutoCleanup
@@ -129,6 +131,60 @@ class ConsulPropertySourceImporterSpec extends Specification {
 
         cleanup:
         context.close()
+    }
+
+    void 'consul importer map configuration binds acl token and config fail fast'() {
+        given:
+        def importer = new ConsulPropertySourceImporter()
+
+        when:
+        def declaration = importer.newImportDeclaration(ConvertibleValues.of([
+            host: 'localhost',
+            path: 'config/application',
+            'acl-token': 'secret',
+            'fail-fast': true
+        ]), null)
+
+        then:
+        declaration.properties()['consul.client.acl-token'] == 'secret'
+        declaration.properties()['consul.client.config.fail-fast'] == true
+    }
+
+    void 'consul importer normalizes yml watch format to YAML'() {
+        given:
+        def importer = new ConsulPropertySourceImporter()
+        def method = ConsulPropertySourceImporter.getDeclaredMethod('normalizeWatchFormat', String)
+        method.accessible = true
+
+        expect:
+        method.invoke(importer, 'yml') == 'YAML'
+    }
+
+    void 'consul importer uses acl token query option for authenticated server'() {
+        given:
+        EmbeddedServer authenticatedConsulServer = ApplicationContext.run(EmbeddedServer, [
+            (MockConsulServer.ENABLED): true,
+            'consul.client.acl-token': 'secret'
+        ])
+        ApplicationContext authenticatedWriterContext = ApplicationContext.run([
+            'consul.client.host': 'localhost',
+            'consul.client.port': authenticatedConsulServer.port,
+            'consul.client.acl-token': 'secret'
+        ])
+        Flux.from(authenticatedWriterContext.getBean(ConsulClient).putValue('/config/application/message', 'hello')).blockFirst()
+
+        when:
+        ApplicationContext context = ApplicationContext.run([
+            'micronaut.config.import': "consul://localhost:${authenticatedConsulServer.port}/config/application?acl-token=secret"
+        ])
+
+        then:
+        context.getRequiredProperty('message', String) == 'hello'
+
+        cleanup:
+        context?.close()
+        authenticatedWriterContext.close()
+        authenticatedConsulServer.close()
     }
 
     private void writeValue(String key, String value) {

@@ -163,6 +163,21 @@ class WatcherSpec extends Specification {
         conditions.await(5)
     }
 
+    void "test that Native watcher uses delimited recursive path for namespace watch"() {
+        given:
+        watcher = new NativeWatcher(List.of("path/to/application"), consulClient, watchConfiguration, propertiesChangeHandler)
+        def keyValue = new KeyValue(1234, "path/to/application/message", base64Encoder.encodeToString("value".getBytes()))
+
+        1 * consulClient.watchValues("path/to/application/", true, null) >> Mono.just(List.of(keyValue))
+        _ * watchConfiguration.getDelayDuration() >> Duration.ofSeconds(5)
+
+        when:
+        watcher.start()
+
+        then:
+        0 * propertiesChangeHandler._
+    }
+
     void "test that Native handle null KV"() {
         given:
         watcher = new NativeWatcher(List.of("path/to/yaml"), consulClient, watchConfiguration, propertiesChangeHandler)

@@ -40,6 +40,8 @@ import java.util.Optional;
 @Internal
 public final class VaultPropertySourceImporter extends RetryablePropertySourceImporter<VaultPropertySourceImporter.VaultImport> {
 
+    private static final int DEFAULT_PORT = 8200;
+
     private final RemoteConfigImportOptionBinder optionBinder = new RemoteConfigImportOptionBinder();
     private final RemoteConfigImporterContextFactory contextFactory = new RemoteConfigImporterContextFactory();
     private final VaultImportSupport importSupport = new VaultImportSupport();
@@ -116,7 +118,7 @@ public final class VaultPropertySourceImporter extends RetryablePropertySourceIm
     private String buildUri(ConnectionString connectionString) {
         ConnectionString.HostPort hostPort = connectionString.getHosts().getFirst();
         Integer port = hostPort.port();
-        return port == null ? "http://" + hostPort.host() : "http://" + hostPort.host() + ':' + port;
+        return "http://" + hostPort.host() + ':' + (port == null ? DEFAULT_PORT : port);
     }
 
     private ApplicationContext getOrCreateContext(Map<String, Object> properties) {

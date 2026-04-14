@@ -47,6 +47,8 @@ public final class ConsulPropertySourceImporter extends RetryablePropertySourceI
     private static final String PROVIDER = "consul";
     private static final String CONSUL_HOST = ConsulConfiguration.PREFIX + ".host";
     private static final String CONSUL_PORT = ConsulConfiguration.PREFIX + ".port";
+    private static final String CONSUL_ACL_TOKEN = ConsulConfiguration.PREFIX + ".acl-token";
+    private static final String CONSUL_CONFIG_FAIL_FAST = ConsulConfiguration.PREFIX + ".config.fail-fast";
 
     private final RemoteConfigImportOptionBinder optionBinder = new RemoteConfigImportOptionBinder();
     private final RemoteConfigImporterContextFactory contextFactory = new RemoteConfigImporterContextFactory();
@@ -89,8 +91,8 @@ public final class ConsulPropertySourceImporter extends RetryablePropertySourceI
         if (datacenter != null) {
             properties.put(ConsulConfiguration.PREFIX + ".config.datacenter", datacenter);
         }
-        values.get("acl-token", String.class).ifPresent(v -> properties.put("consul.client.acl-token", v));
-        values.get("fail-fast", Boolean.class).ifPresent(v -> properties.put("consul.client.fail-fast", v));
+        values.get("acl-token", String.class).ifPresent(v -> properties.put(CONSUL_ACL_TOKEN, v));
+        values.get("fail-fast", Boolean.class).ifPresent(v -> properties.put(CONSUL_CONFIG_FAIL_FAST, v));
         values.get("read-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.consul.read-timeout", v));
         values.get("connect-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.consul.connect-timeout", v));
 
@@ -128,7 +130,7 @@ public final class ConsulPropertySourceImporter extends RetryablePropertySourceI
             if (watchPath != null) {
                 imported.put(WatchConfiguration.IMPORTED_PATHS, watchPath);
             }
-            imported.put(WatchConfiguration.IMPORTED_FORMAT, format.toUpperCase(Locale.ENGLISH));
+            imported.put(WatchConfiguration.IMPORTED_FORMAT, normalizeWatchFormat(format));
         }
         return Optional.of(PropertySource.of(propertySourceName, imported, EnvironmentPropertySource.POSITION + 100));
     }
@@ -160,6 +162,16 @@ public final class ConsulPropertySourceImporter extends RetryablePropertySourceI
             applicationContext = contextFactory.build(properties);
         }
         return applicationContext;
+    }
+
+    private String normalizeWatchFormat(String format) {
+        return switch (format.toLowerCase(Locale.ENGLISH)) {
+            case RemoteConfigImportOptionBinder.FORMAT_YML, RemoteConfigImportOptionBinder.FORMAT_YAML -> ConfigDiscoveryConfiguration.Format.YAML.name();
+            case RemoteConfigImportOptionBinder.FORMAT_JSON -> ConfigDiscoveryConfiguration.Format.JSON.name();
+            case RemoteConfigImportOptionBinder.FORMAT_PROPERTIES -> ConfigDiscoveryConfiguration.Format.PROPERTIES.name();
+            case RemoteConfigImportOptionBinder.FORMAT_NATIVE -> ConfigDiscoveryConfiguration.Format.NATIVE.name();
+            default -> format.toUpperCase(Locale.ENGLISH);
+        };
     }
 
     /**

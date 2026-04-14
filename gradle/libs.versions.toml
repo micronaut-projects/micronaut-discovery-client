@@ -1,6 +1,6 @@
 [versions]
 # Micronaut
-micronaut = "5.0.0-M20"
+micronaut = "5.0.0-M22"
 micronaut-platform = "4.10.6"
 micronaut-serde = "3.0.0-M2"
 micronaut-test = "5.0.0-M3"

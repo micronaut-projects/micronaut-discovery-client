@@ -18,6 +18,8 @@ package io.micronaut.discovery.spring
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.env.Environment
 import io.micronaut.context.exceptions.ConfigurationException
+import io.micronaut.core.util.ConnectionString
+import io.micronaut.discovery.spring.imports.SpringCloudPropertySourceImporter
 import io.micronaut.runtime.server.EmbeddedServer
 import spock.lang.AutoCleanup
 import spock.lang.Shared
@@ -95,5 +97,28 @@ class SpringCloudPropertySourceImporterSpec extends Specification {
 
         then:
         thrown(ConfigurationException)
+    }
+
+    void 'springcloud importer fails fast for missing profiles segment'() {
+        given:
+        def importer = new SpringCloudPropertySourceImporter()
+
+        when:
+        importer.newImportDeclaration(ConnectionString.parse("springcloud://localhost:${configServer.port}/myapp"), null)
+
+        then:
+        ConfigurationException e = thrown()
+        e.message.contains("requires path '<application>/<profiles>'")
+    }
+
+    void 'springcloud importer defaults uri port to 8888 when omitted'() {
+        given:
+        def importer = new SpringCloudPropertySourceImporter()
+
+        when:
+        def declaration = importer.newImportDeclaration(ConnectionString.parse('springcloud://localhost/myapp/default'), null)
+
+        then:
+        declaration.properties()['spring.cloud.config.uri'] == 'http://localhost:8888'
     }
 }

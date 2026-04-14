@@ -28,6 +28,7 @@ import io.micronaut.retry.RetryPolicy;
 
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.env.EnvironmentPropertySource;
+import io.micronaut.core.util.StringUtils;
 import org.jspecify.annotations.Nullable;
 
 import java.util.LinkedHashMap;
@@ -42,6 +43,7 @@ public final class SpringCloudPropertySourceImporter extends RetryablePropertySo
 
     private static final String PROVIDER = "springcloud";
     private static final String LABEL = "spring.cloud.config.label";
+    private static final int DEFAULT_PORT = 8888;
 
     private final RemoteConfigImportOptionBinder optionBinder = new RemoteConfigImportOptionBinder();
     private final RemoteConfigImporterContextFactory contextFactory = new RemoteConfigImporterContextFactory();
@@ -57,10 +59,7 @@ public final class SpringCloudPropertySourceImporter extends RetryablePropertySo
     @Override
     protected SpringCloudImport newImportDeclaration(ConnectionString connectionString, RetryPolicy retryPolicy) {
         Map<String, Object> properties = buildContextProperties(connectionString);
-        String[] segments = connectionString.getPath().split("/");
-        if (segments.length < 2) {
-            return new SpringCloudImport(connectionString, properties, null, null, label(properties), connectionString.isOptional(), retryPolicy);
-        }
+        String[] segments = parseImportPath(connectionString);
         String applicationName = segments[0];
         String profiles = segments[1];
         String label = (String) properties.get(LABEL);
@@ -130,7 +129,16 @@ public final class SpringCloudPropertySourceImporter extends RetryablePropertySo
     private String buildUri(ConnectionString connectionString) {
         ConnectionString.HostPort hostPort = connectionString.getHosts().getFirst();
         Integer port = hostPort.port();
-        return port == null ? "http://" + hostPort.host() : "http://" + hostPort.host() + ':' + port;
+        return "http://" + hostPort.host() + ':' + (port == null ? DEFAULT_PORT : port);
+    }
+
+    private String[] parseImportPath(ConnectionString connectionString) {
+        String path = connectionString.getPath();
+        String[] segments = path.split("/", -1);
+        if (segments.length < 2 || StringUtils.isEmpty(segments[0]) || StringUtils.isEmpty(segments[1])) {
+            throw new ConfigurationException("Config import provider [springcloud] requires path '<application>/<profiles>': " + connectionString);
+        }
+        return segments;
     }
 
     private ApplicationContext getOrCreateContext(Map<String, Object> properties) {
