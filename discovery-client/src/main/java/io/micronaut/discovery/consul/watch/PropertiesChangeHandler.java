@@ -23,7 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
 
+import io.micronaut.scheduling.TaskExecutors;
+import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 
 import org.slf4j.Logger;
@@ -53,11 +56,16 @@ public class PropertiesChangeHandler {
     private final ApplicationEventPublisher<RefreshEvent> eventPublisher;
 
     private final Map<String, String> propertySourceNames = new ConcurrentHashMap<>();
+    private final WatchConfiguration watchConfiguration;
+    private final ExecutorService executorService;
 
     PropertiesChangeHandler(final Environment environment,
-                            final ApplicationEventPublisher<RefreshEvent> eventPublisher) {
+                            final ApplicationEventPublisher<RefreshEvent> eventPublisher, WatchConfiguration watchConfiguration,
+                            @Named(TaskExecutors.BLOCKING) ExecutorService executorService) {
         this.environment = environment;
         this.eventPublisher = eventPublisher;
+        this.watchConfiguration = watchConfiguration;
+        this.executorService = executorService;
     }
 
     /**
@@ -94,8 +102,16 @@ public class PropertiesChangeHandler {
                 LOG.debug("No properties differences found for update of kvPath={}", kvPath);
             } else {
                 updatePropertySources(kvPath, next);
+                List<String> importedPaths = watchConfiguration.getImportedPaths().orElse(List.of());
+                if (importedPaths.stream().anyMatch(s -> s.equals(kvPath))) {
+                    executorService.execute(() -> {
+                        Map<String, Object> diff = environment.refreshAndDiff();
+                        publishDifferences(diff);
+                    });
+                } else {
+                    publishDifferences(differences);
+                }
 
-                publishDifferences(differences);
             }
         } catch (final Exception e) {
             LOG.error("Unable to apply configuration changes", e);

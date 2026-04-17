@@ -68,7 +68,7 @@ final class NativeWatcher extends AbstractWatcher<List<KeyValue>> {
                 .max(Integer::compareTo)
                 .orElse(NO_INDEX);
         LOG.debug("Watching kvPath={} with index={}", kvPath, modifiedIndex);
-        return consulClient.watchValues(kvPath, true, modifiedIndex);
+        return consulClient.watchValues(recursePath(kvPath), true, modifiedIndex);
     }
 
     @Override
@@ -85,11 +85,15 @@ final class NativeWatcher extends AbstractWatcher<List<KeyValue>> {
         return keyValues.stream()
                 .filter(Objects::nonNull)
                 .filter(kv -> StringUtils.isNotEmpty(kv.getValue()))
-                .collect(Collectors.toMap(this::pathToPropertyKey, keyValue -> new String(decodeValue(keyValue))));
+                .collect(Collectors.toMap(this::pathToPropertyKey, keyValue -> new String(decodeValue(keyValue)), (previous, next) -> next));
     }
 
     private String pathToPropertyKey(final KeyValue kv) {
         return keysMap.computeIfAbsent(kv.getKey(), key -> CollectionUtils.last(List.of(key.split("/"))));
+    }
+
+    private String recursePath(String kvPath) {
+        return kvPath.endsWith("/") ? kvPath : kvPath + '/';
     }
 
 }

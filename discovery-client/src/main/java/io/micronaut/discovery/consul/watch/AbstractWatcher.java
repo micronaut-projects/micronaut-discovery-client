@@ -16,6 +16,7 @@
 package io.micronaut.discovery.consul.watch;
 
 import java.util.Base64;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -112,12 +113,9 @@ abstract sealed class AbstractWatcher<V> implements Watcher permits Configuratio
     }
 
     private void watchKvPath(final String kvPath) {
-        if (!started) {
-            LOG.warn("Watcher is not started");
-            return;
-        }
+        Duration delayDuration = blockingQueriesConfiguration.getDelayDuration();
         // delaying to avoid flood caused by multiple consecutive calls
-        final var disposable = Mono.delay(blockingQueriesConfiguration.getDelayDuration())
+        final var disposable = Mono.delay(delayDuration)
             .then(watchValue(kvPath))
             .subscribe(next -> onNext(kvPath, next), throwable -> onError(kvPath, throwable));
 

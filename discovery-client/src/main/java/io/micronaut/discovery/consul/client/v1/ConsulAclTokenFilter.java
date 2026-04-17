@@ -37,7 +37,7 @@ import java.util.Optional;
 @Filter(patterns = "/v1/**", serviceId = ConsulClient.SERVICE_ID)
 @Requires(beans = ConsulConfiguration.class)
 @BootstrapContextCompatible
-public class ConsulAslTokenFilter implements HttpClientFilter, Toggleable {
+public class ConsulAclTokenFilter implements HttpClientFilter, Toggleable {
 
     /**
      * Consult header token.
@@ -49,18 +49,18 @@ public class ConsulAslTokenFilter implements HttpClientFilter, Toggleable {
     /**
      * @param configuration The Consul configuration
      */
-    public ConsulAslTokenFilter(ConsulConfiguration configuration) {
+    public ConsulAclTokenFilter(ConsulConfiguration configuration) {
         this.configuration = configuration;
     }
 
     @Override
     public boolean isEnabled() {
-        return configuration.getAslToken().isPresent();
+        return configuration.getAclToken().isPresent();
     }
 
     @Override
     public Publisher<? extends HttpResponse<?>> doFilter(MutableHttpRequest<?> request, ClientFilterChain chain) {
-        Optional<String> aslToken = configuration.getAslToken();
+        Optional<String> aslToken = configuration.getAclToken();
         aslToken.ifPresent(token -> request.header(HEADER_CONSUL_TOKEN, token));
         return chain.proceed(request);
     }
