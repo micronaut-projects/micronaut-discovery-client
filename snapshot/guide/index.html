@@ -50,15 +50,19 @@
                                 
                                 <div class="toc-item" style="margin-left:0"><a href="#releaseHistory"><strong>2</strong><span>Release History</span></a></div>
                                 
-                                <div class="toc-item" style="margin-left:0"><a href="#serviceDiscoveryConsul"><strong>3</strong><span>Consul Support</span></a></div>
+                                <div class="toc-item" style="margin-left:0"><a href="#distributedConfiguration"><strong>3</strong><span>Distributed Configuration</span></a></div>
                                 
-                                <div class="toc-item" style="margin-left:0"><a href="#serviceDiscoveryEureka"><strong>4</strong><span>Eureka Support</span></a></div>
+                                <div class="toc-item" style="margin-left:0"><a href="#serviceDiscoveryConsul"><strong>4</strong><span>Consul Support</span></a></div>
                                 
-                                <div class="toc-item" style="margin-left:0"><a href="#springCloudConfigServer"><strong>5</strong><span>Spring Cloud Config Server Support</span></a></div>
+                                <div class="toc-item" style="margin-left:0"><a href="#serviceDiscoveryEureka"><strong>5</strong><span>Eureka Support</span></a></div>
                                 
-                                <div class="toc-item" style="margin-left:0"><a href="#breaks"><strong>6</strong><span>Breaking Changes</span></a></div>
+                                <div class="toc-item" style="margin-left:0"><a href="#springCloudConfigServer"><strong>6</strong><span>Spring Cloud Config Server Support</span></a></div>
                                 
-                                <div class="toc-item" style="margin-left:0"><a href="#repository"><strong>7</strong><span>Repository</span></a></div>
+                                <div class="toc-item" style="margin-left:0"><a href="#distributedConfigurationVault"><strong>7</strong><span>HashiCorp Vault Support</span></a></div>
+                                
+                                <div class="toc-item" style="margin-left:0"><a href="#breaks"><strong>8</strong><span>Breaking Changes</span></a></div>
+                                
+                                <div class="toc-item" style="margin-left:0"><a href="#repository"><strong>9</strong><span>Repository</span></a></div>
                                 
                             </div>
                         </div>
@@ -93,15 +97,19 @@
         
         <div class="toc-item" style="margin-left:0px" id="toc-item-releaseHistory"><a href="#releaseHistory"><strong>2</strong><span>Release History</span></a></div>
         
-        <div class="toc-item" style="margin-left:0px" id="toc-item-serviceDiscoveryConsul"><a href="#serviceDiscoveryConsul"><strong>3</strong><span>Consul Support</span></a></div>
+        <div class="toc-item" style="margin-left:0px" id="toc-item-distributedConfiguration"><a href="#distributedConfiguration"><strong>3</strong><span>Distributed Configuration</span></a></div>
         
-        <div class="toc-item" style="margin-left:0px" id="toc-item-serviceDiscoveryEureka"><a href="#serviceDiscoveryEureka"><strong>4</strong><span>Eureka Support</span></a></div>
+        <div class="toc-item" style="margin-left:0px" id="toc-item-serviceDiscoveryConsul"><a href="#serviceDiscoveryConsul"><strong>4</strong><span>Consul Support</span></a></div>
         
-        <div class="toc-item" style="margin-left:0px" id="toc-item-springCloudConfigServer"><a href="#springCloudConfigServer"><strong>5</strong><span>Spring Cloud Config Server Support</span></a></div>
+        <div class="toc-item" style="margin-left:0px" id="toc-item-serviceDiscoveryEureka"><a href="#serviceDiscoveryEureka"><strong>5</strong><span>Eureka Support</span></a></div>
         
-        <div class="toc-item" style="margin-left:0px" id="toc-item-breaks"><a href="#breaks"><strong>6</strong><span>Breaking Changes</span></a></div>
+        <div class="toc-item" style="margin-left:0px" id="toc-item-springCloudConfigServer"><a href="#springCloudConfigServer"><strong>6</strong><span>Spring Cloud Config Server Support</span></a></div>
         
-        <div class="toc-item" style="margin-left:0px" id="toc-item-repository"><a href="#repository"><strong>7</strong><span>Repository</span></a></div>
+        <div class="toc-item" style="margin-left:0px" id="toc-item-distributedConfigurationVault"><a href="#distributedConfigurationVault"><strong>7</strong><span>HashiCorp Vault Support</span></a></div>
+        
+        <div class="toc-item" style="margin-left:0px" id="toc-item-breaks"><a href="#breaks"><strong>8</strong><span>Breaking Changes</span></a></div>
+        
+        <div class="toc-item" style="margin-left:0px" id="toc-item-repository"><a href="#repository"><strong>9</strong><span>Repository</span></a></div>
         
         </div>
     </div>
@@ -197,6 +205,12 @@
 </div>
 <div class="paragraph">
 <p>The <code>discovery-client</code> dependency provides implementations of the <a href="https://docs.micronaut.io/latest/api/io/micronaut/discovery/DiscoveryClient">DiscoveryClient</a> interface.</p>
+</div>
+<div class="paragraph">
+<p>It also provides distributed configuration integrations for Consul, Vault, and Spring Cloud Config Server. The preferred way to consume those remote configuration sources is with explicit <code>micronaut.config.import</code> URIs instead of the deprecated bootstrap <code>ConfigurationClient</code> path.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="#distributedConfiguration">Distributed Configuration</a> for the shared overview and the provider-specific sections for Consul, Vault, and Spring Cloud Config Server.</p>
 </div>
 <div class="paragraph">
 <p>The <a href="https://docs.micronaut.io/latest/api/io/micronaut/discovery/DiscoveryClient">DiscoveryClient</a> is fairly simple and provides two main entry points:</p>
@@ -366,7 +380,44 @@
 <p><a href="https://github.com/micronaut-projects/micronaut-discovery-client/releases">https://github.com/micronaut-projects/micronaut-discovery-client/releases</a></p>
 </div>
 
-<h1 id="serviceDiscoveryConsul"><a class="anchor" href="#serviceDiscoveryConsul"></a>3 Consul Support</h1>
+<h1 id="distributedConfiguration"><a class="anchor" href="#distributedConfiguration"></a>3 Distributed Configuration</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.0.x/src/main/docs/guide/distributedConfiguration.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div id="distributedConfiguration" class="paragraph">
+<p>Micronaut features a robust system for externalizing and adapting configuration to the environment.</p>
+</div>
+<div class="paragraph">
+<p>When multiple services need to share configuration, this module provides Micronaut&#8217;s distributed configuration integrations for Consul, Vault, and Spring Cloud Config Server.</p>
+</div>
+<div class="paragraph">
+<p>For new applications and new integrations, the recommended approach is to use <a href="https://docs.micronaut.io/latest/guide/index.html#configImport">configuration import</a> via <code>micronaut.config.import</code> instead of relying on the bootstrap context. Configuration imports load remote or shared configuration as part of normal property source resolution, and custom remote sources can be integrated with <a href="https://docs.micronaut.io/latest/guide/index.html#customPropertySourceImporter"><code>PropertySourceImporter</code></a> implementations.</p>
+</div>
+<div class="paragraph">
+<p>The legacy bootstrap model is still available for compatibility and migrations. In that model, <a href="../api/io/micronaut/discovery/config/ConfigurationClient.html">ConfigurationClient</a> implementations resolve remote property sources during bootstrap and emit zero or many <a href="../api/io/micronaut/context/env/PropertySource.html">PropertySource</a> instances.</p>
+</div>
+<div class="paragraph">
+<p>You can either implement your own <a href="../api/io/micronaut/discovery/config/ConfigurationClient.html">ConfigurationClient</a> or use the integrations provided by this module. For new work, prefer configuration import support and importer-based integrations. The following sections cover the available distributed configuration options.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The bootstrap context is still supported for legacy scenarios, but it is no longer the recommended default for distributed configuration. If you still load distributed configuration during bootstrap, the application needs the discovery client infrastructure from <code>io.micronaut.discovery:micronaut-discovery-client</code>, and any beans involved in resolving that configuration must remain bootstrap-compatible. See <a href="https://docs.micronaut.io/latest/guide/index.html#bootstrap">Bootstrap Configuration</a> for the legacy requirements.
+</td>
+</tr>
+</table>
+</div>
+
+<h1 id="serviceDiscoveryConsul"><a class="anchor" href="#serviceDiscoveryConsul"></a>4 Consul Support</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.0.x/src/main/docs/guide/serviceDiscoveryConsul.adoc"'>
@@ -1079,6 +1130,781 @@ consul.client.registration.check.http=true</code></pre>
 </div>
 </div>
 <div class="sect1">
+<h2 id="distributedConfigurationConsul">Distributed Configuration with Consul</h2>
+<div class="sectionbody">
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">Using the CLI</div>
+<div class="paragraph">
+<p>If you create your project using the Micronaut CLI, supply the <code>config-consul</code> feature to enable Consul distributed configuration in your project:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ mn create-app my-app --features config-consul</pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The legacy bootstrap <code>ConfigurationClient</code> approach is deprecated. Prefer <code>micronaut.config.import</code> for distributed configuration and use the legacy bootstrap path only during migration.</p>
+</div>
+<div class="sect2">
+<h3 id="_importing_consul_configuration">Importing Consul configuration</h3>
+<div class="paragraph">
+<p>The preferred approach is to import explicit Consul KV paths with <code>micronaut.config.import</code>:</p>
+</div>
+<div class="openblock">
+<div class="title">Importing Consul configuration with micronaut.config.import</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.config.import=consul://localhost:8500/config/application</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
+  config:
+    import: "consul://localhost:8500/config/application"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.config]
+    import="consul://localhost:8500/config/application"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  config {
+    'import' = "consul://localhost:8500/config/application"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    config {
+      import = "consul://localhost:8500/config/application"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "config": {
+      "import": "consul://localhost:8500/config/application"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>To load structured data formats from an explicit namespace:</p>
+</div>
+<div class="openblock">
+<div class="title">Importing structured Consul configuration</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.config.import=consul://localhost:8500/config/application?format=json</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
+  config:
+    import: "consul://localhost:8500/config/application?format=json"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.config]
+    import="consul://localhost:8500/config/application?format=json"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  config {
+    'import' = "consul://localhost:8500/config/application?format=json"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    config {
+      import = "consul://localhost:8500/config/application?format=json"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "config": {
+      "import": "consul://localhost:8500/config/application?format=json"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>For ACL-protected Consul instances, prefer URI user-info:</p>
+</div>
+<div class="openblock">
+<div class="title">Importing Consul configuration with an ACL token</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.config.import=consul://token@localhost:8500/config/application</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
+  config:
+    import: "consul://token@localhost:8500/config/application"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.config]
+    import="consul://token@localhost:8500/config/application"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  config {
+    'import' = "consul://token@localhost:8500/config/application"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    config {
+      import = "consul://token@localhost:8500/config/application"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "config": {
+      "import": "consul://token@localhost:8500/config/application"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Query-parameter ACL tokens are also supported during migration:</p>
+</div>
+<div class="openblock">
+<div class="title">Importing Consul configuration with an ACL token query parameter</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.config.import=consul://localhost:8500/config/application?acl-token=token</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
+  config:
+    import: "consul://localhost:8500/config/application?acl-token=token"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.config]
+    import="consul://localhost:8500/config/application?acl-token=token"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  config {
+    'import' = "consul://localhost:8500/config/application?acl-token=token"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    config {
+      import = "consul://localhost:8500/config/application?acl-token=token"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "config": {
+      "import": "consul://localhost:8500/config/application?acl-token=token"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>To enable refresh for an explicit importer path, append <code>watch=true</code>:</p>
+</div>
+<div class="openblock">
+<div class="title">Importing Consul configuration with refresh enabled</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.config.import=consul://localhost:8500/config/application?watch=true</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
+  config:
+    import: "consul://localhost:8500/config/application?watch=true"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.config]
+    import="consul://localhost:8500/config/application?watch=true"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  config {
+    'import' = "consul://localhost:8500/config/application?watch=true"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    config {
+      import = "consul://localhost:8500/config/application?watch=true"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "config": {
+      "import": "consul://localhost:8500/config/application?watch=true"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>When <code>watch=true</code> is used, Consul change notifications trigger an environment refresh so the imported configuration is reloaded and a <code>RefreshEvent</code> is published.</p>
+</div>
+<div class="paragraph">
+<p>Treat import URIs with embedded credentials as sensitive values and store them accordingly.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_consul_import_uri_reference">Consul import URI reference</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">ConnectionString part</th>
+<th class="tableblock halign-left valign-top">Example</th>
+<th class="tableblock halign-left valign-top">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scheme</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>consul://</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Selects the Consul importer.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">User info</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>consul://token@localhost:8500/config/application</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional Consul ACL token. The importer binds the URI username as the Consul ACL token.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Host and port</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>localhost:8500</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Consul host and port.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Path</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/config/application</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Required explicit Consul KV/config path.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Query string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?format=json&amp;watch=true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional importer settings.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">Example</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>format</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?format=json</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Consul config format. Supported values are <code>native</code>, <code>json</code>, <code>yaml</code>, <code>yml</code>, <code>properties</code>, and <code>file</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dc</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?dc=dc1</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Consul datacenter.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>acl-token</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?acl-token=token</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Consul ACL token. Prefer URI user-info instead.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>fail-fast</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?fail-fast=false</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether failures should abort startup immediately.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>watch</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?watch=true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables importer-driven refresh for the explicit Consul import path.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>retry-attempts</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?retry-attempts=3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of config import retry attempts handled by Micronaut&#8217;s retryable importer support.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>retry-count</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?retry-count=3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alias for <code>retry-attempts</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>retry-delay</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?retry-delay=1s</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delay between import retries.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>retry-max-delay</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?retry-max-delay=30s</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum overall retry delay.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>retry-multiplier</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?retry-multiplier=2.0</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Multiplier applied between retry delays.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>retry-jitter</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?retry-jitter=0.2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Retry jitter factor from <code>0.0</code> to <code>1.0</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>read-timeout</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?read-timeout=5s</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Read timeout for Consul client calls.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>connect-timeout</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?connect-timeout=5s</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Connection timeout for Consul client calls.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Consul config import retries are now handled by Micronaut core&#8217;s retryable importer support. Do not combine these import retry settings with separate Consul client retry configuration for the same import path, or retries will be duplicated.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_legacy_bootstrap_configuration">Legacy bootstrap configuration</h3>
+<div class="paragraph">
+<p>To enable the legacy bootstrap integration, create a <code>src/main/resources/bootstrap.[yml/toml/properties]</code> file with the following configuration:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.application.name=hello-world
+micronaut.config-client.enabled=true
+consul.client.defaultZone=${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
+  application:
+    name: hello-world
+  config-client:
+    enabled: true
+consul:
+  client:
+    defaultZone: "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.application]
+    name="hello-world"
+  [micronaut.config-client]
+    enabled=true
+[consul]
+  [consul.client]
+    defaultZone="${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  application {
+    name = "hello-world"
+  }
+  configClient {
+    enabled = true
+  }
+}
+consul {
+  client {
+    defaultZone = "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    application {
+      name = "hello-world"
+    }
+    config-client {
+      enabled = true
+    }
+  }
+  consul {
+    client {
+      defaultZone = "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "application": {
+      "name": "hello-world"
+    },
+    "config-client": {
+      "enabled": true
+    }
+  },
+  "consul": {
+    "client": {
+      "defaultZone": "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>After enabling distributed configuration, store the configuration to share in Consul&#8217;s key/value store.</p>
+</div>
+<div class="sect3">
+<h4 id="_storing_configuration_as_keyvalue_pairs">Storing configuration as key/value pairs</h4>
+<div class="paragraph">
+<p>One option is to store keys and values directly in Consul. In this mode, Micronaut looks for configuration in the Consul <code>/config</code> directory by default.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+You can alter the path by setting <code>consul.client.config.path</code>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Within the configured path, Micronaut resolves values from the following directories in order of precedence:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Legacy Consul configuration resolution precedence</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Directory</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/config/application</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configuration shared by all applications</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/config/application,prod</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configuration shared by all applications for the <code>prod</code> environment</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/config/[APPLICATION_NAME]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Application-specific configuration, for example <code>/config/hello-world</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/config/[APPLICATION_NAME],prod</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Application-specific configuration for an active environment</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The value of <code>APPLICATION_NAME</code> comes from <code>micronaut.application.name</code> in <code>bootstrap</code> configuration.</p>
+</div>
+<div class="paragraph">
+<p>For example, this cURL command stores <code>foo.bar=myvalue</code> in <code>/config/application</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">Using cURL to write a value</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -X PUT -d @- localhost:8500/v1/kv/config/application/foo.bar &lt;&lt;&lt; myvalue</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>With the legacy bootstrap integration enabled, <code>@Value("${foo.bar}")</code> and <code>environment.getProperty(..)</code> can then resolve the value from Consul.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_storing_configuration_in_yaml_json_or_properties_format">Storing configuration in YAML, JSON, or properties format</h4>
+<div class="paragraph">
+<p>Some Consul setups store configuration in a structured blob instead of individual keys. The legacy bootstrap integration supports YAML, JSON, and Java properties formats.</p>
+</div>
+<div class="paragraph">
+<p>Configure the format with <code>consul.client.config.format</code>. For example, to use JSON:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">consul.client.config.format=JSON</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">consul:
+  client:
+    config:
+      format: JSON</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[consul]
+  [consul.client]
+    [consul.client.config]
+      format="JSON"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">consul {
+  client {
+    config {
+      format = "JSON"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  consul {
+    client {
+      config {
+        format = "JSON"
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "consul": {
+    "client": {
+      "config": {
+        "format": "JSON"
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Then write the configuration as JSON to Consul:</p>
+</div>
+<div class="listingblock">
+<div class="title">Using cURL to write JSON</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -X PUT localhost:8500/v1/kv/config/application \
+-d @- &lt;&lt; EOF
+{ "foo": { "bar": "myvalue" } }
+EOF</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_storing_configuration_as_file_references">Storing configuration as file references</h4>
+<div class="paragraph">
+<p>Another option is to mirror a Git repository into Consul using a tool such as <a href="https://github.com/breser/git2consul">git2consul</a>.</p>
+</div>
+<div class="paragraph">
+<p>In that setup, keys in Consul represent files such as <code>/config/application.yml</code> or <code>/config/hello-world-test.json</code>. Configure the legacy bootstrap integration to use the <code>FILE</code> format:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">consul.client.config.format=FILE</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">consul:
+  client:
+    config:
+      format: FILE</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[consul]
+  [consul.client]
+    [consul.client.config]
+      format="FILE"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">consul {
+  client {
+    config {
+      format = "FILE"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  consul {
+    client {
+      config {
+        format = "FILE"
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "consul": {
+    "client": {
+      "config": {
+        "format": "FILE"
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_consul_watch">Consul Watch</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1092,10 +1918,8 @@ the corresponding <code>PropertySource</code> will be updated and a <code>Refres
 <div class="paragraph">
 <p>See <a href="https://docs.micronaut.io/latest/guide/index.html#refreshable">Micronaut &gt; Refreshable Scope</a> for more details</p>
 </div>
-<div class="sect2">
-<h3 id="_configuration">Configuration</h3>
 <div class="paragraph">
-<p>The watcher can be configured using</p>
+<p>The legacy watcher can be configured using</p>
 </div>
 <div class="openblock">
 <div class="title">Consul Watch Configuration</div>
@@ -1262,15 +2086,10 @@ consul {
 </li>
 </ul>
 </div>
-<div class="paragraph">
-<p>Read <a href="https://docs.micronaut.io/latest/guide/index.html#distributedConfigurationConsul">Micronaut &gt; Distributed Configuration &gt; HashiCorp Consul Support</a>
-for more details.</p>
-</div>
-</div>
 </div>
 </div>
 
-<h1 id="serviceDiscoveryEureka"><a class="anchor" href="#serviceDiscoveryEureka"></a>4 Eureka Support</h1>
+<h1 id="serviceDiscoveryEureka"><a class="anchor" href="#serviceDiscoveryEureka"></a>5 Eureka Support</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.0.x/src/main/docs/guide/serviceDiscoveryEureka.adoc"'>
@@ -1683,7 +2502,7 @@ eureka.client.registration.port=9090</code></pre>
 </div>
 </div>
 
-<h1 id="springCloudConfigServer"><a class="anchor" href="#springCloudConfigServer"></a>5 Spring Cloud Config Server Support</h1>
+<h1 id="springCloudConfigServer"><a class="anchor" href="#springCloudConfigServer"></a>6 Spring Cloud Config Server Support</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.0.x/src/main/docs/guide/springCloudConfigServer.adoc"'>
@@ -1692,11 +2511,14 @@ eureka.client.registration.port=9090</code></pre>
 </div>
 
 
-<div class="paragraph">
-<p><a href="https://github.com/spring-cloud/spring-cloud-config">Spring Cloud Config Server</a> Spring Cloud Config provides server-side and client-side support for externalized configuration in a distributed system. With the Config Server, you have a central place to manage external properties for applications across all environments.</p>
+<div id="distributedConfigurationSpringCloud" class="paragraph">
+<p><a href="https://github.com/spring-cloud/spring-cloud-config">Spring Cloud Config Server</a> provides server-side and client-side support for externalized configuration in a distributed system. With the Config Server, you have a central place to manage external properties for applications across all environments.</p>
 </div>
 <div class="paragraph">
-<p>A Micronaut application can be a Spring Cloud Config client to consume Spring Cloud Config Server configurations.</p>
+<p>Micronaut includes native Spring Cloud Config client support for consuming Spring Cloud Config Server configuration.</p>
+</div>
+<div class="paragraph">
+<p>The legacy bootstrap <code>ConfigurationClient</code> approach is deprecated. Prefer <code>micronaut.config.import</code> for new applications and migrations.</p>
 </div>
 <div class="sect1">
 <h2 id="_setup">Setup</h2>
@@ -1710,7 +2532,361 @@ eureka.client.registration.port=9090</code></pre>
 <h2 id="_loading_configurations_from_config_server">Loading configurations from config server</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The process to consume configurations in a Micronaut application from a Spring Cloud Config Server is very strait forward, simply add the necessary configurations. A complete example can be seen below:</p>
+<p>The preferred process to consume configurations in a Micronaut application from a Spring Cloud Config Server is to use an explicit import URI:</p>
+</div>
+<div class="openblock">
+<div class="title">Importing configuration from Spring Cloud Config Server</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.config.import=springcloud://configserver:9000/hello-world/default</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
+  config:
+    import: "springcloud://configserver:9000/hello-world/default"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.config]
+    import="springcloud://configserver:9000/hello-world/default"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  config {
+    'import' = "springcloud://configserver:9000/hello-world/default"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    config {
+      import = "springcloud://configserver:9000/hello-world/default"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "config": {
+      "import": "springcloud://configserver:9000/hello-world/default"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>To target multiple profiles or a Git label:</p>
+</div>
+<div class="openblock">
+<div class="title">Importing configuration with multiple profiles and label</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.config.import=springcloud://configserver:9000/hello-world/first,second?label=main</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
+  config:
+    import: "springcloud://configserver:9000/hello-world/first,second?label=main"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.config]
+    import="springcloud://configserver:9000/hello-world/first,second?label=main"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  config {
+    'import' = "springcloud://configserver:9000/hello-world/first,second?label=main"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    config {
+      import = "springcloud://configserver:9000/hello-world/first,second?label=main"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "config": {
+      "import": "springcloud://configserver:9000/hello-world/first,second?label=main"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>For secured servers, prefer credentials in the URI authority:</p>
+</div>
+<div class="openblock">
+<div class="title">Importing from a secured Spring Cloud Config Server</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.config.import=springcloud://user:password@configserver:9000/hello-world/default</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
+  config:
+    import: "springcloud://user:password@configserver:9000/hello-world/default"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.config]
+    import="springcloud://user:password@configserver:9000/hello-world/default"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  config {
+    'import' = "springcloud://user:password@configserver:9000/hello-world/default"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    config {
+      import = "springcloud://user:password@configserver:9000/hello-world/default"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "config": {
+      "import": "springcloud://user:password@configserver:9000/hello-world/default"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Query-parameter credentials are also supported during migration, but URI user-info is preferred:</p>
+</div>
+<div class="openblock">
+<div class="title">Importing from a secured Spring Cloud Config Server with query parameters</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.config.import=springcloud://configserver:9000/hello-world/default?username=user&amp;password=secret</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
+  config:
+    import: "springcloud://configserver:9000/hello-world/default?username=user&amp;password=secret"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.config]
+    import="springcloud://configserver:9000/hello-world/default?username=user&amp;password=secret"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  config {
+    'import' = "springcloud://configserver:9000/hello-world/default?username=user&amp;password=secret"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    config {
+      import = "springcloud://configserver:9000/hello-world/default?username=user&amp;password=secret"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "config": {
+      "import": "springcloud://configserver:9000/hello-world/default?username=user&amp;password=secret"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Treat import URIs with embedded credentials as sensitive values and store them accordingly.</p>
+</div>
+<div class="sect2">
+<h3 id="_spring_cloud_config_import_uri_reference">Spring Cloud Config import URI reference</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">ConnectionString part</th>
+<th class="tableblock halign-left valign-top">Example</th>
+<th class="tableblock halign-left valign-top">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scheme</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>springcloud://</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Selects the Spring Cloud Config importer.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">User info</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>springcloud://user:password@configserver:9000/&#8230;&#8203;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional Basic-auth credentials. <code>username</code> and <code>password</code> query parameters are also supported, but user-info is preferred.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Host and port</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>configserver:9000</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Spring Cloud Config Server host and port.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Path</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/hello-world/default</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Required. The first path segment is the application name and the second is the profile list. Multiple profiles may be comma-separated.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Query string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?label=main&amp;fail-fast=false</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional importer settings.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">Example</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>label</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?label=main</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional Git label or branch requested from the Config Server.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>fail-fast</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?fail-fast=false</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether failures should abort startup immediately.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>username</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?username=user</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional Basic-auth username. Prefer URI user-info instead.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>password</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?password=secret</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional Basic-auth password. Prefer URI user-info instead.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>retry-attempts</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?retry-attempts=3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of config import retry attempts handled by Micronaut&#8217;s retryable importer support.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>retry-count</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?retry-count=3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alias for <code>retry-attempts</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>retry-delay</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?retry-delay=1s</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delay between import retries.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>retry-max-delay</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?retry-max-delay=30s</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum overall retry delay.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>retry-multiplier</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?retry-multiplier=2.0</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Multiplier applied between retry delays.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>retry-jitter</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?retry-jitter=0.2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Retry jitter factor from <code>0.0</code> to <code>1.0</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>read-timeout</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?read-timeout=5s</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Read timeout for remote calls.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>connect-timeout</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?connect-timeout=5s</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Connection timeout for remote calls.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The legacy bootstrap/client configuration is still available during migration. A complete example can be seen below:</p>
 </div>
 <div class="openblock">
 <div class="title">Registering your application as a Spring Cloud Config client</div>
@@ -1824,12 +3000,550 @@ spring {
 </div>
 </div>
 <div class="paragraph">
-<p>The field name is optional, if it&#8217;s not informed, the value in micronaut.application.name will be used.</p>
+<p>Optional legacy retry settings are also supported:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>retry-attempts</code> specifies the number of retries</p>
+</li>
+<li>
+<p><code>retry-delay</code> specifies the delay between retries</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The legacy integration uses the configured <code>micronaut.application.name</code> to look up property sources from the server configured via <code>spring.cloud.config.uri</code>.</p>
+</div>
+<div class="paragraph">
+<p>The <code>name</code> field is optional in the legacy configuration. With <code>micronaut.config.import</code>, the application name and profiles are explicit in the URI path. See the <a href="https://spring.io/projects/spring-cloud-config/">Spring Cloud Config documentation</a> for server setup details.</p>
+</div>
 </div>
 </div>
 </div>
 
-<h1 id="breaks"><a class="anchor" href="#breaks"></a>6 Breaking Changes</h1>
+<h1 id="distributedConfigurationVault"><a class="anchor" href="#distributedConfigurationVault"></a>7 HashiCorp Vault Support</h1>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.0.x/src/main/docs/guide/distributedConfigurationVault.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div id="distributedConfigurationVault" class="paragraph">
+<p>HashiCorp Vault can be used as a distributed configuration source for Micronaut applications.</p>
+</div>
+<div class="paragraph">
+<p>The legacy bootstrap <code>ConfigurationClient</code> approach is deprecated. Prefer <code>micronaut.config.import</code> with explicit Vault paths.</p>
+</div>
+<div class="sect1">
+<h2 id="_importing_configuration_from_vault">Importing configuration from Vault</h2>
+<div class="sectionbody">
+<div class="openblock">
+<div class="title">Importing a Vault secret path</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.config.import=vault://testtoken@localhost:8200/application</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
+  config:
+    import: "vault://testtoken@localhost:8200/application"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.config]
+    import="vault://testtoken@localhost:8200/application"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  config {
+    'import' = "vault://testtoken@localhost:8200/application"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    config {
+      import = "vault://testtoken@localhost:8200/application"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "config": {
+      "import": "vault://testtoken@localhost:8200/application"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="openblock">
+<div class="title">Importing an environment-specific Vault secret path</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.config.import=vault://testtoken@localhost:8200/application/prod</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
+  config:
+    import: "vault://testtoken@localhost:8200/application/prod"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.config]
+    import="vault://testtoken@localhost:8200/application/prod"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  config {
+    'import' = "vault://testtoken@localhost:8200/application/prod"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    config {
+      import = "vault://testtoken@localhost:8200/application/prod"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "config": {
+      "import": "vault://testtoken@localhost:8200/application/prod"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="openblock">
+<div class="title">Importing from Vault KV v2 with an explicit path prefix</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.config.import=vault://testtoken@localhost:8200/application?kv-version=V2&amp;secret-engine-name=backendv2-prefixed&amp;path-prefix=mock/v2/path/prefix</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
+  config:
+    import: "vault://testtoken@localhost:8200/application?kv-version=V2&amp;secret-engine-name=backendv2-prefixed&amp;path-prefix=mock/v2/path/prefix"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.config]
+    import="vault://testtoken@localhost:8200/application?kv-version=V2&amp;secret-engine-name=backendv2-prefixed&amp;path-prefix=mock/v2/path/prefix"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  config {
+    'import' = "vault://testtoken@localhost:8200/application?kv-version=V2&amp;secret-engine-name=backendv2-prefixed&amp;path-prefix=mock/v2/path/prefix"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    config {
+      import = "vault://testtoken@localhost:8200/application?kv-version=V2&amp;secret-engine-name=backendv2-prefixed&amp;path-prefix=mock/v2/path/prefix"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "config": {
+      "import": "vault://testtoken@localhost:8200/application?kv-version=V2&amp;secret-engine-name=backendv2-prefixed&amp;path-prefix=mock/v2/path/prefix"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Query-parameter tokens are also supported during migration, but URI user-info is preferred:</p>
+</div>
+<div class="openblock">
+<div class="title">Importing a Vault secret path with a query-parameter token</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.config.import=vault://localhost:8200/application?token=testtoken</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
+  config:
+    import: "vault://localhost:8200/application?token=testtoken"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.config]
+    import="vault://localhost:8200/application?token=testtoken"</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  config {
+    'import' = "vault://localhost:8200/application?token=testtoken"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    config {
+      import = "vault://localhost:8200/application?token=testtoken"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "config": {
+      "import": "vault://localhost:8200/application?token=testtoken"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Treat import URIs with embedded credentials as sensitive values and store them accordingly.</p>
+</div>
+<div class="sect2">
+<h3 id="_vault_import_uri_reference">Vault import URI reference</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">ConnectionString part</th>
+<th class="tableblock halign-left valign-top">Example</th>
+<th class="tableblock halign-left valign-top">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scheme</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vault://</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Selects the Vault importer.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">User info</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vault://testtoken@localhost:8200/application</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional Vault token. The importer binds the URI username as <code>vault.client.token</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Host and port</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>localhost:8200</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vault host and port.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Path</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/application/prod</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Required explicit secret path. Leading <code>/</code> is optional in practice, but the path must identify the secret to load.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Query string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?kv-version=V2&amp;path-prefix=config</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional importer settings.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Option</th>
+<th class="tableblock halign-left valign-top">Example</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>token</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?token=testtoken</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vault token. Prefer URI user-info instead.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kv-version</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?kv-version=V2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vault KV engine version.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>secret-engine-name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?secret-engine-name=backendv2-prefixed</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vault secret engine name.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>path-prefix</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?path-prefix=mock/v2/path/prefix</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional path prefix prepended before the explicit secret path.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>fail-fast</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?fail-fast=false</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether failures should abort startup immediately.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>retry-attempts</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?retry-attempts=3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of config import retry attempts handled by Micronaut&#8217;s retryable importer support.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>retry-count</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?retry-count=3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alias for <code>retry-attempts</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>retry-delay</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?retry-delay=1s</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delay between import retries.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>retry-max-delay</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?retry-max-delay=30s</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum overall retry delay.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>retry-multiplier</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?retry-multiplier=2.0</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Multiplier applied between retry delays.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>retry-jitter</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?retry-jitter=0.2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Retry jitter factor from <code>0.0</code> to <code>1.0</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>read-timeout</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?read-timeout=5s</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Read timeout for remote calls.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>connect-timeout</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>?connect-timeout=5s</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Connection timeout for remote calls.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>During migration, the older bootstrap configuration is still available:</p>
+</div>
+<div class="openblock">
+<div class="title">Legacy bootstrap Vault configuration</div>
+<div class="content">
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">micronaut.application.name=hello-world
+micronaut.config-client.enabled=true
+vault.client.uri=http://localhost:8200
+vault.client.config.enabled=true</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">micronaut:
+  application:
+    name: hello-world
+  config-client:
+    enabled: true
+
+vault:
+  client:
+    uri: http://localhost:8200
+    config:
+      enabled: true</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
+  [micronaut.application]
+    name="hello-world"
+  [micronaut.config-client]
+    enabled=true
+[vault]
+  [vault.client]
+    uri="http://localhost:8200"
+    [vault.client.config]
+      enabled=true</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy-config hljs" data-lang="groovy-config">micronaut {
+  application {
+    name = "hello-world"
+  }
+  configClient {
+    enabled = true
+  }
+}
+vault {
+  client {
+    uri = "http://localhost:8200"
+    config {
+      enabled = true
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-hocon hljs" data-lang="hocon">{
+  micronaut {
+    application {
+      name = "hello-world"
+    }
+    config-client {
+      enabled = true
+    }
+  }
+  vault {
+    client {
+      uri = "http://localhost:8200"
+      config {
+        enabled = true
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json-config hljs" data-lang="json-config">{
+  "micronaut": {
+    "application": {
+      "name": "hello-world"
+    },
+    "config-client": {
+      "enabled": true
+    }
+  },
+  "vault": {
+    "client": {
+      "uri": "http://localhost:8200",
+      "config": {
+        "enabled": true
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Prefer the importer-based configuration for new applications and migrations.</p>
+</div>
+<div class="paragraph">
+<p>The legacy bootstrap integration uses the configured <code>micronaut.application.name</code> to look up property sources from Vault.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Legacy Vault configuration resolution precedence</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Secret Path</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/application</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configuration shared by all applications</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/[APPLICATION_NAME]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Application-specific configuration</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/application/[ENV_NAME]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configuration shared by all applications for an active environment</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/[APPLICATION_NAME]/[ENV_NAME]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Application-specific configuration for an active environment</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>With <code>micronaut.config.import</code>, the secret path is explicit in the import URI, so those default lookup paths are no longer implied. See the <a href="https://developer.hashicorp.com/vault/api-docs/secret/kv">HashiCorp Vault KV documentation</a> for server setup and secret storage details.</p>
+</div>
+</div>
+</div>
+</div>
+
+<h1 id="breaks"><a class="anchor" href="#breaks"></a>8 Breaking Changes</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.0.x/src/main/docs/guide/breaks.adoc"'>
@@ -1840,6 +3554,28 @@ spring {
 
 <div class="paragraph">
 <p>This section documents breaking changes between Micronaut Discovery Client versions:</p>
+</div>
+<div class="sect2">
+<h3 id="_distributed_configuration_migration_note">Distributed configuration migration note</h3>
+<div class="paragraph">
+<p>Distributed configuration via the legacy bootstrap <code>ConfigurationClient</code> path is now deprecated. Prefer <code>micronaut.config.import</code> with explicit provider URIs such as:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>consul://localhost:8500/config/application</code></p>
+</li>
+<li>
+<p><code>vault://localhost:8200/application</code></p>
+</li>
+<li>
+<p><code>springcloud://configserver:9000/hello-world/default</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Applications can continue using the legacy bootstrap path during migration, but startup will log deprecation warnings that point to the importer-based alternative.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_micronaut_discovery_client_5_0_0">Micronaut Discovery Client 5.0.0</h3>
@@ -2002,7 +3738,7 @@ spring {
 </div>
 </div>
 
-<h1 id="repository"><a class="anchor" href="#repository"></a>7 Repository</h1>
+<h1 id="repository"><a class="anchor" href="#repository"></a>9 Repository</h1>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.0.x/src/main/docs/guide/repository.adoc"'>

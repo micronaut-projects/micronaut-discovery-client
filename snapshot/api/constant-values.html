@@ -29,6 +29,7 @@ loadScripts(document, 'script');</script>
 <ul id="navbar-top-firstrow" class="nav-list" title="Navigation">
 <li><a href="index.html">Overview</a></li>
 <li><a href="overview-tree.html">Tree</a></li>
+<li><a href="deprecated-list.html">Deprecated</a></li>
 <li><a href="index-all.html">Index</a></li>
 <li><a href="search.html">Search</a></li>
 <li><a href="help-doc.html#constant-values">Help</a></li>
@@ -115,13 +116,13 @@ loadScripts(document, 'script');</script>
 </ul>
 <ul class="block-list">
 <li>
-<div class="caption"><span>io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/ConsulAslTokenFilter.html" title="class in io.micronaut.discovery.consul.client.v1">ConsulAslTokenFilter</a></span></div>
+<div class="caption"><span>io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/ConsulAclTokenFilter.html" title="class in io.micronaut.discovery.consul.client.v1">ConsulAclTokenFilter</a></span></div>
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Constant Field</div>
 <div class="table-header col-last">Value</div>
-<div class="col-first even-row-color"><code id="io.micronaut.discovery.consul.client.v1.ConsulAslTokenFilter.HEADER_CONSUL_TOKEN">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="io/micronaut/discovery/consul/client/v1/ConsulAslTokenFilter.html#HEADER_CONSUL_TOKEN">HEADER_CONSUL_TOKEN</a></code></div>
+<div class="col-first even-row-color"><code id="io.micronaut.discovery.consul.client.v1.ConsulAclTokenFilter.HEADER_CONSUL_TOKEN">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="io/micronaut/discovery/consul/client/v1/ConsulAclTokenFilter.html#HEADER_CONSUL_TOKEN">HEADER_CONSUL_TOKEN</a></code></div>
 <div class="col-last even-row-color"><code>"X-Consul-Token"</code></div>
 </div>
 </li>
@@ -179,6 +180,12 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code id="io.micronaut.discovery.consul.watch.WatchConfiguration.DEFAULT_ENABLED">public&nbsp;static&nbsp;final&nbsp;boolean</code></div>
 <div class="col-second even-row-color"><code><a href="io/micronaut/discovery/consul/watch/WatchConfiguration.html#DEFAULT_ENABLED">DEFAULT_ENABLED</a></code></div>
 <div class="col-last even-row-color"><code>false</code></div>
+<div class="col-first odd-row-color"><code id="io.micronaut.discovery.consul.watch.WatchConfiguration.IMPORTED_FORMAT">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="io/micronaut/discovery/consul/watch/WatchConfiguration.html#IMPORTED_FORMAT">IMPORTED_FORMAT</a></code></div>
+<div class="col-last odd-row-color"><code>"consul.client.watch.imported-format"</code></div>
+<div class="col-first even-row-color"><code id="io.micronaut.discovery.consul.watch.WatchConfiguration.IMPORTED_PATHS">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="io/micronaut/discovery/consul/watch/WatchConfiguration.html#IMPORTED_PATHS">IMPORTED_PATHS</a></code></div>
+<div class="col-last even-row-color"><code>"consul.client.watch.imported-paths"</code></div>
 <div class="col-first odd-row-color"><code id="io.micronaut.discovery.consul.watch.WatchConfiguration.PREFIX">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color"><code><a href="io/micronaut/discovery/consul/watch/WatchConfiguration.html#PREFIX">PREFIX</a></code></div>
 <div class="col-last odd-row-color"><code>"consul.client.watch"</code></div>
@@ -280,6 +287,57 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code id="io.micronaut.discovery.eureka.client.v2.LeaseInfo.DEFAULT_LEASE_RENEWAL_INTERVAL">public&nbsp;static&nbsp;final&nbsp;int</code></div>
 <div class="col-second odd-row-color"><code><a href="io/micronaut/discovery/eureka/client/v2/LeaseInfo.html#DEFAULT_LEASE_RENEWAL_INTERVAL">DEFAULT_LEASE_RENEWAL_INTERVAL</a></code></div>
 <div class="col-last odd-row-color"><code>30</code></div>
+</div>
+</li>
+</ul>
+<ul class="block-list">
+<li>
+<div class="caption"><span>io.micronaut.discovery.imports.<a href="io/micronaut/discovery/imports/RemoteConfigImportMetadata.html" title="class in io.micronaut.discovery.imports">RemoteConfigImportMetadata</a></span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Constant Field</div>
+<div class="table-header col-last">Value</div>
+<div class="col-first even-row-color"><code id="io.micronaut.discovery.imports.RemoteConfigImportMetadata.CONSUL_IMPORT_METADATA_PREFIX">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="io/micronaut/discovery/imports/RemoteConfigImportMetadata.html#CONSUL_IMPORT_METADATA_PREFIX">CONSUL_IMPORT_METADATA_PREFIX</a></code></div>
+<div class="col-last even-row-color"><code>"micronaut.config.import.consul"</code></div>
+<div class="col-first odd-row-color"><code id="io.micronaut.discovery.imports.RemoteConfigImportMetadata.CONSUL_WATCH_ENABLED">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="io/micronaut/discovery/imports/RemoteConfigImportMetadata.html#CONSUL_WATCH_ENABLED">CONSUL_WATCH_ENABLED</a></code></div>
+<div class="col-last odd-row-color"><code>"micronaut.config.import.consul.watch-enabled"</code></div>
+<div class="col-first even-row-color"><code id="io.micronaut.discovery.imports.RemoteConfigImportMetadata.CONSUL_WATCH_FORMAT">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="io/micronaut/discovery/imports/RemoteConfigImportMetadata.html#CONSUL_WATCH_FORMAT">CONSUL_WATCH_FORMAT</a></code></div>
+<div class="col-last even-row-color"><code>"micronaut.config.import.consul.watch-format"</code></div>
+<div class="col-first odd-row-color"><code id="io.micronaut.discovery.imports.RemoteConfigImportMetadata.CONSUL_WATCH_PATH">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="io/micronaut/discovery/imports/RemoteConfigImportMetadata.html#CONSUL_WATCH_PATH">CONSUL_WATCH_PATH</a></code></div>
+<div class="col-last odd-row-color"><code>"micronaut.config.import.consul.watch-path"</code></div>
+<div class="col-first even-row-color"><code id="io.micronaut.discovery.imports.RemoteConfigImportMetadata.CONSUL_WATCH_PROPERTY_SOURCE">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="io/micronaut/discovery/imports/RemoteConfigImportMetadata.html#CONSUL_WATCH_PROPERTY_SOURCE">CONSUL_WATCH_PROPERTY_SOURCE</a></code></div>
+<div class="col-last even-row-color"><code>"micronaut.config.import.consul.watch-property-source"</code></div>
+</div>
+</li>
+<li>
+<div class="caption"><span>io.micronaut.discovery.imports.<a href="io/micronaut/discovery/imports/RemoteConfigImportOptionBinder.html" title="class in io.micronaut.discovery.imports">RemoteConfigImportOptionBinder</a></span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Constant Field</div>
+<div class="table-header col-last">Value</div>
+<div class="col-first even-row-color"><code id="io.micronaut.discovery.imports.RemoteConfigImportOptionBinder.FORMAT_FILE">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="io/micronaut/discovery/imports/RemoteConfigImportOptionBinder.html#FORMAT_FILE">FORMAT_FILE</a></code></div>
+<div class="col-last even-row-color"><code>"file"</code></div>
+<div class="col-first odd-row-color"><code id="io.micronaut.discovery.imports.RemoteConfigImportOptionBinder.FORMAT_JSON">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="io/micronaut/discovery/imports/RemoteConfigImportOptionBinder.html#FORMAT_JSON">FORMAT_JSON</a></code></div>
+<div class="col-last odd-row-color"><code>"json"</code></div>
+<div class="col-first even-row-color"><code id="io.micronaut.discovery.imports.RemoteConfigImportOptionBinder.FORMAT_NATIVE">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="io/micronaut/discovery/imports/RemoteConfigImportOptionBinder.html#FORMAT_NATIVE">FORMAT_NATIVE</a></code></div>
+<div class="col-last even-row-color"><code>"native"</code></div>
+<div class="col-first odd-row-color"><code id="io.micronaut.discovery.imports.RemoteConfigImportOptionBinder.FORMAT_PROPERTIES">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="io/micronaut/discovery/imports/RemoteConfigImportOptionBinder.html#FORMAT_PROPERTIES">FORMAT_PROPERTIES</a></code></div>
+<div class="col-last odd-row-color"><code>"properties"</code></div>
+<div class="col-first even-row-color"><code id="io.micronaut.discovery.imports.RemoteConfigImportOptionBinder.FORMAT_YAML">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="io/micronaut/discovery/imports/RemoteConfigImportOptionBinder.html#FORMAT_YAML">FORMAT_YAML</a></code></div>
+<div class="col-last even-row-color"><code>"yaml"</code></div>
+<div class="col-first odd-row-color"><code id="io.micronaut.discovery.imports.RemoteConfigImportOptionBinder.FORMAT_YML">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="io/micronaut/discovery/imports/RemoteConfigImportOptionBinder.html#FORMAT_YML">FORMAT_YML</a></code></div>
+<div class="col-last odd-row-color"><code>"yml"</code></div>
 </div>
 </li>
 </ul>

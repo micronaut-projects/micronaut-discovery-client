@@ -29,6 +29,7 @@ loadScripts(document, 'script');</script>
 <ul id="navbar-top-firstrow" class="nav-list" title="Navigation">
 <li><a href="index.html">Overview</a></li>
 <li class="nav-bar-cell1-rev">Tree</li>
+<li><a href="deprecated-list.html">Deprecated</a></li>
 <li><a href="index-all.html">Index</a></li>
 <li><a href="search.html">Search</a></li>
 <li><a href="help-doc.html#tree">Help</a></li>
@@ -61,6 +62,7 @@ loadScripts(document, 'script');</script>
 <li><a href="io/micronaut/discovery/consul/condition/package-tree.html">io.micronaut.discovery.consul.condition</a>, </li>
 <li><a href="io/micronaut/discovery/consul/config/package-tree.html">io.micronaut.discovery.consul.config</a>, </li>
 <li><a href="io/micronaut/discovery/consul/health/package-tree.html">io.micronaut.discovery.consul.health</a>, </li>
+<li><a href="io/micronaut/discovery/consul/imports/package-tree.html">io.micronaut.discovery.consul.imports</a>, </li>
 <li><a href="io/micronaut/discovery/consul/registration/package-tree.html">io.micronaut.discovery.consul.registration</a>, </li>
 <li><a href="io/micronaut/discovery/consul/testcontainers/package-tree.html">io.micronaut.discovery.consul.testcontainers</a>, </li>
 <li><a href="io/micronaut/discovery/consul/watch/package-tree.html">io.micronaut.discovery.consul.watch</a>, </li>
@@ -69,12 +71,15 @@ loadScripts(document, 'script');</script>
 <li><a href="io/micronaut/discovery/eureka/condition/package-tree.html">io.micronaut.discovery.eureka.condition</a>, </li>
 <li><a href="io/micronaut/discovery/eureka/health/package-tree.html">io.micronaut.discovery.eureka.health</a>, </li>
 <li><a href="io/micronaut/discovery/eureka/registration/package-tree.html">io.micronaut.discovery.eureka.registration</a>, </li>
+<li><a href="io/micronaut/discovery/imports/package-tree.html">io.micronaut.discovery.imports</a>, </li>
 <li><a href="io/micronaut/discovery/info/package-tree.html">io.micronaut.discovery.info</a>, </li>
 <li><a href="io/micronaut/discovery/spring/config/package-tree.html">io.micronaut.discovery.spring.config</a>, </li>
 <li><a href="io/micronaut/discovery/spring/config/client/package-tree.html">io.micronaut.discovery.spring.config.client</a>, </li>
+<li><a href="io/micronaut/discovery/spring/imports/package-tree.html">io.micronaut.discovery.spring.imports</a>, </li>
 <li><a href="io/micronaut/discovery/vault/config/package-tree.html">io.micronaut.discovery.vault.config</a>, </li>
 <li><a href="io/micronaut/discovery/vault/config/v1/package-tree.html">io.micronaut.discovery.vault.config.v1</a>, </li>
-<li><a href="io/micronaut/discovery/vault/config/v2/package-tree.html">io.micronaut.discovery.vault.config.v2</a></li>
+<li><a href="io/micronaut/discovery/vault/config/v2/package-tree.html">io.micronaut.discovery.vault.config.v2</a>, </li>
+<li><a href="io/micronaut/discovery/vault/imports/package-tree.html">io.micronaut.discovery.vault.imports</a></li>
 </ul>
 <section class="hierarchy">
 <h2 title="Class Hierarchy">Class Hierarchy</h2>
@@ -123,7 +128,7 @@ loadScripts(document, 'script');</script>
 <li class="circle">io.micronaut.discovery.spring.config.client.<a href="io/micronaut/discovery/spring/config/client/ConfigServerPropertySource.html" class="type-name-link" title="class in io.micronaut.discovery.spring.config.client">ConfigServerPropertySource</a></li>
 <li class="circle">io.micronaut.discovery.spring.config.client.<a href="io/micronaut/discovery/spring/config/client/ConfigServerResponse.html" class="type-name-link" title="class in io.micronaut.discovery.spring.config.client">ConfigServerResponse</a></li>
 <li class="circle">io.micronaut.discovery.consul.testcontainers.<a href="io/micronaut/discovery/consul/testcontainers/Consul.html" class="type-name-link" title="class in io.micronaut.discovery.consul.testcontainers">Consul</a></li>
-<li class="circle">io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/ConsulAslTokenFilter.html" class="type-name-link" title="class in io.micronaut.discovery.consul.client.v1">ConsulAslTokenFilter</a> (implements io.micronaut.http.filter.HttpClientFilter, io.micronaut.core.util.Toggleable)</li>
+<li class="circle">io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/ConsulAclTokenFilter.html" class="type-name-link" title="class in io.micronaut.discovery.consul.client.v1">ConsulAclTokenFilter</a> (implements io.micronaut.http.filter.HttpClientFilter, io.micronaut.core.util.Toggleable)</li>
 <li class="circle">io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/ConsulCheck.html" class="type-name-link" title="class in io.micronaut.discovery.consul.client.v1">ConsulCheck</a></li>
 <li class="circle">io.micronaut.discovery.consul.<a href="io/micronaut/discovery/consul/ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration.html" class="type-name-link" title="class in io.micronaut.discovery.consul">ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration</a> (implements io.micronaut.core.util.Toggleable)</li>
 <li class="circle">io.micronaut.discovery.consul.config.<a href="io/micronaut/discovery/consul/config/ConsulConfigurationClient.html" class="type-name-link" title="class in io.micronaut.discovery.consul.config">ConsulConfigurationClient</a> (implements io.micronaut.discovery.config.ConfigurationClient)</li>
@@ -172,6 +177,7 @@ loadScripts(document, 'script');</script>
 <li class="circle">io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/KeyValue.html" class="type-name-link" title="class in io.micronaut.discovery.consul.client.v1">KeyValue</a></li>
 <li class="circle">io.micronaut.discovery.eureka.client.v2.<a href="io/micronaut/discovery/eureka/client/v2/LeaseInfo.html" class="type-name-link" title="class in io.micronaut.discovery.eureka.client.v2">LeaseInfo</a></li>
 <li class="circle">io.micronaut.discovery.eureka.client.v2.<a href="io/micronaut/discovery/eureka/client/v2/LeaseInfo.Builder.html" class="type-name-link" title="class in io.micronaut.discovery.eureka.client.v2">LeaseInfo.Builder</a></li>
+<li class="circle">io.micronaut.discovery.imports.<a href="io/micronaut/discovery/imports/LegacyConfigurationClientDeprecationLogger.html" class="type-name-link" title="class in io.micronaut.discovery.imports">LegacyConfigurationClientDeprecationLogger</a></li>
 <li class="circle">io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/LocalAgentConfiguration.html" class="type-name-link" title="class in io.micronaut.discovery.consul.client.v1">LocalAgentConfiguration</a></li>
 <li class="circle">io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/MemberEntry.html" class="type-name-link" title="class in io.micronaut.discovery.consul.client.v1">MemberEntry</a></li>
 <li class="circle">io.micronaut.discovery.eureka.client.v2.<a href="io/micronaut/discovery/eureka/client/v2/MyDataCenterInfo.html" class="type-name-link" title="class in io.micronaut.discovery.eureka.client.v2">MyDataCenterInfo</a> (implements io.micronaut.discovery.eureka.client.v2.<a href="io/micronaut/discovery/eureka/client/v2/DataCenterInfo.html" title="interface in io.micronaut.discovery.eureka.client.v2">DataCenterInfo</a>)</li>
@@ -183,7 +189,17 @@ loadScripts(document, 'script');</script>
 <li class="circle">io.micronaut.discovery.eureka.<a href="io/micronaut/discovery/eureka/EurekaConfiguration.EurekaRegistrationConfiguration.html" class="type-name-link" title="class in io.micronaut.discovery.eureka">EurekaConfiguration.EurekaRegistrationConfiguration</a></li>
 </ul>
 </li>
+<li class="circle">io.micronaut.discovery.imports.<a href="io/micronaut/discovery/imports/RemoteConfigImporterContextFactory.html" class="type-name-link" title="class in io.micronaut.discovery.imports">RemoteConfigImporterContextFactory</a></li>
+<li class="circle">io.micronaut.discovery.imports.<a href="io/micronaut/discovery/imports/RemoteConfigImportMetadata.html" class="type-name-link" title="class in io.micronaut.discovery.imports">RemoteConfigImportMetadata</a></li>
+<li class="circle">io.micronaut.discovery.imports.<a href="io/micronaut/discovery/imports/RemoteConfigImportOptionBinder.html" class="type-name-link" title="class in io.micronaut.discovery.imports">RemoteConfigImportOptionBinder</a></li>
 <li class="circle">io.micronaut.discovery.eureka.condition.<a href="io/micronaut/discovery/eureka/condition/RequiresEurekaCondition.html" class="type-name-link" title="class in io.micronaut.discovery.eureka.condition">RequiresEurekaCondition</a> (implements io.micronaut.context.condition.Condition)</li>
+<li class="circle">io.micronaut.discovery.config.RetryablePropertySourceImporter&lt;D&gt; (implements io.micronaut.context.env.PropertySourceImporter&lt;T&gt;)
+<ul>
+<li class="circle">io.micronaut.discovery.consul.imports.<a href="io/micronaut/discovery/consul/imports/ConsulPropertySourceImporter.html" class="type-name-link" title="class in io.micronaut.discovery.consul.imports">ConsulPropertySourceImporter</a></li>
+<li class="circle">io.micronaut.discovery.spring.imports.<a href="io/micronaut/discovery/spring/imports/SpringCloudPropertySourceImporter.html" class="type-name-link" title="class in io.micronaut.discovery.spring.imports">SpringCloudPropertySourceImporter</a></li>
+<li class="circle">io.micronaut.discovery.vault.imports.<a href="io/micronaut/discovery/vault/imports/VaultPropertySourceImporter.html" class="type-name-link" title="class in io.micronaut.discovery.vault.imports">VaultPropertySourceImporter</a></li>
+</ul>
+</li>
 <li class="circle">io.micronaut.discovery.spring.config.<a href="io/micronaut/discovery/spring/config/SpringCloudConfigurationClient.html" class="type-name-link" title="class in io.micronaut.discovery.spring.config">SpringCloudConfigurationClient</a> (implements io.micronaut.discovery.config.ConfigurationClient)</li>
 <li class="circle">io.micronaut.discovery.vault.config.<a href="io/micronaut/discovery/vault/config/VaultConfigurationClient.html" class="type-name-link" title="class in io.micronaut.discovery.vault.config">VaultConfigurationClient</a> (implements io.micronaut.discovery.config.ConfigurationClient)</li>
 <li class="circle">io.micronaut.discovery.vault.config.v2.<a href="io/micronaut/discovery/vault/config/v2/VaultResponseData.html" class="type-name-link" title="class in io.micronaut.discovery.vault.config.v2">VaultResponseData</a></li>
@@ -285,7 +301,10 @@ loadScripts(document, 'script');</script>
 <li class="circle">io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/ConsulCatalogEntry.html" class="type-name-link" title="class in io.micronaut.discovery.consul.client.v1">ConsulCatalogEntry</a></li>
 <li class="circle">io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/ConsulHealthEntry.html" class="type-name-link" title="class in io.micronaut.discovery.consul.client.v1">ConsulHealthEntry</a></li>
 <li class="circle">io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/ConsulNewServiceEntry.html" class="type-name-link" title="class in io.micronaut.discovery.consul.client.v1">ConsulNewServiceEntry</a></li>
+<li class="circle">io.micronaut.discovery.consul.imports.<a href="io/micronaut/discovery/consul/imports/ConsulPropertySourceImporter.ConsulImport.html" class="type-name-link" title="class in io.micronaut.discovery.consul.imports">ConsulPropertySourceImporter.ConsulImport</a></li>
 <li class="circle">io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/ConsulServiceEntry.html" class="type-name-link" title="class in io.micronaut.discovery.consul.client.v1">ConsulServiceEntry</a></li>
+<li class="circle">io.micronaut.discovery.spring.imports.<a href="io/micronaut/discovery/spring/imports/SpringCloudPropertySourceImporter.SpringCloudImport.html" class="type-name-link" title="class in io.micronaut.discovery.spring.imports">SpringCloudPropertySourceImporter.SpringCloudImport</a></li>
+<li class="circle">io.micronaut.discovery.vault.imports.<a href="io/micronaut/discovery/vault/imports/VaultPropertySourceImporter.VaultImport.html" class="type-name-link" title="class in io.micronaut.discovery.vault.imports">VaultPropertySourceImporter.VaultImport</a></li>
 </ul>
 </li>
 </ul>

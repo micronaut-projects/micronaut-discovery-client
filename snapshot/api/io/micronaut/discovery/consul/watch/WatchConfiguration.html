@@ -30,6 +30,7 @@ loadScripts(document, 'script');</script>
 <li><a href="../../../../../index.html">Overview</a></li>
 <li class="nav-bar-cell1-rev">Class</li>
 <li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../../../deprecated-list.html">Deprecated</a></li>
 <li><a href="../../../../../index-all.html">Index</a></li>
 <li><a href="../../../../../search.html">Search</a></li>
 <li><a href="../../../../../help-doc.html#class">Help</a></li>
@@ -60,6 +61,8 @@ loadScripts(document, 'script');</script>
 <ol class="toc-list">
 <li><a href="#PREFIX" tabindex="0">PREFIX</a></li>
 <li><a href="#DEFAULT_ENABLED" tabindex="0">DEFAULT_ENABLED</a></li>
+<li><a href="#IMPORTED_PATHS" tabindex="0">IMPORTED_PATHS</a></li>
+<li><a href="#IMPORTED_FORMAT" tabindex="0">IMPORTED_FORMAT</a></li>
 </ol>
 </li>
 <li><a href="#constructor-detail" tabindex="0">Constructor Details</a>
@@ -71,6 +74,10 @@ loadScripts(document, 'script');</script>
 <ol class="toc-list">
 <li><a href="#isEnabled()" tabindex="0">isEnabled()</a></li>
 <li><a href="#setEnabled(boolean)" tabindex="0">setEnabled(boolean)</a></li>
+<li><a href="#getImportedPaths()" tabindex="0">getImportedPaths()</a></li>
+<li><a href="#setImportedPaths(java.lang.String)" tabindex="0">setImportedPaths(String)</a></li>
+<li><a href="#getImportedFormat()" tabindex="0">getImportedFormat()</a></li>
+<li><a href="#setImportedFormat(java.lang.String)" tabindex="0">setImportedFormat(String)</a></li>
 </ol>
 </li>
 </ol>
@@ -120,6 +127,16 @@ implements io.micronaut.core.util.Toggleable</span></div>
 <div class="block">The default enable value.</div>
 </div>
 <div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#IMPORTED_FORMAT" class="member-name-link">IMPORTED_FORMAT</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Internal property used to carry the importer-derived Consul config format into the watcher.</div>
+</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#IMPORTED_PATHS" class="member-name-link">IMPORTED_PATHS</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Internal property used to carry importer-derived watch paths into the Consul watcher.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#PREFIX" class="member-name-link">PREFIX</a></code></div>
 <div class="col-last odd-row-color">
 <div class="block">The prefix to use for Consul's watcher settings.</div>
@@ -151,6 +168,12 @@ implements io.micronaut.core.util.Toggleable</span></div>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getImportedFormat()" class="member-name-link">getImportedFormat</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getImportedPaths()" class="member-name-link">getImportedPaths</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isEnabled()" class="member-name-link">isEnabled</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
@@ -158,6 +181,16 @@ implements io.micronaut.core.util.Toggleable</span></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setEnabled(boolean)" class="member-name-link">setEnabled</a><wbr>(boolean&nbsp;enabled)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets whether Configuration watching is enabled.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setImportedFormat(java.lang.String)" class="member-name-link">setImportedFormat</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;importedFormat)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Sets the Consul configuration format supplied by importer metadata.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setImportedPaths(java.lang.String)" class="member-name-link">setImportedPaths</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;importedPaths)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Sets the explicit Consul KV paths supplied by importer metadata.</div>
 </div>
 </div>
 </div>
@@ -210,6 +243,44 @@ implements io.micronaut.core.util.Toggleable</span></div>
 </div>
 </section>
 </li>
+<li>
+<section class="detail" id="IMPORTED_PATHS">
+<h3>IMPORTED_PATHS</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">IMPORTED_PATHS</span></div>
+<div class="block">Internal property used to carry importer-derived watch paths into the Consul watcher.</div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>5.0.0</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../../../constant-values.html#io.micronaut.discovery.consul.watch.WatchConfiguration.IMPORTED_PATHS">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="IMPORTED_FORMAT">
+<h3>IMPORTED_FORMAT</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">IMPORTED_FORMAT</span></div>
+<div class="block">Internal property used to carry the importer-derived Consul config format into the watcher.</div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>5.0.0</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../../../constant-values.html#io.micronaut.discovery.consul.watch.WatchConfiguration.IMPORTED_FORMAT">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</div>
+</section>
+</li>
 </ul>
 </section>
 </li>
@@ -255,6 +326,64 @@ implements io.micronaut.core.util.Toggleable</span></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>enabled</code> - True if it is enabled</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="getImportedPaths()">
+<h3>getImportedPaths</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;</span>&nbsp;<span class="element-name">getImportedPaths</span>()</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The explicit Consul KV paths supplied by config import metadata, if any.</dd>
+<dt>Since:</dt>
+<dd>5.0.0</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="setImportedPaths(java.lang.String)">
+<h3>setImportedPaths</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setImportedPaths</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;importedPaths)</span></div>
+<div class="block">Sets the explicit Consul KV paths supplied by importer metadata.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>importedPaths</code> - A comma-separated list of explicit Consul KV watch paths</dd>
+<dt>Since:</dt>
+<dd>5.0.0</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="getImportedFormat()">
+<h3>getImportedFormat</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">getImportedFormat</span>()</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The importer-derived Consul configuration format, if any.</dd>
+<dt>Since:</dt>
+<dd>5.0.0</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="setImportedFormat(java.lang.String)">
+<h3>setImportedFormat</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setImportedFormat</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;importedFormat)</span></div>
+<div class="block">Sets the Consul configuration format supplied by importer metadata.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>importedFormat</code> - The importer-derived Consul configuration format</dd>
+<dt>Since:</dt>
+<dd>5.0.0</dd>
 </dl>
 </div>
 </section>

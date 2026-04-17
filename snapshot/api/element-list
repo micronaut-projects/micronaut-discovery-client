@@ -8,6 +8,7 @@ io.micronaut.discovery.consul.client.v1.blockingqueries
 io.micronaut.discovery.consul.condition
 io.micronaut.discovery.consul.config
 io.micronaut.discovery.consul.health
+io.micronaut.discovery.consul.imports
 io.micronaut.discovery.consul.registration
 io.micronaut.discovery.consul.testcontainers
 io.micronaut.discovery.consul.watch
@@ -16,9 +17,12 @@ io.micronaut.discovery.eureka.client.v2
 io.micronaut.discovery.eureka.condition
 io.micronaut.discovery.eureka.health
 io.micronaut.discovery.eureka.registration
+io.micronaut.discovery.imports
 io.micronaut.discovery.info
 io.micronaut.discovery.spring.config
 io.micronaut.discovery.spring.config.client
+io.micronaut.discovery.spring.imports
 io.micronaut.discovery.vault.config
 io.micronaut.discovery.vault.config.v1
 io.micronaut.discovery.vault.config.v2
+io.micronaut.discovery.vault.imports
