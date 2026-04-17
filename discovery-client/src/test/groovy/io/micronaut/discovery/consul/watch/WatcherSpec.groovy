@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory
 import reactor.core.publisher.Mono
 import spock.lang.Specification
 import spock.util.concurrent.AsyncConditions
+import spock.util.concurrent.PollingConditions
 
 import java.time.Duration
 
@@ -191,6 +192,7 @@ class WatcherSpec extends Specification {
 
     void "test that global error are logged"() {
         given:
+        def conditions = new PollingConditions(timeout: 5)
         listAppender = new ListAppender<ILoggingEvent>()
         listAppender.start()
         CLASS_LOGGER.addAppender(listAppender)
@@ -209,17 +211,15 @@ class WatcherSpec extends Specification {
         watcher.start()
 
         then:
-        Thread.sleep(500)
-        def errorLogs = listAppender.list.stream()
-                .filter(event -> Level.ERROR == event.getLevel())
-                .filter(event -> event.getFormattedMessage() == "Watching kvPath=path/to/global_error failed")
-                .toList()
-        errorLogs.size() == 1
-        def loggingEvent = errorLogs.get(0)
-        with((ThrowableProxy) loggingEvent.getThrowableProxy()) {
-            def throwable = it.getThrowable()
-            throwable instanceof IllegalArgumentException
-            throwable.getMessage() == "Illegal base64 character 20"
+        conditions.eventually {
+            assert listAppender.list.size() == 1
+            def loggingEvent = listAppender.list.get(0)
+            assert loggingEvent.getFormattedMessage() == "Watching kvPath=path/to/global_error failed"
+            with((ThrowableProxy) loggingEvent.getThrowableProxy()) {
+                def throwable = it.getThrowable()
+                assert throwable instanceof IllegalArgumentException
+                assert throwable.getMessage() == "Illegal base64 character 20"
+            }
         }
 
         0 * propertiesChangeHandler._
@@ -257,6 +257,7 @@ class WatcherSpec extends Specification {
 
     void "test that client http errors are handled"() {
         given:
+        def conditions = new PollingConditions(timeout: 5)
         listAppender = new ListAppender<ILoggingEvent>()
         listAppender.start()
         CLASS_LOGGER.addAppender(listAppender)
@@ -273,15 +274,16 @@ class WatcherSpec extends Specification {
         watcher.start()
 
         then:
-        Thread.sleep(500)
-        def logs = listAppender.list.stream()
-                .filter(event -> Level.ERROR == event.getLevel())
-                .toList()
-        logs.size() == 1
-        def loggingEvent = logs.get(0)
-        loggingEvent.getFormattedMessage() == "Watching kvPath=path/to/http_error failed"
-        ((ThrowableProxy) loggingEvent.getThrowableProxy()) != null
-        ((ThrowableProxy) loggingEvent.getThrowableProxy()).getThrowable() == exception
+        conditions.eventually {
+            def logs = listAppender.list.stream()
+                    .filter(event -> Level.ERROR == event.getLevel())
+                    .toList()
+            assert logs.size() == 1
+            def loggingEvent = logs.get(0)
+            assert loggingEvent.getFormattedMessage() == "Watching kvPath=path/to/http_error failed"
+            assert ((ThrowableProxy) loggingEvent.getThrowableProxy()) != null
+            assert ((ThrowableProxy) loggingEvent.getThrowableProxy()).getThrowable() == exception
+        }
 
         and:
         0 * propertiesChangeHandler._
