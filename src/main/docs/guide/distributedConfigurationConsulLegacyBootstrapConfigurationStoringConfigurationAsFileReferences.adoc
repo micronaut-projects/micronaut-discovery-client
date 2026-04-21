@@ -1,0 +1,13 @@
+= Storing Configuration as File References
+
+Another option is to mirror a Git repository into Consul using a tool such as https://github.com/breser/git2consul[git2consul].
+
+In that setup, keys in Consul represent files such as `/config/application.yml` or `/config/hello-world-test.json`. Configure the legacy bootstrap integration to use the `FILE` format:
+
+[configuration]
+----
+consul:
+  client:
+    config:
+      format: FILE
+----

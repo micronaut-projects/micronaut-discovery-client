@@ -1,0 +1,17 @@
+= Legacy Bootstrap Configuration
+
+To enable the legacy bootstrap integration, create a `src/main/resources/bootstrap.[yml/toml/properties]` file with the following configuration:
+
+[configuration]
+----
+micronaut:
+  application:
+    name: hello-world
+  config-client:
+    enabled: true
+consul:
+  client:
+    defaultZone: "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+----
+
+After enabling distributed configuration, store the configuration to share in Consul's key/value store.

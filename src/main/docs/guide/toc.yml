@@ -1,7 +1,24 @@
 introduction: Introduction
 releaseHistory: Release History
 distributedConfiguration: Distributed Configuration
-serviceDiscoveryConsul: Consul Support
+serviceDiscoveryConsul:
+  title: Consul Support
+  serviceDiscoveryConsulStartingConsul: Starting Consul
+  serviceDiscoveryConsulAutoRegisteringWithConsul: Auto Registering with Consul
+  serviceDiscoveryConsulCustomizingConsulServiceRegistration: Customizing Consul Service Registration
+  serviceDiscoveryConsulDiscoveryServicesFromConsul: Discovery Services from Consul
+  serviceDiscoveryConsulConsulHealthChecks: Consul Health Checks
+  serviceDiscoveryConsulControllingIpHostRegistration: Controlling IP/Host Registration
+  distributedConfigurationConsul:
+    title: Distributed Configuration with Consul
+    distributedConfigurationConsulImportingConsulConfiguration: Importing Consul Configuration
+    distributedConfigurationConsulConsulImportUriReference: Consul Import URI Reference
+    distributedConfigurationConsulLegacyBootstrapConfiguration:
+      title: Legacy Bootstrap Configuration
+      distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsKeyValuePairs: Storing Configuration as Key/Value Pairs
+      distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationInYamlJsonOrPropertiesFormat: Storing Configuration in YAML, JSON, or Properties Format
+      distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsFileReferences: Storing Configuration as File References
+  serviceDiscoveryConsulConsulWatch: Consul Watch
 serviceDiscoveryEureka: Eureka Support
 springCloudConfigServer: Spring Cloud Config Server Support
 distributedConfigurationVault: HashiCorp Vault Support

@@ -1,0 +1,36 @@
+= Storing Configuration as Key/Value Pairs
+
+One option is to store keys and values directly in Consul. In this mode, Micronaut looks for configuration in the Consul `/config` directory by default.
+
+TIP: You can alter the path by setting `consul.client.config.path`.
+
+Within the configured path, Micronaut resolves values from the following directories in order of precedence:
+
+.Legacy Consul configuration resolution precedence
+|===
+|Directory|Description
+
+|`/config/application`
+|Configuration shared by all applications
+
+|`/config/application,prod`
+|Configuration shared by all applications for the `prod` environment
+
+|`/config/[APPLICATION_NAME]`
+|Application-specific configuration, for example `/config/hello-world`
+
+|`/config/[APPLICATION_NAME],prod`
+|Application-specific configuration for an active environment
+|===
+
+The value of `APPLICATION_NAME` comes from `micronaut.application.name` in `bootstrap` configuration.
+
+For example, this cURL command stores `foo.bar=myvalue` in `/config/application`:
+
+.Using cURL to write a value
+[source,bash]
+----
+curl -X PUT -d @- localhost:8500/v1/kv/config/application/foo.bar <<< myvalue
+----
+
+With the legacy bootstrap integration enabled, `@Value("${foo.bar}")` and `environment.getProperty(..)` can then resolve the value from Consul.
