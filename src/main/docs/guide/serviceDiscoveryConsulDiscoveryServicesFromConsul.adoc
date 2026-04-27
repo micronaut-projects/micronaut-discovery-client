@@ -1,0 +1,26 @@
+= Discovery Services from Consul
+
+To discovery other services you could manually interact with the link:{micronautapi}discovery/DiscoveryClient[DiscoveryClient], however typically instead you use the https://docs.micronaut.io/latest/guide/index.html#clientAnnotation[Client Annotation] to declare how an HTTP client maps to a service.
+
+For example the configuration in the previous section declared a value for `micronaut.application.name` of `hello-world`. This is the value that will be used as the service ID when registering with Consul.
+
+Other services can discovery instances of the `hello-world` service simply by declaring a client as follows:
+
+.Using @Client to Discover Services
+[source,java]
+----
+@Client(id = "hello-world")
+interface HelloClient{
+    ...
+}
+----
+
+Alternatively you can also use link:{micronautapi}http/client/annotation/Client[@Client] as a qualifier to `@Inject` an instance of link:{micronautapi}http/client/HttpClient[HttpClient]:
+
+.Using @Client to Discover Services
+[source,java]
+----
+@Client(id = "hello-world")
+@Inject
+RxHttpClient httpClient;
+----

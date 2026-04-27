@@ -1,0 +1,23 @@
+= Consul Health Checks
+
+By default when registering with Consul Micronaut will register a https://www.consul.io/docs/agent/checks.html[TTL check]. A TTL check basically means that if the application does not send a heartbeat back to Consul after a period of time the service is put in a failing state.
+
+Micronaut applications feature a link:{micronautapi}health/HeartbeatConfiguration[HeartbeatConfiguration] which starts a thread using link:{micronautapi}health/HeartbeatTask[HeartbeatTask] that fires link:{micronautapi}health/HeartbeatEvent[HeartbeatEvent] instances.
+
+The api:discovery.consul.registration.ConsulAutoRegistration[] class listens for these events and sends a callback to the https://www.consul.io/api/agent/check.html[/agent/check/pass/:check_id] endpoint provided by Consul, effectively keeping the service alive.
+
+With this arrangement the responsibility is on the Micronaut application to send TTL callbacks to Consul on a regular basis.
+
+If you prefer you can push the responsibility for health checks to Consul itself by registering an HTTP check:
+
+.Consul HTTP Check Configuration
+[configuration]
+----
+consul:
+  client:
+    registration:
+       check:
+         http: true
+----
+
+With this configuration option in place Consul will assume responsibility of invoking the Micronaut applications https://docs.micronaut.io/latest/guide/index.html#healthEndpoint[Health Endpoint].

@@ -1,0 +1,24 @@
+= Storing Configuration in YAML, JSON, or Properties Format
+
+Some Consul setups store configuration in a structured blob instead of individual keys. The legacy bootstrap integration supports YAML, JSON, and Java properties formats.
+
+Configure the format with `consul.client.config.format`. For example, to use JSON:
+
+[configuration]
+----
+consul:
+  client:
+    config:
+      format: JSON
+----
+
+Then write the configuration as JSON to Consul:
+
+.Using cURL to write JSON
+[source,bash]
+----
+curl -X PUT localhost:8500/v1/kv/config/application \
+-d @- << EOF
+{ "foo": { "bar": "myvalue" } }
+EOF
+----
