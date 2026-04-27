@@ -101,6 +101,34 @@
         
         <div class="toc-item" style="margin-left:0px" id="toc-item-serviceDiscoveryConsul"><a href="#serviceDiscoveryConsul"><strong>4</strong><span>Consul Support</span></a></div>
         
+        <div class="toc-item" style="margin-left:10px" id="toc-item-serviceDiscoveryConsulStartingConsul"><a href="#serviceDiscoveryConsulStartingConsul"><strong>4.1</strong><span>Starting Consul</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-serviceDiscoveryConsulAutoRegisteringWithConsul"><a href="#serviceDiscoveryConsulAutoRegisteringWithConsul"><strong>4.2</strong><span>Auto Registering with Consul</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-serviceDiscoveryConsulCustomizingConsulServiceRegistration"><a href="#serviceDiscoveryConsulCustomizingConsulServiceRegistration"><strong>4.3</strong><span>Customizing Consul Service Registration</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-serviceDiscoveryConsulDiscoveryServicesFromConsul"><a href="#serviceDiscoveryConsulDiscoveryServicesFromConsul"><strong>4.4</strong><span>Discovery Services from Consul</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-serviceDiscoveryConsulConsulHealthChecks"><a href="#serviceDiscoveryConsulConsulHealthChecks"><strong>4.5</strong><span>Consul Health Checks</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-serviceDiscoveryConsulControllingIpHostRegistration"><a href="#serviceDiscoveryConsulControllingIpHostRegistration"><strong>4.6</strong><span>Controlling IP/Host Registration</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-distributedConfigurationConsul"><a href="#distributedConfigurationConsul"><strong>4.7</strong><span>Distributed Configuration with Consul</span></a></div>
+        
+        <div class="toc-item" style="margin-left:20px" id="toc-item-distributedConfigurationConsulImportingConsulConfiguration"><a href="#distributedConfigurationConsulImportingConsulConfiguration"><strong>4.7.1</strong><span>Importing Consul Configuration</span></a></div>
+        
+        <div class="toc-item" style="margin-left:20px" id="toc-item-distributedConfigurationConsulConsulImportUriReference"><a href="#distributedConfigurationConsulConsulImportUriReference"><strong>4.7.2</strong><span>Consul Import URI Reference</span></a></div>
+        
+        <div class="toc-item" style="margin-left:20px" id="toc-item-distributedConfigurationConsulLegacyBootstrapConfiguration"><a href="#distributedConfigurationConsulLegacyBootstrapConfiguration"><strong>4.7.3</strong><span>Legacy Bootstrap Configuration</span></a></div>
+        
+        <div class="toc-item" style="margin-left:30px" id="toc-item-distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsKeyValuePairs"><a href="#distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsKeyValuePairs"><strong>4.7.3.1</strong><span>Storing Configuration as Key/Value Pairs</span></a></div>
+        
+        <div class="toc-item" style="margin-left:30px" id="toc-item-distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationInYamlJsonOrPropertiesFormat"><a href="#distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationInYamlJsonOrPropertiesFormat"><strong>4.7.3.2</strong><span>Storing Configuration in YAML, JSON, or Properties Format</span></a></div>
+        
+        <div class="toc-item" style="margin-left:30px" id="toc-item-distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsFileReferences"><a href="#distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsFileReferences"><strong>4.7.3.3</strong><span>Storing Configuration as File References</span></a></div>
+        
+        <div class="toc-item" style="margin-left:10px" id="toc-item-serviceDiscoveryConsulConsulWatch"><a href="#serviceDiscoveryConsulConsulWatch"><strong>4.8</strong><span>Consul Watch</span></a></div>
+        
         <div class="toc-item" style="margin-left:0px" id="toc-item-serviceDiscoveryEureka"><a href="#serviceDiscoveryEureka"><strong>5</strong><span>Eureka Support</span></a></div>
         
         <div class="toc-item" style="margin-left:0px" id="toc-item-springCloudConfigServer"><a href="#springCloudConfigServer"><strong>6</strong><span>Spring Cloud Config Server Support</span></a></div>
@@ -429,9 +457,16 @@ The bootstrap context is still supported for legacy scenarios, but it is no long
 <div class="paragraph">
 <p><a href="https://www.consul.io">Consul</a> is a popular Service Discovery and Distributed Configuration server provided by HashiCorp. Micronaut features a native non-blocking <a href="../api/io/micronaut/discovery/consul/client/v1/ConsulClient.html">ConsulClient</a> that is built using Micronaut&#8217;s support for <a href="https://docs.micronaut.io/latest/guide/index.html#clientAnnotation">Declarative HTTP Clients</a>.</p>
 </div>
-<div class="sect1">
-<h2 id="_starting_consul">Starting Consul</h2>
-<div class="sectionbody">
+
+<h2 id="serviceDiscoveryConsulStartingConsul"><a class="anchor" href="#serviceDiscoveryConsulStartingConsul"></a>4.1 Starting Consul</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.0.x/src/main/docs/guide/serviceDiscoveryConsulStartingConsul.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
 <div class="paragraph">
 <p>The quickest way to start using Consul is via Docker:</p>
 </div>
@@ -450,11 +485,16 @@ The bootstrap context is still supported for legacy scenarios, but it is no long
 <div class="paragraph">
 <p>Alternatively you can <a href="https://www.consul.io/docs/install/index.html">install and run a local Consul instance</a>.</p>
 </div>
+
+<h2 id="serviceDiscoveryConsulAutoRegisteringWithConsul"><a class="anchor" href="#serviceDiscoveryConsulAutoRegisteringWithConsul"></a>4.2 Auto Registering with Consul</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.0.x/src/main/docs/guide/serviceDiscoveryConsulAutoRegisteringWithConsul.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_auto_registering_with_consul">Auto Registering with Consul</h2>
-<div class="sectionbody">
+
+
 <div class="paragraph">
 <p>To register a Micronaut application with Consul simply add the necessary <a href="../api/io/micronaut/discovery/consul/ConsulConfiguration.html">ConsulConfiguration</a>. A minimal example can be seen below:</p>
 </div>
@@ -662,11 +702,16 @@ micronaut.application.instance.id=${random.shortuuid}</code></pre>
 </div>
 </div>
 </div>
+
+<h2 id="serviceDiscoveryConsulCustomizingConsulServiceRegistration"><a class="anchor" href="#serviceDiscoveryConsulCustomizingConsulServiceRegistration"></a>4.3 Customizing Consul Service Registration</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.0.x/src/main/docs/guide/serviceDiscoveryConsulCustomizingConsulServiceRegistration.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_customizing_consul_service_registration">Customizing Consul Service Registration</h2>
-<div class="sectionbody">
+
+
 <div class="paragraph">
 <p>The <a href="../api/io/micronaut/discovery/consul/ConsulConfiguration.html">ConsulConfiguration</a> class features a range of customization options for altering how an instance registers with Consul. You can customize the tags, the retry attempts, the fail fast behaviour and so on.</p>
 </div>
@@ -827,11 +872,16 @@ consul {
 </li>
 </ul>
 </div>
+
+<h2 id="serviceDiscoveryConsulDiscoveryServicesFromConsul"><a class="anchor" href="#serviceDiscoveryConsulDiscoveryServicesFromConsul"></a>4.4 Discovery Services from Consul</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.0.x/src/main/docs/guide/serviceDiscoveryConsulDiscoveryServicesFromConsul.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_discovery_services_from_consul">Discovery Services from Consul</h2>
-<div class="sectionbody">
+
+
 <div class="paragraph">
 <p>To discovery other services you could manually interact with the <a href="https://docs.micronaut.io/latest/api/io/micronaut/discovery/DiscoveryClient">DiscoveryClient</a>, however typically instead you use the <a href="https://docs.micronaut.io/latest/guide/index.html#clientAnnotation">Client Annotation</a> to declare how an HTTP client maps to a service.</p>
 </div>
@@ -861,11 +911,16 @@ interface HelloClient{
 RxHttpClient httpClient;</code></pre>
 </div>
 </div>
+
+<h2 id="serviceDiscoveryConsulConsulHealthChecks"><a class="anchor" href="#serviceDiscoveryConsulConsulHealthChecks"></a>4.5 Consul Health Checks</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.0.x/src/main/docs/guide/serviceDiscoveryConsulConsulHealthChecks.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_consul_health_checks">Consul Health Checks</h2>
-<div class="sectionbody">
+
+
 <div class="paragraph">
 <p>By default when registering with Consul Micronaut will register a <a href="https://www.consul.io/docs/agent/checks.html">TTL check</a>. A TTL check basically means that if the application does not send a heartbeat back to Consul after a period of time the service is put in a failing state.</p>
 </div>
@@ -955,11 +1010,16 @@ RxHttpClient httpClient;</code></pre>
 <div class="paragraph">
 <p>With this configuration option in place Consul will assume responsibility of invoking the Micronaut applications <a href="https://docs.micronaut.io/latest/guide/index.html#healthEndpoint">Health Endpoint</a>.</p>
 </div>
+
+<h2 id="serviceDiscoveryConsulControllingIpHostRegistration"><a class="anchor" href="#serviceDiscoveryConsulControllingIpHostRegistration"></a>4.6 Controlling IP/Host Registration</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.0.x/src/main/docs/guide/serviceDiscoveryConsulControllingIpHostRegistration.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_controlling_iphost_registration">Controlling IP/Host Registration</h2>
-<div class="sectionbody">
+
+
 <div class="paragraph">
 <p>Occasionally, depending on the deployment environment you may wish to expose the IP address and not the host name, since by default Micronaut will register with Consul with either the value of the <code>HOST</code> environment variable or the value configured via <code>micronaut.server.host</code>.</p>
 </div>
@@ -1127,11 +1187,16 @@ consul.client.registration.check.http=true</code></pre>
 </div>
 </div>
 </div>
+
+<h2 id="distributedConfigurationConsul"><a class="anchor" href="#distributedConfigurationConsul"></a>4.7 Distributed Configuration with Consul</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.0.x/src/main/docs/guide/distributedConfigurationConsul.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
 </div>
-</div>
-<div class="sect1">
-<h2 id="distributedConfigurationConsul">Distributed Configuration with Consul</h2>
-<div class="sectionbody">
+
+
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -1155,8 +1220,16 @@ consul.client.registration.check.http=true</code></pre>
 <div class="paragraph">
 <p>The legacy bootstrap <code>ConfigurationClient</code> approach is deprecated. Prefer <code>micronaut.config.import</code> for distributed configuration and use the legacy bootstrap path only during migration.</p>
 </div>
-<div class="sect2">
-<h3 id="_importing_consul_configuration">Importing Consul configuration</h3>
+
+<h2 id="distributedConfigurationConsulImportingConsulConfiguration"><a class="anchor" href="#distributedConfigurationConsulImportingConsulConfiguration"></a>4.7.1 Importing Consul Configuration</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.0.x/src/main/docs/guide/distributedConfigurationConsulImportingConsulConfiguration.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
 <div class="paragraph">
 <p>The preferred approach is to import explicit Consul KV paths with <code>micronaut.config.import</code>:</p>
 </div>
@@ -1453,9 +1526,16 @@ consul.client.registration.check.http=true</code></pre>
 <div class="paragraph">
 <p>Treat import URIs with embedded credentials as sensitive values and store them accordingly.</p>
 </div>
+
+<h2 id="distributedConfigurationConsulConsulImportUriReference"><a class="anchor" href="#distributedConfigurationConsulConsulImportUriReference"></a>4.7.2 Consul Import URI Reference</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.0.x/src/main/docs/guide/distributedConfigurationConsulConsulImportUriReference.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
 </div>
-<div class="sect2">
-<h3 id="_consul_import_uri_reference">Consul import URI reference</h3>
+
+
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -1581,9 +1661,16 @@ consul.client.registration.check.http=true</code></pre>
 <div class="paragraph">
 <p>Consul config import retries are now handled by Micronaut core&#8217;s retryable importer support. Do not combine these import retry settings with separate Consul client retry configuration for the same import path, or retries will be duplicated.</p>
 </div>
+
+<h2 id="distributedConfigurationConsulLegacyBootstrapConfiguration"><a class="anchor" href="#distributedConfigurationConsulLegacyBootstrapConfiguration"></a>4.7.3 Legacy Bootstrap Configuration</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.0.x/src/main/docs/guide/distributedConfigurationConsulLegacyBootstrapConfiguration.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
 </div>
-<div class="sect2">
-<h3 id="_legacy_bootstrap_configuration">Legacy bootstrap configuration</h3>
+
+
 <div class="paragraph">
 <p>To enable the legacy bootstrap integration, create a <code>src/main/resources/bootstrap.[yml/toml/properties]</code> file with the following configuration:</p>
 </div>
@@ -1680,8 +1767,16 @@ consul {
 <div class="paragraph">
 <p>After enabling distributed configuration, store the configuration to share in Consul&#8217;s key/value store.</p>
 </div>
-<div class="sect3">
-<h4 id="_storing_configuration_as_keyvalue_pairs">Storing configuration as key/value pairs</h4>
+
+<h2 id="distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsKeyValuePairs"><a class="anchor" href="#distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsKeyValuePairs"></a>4.7.3.1 Storing Configuration as Key/Value Pairs</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.0.x/src/main/docs/guide/distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsKeyValuePairs.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
 <div class="paragraph">
 <p>One option is to store keys and values directly in Consul. In this mode, Micronaut looks for configuration in the Consul <code>/config</code> directory by default.</p>
 </div>
@@ -1746,9 +1841,16 @@ You can alter the path by setting <code>consul.client.config.path</code>.
 <div class="paragraph">
 <p>With the legacy bootstrap integration enabled, <code>@Value("${foo.bar}")</code> and <code>environment.getProperty(..)</code> can then resolve the value from Consul.</p>
 </div>
+
+<h2 id="distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationInYamlJsonOrPropertiesFormat"><a class="anchor" href="#distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationInYamlJsonOrPropertiesFormat"></a>4.7.3.2 Storing Configuration in YAML, JSON, or Properties Format</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.0.x/src/main/docs/guide/distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationInYamlJsonOrPropertiesFormat.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
 </div>
-<div class="sect3">
-<h4 id="_storing_configuration_in_yaml_json_or_properties_format">Storing configuration in YAML, JSON, or properties format</h4>
+
+
 <div class="paragraph">
 <p>Some Consul setups store configuration in a structured blob instead of individual keys. The legacy bootstrap integration supports YAML, JSON, and Java properties formats.</p>
 </div>
@@ -1829,9 +1931,16 @@ You can alter the path by setting <code>consul.client.config.path</code>.
 EOF</code></pre>
 </div>
 </div>
+
+<h2 id="distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsFileReferences"><a class="anchor" href="#distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsFileReferences"></a>4.7.3.3 Storing Configuration as File References</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.0.x/src/main/docs/guide/distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsFileReferences.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
 </div>
-<div class="sect3">
-<h4 id="_storing_configuration_as_file_references">Storing configuration as file references</h4>
+
+
 <div class="paragraph">
 <p>Another option is to mirror a Git repository into Consul using a tool such as <a href="https://github.com/breser/git2consul">git2consul</a>.</p>
 </div>
@@ -1900,13 +2009,16 @@ EOF</code></pre>
 </div>
 </div>
 </div>
+
+<h2 id="serviceDiscoveryConsulConsulWatch"><a class="anchor" href="#serviceDiscoveryConsulConsulWatch"></a>4.8 Consul Watch</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.0.x/src/main/docs/guide/serviceDiscoveryConsulConsulWatch.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
 </div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_consul_watch">Consul Watch</h2>
-<div class="sectionbody">
+
+
 <div class="paragraph">
 <p>The watcher calls the <a href="https://developer.hashicorp.com/consul/api-docs/kv">KV Store API</a> to watch all keys used for the distributed configurations,
 using <a href="https://developer.hashicorp.com/consul/api-docs/features/blocking">Blocking Queries</a>
@@ -2085,8 +2197,6 @@ consul {
 <p><code>YAML</code></p>
 </li>
 </ul>
-</div>
-</div>
 </div>
 
 <h1 id="serviceDiscoveryEureka"><a class="anchor" href="#serviceDiscoveryEureka"></a>5 Eureka Support</h1>
