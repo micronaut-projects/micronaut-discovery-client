@@ -19,6 +19,10 @@ import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.core.util.Toggleable;
 import io.micronaut.discovery.consul.ConsulConfiguration;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
 /**
  * Configuration for Consul {@link Watcher}.
  *
@@ -38,7 +42,23 @@ public class WatchConfiguration implements Toggleable {
      */
     public static final boolean DEFAULT_ENABLED = false;
 
+    /**
+     * Internal property used to carry importer-derived watch paths into the Consul watcher.
+     *
+     * @since 5.0.0
+     */
+    public static final String IMPORTED_PATHS = PREFIX + ".imported-paths";
+
+    /**
+     * Internal property used to carry the importer-derived Consul config format into the watcher.
+     *
+     * @since 5.0.0
+     */
+    public static final String IMPORTED_FORMAT = PREFIX + ".imported-format";
+
     private boolean enabled = DEFAULT_ENABLED;
+    private String importedPaths;
+    private String importedFormat;
 
     @Override
     public boolean isEnabled() {
@@ -52,5 +72,45 @@ public class WatchConfiguration implements Toggleable {
      */
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
+    }
+
+    /**
+     * @return The explicit Consul KV paths supplied by config import metadata, if any.
+     * @since 5.0.0
+     */
+    public Optional<List<String>> getImportedPaths() {
+        return Optional.ofNullable(importedPaths)
+            .map(paths -> Arrays.stream(paths.split(","))
+                .map(String::trim)
+                .filter(path -> !path.isEmpty())
+                .toList());
+    }
+
+    /**
+     * Sets the explicit Consul KV paths supplied by importer metadata.
+     *
+     * @param importedPaths A comma-separated list of explicit Consul KV watch paths
+     * @since 5.0.0
+     */
+    public void setImportedPaths(String importedPaths) {
+        this.importedPaths = importedPaths;
+    }
+
+    /**
+     * @return The importer-derived Consul configuration format, if any.
+     * @since 5.0.0
+     */
+    public Optional<String> getImportedFormat() {
+        return Optional.ofNullable(importedFormat);
+    }
+
+    /**
+     * Sets the Consul configuration format supplied by importer metadata.
+     *
+     * @param importedFormat The importer-derived Consul configuration format
+     * @since 5.0.0
+     */
+    public void setImportedFormat(String importedFormat) {
+        this.importedFormat = importedFormat;
     }
 }

@@ -1,5 +1,15 @@
 This section documents breaking changes between Micronaut Discovery Client versions:
 
+=== Distributed configuration migration note
+
+Distributed configuration via the legacy bootstrap `ConfigurationClient` path is now deprecated. Prefer `micronaut.config.import` with explicit provider URIs such as:
+
+* `consul://localhost:8500/config/application`
+* `vault://localhost:8200/application`
+* `springcloud://configserver:9000/hello-world/default`
+
+Applications can continue using the legacy bootstrap path during migration, but startup will log deprecation warnings that point to the importer-based alternative.
+
 === Micronaut Discovery Client 5.0.0
 
 The following classes deprecated previously are now removed. The replacements are as follows:
@@ -103,4 +113,3 @@ As a consequence of removals, the following api:discovery.consul.client.v1.NewSe
 - The method `io.micronaut.discovery.consul.ConsulServiceInstance.getHealthEntry()` deprecated previously is now removed. It was unused and has no replacement.
 
 - The method `io.micronaut.discovery.consul.registration.ConsulAutoRegistration.customizeServiceEntry(ServiceInstance, ConsulNewServiceEntry)` deprecated previously is now removed. It was unused and has no replacement.
-

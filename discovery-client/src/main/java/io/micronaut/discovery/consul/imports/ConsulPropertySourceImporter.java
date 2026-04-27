@@ -1,0 +1,196 @@
+/*
+ * Copyright 2017-2026 original authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.micronaut.discovery.consul.imports;
+
+import io.micronaut.context.env.PropertySource;
+import io.micronaut.context.exceptions.ConfigurationException;
+import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.convert.value.ConvertibleValues;
+import io.micronaut.core.util.ConnectionString;
+import io.micronaut.discovery.consul.ConsulConfiguration;
+import io.micronaut.discovery.imports.RemoteConfigImporterContextFactory;
+import io.micronaut.discovery.imports.RemoteConfigImportOptionBinder;
+import io.micronaut.discovery.config.ConfigDiscoveryConfiguration;
+import io.micronaut.discovery.config.RetryablePropertySourceImporter;
+import io.micronaut.discovery.consul.watch.WatchConfiguration;
+import io.micronaut.retry.RetryPolicy;
+
+import java.util.LinkedHashMap;
+import java.util.Locale;
+
+import io.micronaut.context.ApplicationContext;
+import io.micronaut.context.env.EnvironmentPropertySource;
+import org.jspecify.annotations.Nullable;
+
+import java.util.Map;
+import java.util.Optional;
+
+/**
+ * Property source importer for explicit Consul configuration paths.
+ */
+@Internal
+public final class ConsulPropertySourceImporter extends RetryablePropertySourceImporter<ConsulPropertySourceImporter.ConsulImport> {
+
+    private static final String PROVIDER = "consul";
+    private static final String CONSUL_HOST = ConsulConfiguration.PREFIX + ".host";
+    private static final String CONSUL_PORT = ConsulConfiguration.PREFIX + ".port";
+    private static final String CONSUL_ACL_TOKEN = ConsulConfiguration.PREFIX + ".acl-token";
+    private static final String CONSUL_CONFIG_FAIL_FAST = ConsulConfiguration.PREFIX + ".config.fail-fast";
+
+    private final RemoteConfigImportOptionBinder optionBinder = new RemoteConfigImportOptionBinder();
+    private final RemoteConfigImporterContextFactory contextFactory = new RemoteConfigImporterContextFactory();
+    private final ConsulImportSupport importSupport = new ConsulImportSupport();
+    private @Nullable ApplicationContext applicationContext;
+    private @Nullable Map<String, Object> cachedContextProperties;
+
+    @Override
+    public String getProvider() {
+        return PROVIDER;
+    }
+
+    @Override
+    protected ConsulImport newImportDeclaration(ConnectionString connectionString, RetryPolicy retryPolicy) {
+        Map<String, Object> properties = buildContextProperties(connectionString);
+        String format = String.valueOf(properties.getOrDefault(ConsulConfiguration.PREFIX + ".config.format", ConfigDiscoveryConfiguration.Format.NATIVE.name().toLowerCase(Locale.ENGLISH)));
+        String datacenter = (String) properties.get(ConsulConfiguration.PREFIX + ".config.datacenter");
+        boolean watchEnabled = Boolean.parseBoolean(connectionString.getOptions().getOrDefault("watch", "false"));
+        return new ConsulImport(properties, format, datacenter, watchEnabled, connectionString.getPath(), connectionString.isOptional(), retryPolicy);
+    }
+
+    @Override
+    protected ConsulImport newImportDeclaration(ConvertibleValues<Object> values, RetryPolicy retryPolicy) {
+        String host = values.get("host", String.class)
+            .filter(v -> !v.isBlank())
+            .orElseThrow(() -> new ConfigurationException("Config import provider [consul] requires non-blank ['host']"));
+        Integer port = values.get("port", Integer.class).orElse(8500);
+        String path = values.get("path", String.class)
+            .filter(v -> !v.isBlank())
+            .orElseThrow(() -> new ConfigurationException("Config import provider [consul] requires non-blank ['path']"));
+        String format = values.get("format", String.class)
+            .orElse(ConfigDiscoveryConfiguration.Format.NATIVE.name().toLowerCase(Locale.ENGLISH));
+        String datacenter = values.get("dc", String.class).orElse(null);
+        boolean watchEnabled = values.get("watch", Boolean.class).orElse(false);
+
+        Map<String, Object> properties = new LinkedHashMap<>();
+        properties.put(CONSUL_HOST, host);
+        properties.put(CONSUL_PORT, port);
+        properties.put(ConsulConfiguration.PREFIX + ".config.format", format);
+        if (datacenter != null) {
+            properties.put(ConsulConfiguration.PREFIX + ".config.datacenter", datacenter);
+        }
+        values.get("acl-token", String.class).ifPresent(v -> properties.put(CONSUL_ACL_TOKEN, v));
+        values.get("fail-fast", Boolean.class).ifPresent(v -> properties.put(CONSUL_CONFIG_FAIL_FAST, v));
+        values.get("read-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.consul.read-timeout", v));
+        values.get("connect-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.consul.connect-timeout", v));
+
+        return new ConsulImport(properties, format, datacenter, watchEnabled, path, values.get("optional", Boolean.class).orElse(false), retryPolicy);
+    }
+
+    @Override
+    protected Optional<PropertySource> importRetryablePropertySource(ImportContext<ConsulImport> context) {
+        ConsulImport declaration = context.importDeclaration();
+        Map<String, Object> properties = declaration.properties();
+        String format = declaration.format();
+        String datacenter = declaration.datacenter();
+
+        ApplicationContext importerContext = getOrCreateContext(properties);
+        String importPath = declaration.path();
+        Map<String, Object> imported = importSupport.load(importerContext, importPath, format, datacenter);
+        if (imported.isEmpty()) {
+            return Optional.empty();
+        }
+        boolean watchEnabled = declaration.watchEnabled();
+        String propertySourceName;
+        if (watchEnabled) {
+            propertySourceName = importPath;
+        } else if (context.connectionString() != null) {
+            propertySourceName = context.getCanonicalLocation();
+        } else {
+            propertySourceName = getProvider() + "://" + importPath;
+        }
+        if (watchEnabled) {
+            String watchPath = importSupport.resolveWatchPath(importPath, format, imported).orElse(null);
+            imported.put(WatchConfiguration.PREFIX + ".enabled", true);
+            imported.putAll(properties.entrySet().stream()
+                .filter(e -> e.getKey().equals(CONSUL_HOST) || e.getKey().equals(CONSUL_PORT))
+                .collect(java.util.stream.Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+            if (watchPath != null) {
+                imported.put(WatchConfiguration.IMPORTED_PATHS, watchPath);
+            }
+            imported.put(WatchConfiguration.IMPORTED_FORMAT, normalizeWatchFormat(format));
+        }
+        return Optional.of(PropertySource.of(propertySourceName, imported, EnvironmentPropertySource.POSITION + 100));
+    }
+
+    @Override
+    protected void closeRetryableImporter() {
+        if (applicationContext != null) {
+            applicationContext.close();
+            applicationContext = null;
+            cachedContextProperties = null;
+        }
+    }
+
+    private Map<String, Object> buildContextProperties(ConnectionString connectionString) {
+        Map<String, Object> properties = new LinkedHashMap<>();
+        ConnectionString.HostPort hostPort = connectionString.getHosts().getFirst();
+        properties.put(CONSUL_HOST, hostPort.host());
+        if (hostPort.port() != null) {
+            properties.put(CONSUL_PORT, hostPort.port());
+        }
+        properties.putAll(optionBinder.bind(connectionString));
+        return properties;
+    }
+
+    private ApplicationContext getOrCreateContext(Map<String, Object> properties) {
+        if (applicationContext == null || !properties.equals(cachedContextProperties)) {
+            close();
+            cachedContextProperties = new LinkedHashMap<>(properties);
+            applicationContext = contextFactory.build(properties);
+        }
+        return applicationContext;
+    }
+
+    private String normalizeWatchFormat(String format) {
+        return switch (format.toLowerCase(Locale.ENGLISH)) {
+            case RemoteConfigImportOptionBinder.FORMAT_YML, RemoteConfigImportOptionBinder.FORMAT_YAML -> ConfigDiscoveryConfiguration.Format.YAML.name();
+            case RemoteConfigImportOptionBinder.FORMAT_JSON -> ConfigDiscoveryConfiguration.Format.JSON.name();
+            case RemoteConfigImportOptionBinder.FORMAT_PROPERTIES -> ConfigDiscoveryConfiguration.Format.PROPERTIES.name();
+            case RemoteConfigImportOptionBinder.FORMAT_NATIVE -> ConfigDiscoveryConfiguration.Format.NATIVE.name();
+            default -> format.toUpperCase(Locale.ENGLISH);
+        };
+    }
+
+    /**
+     * Typed Consul import declaration.
+     *
+     * @param properties The importer child-context properties
+     * @param format The Consul config format
+     * @param datacenter The optional Consul datacenter
+     * @param watchEnabled Whether importer-driven watch refresh is enabled
+     * @param path The explicit Consul import path
+     * @param optional Whether the import is optional
+     * @param retryPolicy The resolved import retry policy
+     */
+    public record ConsulImport(Map<String, Object> properties,
+                               String format,
+                               @Nullable String datacenter,
+                               boolean watchEnabled,
+                               String path,
+                               boolean optional,
+                               RetryPolicy retryPolicy) {
+    }
+}

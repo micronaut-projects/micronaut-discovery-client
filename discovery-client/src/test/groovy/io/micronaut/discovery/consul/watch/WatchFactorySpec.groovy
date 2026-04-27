@@ -76,7 +76,7 @@ class WatchFactorySpec extends Specification {
         watcher instanceof NativeWatcher
         def kvPaths = ReflectionUtils.getFieldValue(NativeWatcher.class, "kvPaths", watcher)
         kvPaths.isPresent()
-        kvPaths.get() == List.of("path/to/native/application/", "path/to/native/my_application/")
+        kvPaths.get() == List.of("path/to/native/application", "path/to/native/my_application")
     }
 
     void "test than #format format is supported"(Format format) {
