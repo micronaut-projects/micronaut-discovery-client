@@ -37,7 +37,7 @@ import io.micronaut.discovery.consul.condition.RequiresConsul;
 import io.micronaut.discovery.imports.LegacyConfigurationClientDeprecationLogger;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import io.micronaut.jackson.env.JsonPropertySourceLoader;
+import io.micronaut.jackson.core.env.JsonPropertySourceLoader;
 import io.micronaut.scheduling.TaskExecutors;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
