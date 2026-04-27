@@ -26,7 +26,7 @@ import io.micronaut.discovery.consul.client.v1.ConsulClient;
 import io.micronaut.discovery.consul.client.v1.KeyValue;
 import io.micronaut.discovery.imports.RemoteConfigImportOptionBinder;
 import io.micronaut.discovery.imports.RemoteConfigImportMetadata;
-import io.micronaut.jackson.env.JsonPropertySourceLoader;
+import io.micronaut.jackson.core.env.JsonPropertySourceLoader;
 import org.jspecify.annotations.Nullable;
 import reactor.core.publisher.Flux;
 
