@@ -55,7 +55,7 @@ public class ConsulConfiguration extends DiscoveryClientConfiguration {
     private static final int CONSULT_DEFAULT_PORT = 8500;
     private final ConsulConnectionPoolConfiguration consulConnectionPoolConfiguration;
 
-    private String aslToken;
+    private String aclToken;
     private boolean healthCheck = true;
     private ConsulRegistrationConfiguration registration = new ConsulRegistrationConfiguration();
     private ConsulDiscoveryConfiguration discovery = new ConsulDiscoveryConfiguration();
@@ -122,16 +122,34 @@ public class ConsulConfiguration extends DiscoveryClientConfiguration {
 
     /**
      * @return The token to include in all requests as the {@code X-Consul-Token} header
+     * @deprecated Use {@link #getAclToken()}.
      */
+    @Deprecated(since = "5.0", forRemoval = true)
     public Optional<String> getAslToken() {
-        return Optional.ofNullable(aslToken);
+        return Optional.ofNullable(aclToken);
     }
 
     /**
      * @param aslToken The asl token
+     * @deprecated Use {@link #setAclToken(String)}.
      */
+    @Deprecated(since = "5.0", forRemoval = true)
     public void setAslToken(String aslToken) {
-        this.aslToken = aslToken;
+        this.aclToken = aslToken;
+    }
+
+    /**
+     * @return The token to include in all requests as the {@code X-Consul-Token} header
+     */
+    public Optional<String> getAclToken() {
+        return Optional.ofNullable(aclToken);
+    }
+
+    /**
+     * @param aclToken The asl token
+     */
+    public void setAclToken(String aclToken) {
+        this.aclToken = aclToken;
     }
 
     /**
@@ -181,7 +199,7 @@ public class ConsulConfiguration extends DiscoveryClientConfiguration {
     @Override
     public String toString() {
         return "ConsulConfiguration{" +
-            "aslToken='" + aslToken + '\'' +
+            "aclToken='" + aclToken + '\'' +
             ", registration=" + registration +
             ", discovery=" + discovery +
             "} " + super.toString();

@@ -1,0 +1,144 @@
+/*
+ * Copyright 2017-2026 original authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.micronaut.discovery.imports;
+
+import io.micronaut.context.exceptions.ConfigurationException;
+import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.util.ConnectionString;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * Binds shared and provider-specific query parameters from distributed config import URIs.
+ */
+@Internal
+public final class RemoteConfigImportOptionBinder {
+
+    public static final String FORMAT_NATIVE = "native";
+    public static final String FORMAT_JSON = "json";
+    public static final String FORMAT_YAML = "yaml";
+    public static final String FORMAT_YML = "yml";
+    public static final String FORMAT_PROPERTIES = "properties";
+    public static final String FORMAT_FILE = "file";
+
+    private static final String RETRY_ATTEMPTS = "retry-attempts";
+    private static final String FAIL_FAST = "fail-fast";
+    private static final String PROVIDER_CONSUL = "consul";
+    private static final String PROVIDER_VAULT = "vault";
+    private static final String PROVIDER_SPRING_CLOUD = "springcloud";
+    private static final String CONSUL_ACL_TOKEN = "consul.client.acl-token";
+    private static final String VAULT_TOKEN = "vault.client.token";
+    private static final String SPRING_CLOUD_CONFIG_USERNAME = "spring.cloud.config.username";
+    private static final String SPRING_CLOUD_CONFIG_PASSWORD = "spring.cloud.config.password";
+
+    private static final Map<String, String> COMMON_OPTIONS = Map.of(
+        RETRY_ATTEMPTS, RETRY_ATTEMPTS,
+        "retry-count", RETRY_ATTEMPTS,
+        "retry-delay", "retry-delay",
+        "read-timeout", "read-timeout",
+        "connect-timeout", "connect-timeout"
+    );
+
+    private static final Map<String, Map<String, String>> PROVIDER_OPTIONS = Map.of(
+        PROVIDER_CONSUL, Map.of(
+            "format", "consul.client.config.format",
+            "dc", "consul.client.config.datacenter",
+            "acl-token", CONSUL_ACL_TOKEN,
+            FAIL_FAST, "consul.client.config.fail-fast",
+            "watch", "micronaut.discovery.consul.import.watch"
+        ),
+        PROVIDER_VAULT, Map.of(
+            "token", VAULT_TOKEN,
+            "kv-version", "vault.client.kv-version",
+            "secret-engine-name", "vault.client.secret-engine-name",
+            "path-prefix", "vault.client.path-prefix",
+            FAIL_FAST, "vault.client.fail-fast"
+        ),
+        PROVIDER_SPRING_CLOUD, Map.of(
+            "label", "spring.cloud.config.label",
+            "username", SPRING_CLOUD_CONFIG_USERNAME,
+            "password", SPRING_CLOUD_CONFIG_PASSWORD,
+            FAIL_FAST, "spring.cloud.config.fail-fast"
+        )
+    );
+
+    public Map<String, Object> bind(ConnectionString connectionString) {
+        String protocol = connectionString.protocol();
+        Map<String, String> providerOptions = PROVIDER_OPTIONS.get(protocol);
+        if (providerOptions == null) {
+            throw new ConfigurationException("Unsupported import protocol: " + protocol);
+        }
+
+        Map<String, Object> bound = new LinkedHashMap<>();
+        bindUserInfo(connectionString, protocol, bound);
+        for (Map.Entry<String, String> option : connectionString.options().entrySet()) {
+            String key = option.getKey();
+            String normalizedCommon = COMMON_OPTIONS.get(key);
+            if (normalizedCommon != null) {
+                if (RETRY_ATTEMPTS.equals(key)) {
+                    bound.put(normalizedCommon, option.getValue());
+                } else {
+                    bound.computeIfAbsent(normalizedCommon, ignored -> option.getValue());
+                }
+                continue;
+            }
+
+            String propertyName = providerOptions.get(key);
+            if (propertyName == null) {
+                throw unsupportedOption(connectionString, key, providerOptions.keySet());
+            }
+            bound.put(propertyName, option.getValue());
+        }
+
+        return bound;
+    }
+
+    private void bindUserInfo(ConnectionString connectionString, String protocol, Map<String, Object> bound) {
+        String username = connectionString.getUsername().orElse(null);
+        String password = connectionString.getPassword().orElse(null);
+        switch (protocol) {
+            case PROVIDER_CONSUL -> {
+                if (username instanceof String value && !value.isEmpty()) {
+                    bound.put(CONSUL_ACL_TOKEN, value);
+                }
+            }
+            case PROVIDER_VAULT -> {
+                if (username instanceof String value && !value.isEmpty()) {
+                    bound.put(VAULT_TOKEN, value);
+                }
+            }
+            case PROVIDER_SPRING_CLOUD -> {
+                if (username instanceof String value && !value.isEmpty()) {
+                    bound.put(SPRING_CLOUD_CONFIG_USERNAME, value);
+                }
+                if (password instanceof String value && !value.isEmpty()) {
+                    bound.put(SPRING_CLOUD_CONFIG_PASSWORD, value);
+                }
+            }
+            default -> {
+                // No user-info binding for other protocols.
+            }
+        }
+    }
+
+    private static ConfigurationException unsupportedOption(ConnectionString connectionString, String option, Set<String> supportedOptions) {
+        return new ConfigurationException(
+            "Unsupported query parameter '" + option + "' for import protocol '" + connectionString.protocol() + "'. Supported provider options: " + supportedOptions
+        );
+    }
+}

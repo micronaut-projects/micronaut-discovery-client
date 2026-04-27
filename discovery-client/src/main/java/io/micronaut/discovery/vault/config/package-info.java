@@ -19,7 +19,6 @@
  *  @author thiagolocatelli
  *  @since 1.2.0
  */
-@Requires(property = ConfigurationClient.ENABLED, value = "true", defaultValue = "false")
 @Requires(property = VaultClientConfiguration.PREFIX + "." + ConfigDiscoveryConfiguration.PREFIX + ".enabled", value = "true")
 @Configuration
 package io.micronaut.discovery.vault.config;
@@ -27,4 +26,3 @@ package io.micronaut.discovery.vault.config;
 import io.micronaut.context.annotation.Configuration;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.discovery.config.ConfigDiscoveryConfiguration;
-import io.micronaut.discovery.config.ConfigurationClient;

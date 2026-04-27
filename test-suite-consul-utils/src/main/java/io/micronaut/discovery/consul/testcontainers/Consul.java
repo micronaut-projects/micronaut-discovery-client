@@ -20,7 +20,10 @@ public class Consul {
     public static ConsulContainer getContainer() {
         if (container == null) {
             container = new ConsulContainer(DockerImageName.parse(IMAGE_NAME));
-            container.waitingFor(new HttpWaitStrategy().forStatusCode(200).forPath("/v1/status/leader"));
+            container.waitingFor(new HttpWaitStrategy()
+                .forPort(CONSUL_HTTP_PORT)
+                .forStatusCode(200)
+                .forPath("/v1/status/leader"));
             container.start();
             do {
                 try {

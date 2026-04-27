@@ -16,6 +16,7 @@
 package io.micronaut.discovery.consul.client.v1;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micronaut.core.annotation.ReflectiveAccess;
 import org.jspecify.annotations.Nullable;
 import io.micronaut.serde.annotation.Serdeable;
 
@@ -37,6 +38,7 @@ import java.util.Map;
  * @since 4.1.0
  */
 @Serdeable
+@ReflectiveAccess
 public record ConsulNewServiceEntry(
     @JsonProperty("Name")
     String name,

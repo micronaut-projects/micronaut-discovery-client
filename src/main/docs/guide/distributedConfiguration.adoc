@@ -1,0 +1,12 @@
+[[distributedConfiguration]]
+Micronaut features a robust system for externalizing and adapting configuration to the environment.
+
+When multiple services need to share configuration, this module provides Micronaut's distributed configuration integrations for Consul, Vault, and Spring Cloud Config Server.
+
+For new applications and new integrations, the recommended approach is to use https://docs.micronaut.io/latest/guide/index.html#configImport[configuration import] via `micronaut.config.import` instead of relying on the bootstrap context. Configuration imports load remote or shared configuration as part of normal property source resolution, and custom remote sources can be integrated with https://docs.micronaut.io/latest/guide/index.html#customPropertySourceImporter[`PropertySourceImporter`] implementations.
+
+The legacy bootstrap model is still available for compatibility and migrations. In that model, api:discovery.config.ConfigurationClient[] implementations resolve remote property sources during bootstrap and emit zero or many api:context.env.PropertySource[] instances.
+
+You can either implement your own api:discovery.config.ConfigurationClient[] or use the integrations provided by this module. For new work, prefer configuration import support and importer-based integrations. The following sections cover the available distributed configuration options.
+
+NOTE: The bootstrap context is still supported for legacy scenarios, but it is no longer the recommended default for distributed configuration. If you still load distributed configuration during bootstrap, the application needs the discovery client infrastructure from `io.micronaut.discovery:micronaut-discovery-client`, and any beans involved in resolving that configuration must remain bootstrap-compatible. See https://docs.micronaut.io/latest/guide/index.html#bootstrap[Bootstrap Configuration] for the legacy requirements.

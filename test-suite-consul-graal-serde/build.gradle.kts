@@ -1,7 +1,7 @@
 plugins {
     id("io.micronaut.build.internal.discovery-client-tests-consul")
-    id("org.graalvm.buildtools.native") version "0.11.3"
-    id("io.micronaut.library") version "4.6.1"
+    id("org.graalvm.buildtools.native") version "0.11.5"
+    id("io.micronaut.library") version "4.6.2"
 }
 
 dependencies {

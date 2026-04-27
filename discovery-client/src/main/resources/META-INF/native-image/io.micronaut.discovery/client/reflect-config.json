@@ -1,0 +1,10 @@
+[
+  {
+    "name": "io.micronaut.discovery.consul.client.v1.ConsulNewServiceEntry",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true
+  }
+]

@@ -17,9 +17,9 @@ package io.micronaut.discovery.consul
 
 import io.micronaut.context.annotation.Property
 import io.micronaut.context.annotation.Requires
-import io.micronaut.context.annotation.Value
 import io.micronaut.core.async.publisher.Publishers
 import io.micronaut.core.util.Toggleable
+import io.micronaut.core.util.StringUtils
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
@@ -34,13 +34,19 @@ import org.reactivestreams.Publisher
  * @since 1.0
  */
 @Filter('/v1/**')
-@Requires(property = 'consul.client.asl-token')
+@Requires(property = MockConsulServer.ENABLED)
 class MockConsulAuth implements HttpServerFilter, Toggleable{
 
     final String token
 
-    MockConsulAuth(@Property(name = 'consul.client.asl-token') String token) {
-        this.token = token
+    MockConsulAuth(@Property(name = 'consul.client.acl-token', defaultValue = '') String aclToken,
+                   @Property(name = 'consul.client.asl-token', defaultValue = '') String aslToken) {
+        this.token = StringUtils.isNotEmpty(aclToken) ? aclToken : aslToken
+    }
+
+    @Override
+    boolean isEnabled() {
+        StringUtils.isNotEmpty(token)
     }
 
     @Override
