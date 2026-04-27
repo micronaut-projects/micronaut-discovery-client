@@ -21,6 +21,10 @@ dependencies {
     testRuntimeOnly(mnLogging.logback.classic)
 }
 
+configurations.all {
+    resolutionStrategy.preferProjectModules()
+}
+
 micronaut {
     version.set(libs.versions.micronaut.platform.get())
     testRuntime("junit5")
