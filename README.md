@@ -18,6 +18,8 @@ As well as [Distributed Configuration](https://docs.micronaut.io/latest/guide/in
 * [Oracle Cloud Vault](https://docs.cloud.oracle.com/en-us/iaas/Content/KeyManagement/Concepts/keyoverview.htm)
 * [Spring Cloud Config Server](https://cloud.spring.io/spring-cloud-config/reference/html/#_spring_cloud_config_server)
 
+The preferred distributed configuration path is `micronaut.config.import` with explicit provider URIs such as `consul://...`, `vault://...`, and `springcloud://...`. The older bootstrap `ConfigurationClient` approach remains available for migration, but is deprecated and logs warnings on use.
+
 ## Documentation
 
 See the [Documentation](https://micronaut-projects.github.io/micronaut-discovery-client/latest/guide/) for more information. 

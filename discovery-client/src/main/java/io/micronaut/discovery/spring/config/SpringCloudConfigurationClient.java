@@ -26,6 +26,7 @@ import org.jspecify.annotations.Nullable;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.config.ConfigurationClient;
+import io.micronaut.discovery.imports.LegacyConfigurationClientDeprecationLogger;
 import io.micronaut.discovery.spring.config.client.SpringCloudConfigClient;
 import io.micronaut.discovery.spring.config.client.ConfigServerPropertySource;
 import io.micronaut.discovery.spring.config.client.ConfigServerResponse;
@@ -53,6 +54,7 @@ import java.util.concurrent.ExecutorService;
  */
 @Singleton
 @BootstrapContextCompatible
+@Requires(property = ConfigurationClient.ENABLED, value = StringUtils.TRUE, defaultValue = StringUtils.FALSE)
 @Requires(beans = SpringCloudClientConfiguration.class)
 public class SpringCloudConfigurationClient implements ConfigurationClient {
 
@@ -83,6 +85,8 @@ public class SpringCloudConfigurationClient implements ConfigurationClient {
 
     @Override
     public Publisher<PropertySource> getPropertySources(Environment environment) {
+        LegacyConfigurationClientDeprecationLogger.warn(LOG, "spring-cloud-configuration-client-legacy-use",
+            "Spring Cloud distributed configuration via ConfigurationClient/bootstrap is deprecated. Prefer micronaut.config.import=springcloud://...");
         if (!springCloudConfiguration.getConfiguration().isEnabled()) {
             return Flux.empty();
         }

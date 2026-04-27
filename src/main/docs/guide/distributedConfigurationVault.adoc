@@ -1,0 +1,167 @@
+[[distributedConfigurationVault]]
+HashiCorp Vault can be used as a distributed configuration source for Micronaut applications.
+
+The legacy bootstrap `ConfigurationClient` approach is deprecated. Prefer `micronaut.config.import` with explicit Vault paths.
+
+== Importing configuration from Vault
+
+.Importing a Vault secret path
+[configuration]
+----
+micronaut:
+  config:
+    import: "vault://testtoken@localhost:8200/application"
+----
+
+.Importing an environment-specific Vault secret path
+[configuration]
+----
+micronaut:
+  config:
+    import: "vault://testtoken@localhost:8200/application/prod"
+----
+
+.Importing from Vault KV v2 with an explicit path prefix
+[configuration]
+----
+micronaut:
+  config:
+    import: "vault://testtoken@localhost:8200/application?kv-version=V2&secret-engine-name=backendv2-prefixed&path-prefix=mock/v2/path/prefix"
+----
+
+Query-parameter tokens are also supported during migration, but URI user-info is preferred:
+
+.Importing a Vault secret path with a query-parameter token
+[configuration]
+----
+micronaut:
+  config:
+    import: "vault://localhost:8200/application?token=testtoken"
+----
+
+Treat import URIs with embedded credentials as sensitive values and store them accordingly.
+
+=== Vault import URI reference
+
+[cols="1,1,3"]
+|===
+|ConnectionString part |Example |Meaning
+
+|Scheme
+|`vault://`
+|Selects the Vault importer.
+
+|User info
+|`vault://testtoken@localhost:8200/application`
+|Optional Vault token. The importer binds the URI username as `vault.client.token`.
+
+|Host and port
+|`localhost:8200`
+|Vault host and port.
+
+|Path
+|`/application/prod`
+|Required explicit secret path. Leading `/` is optional in practice, but the path must identify the secret to load.
+
+|Query string
+|`?kv-version=V2&path-prefix=config`
+|Optional importer settings.
+|===
+
+[cols="1,1,3"]
+|===
+|Option |Example |Description
+
+|`token`
+|`?token=testtoken`
+|Vault token. Prefer URI user-info instead.
+
+|`kv-version`
+|`?kv-version=V2`
+|Vault KV engine version.
+
+|`secret-engine-name`
+|`?secret-engine-name=backendv2-prefixed`
+|Vault secret engine name.
+
+|`path-prefix`
+|`?path-prefix=mock/v2/path/prefix`
+|Optional path prefix prepended before the explicit secret path.
+
+|`fail-fast`
+|`?fail-fast=false`
+|Whether failures should abort startup immediately.
+
+|`retry-attempts`
+|`?retry-attempts=3`
+|Number of config import retry attempts handled by Micronaut's retryable importer support.
+
+|`retry-count`
+|`?retry-count=3`
+|Alias for `retry-attempts`.
+
+|`retry-delay`
+|`?retry-delay=1s`
+|Delay between import retries.
+
+|`retry-max-delay`
+|`?retry-max-delay=30s`
+|Maximum overall retry delay.
+
+|`retry-multiplier`
+|`?retry-multiplier=2.0`
+|Multiplier applied between retry delays.
+
+|`retry-jitter`
+|`?retry-jitter=0.2`
+|Retry jitter factor from `0.0` to `1.0`.
+
+|`read-timeout`
+|`?read-timeout=5s`
+|Read timeout for remote calls.
+
+|`connect-timeout`
+|`?connect-timeout=5s`
+|Connection timeout for remote calls.
+|===
+
+During migration, the older bootstrap configuration is still available:
+
+.Legacy bootstrap Vault configuration
+[configuration]
+----
+micronaut:
+  application:
+    name: hello-world
+  config-client:
+    enabled: true
+
+vault:
+  client:
+    uri: http://localhost:8200
+    config:
+      enabled: true
+----
+
+Prefer the importer-based configuration for new applications and migrations.
+
+The legacy bootstrap integration uses the configured `micronaut.application.name` to look up property sources from Vault.
+
+.Legacy Vault configuration resolution precedence
+|===
+|Secret Path|Description
+
+|`/application`
+|Configuration shared by all applications
+
+|`/[APPLICATION_NAME]`
+|Application-specific configuration
+
+|`/application/[ENV_NAME]`
+|Configuration shared by all applications for an active environment
+
+|`/[APPLICATION_NAME]/[ENV_NAME]`
+|Application-specific configuration for an active environment
+|===
+
+With `micronaut.config.import`, the secret path is explicit in the import URI, so those default lookup paths are no longer implied. See the https://developer.hashicorp.com/vault/api-docs/secret/kv[HashiCorp Vault KV documentation] for server setup and secret storage details.

@@ -1,0 +1,15 @@
+[
+  {
+    "name": "io.micronaut.discovery.consul.client.v1.ConsulNewServiceEntry",
+    "allRecordComponents": true,
+    "methods": [
+      { "name": "name" },
+      { "name": "address" },
+      { "name": "port" },
+      { "name": "tags" },
+      { "name": "id" },
+      { "name": "meta" },
+      { "name": "checks" }
+    ]
+  }
+]
