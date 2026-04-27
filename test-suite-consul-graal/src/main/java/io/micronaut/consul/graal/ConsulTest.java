@@ -53,7 +53,6 @@ class ConsulTest implements TestPropertyProvider {
     @Inject
     @Client("/")
     HttpClient client;
-    
     @Test
     void test() {
         String hello = client.toBlocking().retrieve("/hello/Micronaut");
