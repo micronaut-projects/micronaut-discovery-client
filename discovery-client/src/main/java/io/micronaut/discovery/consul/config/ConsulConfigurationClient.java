@@ -18,10 +18,10 @@ package io.micronaut.discovery.consul.config;
 import io.micronaut.context.annotation.BootstrapContextCompatible;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
-import io.micronaut.context.env.EnvironmentPropertySource;
 import io.micronaut.context.env.PropertiesPropertySourceLoader;
 import io.micronaut.context.env.PropertySource;
 import io.micronaut.context.env.PropertySourceLoader;
+import io.micronaut.context.env.SystemPropertiesPropertySource;
 import io.micronaut.context.env.yaml.YamlPropertySourceLoader;
 import io.micronaut.context.exceptions.ConfigurationException;
 import org.jspecify.annotations.Nullable;
@@ -172,7 +172,7 @@ public class ConsulConfigurationClient implements ConfigurationClient {
             keyValueFlowables.add(appSpecificConfig);
         }
 
-        int basePriority = EnvironmentPropertySource.POSITION + 100;
+        int basePriority = SystemPropertiesPropertySource.POSITION + 100;
         int envBasePriority = basePriority + 50;
 
         return Flux.merge(keyValueFlowables).flatMap(keyValues -> Flux.create(emitter -> {
