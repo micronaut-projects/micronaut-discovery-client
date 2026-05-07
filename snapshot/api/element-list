@@ -18,7 +18,6 @@ io.micronaut.discovery.eureka.condition
 io.micronaut.discovery.eureka.health
 io.micronaut.discovery.eureka.registration
 io.micronaut.discovery.imports
-io.micronaut.discovery.info
 io.micronaut.discovery.spring.config
 io.micronaut.discovery.spring.config.client
 io.micronaut.discovery.spring.imports
