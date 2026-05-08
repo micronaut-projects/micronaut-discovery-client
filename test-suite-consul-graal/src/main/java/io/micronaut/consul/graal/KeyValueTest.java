@@ -25,7 +25,6 @@ import jakarta.inject.Inject;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.condition.DisabledInNativeImage;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
@@ -46,7 +45,6 @@ class KeyValueTest implements TestPropertyProvider {
     @Inject
     JsonMapper jsonMapper;
 
-    @DisabledInNativeImage
     @Test
     void testJsonSerializationOfKeyValue() throws IOException, JSONException {
         //given:
