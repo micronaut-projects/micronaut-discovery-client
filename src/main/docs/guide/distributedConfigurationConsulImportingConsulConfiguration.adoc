@@ -1,0 +1,55 @@
+= Importing Consul Configuration
+
+The preferred approach is to import explicit Consul KV paths with `micronaut.config.import`:
+
+.Importing Consul configuration with micronaut.config.import
+[configuration]
+----
+micronaut:
+  config:
+    import: "consul://localhost:8500/config/application"
+----
+
+To load structured data formats from an explicit namespace:
+
+.Importing structured Consul configuration
+[configuration]
+----
+micronaut:
+  config:
+    import: "consul://localhost:8500/config/application?format=json"
+----
+
+For ACL-protected Consul instances, prefer URI user-info:
+
+.Importing Consul configuration with an ACL token
+[configuration]
+----
+micronaut:
+  config:
+    import: "consul://token@localhost:8500/config/application"
+----
+
+Query-parameter ACL tokens are also supported during migration:
+
+.Importing Consul configuration with an ACL token query parameter
+[configuration]
+----
+micronaut:
+  config:
+    import: "consul://localhost:8500/config/application?acl-token=token"
+----
+
+To enable refresh for an explicit importer path, append `watch=true`:
+
+.Importing Consul configuration with refresh enabled
+[configuration]
+----
+micronaut:
+  config:
+    import: "consul://localhost:8500/config/application?watch=true"
+----
+
+When `watch=true` is used, Consul change notifications trigger an environment refresh so the imported configuration is reloaded and a `RefreshEvent` is published.
+
+Treat import URIs with embedded credentials as sensitive values and store them accordingly.

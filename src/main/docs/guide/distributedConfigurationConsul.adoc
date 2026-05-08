@@ -1,0 +1,12 @@
+= Distributed Configuration with Consul
+
+[TIP]
+.Using the CLI
+====
+If you create your project using the Micronaut CLI, supply the `config-consul` feature to enable Consul distributed configuration in your project:
+----
+$ mn create-app my-app --features config-consul
+----
+====
+
+The legacy bootstrap `ConfigurationClient` approach is deprecated. Prefer `micronaut.config.import` for distributed configuration and use the legacy bootstrap path only during migration.

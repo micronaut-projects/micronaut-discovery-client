@@ -1,0 +1,85 @@
+= Consul Import URI Reference
+
+[cols="1,1,3"]
+|===
+|ConnectionString part |Example |Meaning
+
+|Scheme
+|`consul://`
+|Selects the Consul importer.
+
+|User info
+|`consul://token@localhost:8500/config/application`
+|Optional Consul ACL token. The importer binds the URI username as the Consul ACL token.
+
+|Host and port
+|`localhost:8500`
+|Consul host and port.
+
+|Path
+|`/config/application`
+|Required explicit Consul KV/config path.
+
+|Query string
+|`?format=json&watch=true`
+|Optional importer settings.
+|===
+
+[cols="1,1,3"]
+|===
+|Option |Example |Description
+
+|`format`
+|`?format=json`
+|Consul config format. Supported values are `native`, `json`, `yaml`, `yml`, `properties`, and `file`.
+
+|`dc`
+|`?dc=dc1`
+|Consul datacenter.
+
+|`acl-token`
+|`?acl-token=token`
+|Consul ACL token. Prefer URI user-info instead.
+
+|`fail-fast`
+|`?fail-fast=false`
+|Whether failures should abort startup immediately.
+
+|`watch`
+|`?watch=true`
+|Enables importer-driven refresh for the explicit Consul import path.
+
+|`retry-attempts`
+|`?retry-attempts=3`
+|Number of config import retry attempts handled by Micronaut's retryable importer support.
+
+|`retry-count`
+|`?retry-count=3`
+|Alias for `retry-attempts`.
+
+|`retry-delay`
+|`?retry-delay=1s`
+|Delay between import retries.
+
+|`retry-max-delay`
+|`?retry-max-delay=30s`
+|Maximum overall retry delay.
+
+|`retry-multiplier`
+|`?retry-multiplier=2.0`
+|Multiplier applied between retry delays.
+
+|`retry-jitter`
+|`?retry-jitter=0.2`
+|Retry jitter factor from `0.0` to `1.0`.
+
+|`read-timeout`
+|`?read-timeout=5s`
+|Read timeout for Consul client calls.
+
+|`connect-timeout`
+|`?connect-timeout=5s`
+|Connection timeout for Consul client calls.
+|===
+
+Consul config import retries are now handled by Micronaut core's retryable importer support. Do not combine these import retry settings with separate Consul client retry configuration for the same import path, or retries will be duplicated.

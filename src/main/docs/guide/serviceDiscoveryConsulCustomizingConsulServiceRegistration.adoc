@@ -1,0 +1,33 @@
+= Customizing Consul Service Registration
+
+The api:discovery.consul.ConsulConfiguration[] class features a range of customization options for altering how an instance registers with Consul. You can customize the tags, the retry attempts, the fail fast behaviour and so on.
+
+Notice too that `ConsulConfiguration` extends api:discovery.client.DiscoveryClientConfiguration[]  which in turn extends link:{micronautapi}http/client/HttpClientConfiguration[HttpClientConfiguration] allowing you to customize the settings for the Consul client, including read timeout, proxy configuration and so on.
+
+For example:
+
+.Customizing Consul Registration Configuration
+[configuration]
+----
+micronaut:
+    application:
+        name: hello-world
+consul:
+  client:
+    registration:
+      enabled: true
+      tags:
+        - hello
+        - world
+      meta:
+        some: value
+        instance_type: t2.medium
+      retry-count: 5
+      fail-fast: false
+    defaultZone: "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+----
+
+- `tags` alters the tags
+- `meta` alters the metadata
+- `retry-count` alsters the retry count
+- `fail-fast` alters the fail fast behavior
