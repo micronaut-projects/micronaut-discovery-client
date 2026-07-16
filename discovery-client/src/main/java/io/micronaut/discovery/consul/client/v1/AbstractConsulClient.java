@@ -53,12 +53,11 @@ public abstract class AbstractConsulClient implements ConsulClient {
     private ConsulConfiguration consulConfiguration = new ConsulConfiguration();
 
     /**
-     * @param consulConfiguration The Consul configuration
+     * @param configuration The Consul configuration
      */
-    @Inject
-    public void setConsulConfiguration(ConsulConfiguration consulConfiguration) {
-        if (consulConfiguration != null) {
-            this.consulConfiguration = consulConfiguration;
+    AbstractConsulClient(ConsulConfiguration configuration) {
+        if (configuration != null) {
+            this.consulConfiguration = configuration;
         }
     }
 
