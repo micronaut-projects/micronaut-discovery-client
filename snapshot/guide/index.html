@@ -277,10 +277,7 @@
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.caches]
-    [micronaut.caches.discovery-client]
-      enabled=false</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {caches = {discovery-client = {enabled = false}}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -343,10 +340,7 @@
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.caches]
-    [micronaut.caches.discovery-client]
-      expire-after-access="60s"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {caches = {discovery-client = {expire-after-access = "60s"}}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -522,14 +516,8 @@ consul:
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.application]
-    name="hello-world"
-[consul]
-  [consul.client]
-    defaultZone="${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
-    [consul.client.registration]
-      enabled=true</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {application = {name = "hello-world"}}
+consul = {client = {registration = {enabled = true}, defaultZone = "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -653,11 +641,7 @@ micronaut.application.instance.id=${random.shortuuid}</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.application]
-    name="hello-world"
-    [micronaut.application.instance]
-      id="${random.shortuuid}"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {application = {name = "hello-world", instance = {id = "${random.shortuuid}"}}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -759,23 +743,8 @@ consul:
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.application]
-    name="hello-world"
-[consul]
-  [consul.client]
-    defaultZone="${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
-    [consul.client.registration]
-      enabled=true
-      tags=[
-        "hello",
-        "world"
-      ]
-      retry-count=5
-      fail-fast=false
-      [consul.client.registration.meta]
-        some="value"
-        instance_type="t2.medium"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {application = {name = "hello-world"}}
+consul = {client = {registration = {enabled = true, tags = ["hello", "world"], meta = {some = "value", instance_type = "t2.medium"}, retry-count = 5, fail-fast = false}, defaultZone = "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -955,11 +924,7 @@ RxHttpClient httpClient;</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[consul]
-  [consul.client]
-    [consul.client.registration]
-      [consul.client.registration.check]
-        http=true</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">consul = {client = {registration = {check = {http = true}}}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1049,11 +1014,7 @@ consul.client.registration.prefer-ip-address=true</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[consul]
-  [consul.client]
-    [consul.client.registration]
-      ip-addr="&lt;your base container ip&gt;"
-      prefer-ip-address=true</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">consul = {client = {registration = {ip-addr = "&lt;your base container ip&gt;", prefer-ip-address = true}}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1127,13 +1088,7 @@ consul.client.registration.check.http=true</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[consul]
-  [consul.client]
-    [consul.client.registration]
-      ip-addr="&lt;your base container ip&gt;"
-      prefer-ip-address=true
-      [consul.client.registration.check]
-        http=true</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">consul = {client = {registration = {ip-addr = "&lt;your base container ip&gt;", prefer-ip-address = true, check = {http = true}}}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1250,9 +1205,7 @@ consul.client.registration.check.http=true</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.config]
-    import="consul://localhost:8500/config/application"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "consul://localhost:8500/config/application"}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1308,9 +1261,7 @@ consul.client.registration.check.http=true</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.config]
-    import="consul://localhost:8500/config/application?format=json"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "consul://localhost:8500/config/application?format=json"}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1366,9 +1317,7 @@ consul.client.registration.check.http=true</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.config]
-    import="consul://token@localhost:8500/config/application"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "consul://token@localhost:8500/config/application"}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1424,9 +1373,7 @@ consul.client.registration.check.http=true</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.config]
-    import="consul://localhost:8500/config/application?acl-token=token"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "consul://localhost:8500/config/application?acl-token=token"}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1482,9 +1429,7 @@ consul.client.registration.check.http=true</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.config]
-    import="consul://localhost:8500/config/application?watch=true"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "consul://localhost:8500/config/application?watch=true"}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1697,14 +1642,8 @@ consul:
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.application]
-    name="hello-world"
-  [micronaut.config-client]
-    enabled=true
-[consul]
-  [consul.client]
-    defaultZone="${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {application = {name = "hello-world"}, config-client = {enabled = true}}
+consul = {client = {defaultZone = "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1874,10 +1813,7 @@ You can alter the path by setting <code>consul.client.config.path</code>.
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[consul]
-  [consul.client]
-    [consul.client.config]
-      format="JSON"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">consul = {client = {config = {format = "JSON"}}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1964,10 +1900,7 @@ EOF</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[consul]
-  [consul.client]
-    [consul.client.config]
-      format="FILE"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">consul = {client = {config = {format = "FILE"}}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -2071,22 +2004,8 @@ consul:
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.application]
-    name="hello-world"
-  [micronaut.config-client]
-    enabled=true
-[consul]
-  [consul.client]
-    defaultZone="${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
-    [consul.client.config]
-      format="YAML"
-      path="/config"
-    [consul.client.watch]
-      enabled=true
-    [consul.client.blocking-queries]
-      max-wait-duration="10m"
-      delay-duration="50ms"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {application = {name = "hello-world"}, config-client = {enabled = true}}
+consul = {client = {defaultZone = "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}", config = {format = "YAML", path = "/config"}, watch = {enabled = true}, blocking-queries = {max-wait-duration = "10m", delay-duration = "50ms"}}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -2264,14 +2183,8 @@ eureka:
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.application]
-    name="hello-world"
-[eureka]
-  [eureka.client]
-    defaultZone="${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}"
-    [eureka.client.registration]
-      enabled=true</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {application = {name = "hello-world"}}
+eureka = {client = {registration = {enabled = true}, defaultZone = "${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}"}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -2381,23 +2294,7 @@ eureka.client.registration.port=9090</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[eureka]
-  [eureka.client]
-    readTimeout="5s"
-    [eureka.client.registration]
-      asgName="myAsg"
-      countryId=10
-      vipAddress="myapp"
-      retry-count=10
-      retry-delay="5s"
-      appname="some-app-name"
-      hostname="foo.example.com"
-      ip-addr="1.2.3.4"
-      port=9090
-      [eureka.client.registration.leaseInfo]
-        durationInSecs=60
-      [eureka.client.registration.metadata]
-        foo="bar"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">eureka = {client = {readTimeout = "5s", registration = {asgName = "myAsg", countryId = 10, vipAddress = "myapp", leaseInfo = {durationInSecs = 60}, metadata = {foo = "bar"}, retry-count = 10, retry-delay = "5s", appname = "some-app-name", hostname = "foo.example.com", ip-addr = "1.2.3.4", port = 9090}}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -2549,9 +2446,7 @@ eureka.client.registration.port=9090</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[eureka]
-  [eureka.client]
-    defaultZone="https://${EUREKA_USERNAME}:${EUREKA_PASSWORD}@localhost:8761"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">eureka = {client = {defaultZone = "https://${EUREKA_USERNAME}:${EUREKA_PASSWORD}@localhost:8761"}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -2661,9 +2556,7 @@ eureka.client.registration.port=9090</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.config]
-    import="springcloud://configserver:9000/hello-world/default"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "springcloud://configserver:9000/hello-world/default"}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -2719,9 +2612,7 @@ eureka.client.registration.port=9090</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.config]
-    import="springcloud://configserver:9000/hello-world/first,second?label=main"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "springcloud://configserver:9000/hello-world/first,second?label=main"}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -2777,9 +2668,7 @@ eureka.client.registration.port=9090</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.config]
-    import="springcloud://user:password@configserver:9000/hello-world/default"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "springcloud://user:password@configserver:9000/hello-world/default"}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -2835,9 +2724,7 @@ eureka.client.registration.port=9090</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.config]
-    import="springcloud://configserver:9000/hello-world/default?username=user&amp;password=secret"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "springcloud://configserver:9000/hello-world/default?username=user&amp;password=secret"}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -3027,17 +2914,8 @@ spring:
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.application]
-    name="hello-world"
-  [micronaut.config-client]
-    enabled=true
-[spring]
-  [spring.cloud]
-    [spring.cloud.config]
-      enabled=true
-      uri="http://configserver:9000"
-      name="filename1,filename2"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {application = {name = "hello-world"}, config-client = {enabled = true}}
+spring = {cloud = {config = {enabled = true, uri = "http://configserver:9000", name = "filename1,filename2"}}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -3167,9 +3045,7 @@ spring {
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.config]
-    import="vault://testtoken@localhost:8200/application"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "vault://testtoken@localhost:8200/application"}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -3222,9 +3098,7 @@ spring {
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.config]
-    import="vault://testtoken@localhost:8200/application/prod"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "vault://testtoken@localhost:8200/application/prod"}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -3277,9 +3151,7 @@ spring {
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.config]
-    import="vault://testtoken@localhost:8200/application?kv-version=V2&amp;secret-engine-name=backendv2-prefixed&amp;path-prefix=mock/v2/path/prefix"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "vault://testtoken@localhost:8200/application?kv-version=V2&amp;secret-engine-name=backendv2-prefixed&amp;path-prefix=mock/v2/path/prefix"}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -3335,9 +3207,7 @@ spring {
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.config]
-    import="vault://localhost:8200/application?token=testtoken"</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "vault://localhost:8200/application?token=testtoken"}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -3531,16 +3401,8 @@ vault:
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut]
-  [micronaut.application]
-    name="hello-world"
-  [micronaut.config-client]
-    enabled=true
-[vault]
-  [vault.client]
-    uri="http://localhost:8200"
-    [vault.client.config]
-      enabled=true</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {application = {name = "hello-world"}, config-client = {enabled = true}}
+vault = {client = {uri = "http://localhost:8200", config = {enabled = true}}}</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
