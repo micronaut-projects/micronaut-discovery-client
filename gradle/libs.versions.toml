@@ -3,7 +3,7 @@
 micronaut = "5.1.7"
 micronaut-platform = "5.0.5"
 micronaut-serde = "3.1.0"
-micronaut-test = "5.0.0-RC1"
+micronaut-test = "5.1.0"
 micronaut-reactor = "4.1.0"
 micronaut-validation = "5.1.0"
 
