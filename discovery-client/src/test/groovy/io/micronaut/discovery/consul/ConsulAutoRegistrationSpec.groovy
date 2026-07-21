@@ -20,6 +20,7 @@ import io.micronaut.context.env.Environment
 import io.micronaut.discovery.DiscoveryClient
 import io.micronaut.discovery.ServiceInstance
 import io.micronaut.discovery.consul.client.v1.ConsulClient
+import io.micronaut.discovery.consul.client.v1.ConsulHealthEntry
 import io.micronaut.discovery.eureka.client.v2.EurekaClient
 import io.micronaut.runtime.server.EmbeddedServer
 import org.testcontainers.DockerClientFactory
@@ -141,11 +142,10 @@ class ConsulAutoRegistrationSpec extends Specification {
                  'consul.client.port'        : consulPort]
         )
 
-        // a client with tags specified
+        // a discovery client used to verify the registered service
         Map discoveryClientMap = ['consul.client.host': consulHost,
                                   'consul.client.port': consulPort,
-                                  "micronaut.caches.discovery-client.enabled": false,
-                                  'consul.client.discovery.tags.myService'  : 'foo']
+                                  "micronaut.caches.discovery-client.enabled": false]
         DiscoveryClient discoveryClient = ApplicationContext.builder(discoveryClientMap)
                 .build()
                 .start()
@@ -153,10 +153,12 @@ class ConsulAutoRegistrationSpec extends Specification {
 
         Map anotherClientConfig = ['consul.client.host'                      : consulHost,
                                    'consul.client.port'                      : consulPort,
-                                   "micronaut.caches.discovery-client.enabled": false,
-                                   'consul.client.discovery.tags.myService'  : ['someother']]
+                                   "micronaut.caches.discovery-client.enabled": false]
 
-        DiscoveryClient anotherClient = ApplicationContext.builder(anotherClientConfig).run(DiscoveryClient)
+        ApplicationContext anotherClientContext = ApplicationContext.builder(anotherClientConfig)
+                                                                    .build()
+                                                                    .start()
+        ConsulClient anotherClient = anotherClientContext.getBean(ConsulClient)
         PollingConditions conditions = new PollingConditions(timeout: 3)
 
         then: "the server is registered with Consul"
@@ -167,8 +169,8 @@ class ConsulAutoRegistrationSpec extends Specification {
             instances[0].host == embeddedServer.getHost()
         }
 
-        when: "another client is is queried that specifies tags"
-        List<ServiceInstance> otherInstances = Flux.from(anotherClient.getInstances(serviceId)).blockFirst()
+        when: "another client is queried with a tag"
+        List<ConsulHealthEntry> otherInstances = Flux.from(anotherClient.findHealthyServices(serviceId, false, 'someother', null)).blockFirst()
 
         then: "The instances are not returned"
         otherInstances.size() == 0
@@ -184,7 +186,8 @@ class ConsulAutoRegistrationSpec extends Specification {
         }
 
         cleanup:
-        anotherClient.close()
+        embeddedServer.stop()
+        anotherClientContext.close()
         discoveryClient.close()
     }
 
