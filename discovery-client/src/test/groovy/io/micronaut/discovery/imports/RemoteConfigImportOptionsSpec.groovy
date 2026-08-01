@@ -36,10 +36,11 @@ class RemoteConfigImportOptionsSpec extends Specification {
 
     void 'binds provider-specific options for each supported protocol'() {
         expect:
-        binder.bind(ConnectionString.parse('consul://localhost:8500/config/application?format=json&dc=dc1&acl-token=token&fail-fast=true')) == [
+        binder.bind(ConnectionString.parse('consul://localhost:8500/config/application?format=json&dc=dc1&acl-token=token&secure=true&fail-fast=true')) == [
             'consul.client.config.format': 'json',
             'consul.client.config.datacenter': 'dc1',
             'consul.client.acl-token': 'token',
+            'consul.client.secure': 'true',
             'consul.client.config.fail-fast': 'true'
         ]
 
