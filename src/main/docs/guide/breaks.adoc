@@ -1,5 +1,16 @@
 This section documents breaking changes between Micronaut Discovery Client versions:
 
+=== Micronaut Discovery Client 5.2.0
+
+Consul may report a node, member or service address as a host name or as an IP address. The Consul client models used to map these addresses to `java.net.InetAddress`, which left the JSON library to resolve host names. Jackson 3.2, managed by Micronaut Framework 5.2, reads an `InetAddress` from IP literals only and no longer performs DNS lookups during deserialization, so responses with host names failed to decode.
+
+The addresses are now kept as the strings Consul sends, and are read and written unchanged by both Jackson Databind and Micronaut Serialization:
+
+* api:discovery.consul.client.v1.ConsulCatalogEntry[]: the `address` component is now a `String`. The constructor taking an `InetAddress` is deprecated.
+* api:discovery.consul.client.v1.NodeEntry[], api:discovery.consul.client.v1.MemberEntry[] and api:discovery.consul.client.v1.AbstractServiceEntry[]: use the new `getHostString()` accessors. The `getAddress()` methods that return an `InetAddress` are deprecated. They resolve the address on each call, which may need a DNS lookup, and throw `UncheckedIOException` when it fails.
+* `AbstractServiceEntry.address(String)` no longer resolves the address, so it no longer throws for a host name that cannot be resolved.
+* A Consul service instance without a service address now uses the node address as Consul reports it, instead of the IP address its host name resolved to.
+
 === Distributed configuration migration note
 
 Distributed configuration via the legacy bootstrap `ConfigurationClient` path is now deprecated. Prefer `micronaut.config.import` with explicit provider URIs such as:

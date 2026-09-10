@@ -68,7 +68,8 @@ class MockConsulServer implements ConsulOperations {
 
     final MemberEntry agent = new MemberEntry().tap {
         name = "localhost"
-        address = InetAddress.localHost
+        // a host name, as Consul may send, which Jackson 3.2 no longer reads as an InetAddress
+        hostString = InetAddress.localHost.hostName
         port = 8301
         status = 1
     }
@@ -76,7 +77,7 @@ class MockConsulServer implements ConsulOperations {
     MockConsulServer(EmbeddedServer embeddedServer) {
         newEntries = [:]
         passingReports.clear()
-        nodeEntry = new ConsulCatalogEntry(UUID.randomUUID().toString(), InetAddress.localHost, null, null, null, null)
+        nodeEntry = new ConsulCatalogEntry(UUID.randomUUID().toString(), InetAddress.localHost.hostName, null, null, null, null)
     }
 
     void reset() {
