@@ -32,6 +32,7 @@ import io.micronaut.context.env.PropertySourceLoader;
 import io.micronaut.context.env.yaml.YamlPropertySourceLoader;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.discovery.consul.ConsulConfiguration;
+import io.micronaut.discovery.consul.condition.RequiresConsul;
 import io.micronaut.discovery.imports.RemoteConfigImportMetadata;
 import io.micronaut.discovery.consul.client.v1.blockingqueries.BlockingQueriesConfiguration;
 import io.micronaut.discovery.consul.client.v1.blockingqueries.BlockedQueriesConsulClient;
@@ -46,6 +47,7 @@ import io.micronaut.jackson.core.env.JsonPropertySourceLoader;
  */
 @Factory
 @Internal
+@RequiresConsul
 final class WatchFactory {
 
     private static final String CONSUL_PATH_SEPARATOR = "/";

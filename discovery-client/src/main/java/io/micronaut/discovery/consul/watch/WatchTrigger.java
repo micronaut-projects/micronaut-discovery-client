@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import io.micronaut.context.annotation.Prototype;
 import io.micronaut.context.event.ShutdownEvent;
 import io.micronaut.context.event.StartupEvent;
+import io.micronaut.discovery.consul.condition.RequiresConsul;
 import io.micronaut.runtime.event.annotation.EventListener;
 
 /**
@@ -30,6 +31,7 @@ import io.micronaut.runtime.event.annotation.EventListener;
  * @since 4.6.0
  */
 @Prototype
+@RequiresConsul
 final class WatchTrigger {
 
     private static final Logger LOG = LoggerFactory.getLogger(WatchTrigger.class);
