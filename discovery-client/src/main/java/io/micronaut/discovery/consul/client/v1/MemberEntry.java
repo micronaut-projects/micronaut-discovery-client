@@ -15,6 +15,7 @@
  */
 package io.micronaut.discovery.consul.client.v1;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import tools.jackson.databind.PropertyNamingStrategies;
 import tools.jackson.databind.annotation.JsonNaming;
@@ -34,7 +35,7 @@ import java.util.Map;
 public class MemberEntry {
 
     private String name;
-    private InetAddress address;
+    private String hostString;
     private Integer port;
     private Map<String, String> tags;
     private Integer status;
@@ -54,18 +55,44 @@ public class MemberEntry {
     }
 
     /**
-     * @return The {@link InetAddress} of this member
+     * @return The address of this member as sent by Consul, a host name or an IP literal. It is not resolved.
+     * @since 5.2.0
      */
-    public InetAddress getAddress() {
-        return address;
+    @JsonProperty("Addr")
+    public String getHostString() {
+        return hostString;
     }
 
     /**
-     * @param address The {@link InetAddress} of this member
+     * @param hostString The address of this member, a host name or an IP literal
+     * @since 5.2.0
      */
     @JsonProperty("Addr")
+    public void setHostString(String hostString) {
+        this.hostString = hostString;
+    }
+
+    /**
+     * The address is resolved on each call, which needs a DNS lookup when Consul sent a host name.
+     *
+     * @return The resolved {@link InetAddress} of this member, or {@code null} if there is none
+     * @throws java.io.UncheckedIOException if the host name cannot be resolved
+     * @deprecated Use {@link #getHostString()} and resolve the address where it is needed.
+     */
+    @Deprecated(since = "5.2.0", forRemoval = true)
+    @JsonIgnore
+    public InetAddress getAddress() {
+        return ConsulAddresses.resolve(hostString);
+    }
+
+    /**
+     * Sets the address, stored as its host name, or as its IP literal when it has no host name.
+     *
+     * @param address The {@link InetAddress} of this member
+     */
+    @JsonIgnore
     public void setAddress(InetAddress address) {
-        this.address = address;
+        this.hostString = ConsulAddresses.toHostString(address);
     }
 
     /**

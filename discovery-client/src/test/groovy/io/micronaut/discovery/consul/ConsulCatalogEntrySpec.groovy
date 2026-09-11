@@ -81,7 +81,7 @@ class ConsulCatalogEntrySpec extends Specification {
 
         then:
         'dc1' == consulCatalogEntry.datacenter()
-        '192.168.10.10' == consulCatalogEntry.address().getHostAddress()
+        '192.168.10.10' == consulCatalogEntry.address()
         [lan: "192.168.10.10", wan: "10.0.10.10"] == consulCatalogEntry.taggedAddresses()
         [somekey: "somevalue"] == consulCatalogEntry.nodeMetadata()
         consulCatalogEntry.service()

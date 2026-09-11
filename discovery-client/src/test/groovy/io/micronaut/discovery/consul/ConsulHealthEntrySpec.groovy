@@ -98,7 +98,7 @@ class ConsulHealthEntrySpec extends Specification {
         and: 'verify node'
         consulHealthEntry.node()
         'foobar' == consulHealthEntry.node().node()
-        InetAddress.getByName('10.1.10.12') == consulHealthEntry.node().address()
+        '10.1.10.12' == consulHealthEntry.node().address()
         consulHealthEntry.node().datacenter() != null
         'dc1' == consulHealthEntry.node().datacenter()
         [lan: "10.1.10.12", wan: '10.1.10.12'] == consulHealthEntry.node().taggedAddresses()

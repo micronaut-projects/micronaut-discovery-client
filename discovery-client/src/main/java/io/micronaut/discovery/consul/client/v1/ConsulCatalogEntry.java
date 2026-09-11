@@ -27,7 +27,7 @@ import java.util.Map;
  * @see <a href="https://developer.hashicorp.com/consul/api-docs/catalog#sample-payload">Catalog Sample Payload</a>.
  *
  * @param node Node ID
- * @param address Address
+ * @param address Address as sent by Consul, a host name or an IP literal. It is not resolved.
  * @param datacenter Datacenter
  * @param taggedAddresses Tagged addresses
  * @param nodeMetadata Node metadata
@@ -38,9 +38,31 @@ import java.util.Map;
  */
 @Serdeable
 public record ConsulCatalogEntry(@Nullable @JsonProperty("Node") String node,
-                                 @Nullable @JsonProperty("Address") InetAddress address,
+                                 @Nullable @JsonProperty("Address") String address,
                                  @Nullable @JsonProperty("Datacenter") String datacenter,
                                  @Nullable @JsonProperty("TaggedAddresses") Map<String, String> taggedAddresses,
                                  @Nullable @JsonProperty("NodeMeta") Map<String, String> nodeMetadata,
                                  @Nullable @JsonProperty("Service") ConsulNewServiceEntry service) {
+
+    /**
+     * Creates a catalog entry from an {@link InetAddress}. The address is stored as its host name,
+     * or as its IP literal when it has no host name.
+     *
+     * @param node Node ID
+     * @param address Address
+     * @param datacenter Datacenter
+     * @param taggedAddresses Tagged addresses
+     * @param nodeMetadata Node metadata
+     * @param service Service
+     * @deprecated Use the canonical constructor, which takes the address as a string.
+     */
+    @Deprecated(since = "5.2.0", forRemoval = true)
+    public ConsulCatalogEntry(@Nullable String node,
+                              @Nullable InetAddress address,
+                              @Nullable String datacenter,
+                              @Nullable Map<String, String> taggedAddresses,
+                              @Nullable Map<String, String> nodeMetadata,
+                              @Nullable ConsulNewServiceEntry service) {
+        this(node, ConsulAddresses.toHostString(address), datacenter, taggedAddresses, nodeMetadata, service);
+    }
 }

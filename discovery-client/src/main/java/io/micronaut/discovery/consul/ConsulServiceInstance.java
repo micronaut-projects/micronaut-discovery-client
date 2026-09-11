@@ -64,7 +64,8 @@ public class ConsulServiceInstance implements ServiceInstance {
         ConsulCatalogEntry node = healthEntry.node();
         Objects.requireNonNull(service, "ConsulHealthEntry cannot reference a null node entry");
 
-        String inetAddress = service.address() != null ? service.address() : node.address().getHostAddress();
+        // Consul sends host names or IP literals, use them as they are
+        String inetAddress = service.address() != null ? service.address() : node.address();
         int port = service.port() != null ? service.port() : -1;
         String portSuffix = port > -1 ? ":" + port : "";
         String uriStr = (scheme != null ? scheme + "://" : "http://") + inetAddress + portSuffix;

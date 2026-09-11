@@ -16,6 +16,7 @@
 package io.micronaut.discovery.consul.client.v1;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import tools.jackson.databind.PropertyNamingStrategies;
 import tools.jackson.databind.annotation.JsonNaming;
@@ -38,7 +39,7 @@ import java.util.Optional;
 public class NodeEntry {
 
     private final String node;
-    private final InetAddress address;
+    private final String hostString;
     private String datacenter;
     private Map<String, String> taggedAddresses;
     private Map<String, String> nodeMetadata;
@@ -46,13 +47,27 @@ public class NodeEntry {
     /**
      * Create a new catalog entry.
      *
-     * @param nodeId  The node ID
-     * @param address The node address
+     * @param nodeId     The node ID
+     * @param hostString The node address as sent by Consul, a host name or an IP literal
+     * @since 5.2.0
      */
     @JsonCreator
-    public NodeEntry(@JsonProperty("Node") String nodeId, @JsonProperty("Address") InetAddress address) {
+    public NodeEntry(@JsonProperty("Node") String nodeId, @JsonProperty("Address") String hostString) {
         this.node = nodeId;
-        this.address = address;
+        this.hostString = hostString;
+    }
+
+    /**
+     * Create a new catalog entry. The address is stored as its host name, or as its IP literal when
+     * it has no host name.
+     *
+     * @param nodeId  The node ID
+     * @param address The node address
+     * @deprecated Use {@link #NodeEntry(String, String)} instead.
+     */
+    @Deprecated(since = "5.2.0", forRemoval = true)
+    public NodeEntry(String nodeId, InetAddress address) {
+        this(nodeId, ConsulAddresses.toHostString(address));
     }
 
     /**
@@ -118,10 +133,27 @@ public class NodeEntry {
     /**
      * See https://www.consul.io/api/catalog.html#address.
      *
-     * @return The node address
+     * @return The node address as sent by Consul, a host name or an IP literal. It is not resolved.
+     * @since 5.2.0
      */
+    @JsonProperty("Address")
+    public String getHostString() {
+        return hostString;
+    }
+
+    /**
+     * See https://www.consul.io/api/catalog.html#address.
+     *
+     * <p>The address is resolved on each call, which needs a DNS lookup when Consul sent a host name.</p>
+     *
+     * @return The resolved node address, or {@code null} if there is none
+     * @throws java.io.UncheckedIOException if the host name cannot be resolved
+     * @deprecated Use {@link #getHostString()} and resolve the address where it is needed.
+     */
+    @Deprecated(since = "5.2.0", forRemoval = true)
+    @JsonIgnore
     public InetAddress getAddress() {
-        return address;
+        return ConsulAddresses.resolve(hostString);
     }
 
     /**
