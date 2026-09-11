@@ -122,4 +122,26 @@ class ConsulAddressSpec extends Specification {
         new NewServiceEntry('test-service').address('10.1.10.12').address.get() == ip
         new NodeEntry('foobar', (String) null).address == null
     }
+
+    void "missing and unresolvable addresses"() {
+        given:
+        InetAddress ip = InetAddress.getByName('10.1.10.12')
+
+        expect: 'a missing address stays missing'
+        new NodeEntry('foobar', (InetAddress) null).hostString == null
+        new ConsulCatalogEntry('foobar', (InetAddress) null, null, null, null, null).address() == null
+        new MemberEntry().tap { hostString = '' }.address == null
+        new NewServiceEntry('test-service').address.empty
+
+        and: 'the setters store the host string'
+        new NewServiceEntry('test-service').tap { address = ip }.hostString.get() == '10.1.10.12'
+        new NewServiceEntry('test-service').tap { hostString = HOST }.hostString.get() == HOST
+
+        when: 'the deprecated accessor has to resolve a host name that does not exist'
+        new NodeEntry('foobar', HOST).address
+
+        then:
+        UncheckedIOException e = thrown()
+        e.message.contains(HOST)
+    }
 }
