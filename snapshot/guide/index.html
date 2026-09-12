@@ -3528,6 +3528,31 @@ vault {
 <p>This section documents breaking changes between Micronaut Discovery Client versions:</p>
 </div>
 <div class="sect2">
+<h3 id="_micronaut_discovery_client_5_2_0">Micronaut Discovery Client 5.2.0</h3>
+<div class="paragraph">
+<p>Consul may report a node, member or service address as a host name or as an IP address. The Consul client models used to map these addresses to <code>java.net.InetAddress</code>, which left the JSON library to resolve host names. Jackson 3.2, managed by Micronaut Framework 5.2, reads an <code>InetAddress</code> from IP literals only and no longer performs DNS lookups during deserialization, so responses with host names failed to decode.</p>
+</div>
+<div class="paragraph">
+<p>The addresses are now kept as the strings Consul sends, and are read and written unchanged by both Jackson Databind and Micronaut Serialization:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../api/io/micronaut/discovery/consul/client/v1/ConsulCatalogEntry.html">ConsulCatalogEntry</a>: the <code>address</code> component is now a <code>String</code>. The constructor taking an <code>InetAddress</code> is deprecated.</p>
+</li>
+<li>
+<p><a href="../api/io/micronaut/discovery/consul/client/v1/NodeEntry.html">NodeEntry</a>, <a href="../api/io/micronaut/discovery/consul/client/v1/MemberEntry.html">MemberEntry</a> and <a href="../api/io/micronaut/discovery/consul/client/v1/AbstractServiceEntry.html">AbstractServiceEntry</a>: use the new <code>getHostString()</code> accessors. The <code>getAddress()</code> methods that return an <code>InetAddress</code> are deprecated. They resolve the address on each call, which may need a DNS lookup, and throw <code>UncheckedIOException</code> when it fails.</p>
+</li>
+<li>
+<p><code>AbstractServiceEntry.address(String)</code> no longer resolves the address, so it no longer throws for a host name that cannot be resolved.</p>
+</li>
+<li>
+<p>A Consul service instance without a service address now uses the node address as Consul reports it, instead of the IP address its host name resolved to.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_distributed_configuration_migration_note">Distributed configuration migration note</h3>
 <div class="paragraph">
 <p>Distributed configuration via the legacy bootstrap <code>ConfigurationClient</code> path is now deprecated. Prefer <code>micronaut.config.import</code> with explicit provider URIs such as:</p>

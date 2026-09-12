@@ -54,6 +54,7 @@ loadScripts(document, 'script');</script>
 <ul class="contents-list">
 <li id="contents-for-removal"><a href="#for-removal">Terminally Deprecated</a></li>
 <li id="contents-method"><a href="#method">Methods</a></li>
+<li id="contents-constructor"><a href="#constructor">Constructors</a></li>
 </ul>
 <ul class="block-list">
 <li>
@@ -62,12 +63,32 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Element</div>
 <div class="table-header col-last">Description</div>
-<div class="col-summary-item-name even-row-color"><a href="io/micronaut/discovery/consul/ConsulConfiguration.html#getAslToken()">io.micronaut.discovery.consul.ConsulConfiguration.getAslToken()</a></div>
+<div class="col-summary-item-name even-row-color"><a href="io/micronaut/discovery/consul/client/v1/AbstractServiceEntry.html#getAddress()">io.micronaut.discovery.consul.client.v1.AbstractServiceEntry.getAddress()</a></div>
 <div class="col-last even-row-color">
+<div class="block">Use <a href="io/micronaut/discovery/consul/client/v1/AbstractServiceEntry.html#getHostString()"><code>AbstractServiceEntry.getHostString()</code></a> and resolve the address where it is needed.</div>
+</div>
+<div class="col-summary-item-name odd-row-color"><a href="io/micronaut/discovery/consul/client/v1/ConsulCatalogEntry.html#%3Cinit%3E(java.lang.String,java.net.InetAddress,java.lang.String,java.util.Map,java.util.Map,io.micronaut.discovery.consul.client.v1.ConsulNewServiceEntry)">io.micronaut.discovery.consul.client.v1.ConsulCatalogEntry<wbr>(String, InetAddress, String, Map&lt;String, String&gt;, Map&lt;String, String&gt;, ConsulNewServiceEntry)</a></div>
+<div class="col-last odd-row-color">
+<div class="block">Use the canonical constructor, which takes the address as a string.</div>
+</div>
+<div class="col-summary-item-name even-row-color"><a href="io/micronaut/discovery/consul/client/v1/MemberEntry.html#getAddress()">io.micronaut.discovery.consul.client.v1.MemberEntry.getAddress()</a></div>
+<div class="col-last even-row-color">
+<div class="block">Use <a href="io/micronaut/discovery/consul/client/v1/MemberEntry.html#getHostString()"><code>MemberEntry.getHostString()</code></a> and resolve the address where it is needed.</div>
+</div>
+<div class="col-summary-item-name odd-row-color"><a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html#%3Cinit%3E(java.lang.String,java.net.InetAddress)">io.micronaut.discovery.consul.client.v1.NodeEntry<wbr>(String, InetAddress)</a></div>
+<div class="col-last odd-row-color">
+<div class="block">Use <a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html#%3Cinit%3E(java.lang.String,java.lang.String)"><code>NodeEntry(String, String)</code></a> instead.</div>
+</div>
+<div class="col-summary-item-name even-row-color"><a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html#getAddress()">io.micronaut.discovery.consul.client.v1.NodeEntry.getAddress()</a></div>
+<div class="col-last even-row-color">
+<div class="block">Use <a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html#getHostString()"><code>NodeEntry.getHostString()</code></a> and resolve the address where it is needed.</div>
+</div>
+<div class="col-summary-item-name odd-row-color"><a href="io/micronaut/discovery/consul/ConsulConfiguration.html#getAslToken()">io.micronaut.discovery.consul.ConsulConfiguration.getAslToken()</a></div>
+<div class="col-last odd-row-color">
 <div class="block">Use <a href="io/micronaut/discovery/consul/ConsulConfiguration.html#getAclToken()"><code>ConsulConfiguration.getAclToken()</code></a>.</div>
 </div>
-<div class="col-summary-item-name odd-row-color"><a href="io/micronaut/discovery/consul/ConsulConfiguration.html#setAslToken(java.lang.String)">io.micronaut.discovery.consul.ConsulConfiguration.setAslToken<wbr>(String)</a></div>
-<div class="col-last odd-row-color">
+<div class="col-summary-item-name even-row-color"><a href="io/micronaut/discovery/consul/ConsulConfiguration.html#setAslToken(java.lang.String)">io.micronaut.discovery.consul.ConsulConfiguration.setAslToken<wbr>(String)</a></div>
+<div class="col-last even-row-color">
 <div class="block">Use <a href="io/micronaut/discovery/consul/ConsulConfiguration.html#setAclToken(java.lang.String)"><code>ConsulConfiguration.setAclToken(String)</code></a>.</div>
 </div>
 </div>
@@ -81,13 +102,44 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-summary-item-name even-row-color"><a href="io/micronaut/discovery/consul/ConsulConfiguration.html#getAslToken()">io.micronaut.discovery.consul.ConsulConfiguration.getAslToken()</a></div>
+<div class="col-summary-item-name even-row-color"><a href="io/micronaut/discovery/consul/client/v1/AbstractServiceEntry.html#getAddress()">io.micronaut.discovery.consul.client.v1.AbstractServiceEntry.getAddress()</a></div>
 <div class="col-last even-row-color">
+<div class="block">Use <a href="io/micronaut/discovery/consul/client/v1/AbstractServiceEntry.html#getHostString()"><code>AbstractServiceEntry.getHostString()</code></a> and resolve the address where it is needed.</div>
+</div>
+<div class="col-summary-item-name odd-row-color"><a href="io/micronaut/discovery/consul/client/v1/MemberEntry.html#getAddress()">io.micronaut.discovery.consul.client.v1.MemberEntry.getAddress()</a></div>
+<div class="col-last odd-row-color">
+<div class="block">Use <a href="io/micronaut/discovery/consul/client/v1/MemberEntry.html#getHostString()"><code>MemberEntry.getHostString()</code></a> and resolve the address where it is needed.</div>
+</div>
+<div class="col-summary-item-name even-row-color"><a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html#getAddress()">io.micronaut.discovery.consul.client.v1.NodeEntry.getAddress()</a></div>
+<div class="col-last even-row-color">
+<div class="block">Use <a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html#getHostString()"><code>NodeEntry.getHostString()</code></a> and resolve the address where it is needed.</div>
+</div>
+<div class="col-summary-item-name odd-row-color"><a href="io/micronaut/discovery/consul/ConsulConfiguration.html#getAslToken()">io.micronaut.discovery.consul.ConsulConfiguration.getAslToken()</a></div>
+<div class="col-last odd-row-color">
 <div class="block">Use <a href="io/micronaut/discovery/consul/ConsulConfiguration.html#getAclToken()"><code>ConsulConfiguration.getAclToken()</code></a>.</div>
 </div>
-<div class="col-summary-item-name odd-row-color"><a href="io/micronaut/discovery/consul/ConsulConfiguration.html#setAslToken(java.lang.String)">io.micronaut.discovery.consul.ConsulConfiguration.setAslToken<wbr>(String)</a></div>
-<div class="col-last odd-row-color">
+<div class="col-summary-item-name even-row-color"><a href="io/micronaut/discovery/consul/ConsulConfiguration.html#setAslToken(java.lang.String)">io.micronaut.discovery.consul.ConsulConfiguration.setAslToken<wbr>(String)</a></div>
+<div class="col-last even-row-color">
 <div class="block">Use <a href="io/micronaut/discovery/consul/ConsulConfiguration.html#setAclToken(java.lang.String)"><code>ConsulConfiguration.setAclToken(String)</code></a>.</div>
+</div>
+</div>
+</div>
+</li>
+</ul>
+<ul class="block-list">
+<li>
+<div id="constructor">
+<div class="caption"><span>Deprecated Constructors</span></div>
+<div class="summary-table two-column-summary">
+<div class="table-header col-first">Constructor</div>
+<div class="table-header col-last">Description</div>
+<div class="col-summary-item-name even-row-color"><a href="io/micronaut/discovery/consul/client/v1/ConsulCatalogEntry.html#%3Cinit%3E(java.lang.String,java.net.InetAddress,java.lang.String,java.util.Map,java.util.Map,io.micronaut.discovery.consul.client.v1.ConsulNewServiceEntry)">io.micronaut.discovery.consul.client.v1.ConsulCatalogEntry<wbr>(String, InetAddress, String, Map&lt;String, String&gt;, Map&lt;String, String&gt;, ConsulNewServiceEntry)</a></div>
+<div class="col-last even-row-color">
+<div class="block">Use the canonical constructor, which takes the address as a string.</div>
+</div>
+<div class="col-summary-item-name odd-row-color"><a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html#%3Cinit%3E(java.lang.String,java.net.InetAddress)">io.micronaut.discovery.consul.client.v1.NodeEntry<wbr>(String, InetAddress)</a></div>
+<div class="col-last odd-row-color">
+<div class="block">Use <a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html#%3Cinit%3E(java.lang.String,java.lang.String)"><code>NodeEntry(String, String)</code></a> instead.</div>
 </div>
 </div>
 </div>

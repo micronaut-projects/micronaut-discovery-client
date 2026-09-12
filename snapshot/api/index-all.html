@@ -96,7 +96,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Returns the value of the <a href="./io/micronaut/discovery/consul/client/v1/ConsulServiceEntry.html#param-address"><code>address</code></a> record component.</div>
 </dd>
 <dt><a href="io/micronaut/discovery/consul/client/v1/AbstractServiceEntry.html#address(java.lang.String)" class="member-name-link">address(String)</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/AbstractServiceEntry.html" title="class in io.micronaut.discovery.consul.client.v1">AbstractServiceEntry</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Sets the address as given.</div>
+</dd>
 <dt><a href="io/micronaut/discovery/consul/client/v1/NewServiceEntry.html#address(java.lang.String)" class="member-name-link">address(String)</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/NewServiceEntry.html" title="class in io.micronaut.discovery.consul.client.v1">NewServiceEntry</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/consul/client/v1/AbstractServiceEntry.html#address(java.net.InetAddress)" class="member-name-link">address(InetAddress)</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/AbstractServiceEntry.html" title="class in io.micronaut.discovery.consul.client.v1">AbstractServiceEntry</a></dt>
@@ -289,9 +291,15 @@ to wait for potential changes using long polling.</div>
 <dd>
 <div class="block">A catalog entry in Consul.</div>
 </dd>
-<dt><a href="io/micronaut/discovery/consul/client/v1/ConsulCatalogEntry.html#%3Cinit%3E(java.lang.String,java.net.InetAddress,java.lang.String,java.util.Map,java.util.Map,io.micronaut.discovery.consul.client.v1.ConsulNewServiceEntry)" class="member-name-link">ConsulCatalogEntry(String, InetAddress, String, Map, Map, ConsulNewServiceEntry)</a> - Constructor for record class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/ConsulCatalogEntry.html" title="class in io.micronaut.discovery.consul.client.v1">ConsulCatalogEntry</a></dt>
+<dt><a href="io/micronaut/discovery/consul/client/v1/ConsulCatalogEntry.html#%3Cinit%3E(java.lang.String,java.lang.String,java.lang.String,java.util.Map,java.util.Map,io.micronaut.discovery.consul.client.v1.ConsulNewServiceEntry)" class="member-name-link">ConsulCatalogEntry(String, String, String, Map, Map, ConsulNewServiceEntry)</a> - Constructor for record class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/ConsulCatalogEntry.html" title="class in io.micronaut.discovery.consul.client.v1">ConsulCatalogEntry</a></dt>
 <dd>
 <div class="block">Creates an instance of a <code>ConsulCatalogEntry</code> record class.</div>
+</dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/ConsulCatalogEntry.html#%3Cinit%3E(java.lang.String,java.net.InetAddress,java.lang.String,java.util.Map,java.util.Map,io.micronaut.discovery.consul.client.v1.ConsulNewServiceEntry)" class="member-name-link">ConsulCatalogEntry(String, InetAddress, String, Map, Map, ConsulNewServiceEntry)</a> - Constructor for record class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/ConsulCatalogEntry.html" title="class in io.micronaut.discovery.consul.client.v1">ConsulCatalogEntry</a></dt>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">Use the canonical constructor, which takes the address as a string.</div>
+</div>
 </dd>
 <dt><a href="io/micronaut/discovery/consul/client/v1/ConsulCheck.html" class="type-name-link" title="class in io.micronaut.discovery.consul.client.v1">ConsulCheck</a> - Class in <a href="io/micronaut/discovery/consul/client/v1/package-summary.html">io.micronaut.discovery.consul.client.v1</a></dt>
 <dd>
@@ -711,13 +719,21 @@ available <code>PropertySource</code> instances from distributed configuration s
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/consul/client/v1/AbstractServiceEntry.html#getAddress()" class="member-name-link">getAddress()</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/AbstractServiceEntry.html" title="class in io.micronaut.discovery.consul.client.v1">AbstractServiceEntry</a></dt>
 <dd>
-<div class="block">See https://www.consul.io/api/agent/service.html#address.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">Use <a href="io/micronaut/discovery/consul/client/v1/AbstractServiceEntry.html#getHostString()"><code>AbstractServiceEntry.getHostString()</code></a> and resolve the address where it is needed.</div>
+</div>
 </dd>
 <dt><a href="io/micronaut/discovery/consul/client/v1/MemberEntry.html#getAddress()" class="member-name-link">getAddress()</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/MemberEntry.html" title="class in io.micronaut.discovery.consul.client.v1">MemberEntry</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">Use <a href="io/micronaut/discovery/consul/client/v1/MemberEntry.html#getHostString()"><code>MemberEntry.getHostString()</code></a> and resolve the address where it is needed.</div>
+</div>
+</dd>
 <dt><a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html#getAddress()" class="member-name-link">getAddress()</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html" title="class in io.micronaut.discovery.consul.client.v1">NodeEntry</a></dt>
 <dd>
-<div class="block">See https://www.consul.io/api/catalog.html#address.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">Use <a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html#getHostString()"><code>NodeEntry.getHostString()</code></a> and resolve the address where it is needed.</div>
+</div>
 </dd>
 <dt><a href="io/micronaut/discovery/client/DiscoveryClientConfiguration.html#getAllZones()" class="member-name-link">getAllZones()</a> - Method in class io.micronaut.discovery.client.<a href="io/micronaut/discovery/client/DiscoveryClientConfiguration.html" title="class in io.micronaut.discovery.client">DiscoveryClientConfiguration</a></dt>
 <dd>&nbsp;</dd>
@@ -886,6 +902,16 @@ available <code>PropertySource</code> instances from distributed configuration s
 <dt><a href="io/micronaut/discovery/eureka/client/v2/InstanceInfo.html#getHostName()" class="member-name-link">getHostName()</a> - Method in class io.micronaut.discovery.eureka.client.v2.<a href="io/micronaut/discovery/eureka/client/v2/InstanceInfo.html" title="class in io.micronaut.discovery.eureka.client.v2">InstanceInfo</a></dt>
 <dd>
 <div class="block">The host name of the application instance.</div>
+</dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/AbstractServiceEntry.html#getHostString()" class="member-name-link">getHostString()</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/AbstractServiceEntry.html" title="class in io.micronaut.discovery.consul.client.v1">AbstractServiceEntry</a></dt>
+<dd>
+<div class="block">See https://www.consul.io/api/agent/service.html#address.</div>
+</dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/MemberEntry.html#getHostString()" class="member-name-link">getHostString()</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/MemberEntry.html" title="class in io.micronaut.discovery.consul.client.v1">MemberEntry</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html#getHostString()" class="member-name-link">getHostString()</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html" title="class in io.micronaut.discovery.consul.client.v1">NodeEntry</a></dt>
+<dd>
+<div class="block">See https://www.consul.io/api/catalog.html#address.</div>
 </dd>
 <dt><a href="io/micronaut/discovery/consul/client/v1/ConsulCheck.html#getHttp()" class="member-name-link">getHttp()</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/ConsulCheck.html" title="class in io.micronaut.discovery.consul.client.v1">ConsulCheck</a></dt>
 <dd>&nbsp;</dd>
@@ -1641,9 +1667,15 @@ and Spring Cloud Config Server and Vault.</div>
 </dd>
 <dt><a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html" class="type-name-link" title="class in io.micronaut.discovery.consul.client.v1">NodeEntry</a> - Class in <a href="io/micronaut/discovery/consul/client/v1/package-summary.html">io.micronaut.discovery.consul.client.v1</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html#%3Cinit%3E(java.lang.String,java.net.InetAddress)" class="member-name-link">NodeEntry(String, InetAddress)</a> - Constructor for class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html" title="class in io.micronaut.discovery.consul.client.v1">NodeEntry</a></dt>
+<dt><a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html#%3Cinit%3E(java.lang.String,java.lang.String)" class="member-name-link">NodeEntry(String, String)</a> - Constructor for class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html" title="class in io.micronaut.discovery.consul.client.v1">NodeEntry</a></dt>
 <dd>
 <div class="block">Create a new catalog entry.</div>
+</dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html#%3Cinit%3E(java.lang.String,java.net.InetAddress)" class="member-name-link">NodeEntry(String, InetAddress)</a> - Constructor for class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html" title="class in io.micronaut.discovery.consul.client.v1">NodeEntry</a></dt>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">Use <a href="io/micronaut/discovery/consul/client/v1/NodeEntry.html#%3Cinit%3E(java.lang.String,java.lang.String)"><code>NodeEntry(String, String)</code></a> instead.</div>
+</div>
 </dd>
 <dt><a href="io/micronaut/discovery/consul/client/v1/ConsulCatalogEntry.html#nodeMetadata()" class="member-name-link">nodeMetadata()</a> - Method in record class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/ConsulCatalogEntry.html" title="class in io.micronaut.discovery.consul.client.v1">ConsulCatalogEntry</a></dt>
 <dd>
@@ -1939,7 +1971,9 @@ by <a href="io/micronaut/discovery/client/ClientUtil.html#calcPropertySourceName
 <div class="block">See https://www.consul.io/api/agent/service.html#address.</div>
 </dd>
 <dt><a href="io/micronaut/discovery/consul/client/v1/MemberEntry.html#setAddress(java.net.InetAddress)" class="member-name-link">setAddress(InetAddress)</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/MemberEntry.html" title="class in io.micronaut.discovery.consul.client.v1">MemberEntry</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Sets the address, stored as its host name, or as its IP literal when it has no host name.</div>
+</dd>
 <dt><a href="io/micronaut/discovery/eureka/client/v2/ConfigurableInstanceInfo.html#setAppGroupName(java.lang.String)" class="member-name-link">setAppGroupName(String)</a> - Method in interface io.micronaut.discovery.eureka.client.v2.<a href="io/micronaut/discovery/eureka/client/v2/ConfigurableInstanceInfo.html" title="interface in io.micronaut.discovery.eureka.client.v2">ConfigurableInstanceInfo</a></dt>
 <dd>
 <div class="block">Sets the application group name.</div>
@@ -2060,6 +2094,12 @@ for the application or any of its environments.</div>
 <dt><a href="io/micronaut/discovery/eureka/client/v2/InstanceInfo.html#setHomePageUrl(java.lang.String)" class="member-name-link">setHomePageUrl(String)</a> - Method in class io.micronaut.discovery.eureka.client.v2.<a href="io/micronaut/discovery/eureka/client/v2/InstanceInfo.html" title="class in io.micronaut.discovery.eureka.client.v2">InstanceInfo</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/client/DiscoveryClientConfiguration.html#setHost(java.lang.String)" class="member-name-link">setHost(String)</a> - Method in class io.micronaut.discovery.client.<a href="io/micronaut/discovery/client/DiscoveryClientConfiguration.html" title="class in io.micronaut.discovery.client">DiscoveryClientConfiguration</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/AbstractServiceEntry.html#setHostString(java.lang.String)" class="member-name-link">setHostString(String)</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/AbstractServiceEntry.html" title="class in io.micronaut.discovery.consul.client.v1">AbstractServiceEntry</a></dt>
+<dd>
+<div class="block">See https://www.consul.io/api/agent/service.html#address.</div>
+</dd>
+<dt><a href="io/micronaut/discovery/consul/client/v1/MemberEntry.html#setHostString(java.lang.String)" class="member-name-link">setHostString(String)</a> - Method in class io.micronaut.discovery.consul.client.v1.<a href="io/micronaut/discovery/consul/client/v1/MemberEntry.html" title="class in io.micronaut.discovery.consul.client.v1">MemberEntry</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/micronaut/discovery/consul/ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration.html#setHttp(boolean)" class="member-name-link">setHttp(boolean)</a> - Method in class io.micronaut.discovery.consul.<a href="io/micronaut/discovery/consul/ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration.html" title="class in io.micronaut.discovery.consul">ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration</a></dt>
 <dd>
