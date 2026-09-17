@@ -6,7 +6,7 @@ pluginManagement {
 }
 
 plugins {
-    id("io.micronaut.build.shared.settings") version "8.0.2"
+    id("io.micronaut.build.shared.settings") version "8.1.1"
 }
 
 rootProject.name = 'discovery-client-parent'
@@ -20,6 +20,10 @@ include 'test-suite-consul-graal-serde'
 include 'test-suite-consul-graal-jacksondatabind'
 include 'test-suite-consul-watch'
 include 'test-suite-consul-utils'
+include 'test-suite-docs-java'
+include 'test-suite-docs-kotlin'
+include 'test-suite-docs-groovy'
+include 'test-suite-docs-python'
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 

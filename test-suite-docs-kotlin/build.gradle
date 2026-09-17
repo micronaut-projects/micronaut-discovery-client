@@ -1,0 +1,20 @@
+plugins {
+    id 'io.micronaut.build.internal.kotlin-kapt'
+    id 'io.micronaut.build.internal.discovery-client-docs'
+}
+
+// The examples of the guide, in Kotlin, processed with kapt.
+dependencies {
+    kaptTest mn.micronaut.inject.java
+
+    testImplementation mn.kotlin.stdlib.jdk8
+    testImplementation projects.micronautDiscoveryClient
+    testImplementation mn.micronaut.http.server.netty
+    testImplementation mn.micronaut.http.client
+    testImplementation mnTest.micronaut.test.junit5
+
+    testRuntimeOnly mnTest.junit.jupiter.engine
+    testRuntimeOnly mnSerde.micronaut.serde.jackson
+    testRuntimeOnly mnTest.junit.platform.launcher
+    testRuntimeOnly mnLogging.logback.classic
+}
