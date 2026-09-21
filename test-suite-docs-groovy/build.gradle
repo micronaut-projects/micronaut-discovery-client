@@ -1,0 +1,19 @@
+plugins {
+    id 'groovy'
+    id 'io.micronaut.build.internal.discovery-client-docs'
+}
+
+// The examples of the guide, in Groovy (Spock). The Groovy compiler picks up the Micronaut AST transformations
+// from the compile classpath.
+dependencies {
+    testCompileOnly mn.micronaut.inject.groovy
+
+    testImplementation projects.micronautDiscoveryClient
+    testImplementation mn.micronaut.http.server.netty
+    testImplementation mn.micronaut.http.client
+    testImplementation mnTest.micronaut.test.spock
+
+    testRuntimeOnly mnSerde.micronaut.serde.jackson
+    testRuntimeOnly mnTest.junit.platform.launcher
+    testRuntimeOnly mnLogging.logback.classic
+}

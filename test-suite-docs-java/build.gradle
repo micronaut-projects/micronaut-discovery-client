@@ -1,0 +1,19 @@
+plugins {
+    id 'java-library'
+    id 'io.micronaut.build.internal.discovery-client-docs'
+}
+
+// The examples of the guide, in Java.
+dependencies {
+    testAnnotationProcessor mn.micronaut.inject.java
+
+    testImplementation projects.micronautDiscoveryClient
+    testImplementation mn.micronaut.http.server.netty
+    testImplementation mn.micronaut.http.client
+    testImplementation mnTest.micronaut.test.junit5
+
+    testRuntimeOnly mnTest.junit.jupiter.engine
+    testRuntimeOnly mnSerde.micronaut.serde.jackson
+    testRuntimeOnly mnTest.junit.platform.launcher
+    testRuntimeOnly mnLogging.logback.classic
+}

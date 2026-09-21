@@ -1,0 +1,8 @@
+plugins {
+    id("io.micronaut.build.internal.discovery-client-base")
+}
+
+// Shared setup of the test-suite-docs-* projects backing the snippet:: macros of the guide.
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
