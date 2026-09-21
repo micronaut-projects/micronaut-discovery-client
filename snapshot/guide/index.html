@@ -229,6 +229,15 @@
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.micronaut.discovery:micronaut-discovery-client"</span>,
+]</code></pre>
+</div>
+</div>
 </p>
 </div>
 <div class="paragraph">
@@ -860,24 +869,145 @@ consul {
 <div class="paragraph">
 <p>Other services can discovery instances of the <code>hello-world</code> service simply by declaring a client as follows:</p>
 </div>
-<div class="listingblock">
+<div class="listingblock multi-language-sample">
 <div class="title">Using @Client to Discover Services</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Client(id = "hello-world")
-interface HelloClient{
-    ...
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import io.micronaut.http.annotation.Get;
+import io.micronaut.http.client.annotation.Client;
+
+@Client(id = "hello-world")
+public interface HelloClient {
+
+    @Get("/hello")
+    String hello();
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title">Using @Client to Discover Services</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from abc import ABC, abstractmethod
+
+from micronaut.http.annotation import Get
+from micronaut.http.client.annotation import Client
+
+@Client(id="hello-world")
+class HelloClient(ABC):
+
+    @Get("/hello")
+    @abstractmethod
+    def hello(self) -&gt; str:
+        ...</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title">Using @Client to Discover Services</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">import io.micronaut.http.annotation.Get
+import io.micronaut.http.client.annotation.Client
+
+@Client(id = "hello-world")
+interface HelloClient {
+
+    @Get("/hello")
+    fun hello(): String
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title">Using @Client to Discover Services</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">import io.micronaut.http.annotation.Get
+import io.micronaut.http.client.annotation.Client
+
+@Client(id = "hello-world")
+interface HelloClient {
+
+    @Get("/hello")
+    String hello()
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Alternatively you can also use <a href="https://docs.micronaut.io/latest/api/io/micronaut/http/client/annotation/Client">@Client</a> as a qualifier to <code>@Inject</code> an instance of <a href="https://docs.micronaut.io/latest/api/io/micronaut/http/client/HttpClient">HttpClient</a>:</p>
 </div>
-<div class="listingblock">
+<div class="listingblock multi-language-sample">
 <div class="title">Using @Client to Discover Services</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Client(id = "hello-world")
-@Inject
-RxHttpClient httpClient;</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import io.micronaut.http.client.HttpClient;
+import io.micronaut.http.client.annotation.Client;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+
+@Singleton
+public class HelloService {
+
+    @Client(id = "hello-world")
+    @Inject
+    HttpClient httpClient;
+
+    public String hello() {
+        return httpClient.toBlocking().retrieve("/hello");
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title">Using @Client to Discover Services</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from typing import Annotated
+
+from jakarta.inject import Inject, Singleton
+from micronaut.http.client import HttpClient
+from micronaut.http.client.annotation import Client
+
+@Singleton
+class HelloService:
+
+    http_client: Annotated[HttpClient, Inject, Client(id="hello-world")]
+
+    def hello(self) -&gt; str:
+        return self.http_client.toBlocking().retrieve("/hello")</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title">Using @Client to Discover Services</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.annotation.Client
+import jakarta.inject.Inject
+import jakarta.inject.Singleton
+
+@Singleton
+class HelloService {
+
+    @field:Client(id = "hello-world")
+    @Inject
+    lateinit var httpClient: HttpClient
+
+    fun hello(): String = httpClient.toBlocking().retrieve("/hello")
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title">Using @Client to Discover Services</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.annotation.Client
+import jakarta.inject.Inject
+import jakarta.inject.Singleton
+
+@Singleton
+class HelloService {
+
+    @Client(id = "hello-world")
+    @Inject
+    HttpClient httpClient
+
+    String hello() {
+        httpClient.toBlocking().retrieve("/hello")
+    }
+}</code></pre>
 </div>
 </div>
 
