@@ -150,6 +150,43 @@ class ConsulPropertySourceImporterSpec extends Specification {
         declaration.properties()['consul.client.config.fail-fast'] == true
     }
 
+    void 'consul importer map configuration binds secure for HTTPS'() {
+        given:
+        def importer = new ConsulPropertySourceImporter()
+
+        when:
+        def declaration = importer.newImportDeclaration(ConvertibleValues.of([
+            host: 'localhost',
+            port: 8501,
+            path: 'config/application',
+            secure: true
+        ]), null)
+
+        then:
+        declaration.properties()['consul.client.host'] == 'localhost'
+        declaration.properties()['consul.client.port'] == 8501
+        declaration.properties()['consul.client.secure'] == true
+    }
+
+    void 'consul importer connection string binds secure for HTTPS'() {
+        given:
+        def importer = new ConsulPropertySourceImporter()
+        def connectionString = io.micronaut.core.util.ConnectionString.parse(
+            'consul://localhost:8501/config/micronaut/application?format=yaml&watch=true&secure=true'
+        )
+
+        when:
+        def declaration = importer.newImportDeclaration(connectionString, null)
+
+        then:
+        declaration.properties()['consul.client.host'] == 'localhost'
+        declaration.properties()['consul.client.port'] == 8501
+        declaration.properties()['consul.client.secure'] == 'true'
+        declaration.properties()['consul.client.config.format'] == 'yaml'
+        declaration.watchEnabled()
+        declaration.path() == 'config/micronaut/application'
+    }
+
     void 'consul importer normalizes yml watch format to YAML'() {
         given:
         def importer = new ConsulPropertySourceImporter()
