@@ -47,6 +47,7 @@ public final class ConsulPropertySourceImporter extends RetryablePropertySourceI
     private static final String PROVIDER = "consul";
     private static final String CONSUL_HOST = ConsulConfiguration.PREFIX + ".host";
     private static final String CONSUL_PORT = ConsulConfiguration.PREFIX + ".port";
+    private static final String CONSUL_SECURE = ConsulConfiguration.PREFIX + ".secure";
     private static final String CONSUL_ACL_TOKEN = ConsulConfiguration.PREFIX + ".acl-token";
     private static final String CONSUL_CONFIG_FAIL_FAST = ConsulConfiguration.PREFIX + ".config.fail-fast";
 
@@ -91,6 +92,7 @@ public final class ConsulPropertySourceImporter extends RetryablePropertySourceI
         if (datacenter != null) {
             properties.put(ConsulConfiguration.PREFIX + ".config.datacenter", datacenter);
         }
+        values.get("secure", Boolean.class).ifPresent(v -> properties.put(CONSUL_SECURE, v));
         values.get("acl-token", String.class).ifPresent(v -> properties.put(CONSUL_ACL_TOKEN, v));
         values.get("fail-fast", Boolean.class).ifPresent(v -> properties.put(CONSUL_CONFIG_FAIL_FAST, v));
         values.get("read-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.consul.read-timeout", v));
@@ -125,7 +127,9 @@ public final class ConsulPropertySourceImporter extends RetryablePropertySourceI
             String watchPath = importSupport.resolveWatchPath(importPath, format, imported).orElse(null);
             imported.put(WatchConfiguration.PREFIX + ".enabled", true);
             imported.putAll(properties.entrySet().stream()
-                .filter(e -> e.getKey().equals(CONSUL_HOST) || e.getKey().equals(CONSUL_PORT))
+                .filter(e -> e.getKey().equals(CONSUL_HOST)
+                    || e.getKey().equals(CONSUL_PORT)
+                    || e.getKey().equals(CONSUL_SECURE))
                 .collect(java.util.stream.Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
             if (watchPath != null) {
                 imported.put(WatchConfiguration.IMPORTED_PATHS, watchPath);
