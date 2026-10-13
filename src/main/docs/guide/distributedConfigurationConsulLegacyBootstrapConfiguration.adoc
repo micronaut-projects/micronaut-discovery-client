@@ -17,3 +17,15 @@ consul:
 After enabling distributed configuration, store the configuration to share in Consul's key/value store.
 
 NOTE: The legacy bootstrap client does not retry a failed read from Consul. If Consul may be unavailable while the application starts, see <<distributedConfigurationConsulRetryingConsulImports, Retrying Consul Imports>> for how to migrate to a configuration import with retries.
+
+To choose the https://developer.hashicorp.com/consul/api-docs/features/consistency[consistency mode] of the key/value reads, set `consul.client.config.consistency-mode` to `default`, `consistent` or `stale`:
+
+[configuration]
+----
+consul:
+  client:
+    config:
+      consistency-mode: stale
+----
+
+The same option is available programmatically through the `readValues(key, datacenter, raw, separator, consistencyMode)` method of api:discovery.consul.client.v1.ConsulClient[].
