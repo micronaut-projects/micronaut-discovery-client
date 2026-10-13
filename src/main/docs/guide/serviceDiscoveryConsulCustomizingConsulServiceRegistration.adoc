@@ -31,3 +31,74 @@ consul:
 - `meta` alters the metadata
 - `retry-count` alsters the retry count
 - `fail-fast` alters the fail fast behavior
+
+== Registering Additional Checks
+
+Besides the default TTL or HTTP check (see <<serviceDiscoveryConsulConsulHealthChecks, Consul Health Checks>>) you can register additional https://developer.hashicorp.com/consul/docs/services/usage/checks[checks] with the service, for example to let Consul monitor a dependency of the application separately from its overall health. Since 5.3.0, each entry under `consul.client.registration.checks` registers an additional check, configured by api:discovery.consul.registration.ConsulCheckConfiguration[]:
+
+.Registering Additional Consul Checks
+[configuration]
+----
+consul:
+  client:
+    registration:
+      checks:
+        database:
+          tcp: localhost:5432
+          interval: 10s
+          timeout: 1s
+        readiness:
+          http: /health/readiness
+          interval: 15s
+          headers:
+            X-Api-Key:
+              - secret
+        grpc:
+          grpc: localhost:9090
+          grpc-use-tls: true
+        batch:
+          ttl: 5m
+          notes: Updated by the nightly batch job
+----
+
+Each check must define exactly one of `http`, `tcp`, `grpc` or `ttl`, which determines the type of the check:
+
+- `http` - the URL Consul sends a request to. A value without a scheme, such as `/health/readiness`, is resolved against the URL of the registered server. Use `method`, `headers` and `tls-skip-verify` to customize the request.
+- `tcp` - the `host:port` Consul opens a TCP connection to.
+- `grpc` - the endpoint of a service that implements the https://github.com/grpc/grpc/blob/master/doc/health-checking.md[gRPC health checking protocol], optionally followed by `/` and the name of the service. Set `grpc-use-tls` to use TLS.
+- `ttl` - registers a TTL check. The application is responsible for updating the check, for example with `ConsulClient.pass(checkId)`, before the TTL expires.
+
+HTTP, TCP and gRPC checks run every `interval` (15 seconds by default) and can define a `timeout`. All checks support `notes`, the initial `status`, `deregister-critical-service-after` and `enabled`. The name of the configuration entry is the name of the check, and the ID of the check defaults to `service:<service id>:<name>`, which keeps it unique when several instances of the application register with the same Consul agent. Use `id` to set a different ID.
+
+Keep in mind that the checks run on the Consul agent, so hosts such as `localhost` are resolved by the agent.
+
+=== Customizing Checks Programmatically
+
+To add, modify or remove checks in code, register a bean of type api:discovery.consul.registration.ConsulCheckCustomizer[]. Customizers are invoked every time the service registers, after the default check and the configured checks were created:
+
+.Adding a Consul Check Programmatically
+[source,java]
+----
+import io.micronaut.discovery.ServiceInstance;
+import io.micronaut.discovery.consul.client.v1.ConsulCheck;
+import io.micronaut.discovery.consul.registration.ConsulCheckCustomizer;
+import jakarta.inject.Singleton;
+
+import java.util.List;
+
+@Singleton
+class RedisCheckCustomizer implements ConsulCheckCustomizer {
+
+    @Override
+    public void customize(ServiceInstance instance, String serviceId, List<ConsulCheck> checks) {
+        ConsulCheck check = new ConsulCheck();
+        check.setId("service:" + serviceId + ":redis");
+        check.setName("redis");
+        check.setTcp("localhost:6379");
+        check.setInterval("10s");
+        checks.add(check);
+    }
+}
+----
+
+NOTE: The TTL heartbeat reports the health of the application to the default check, whose ID is the configured `consul.client.registration.check.id` or `service:<service id>`. Customizers must not change the ID of that check or remove it.
