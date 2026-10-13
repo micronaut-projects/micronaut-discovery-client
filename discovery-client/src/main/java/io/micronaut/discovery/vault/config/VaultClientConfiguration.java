@@ -88,6 +88,7 @@ public class VaultClientConfiguration extends HttpClientConfiguration {
     private String pathPrefix = DEFAULT_PATH_PREFIX;
     private boolean failFast = DEFAULT_FAIL_FAST;
     private VaultAuthentication authentication = VaultAuthentication.TOKEN;
+    private String namespace;
 
     /**
      * @param vaultClientConnectionPoolConfiguration Vault Client Connection Pool Configuration
@@ -225,6 +226,25 @@ public class VaultClientConfiguration extends HttpClientConfiguration {
      */
     public void setAuthentication(VaultAuthentication authentication) {
         this.authentication = authentication != null ? authentication : VaultAuthentication.TOKEN;
+    }
+
+    /**
+     * @return The Vault Enterprise namespace, or {@code null} if none is configured
+     * @since 5.3.0
+     */
+    public String getNamespace() {
+        return namespace;
+    }
+
+    /**
+     * Set the Vault Enterprise namespace. When set it is sent as the {@code X-Vault-Namespace} header on all
+     * requests, including logins.
+     *
+     * @param namespace The namespace
+     * @since 5.3.0
+     */
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 
     /**
