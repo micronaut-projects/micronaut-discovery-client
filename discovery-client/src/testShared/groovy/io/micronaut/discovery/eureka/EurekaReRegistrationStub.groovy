@@ -23,13 +23,15 @@ import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Delete
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Put
+import io.micronaut.http.annotation.QueryValue
 
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * A minimal Eureka server that can forget the registered instance. Eureka answers a heartbeat
- * for an unknown instance with a 404.
+ * or a status update for an unknown instance with a 404.
  */
 @Requires(property = 'spec.name', value = EurekaReRegistrationStub.SPEC_NAME)
 @Controller('/eureka/apps/{appId}')
@@ -39,13 +41,19 @@ class EurekaReRegistrationStub {
 
     final AtomicInteger registrations = new AtomicInteger()
     final AtomicInteger heartbeats = new AtomicInteger()
+    final AtomicInteger statusUpdates = new AtomicInteger()
+    final AtomicReference<String> status = new AtomicReference<>()
     final AtomicBoolean registered = new AtomicBoolean()
+    final AtomicBoolean failRegistrations = new AtomicBoolean()
 
     @Post
-    HttpStatus register(String appId, @Body String instance) {
-        registered.set(true)
+    HttpResponse<?> register(String appId, @Body String instance) {
         registrations.incrementAndGet()
-        HttpStatus.NO_CONTENT
+        if (failRegistrations.get()) {
+            return HttpResponse.serverError()
+        }
+        registered.set(true)
+        HttpResponse.noContent()
     }
 
     @Delete('/{instanceId}')
@@ -61,8 +69,13 @@ class EurekaReRegistrationStub {
     }
 
     @Put('/{instanceId}/status')
-    HttpStatus updateStatus(String appId, String instanceId) {
-        HttpStatus.OK
+    HttpResponse<?> updateStatus(String appId, String instanceId, @QueryValue String value) {
+        statusUpdates.incrementAndGet()
+        if (!registered.get()) {
+            return HttpResponse.notFound()
+        }
+        status.set(value)
+        HttpResponse.ok()
     }
 
     /**
