@@ -23,6 +23,7 @@ serviceDiscoveryConsul:
       distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsFileReferences: Storing Configuration as File References
   serviceDiscoveryConsulConsulWatch: Consul Watch
 serviceDiscoveryEureka: Eureka Support
+serviceDiscoveryZones: Zones
 springCloudConfigServer: Spring Cloud Config Server Support
 distributedConfigurationVault: HashiCorp Vault Support
 breaks: Breaking Changes

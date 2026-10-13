@@ -163,6 +163,30 @@ class ConsulMockAutoRegistrationSpec extends Specification {
         anotherServer.stop()
     }
 
+    void "test that the zone of the instance is registered in the service metadata"() {
+        when: "creating a server instance in a zone"
+        def serviceName = 'zoned-server'
+        EmbeddedServer anotherServer = ApplicationContext.run(EmbeddedServer, ['micronaut.application.name'         : serviceName,
+                                                                               'micronaut.application.instance.zone': 'zone-a',
+                                                                               'consul.client.registration.meta'    : [foo: 'bar'],
+                                                                               'consul.client.host'                 : 'localhost',
+                                                                               'consul.client.port'                 : consulServer.port])
+
+        PollingConditions conditions = new PollingConditions(timeout: 3)
+
+        then:
+        conditions.eventually {
+            MockConsulServer.newEntries.get(serviceName).meta() == [foo: 'bar', zone: 'zone-a']
+            MockConsulServer.newEntries.get(serviceName).tags().contains('zone=zone-a')
+            List<ServiceInstance> instances = Flux.from(discoveryClient.getInstances(serviceName)).blockFirst()
+            instances.size() == 1
+            instances[0].zone.get() == 'zone-a'
+        }
+
+        cleanup:
+        anotherServer.stop()
+    }
+
     void "test that a service can be registered with an HTTP health check"() {
         when: "creating another server instance"
         def serviceName = 'another-server'
