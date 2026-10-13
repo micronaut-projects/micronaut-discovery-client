@@ -21,3 +21,5 @@ consul:
 ----
 
 With this configuration option in place Consul will assume responsibility of invoking the Micronaut applications https://docs.micronaut.io/latest/guide/index.html#healthEndpoint[Health Endpoint].
+
+To let Consul monitor more than the overall health of the application, for example a database or a gRPC endpoint, you can register additional HTTP, TCP, gRPC or TTL checks. See <<serviceDiscoveryConsulCustomizingConsulServiceRegistration, Customizing Consul Service Registration>>.

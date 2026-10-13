@@ -105,6 +105,30 @@ public class ConsulCheck {
     private String status;
 
     /**
+     * Specifies a timeout for outgoing connections in the case of a Script, HTTP, TCP, UDP or gRPC check.
+     */
+    @Nullable @JsonProperty("Timeout")
+    private String timeout;
+
+    /**
+     * Specifies a TCP to connect against the value of TCP (expected to be an IP or hostname plus port combination) every Interval.
+     */
+    @Nullable @JsonProperty("TCP")
+    private String tcp;
+
+    /**
+     * Specifies a gRPC check's endpoint that supports the standard gRPC health checking protocol.
+     */
+    @Nullable @JsonProperty("GRPC")
+    private String grpc;
+
+    /**
+     * Specifies whether to use TLS for this gRPC health check.
+     */
+    @Nullable @JsonProperty("GRPCUseTLS")
+    private Boolean grpcUseTls;
+
+    /**
      *
      * @return Specifies the name of the check.
      */
@@ -278,6 +302,78 @@ public class ConsulCheck {
      */
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    /**
+     *
+     * @return The timeout for outgoing connections of Script, HTTP, TCP, UDP or gRPC checks.
+     * @since 5.3.0
+     */
+    public @Nullable String getTimeout() {
+        return timeout;
+    }
+
+    /**
+     *
+     * @param timeout The timeout for outgoing connections of Script, HTTP, TCP, UDP or gRPC checks, for example {@code 5s}.
+     * @since 5.3.0
+     */
+    public void setTimeout(@Nullable String timeout) {
+        this.timeout = timeout;
+    }
+
+    /**
+     *
+     * @return The host and port (for example {@code localhost:5432}) that a TCP check connects to.
+     * @since 5.3.0
+     */
+    public @Nullable String getTcp() {
+        return tcp;
+    }
+
+    /**
+     *
+     * @param tcp The host and port (for example {@code localhost:5432}) that a TCP check connects to.
+     * @since 5.3.0
+     */
+    public void setTcp(@Nullable String tcp) {
+        this.tcp = tcp;
+    }
+
+    /**
+     *
+     * @return The endpoint of a gRPC check, for example {@code localhost:9090} or {@code localhost:9090/my.Service}.
+     * @since 5.3.0
+     */
+    public @Nullable String getGrpc() {
+        return grpc;
+    }
+
+    /**
+     *
+     * @param grpc The endpoint of a gRPC check, for example {@code localhost:9090} or {@code localhost:9090/my.Service}.
+     * @since 5.3.0
+     */
+    public void setGrpc(@Nullable String grpc) {
+        this.grpc = grpc;
+    }
+
+    /**
+     *
+     * @return Whether the gRPC check uses TLS.
+     * @since 5.3.0
+     */
+    public @Nullable Boolean getGrpcUseTls() {
+        return grpcUseTls;
+    }
+
+    /**
+     *
+     * @param grpcUseTls Whether the gRPC check uses TLS.
+     * @since 5.3.0
+     */
+    public void setGrpcUseTls(@Nullable Boolean grpcUseTls) {
+        this.grpcUseTls = grpcUseTls;
     }
 
 }
