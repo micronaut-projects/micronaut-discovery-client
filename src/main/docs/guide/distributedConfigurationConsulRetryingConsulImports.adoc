@@ -1,0 +1,54 @@
+= Retrying Consul Imports
+
+Consul may not be reachable yet when an application starts, for example when both are started at the same time. A `consul://` import retries a failed read using the `retry-*` options of the import URI:
+
+.Retrying a Consul import
+[configuration]
+----
+micronaut:
+  config:
+    import: "consul://localhost:8500/config/application?retry-attempts=5&retry-delay=2s&retry-multiplier=2.0&retry-max-delay=30s"
+----
+
+With this configuration the import is attempted up to five times. The first retry happens after two seconds, each further delay is multiplied by `2.0`, and the retries together may not wait longer than 30 seconds. `retry-count` is an alias for `retry-attempts`, and `retry-jitter` randomizes the delays. When no option is given the import is attempted three times, one second apart. See the <<distributedConfigurationConsulConsulImportUriReference, Consul Import URI Reference>> for the full list of options.
+
+Within each attempt the Consul client also retries a failing read a few times before the attempt counts as failed.
+
+The retry options are part of the import URI. Properties such as `consul.client.config.retry-count` and `consul.client.config.retry-delay` are not applied to `consul://` imports.
+
+== When all attempts fail
+
+If the configuration still cannot be read after the last attempt, the import fails and the application does not start. The `optional:` prefix only skips an import whose path does not exist in Consul; it does not hide connection failures. The `fail-fast` option is accepted for compatibility with the other importers, but it does not change this behaviour for Consul imports.
+
+== Migrating from the legacy bootstrap client
+
+The <<distributedConfigurationConsulLegacyBootstrapConfiguration, legacy bootstrap client>>, enabled with `micronaut.config-client.enabled: true`, does not retry a failed read: the configuration is loaded before retry support is available, so neither `consul.client.config.retry-count` nor a replacement of api:discovery.consul.config.ConsulConfigurationClient[] annotated with `@Retryable` has any effect. If Consul may be unavailable while the application starts, move the configuration to an import. For example, the following bootstrap configuration:
+
+.Legacy bootstrap configuration
+[configuration]
+----
+micronaut:
+  application:
+    name: hello-world
+  config-client:
+    enabled: true
+consul:
+  client:
+    defaultZone: "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+----
+
+can be replaced by an import in `application.yml` that names the paths to load and how to retry them:
+
+.Equivalent configuration import with retries
+[configuration]
+----
+micronaut:
+  application:
+    name: hello-world
+  config:
+    import:
+      - "consul://localhost:8500/config/application?retry-attempts=5&retry-delay=2s&retry-multiplier=2.0"
+      - "optional:consul://localhost:8500/config/hello-world?retry-attempts=5&retry-delay=2s&retry-multiplier=2.0"
+----
+
+Unlike the bootstrap client, an import does not derive the paths from the application name and the active environments. List every path you need, and add the environment-specific paths, such as `config/application,prod`, to the configuration file of that environment.

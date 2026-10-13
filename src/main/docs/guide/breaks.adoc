@@ -30,6 +30,14 @@ Distributed configuration via the legacy bootstrap `ConfigurationClient` path is
 
 Applications can continue using the legacy bootstrap path during migration, but startup will log deprecation warnings that point to the importer-based alternative.
 
+=== Disabling Consul in tests
+
+`micronaut.config-client.enabled: false` only disables the legacy bootstrap configuration client. If Consul is configured, other beans still contact it: the service is registered on startup, the `consul` health indicator reads the Consul leader, and the discovery client health indicator and `@Client(id = "...")` lookups query the catalog. Applications that used `micronaut.config-client.enabled: false` to keep tests away from Consul should set `consul.client.enabled: false` instead, which disables the whole Consul integration. See <<serviceDiscoveryConsulDisablingConsul, Disabling Consul>> for the individual switches.
+
+=== Vault KV version default
+
+Vault configuration now uses the KV version 2 engine when `kv-version` (or `vault.client.kv-version`) is not set, as documented. Previously, no Vault client was created unless the KV version was set explicitly.
+
 === Micronaut Discovery Client 5.0.0
 
 The following classes deprecated previously are now removed. The replacements are as follows:
