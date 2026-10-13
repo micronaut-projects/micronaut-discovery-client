@@ -22,6 +22,7 @@ import io.micronaut.discovery.spring.config.SpringCloudClientConfiguration;
 import io.micronaut.discovery.spring.config.client.ConfigServerPropertySource;
 import io.micronaut.discovery.spring.config.client.ConfigServerResponse;
 import io.micronaut.discovery.spring.config.client.SpringCloudConfigClient;
+import io.micronaut.discovery.spring.config.client.SpringCloudConfigRequestHeadersFilter;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import reactor.core.publisher.Flux;
@@ -41,6 +42,7 @@ final class SpringCloudImportSupport {
     Map<String, Object> load(ApplicationContext context, String applicationName, String profiles, String label, boolean optional) {
         SpringCloudClientConfiguration configuration = context.getBean(SpringCloudClientConfiguration.class);
         SpringCloudConfigClient client = context.getBean(SpringCloudConfigClient.class);
+        SpringCloudConfigRequestHeadersFilter.validateAuthorization(configuration);
 
         try {
             ConfigServerResponse response = Flux.from(read(client, configuration, applicationName, profiles, label)).blockFirst();

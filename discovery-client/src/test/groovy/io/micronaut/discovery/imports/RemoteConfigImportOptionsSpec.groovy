@@ -115,6 +115,34 @@ class RemoteConfigImportOptionsSpec extends Specification {
         ]
     }
 
+    void 'binds spring cloud config token, bearer token and request headers'() {
+        expect:
+        binder.bind(ConnectionString.parse('springcloud://localhost:8888/myapp/default?token=vault&bearer-token=oauth&header.X-Foo=foo&header.X-Bar=bar')) == [
+            'spring.cloud.config.token': 'vault',
+            'spring.cloud.config.bearer-token': 'oauth',
+            'spring.cloud.config.headers.X-Foo': 'foo',
+            'spring.cloud.config.headers.X-Bar': 'bar'
+        ]
+    }
+
+    void 'rejects header option without a header name'() {
+        when:
+        binder.bind(ConnectionString.parse('springcloud://localhost:8888/myapp/default?header.=foo'))
+
+        then:
+        ConfigurationException e = thrown()
+        e.message.contains("Unsupported query parameter 'header.'")
+    }
+
+    void 'rejects header option for providers other than springcloud'() {
+        when:
+        binder.bind(ConnectionString.parse('consul://localhost:8500/config/application?header.X-Foo=foo'))
+
+        then:
+        ConfigurationException e = thrown()
+        e.message.contains("Unsupported query parameter 'header.X-Foo'")
+    }
+
     void 'rejects unsupported query parameter for protocol'() {
         when:
         binder.bind(ConnectionString.parse('springcloud://localhost:8888/myapp/default?name=forbidden'))
