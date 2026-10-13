@@ -34,6 +34,25 @@ class RemoteConfigImportOptionsSpec extends Specification {
         options['connect-timeout'] == '2s'
     }
 
+    void 'accepts every retry option supported by the retryable importer for #uri'() {
+        when:
+        Map<String, Object> options = binder.bind(ConnectionString.parse(uri))
+
+        then:
+        options['retry-attempts'] == '5'
+        options['retry-delay'] == '2s'
+        options['retry-max-delay'] == '30s'
+        options['retry-multiplier'] == '2.0'
+        options['retry-jitter'] == '0.2'
+
+        where:
+        uri << [
+            'consul://localhost:8500/config/application?retry-attempts=5&retry-delay=2s&retry-max-delay=30s&retry-multiplier=2.0&retry-jitter=0.2',
+            'vault://localhost:8200/application?retry-attempts=5&retry-delay=2s&retry-max-delay=30s&retry-multiplier=2.0&retry-jitter=0.2',
+            'springcloud://localhost:8888/myapp/default?retry-attempts=5&retry-delay=2s&retry-max-delay=30s&retry-multiplier=2.0&retry-jitter=0.2'
+        ]
+    }
+
     void 'binds provider-specific options for each supported protocol'() {
         expect:
         binder.bind(ConnectionString.parse('consul://localhost:8500/config/application?format=json&dc=dc1&acl-token=token&secure=true&fail-fast=true')) == [
