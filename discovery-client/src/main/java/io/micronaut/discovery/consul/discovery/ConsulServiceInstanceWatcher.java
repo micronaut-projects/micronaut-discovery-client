@@ -56,9 +56,11 @@ import java.util.function.Supplier;
 /**
  * Keeps the instances of each looked up Consul service up to date with a blocking query on
  * {@code /v1/health/service/{service}} and serves {@link io.micronaut.discovery.DiscoveryClient#getInstances(String)}
- * from that cache. A service is watched from its first lookup until the application context is closed.
+ * from that cache. A service is watched from its first lookup until the application context is closed, or until it has
+ * not been looked up for {@link ConsulServiceWatchConfiguration#getIdleTimeout()}.
  *
- * <p>While the watch of a service has no result yet the lookup waits for the first query; while the watch is failing
+ * <p>While the watch of a service has no result yet the lookup waits for the first query, which is bounded by the read
+ * timeout of the Consul client; while the watch is failing
  * lookups query Consul directly. A {@link ServiceInstancesChangedEvent} is published when the instances change.</p>
  *
  * @author graemerocher
@@ -70,12 +72,14 @@ import java.util.function.Supplier;
 public final class ConsulServiceInstanceWatcher {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConsulServiceInstanceWatcher.class);
+    private static final Duration DEFAULT_INITIAL_QUERY_TIMEOUT = Duration.ofSeconds(10);
 
     private final ConsulServiceWatchClient client;
     private final ConsulConfiguration consulConfiguration;
     private final ConsulServiceWatchConfiguration watchConfiguration;
     private final ApplicationEventPublisher<ServiceInstancesChangedEvent> eventPublisher;
     private final Scheduler scheduler;
+    private final Duration initialQueryTimeout;
     private final Map<String, ServiceWatch> watches = new ConcurrentHashMap<>();
     private volatile boolean closed;
 
@@ -96,6 +100,7 @@ public final class ConsulServiceInstanceWatcher {
         this.watchConfiguration = watchConfiguration;
         this.eventPublisher = eventPublisher;
         this.scheduler = Schedulers.fromExecutor(executor);
+        this.initialQueryTimeout = consulConfiguration.getReadTimeout().orElse(DEFAULT_INITIAL_QUERY_TIMEOUT);
     }
 
     /**
@@ -110,6 +115,7 @@ public final class ConsulServiceInstanceWatcher {
             return directQuery.get();
         }
         ServiceWatch watch = watches.computeIfAbsent(serviceId, ServiceWatch::new);
+        watch.lastAccess = System.nanoTime();
         watch.start();
         if (closed) {
             stop(watch);
@@ -121,6 +127,7 @@ public final class ConsulServiceInstanceWatcher {
                 return Mono.just(instances);
             }
             return Mono.fromFuture(watch.firstResult, true)
+                .timeout(initialQueryTimeout)
                 .onErrorResume(e -> Mono.from(directQuery.get()));
         }
         return directQuery.get();
@@ -162,8 +169,19 @@ public final class ConsulServiceInstanceWatcher {
 
     private Mono<Void> poll(ServiceWatch watch) {
         return Mono.defer(() -> {
+            if (isIdle(watch)) {
+                LOG.debug("Service {} has not been looked up for {}, no longer watching it", watch.serviceId,
+                    watchConfiguration.getIdleTimeout().orElse(null));
+                watches.remove(watch.serviceId, watch);
+                stop(watch);
+                return Mono.empty();
+            }
             Duration delay = watch.nextDelay();
             Mono<HttpResponse<List<ConsulHealthEntry>>> query = Mono.defer(() -> query(watch));
+            if (watch.index == null) {
+                // an index-less query returns at once, bound it like a regular lookup
+                query = query.timeout(initialQueryTimeout);
+            }
             if (!delay.isZero()) {
                 query = Mono.delay(delay).then(query);
             }
@@ -176,6 +194,11 @@ public final class ConsulServiceInstanceWatcher {
                 })
                 .then();
         });
+    }
+
+    private boolean isIdle(ServiceWatch watch) {
+        Duration idleTimeout = watchConfiguration.getIdleTimeout().orElse(null);
+        return idleTimeout != null && System.nanoTime() - watch.lastAccess > idleTimeout.toNanos();
     }
 
     private Mono<HttpResponse<List<ConsulHealthEntry>>> query(ServiceWatch watch) {
@@ -289,6 +312,7 @@ public final class ConsulServiceInstanceWatcher {
         volatile boolean failing;
         volatile boolean disposed;
         volatile int errors;
+        volatile long lastAccess = System.nanoTime();
         private boolean started;
 
         ServiceWatch(String serviceId) {

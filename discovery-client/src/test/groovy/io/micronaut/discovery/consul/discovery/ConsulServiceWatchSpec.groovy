@@ -33,6 +33,7 @@ import org.reactivestreams.Publisher
 import org.testcontainers.DockerClientFactory
 import org.testcontainers.containers.GenericContainer
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import spock.lang.AutoCleanup
 import spock.lang.Requires as SpockRequires
 import spock.lang.Shared
@@ -41,6 +42,7 @@ import spock.util.concurrent.PollingConditions
 
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Verifies the Consul service instance watch against a real Consul agent.
@@ -262,6 +264,86 @@ class ConsulServiceWatchSpec extends Specification {
         ctx.close()
     }
 
+    void 'the first lookup is bounded by the Consul client read timeout when Consul hangs'() {
+        given:
+        register('shipping', 'shipping-1', 6081)
+        ApplicationContext ctx = watchingContext(['consul.client.read-timeout': '2s'])
+        RequestRecorder recorder = ctx.getBean(RequestRecorder)
+        ConsulServiceInstanceWatcher watcher = ctx.getBean(ConsulServiceInstanceWatcher)
+        recorder.hangNonBlocking.set(1)
+
+        when: 'the initial query of the watch hangs'
+        long start = System.nanoTime()
+        List<Integer> first = ports(ctx, 'shipping')
+        long elapsedMillis = (System.nanoTime() - start).intdiv(1_000_000)
+
+        then: 'the lookup falls back to a direct query after the read timeout'
+        first == [6081]
+        elapsedMillis >= 1500
+        elapsedMillis < 6000
+
+        and: 'the watch retries and warms the cache'
+        conditions.eventually {
+            assert watcher.isWatching('shipping')
+        }
+        int nonBlocking = recorder.nonBlocking('shipping').size()
+        ports(ctx, 'shipping') == [6081]
+        recorder.nonBlocking('shipping').size() == nonBlocking
+
+        cleanup:
+        ctx.close()
+    }
+
+    void 'services that are not looked up stop being watched after the idle timeout'() {
+        given:
+        register('pricing', 'pricing-1', 5081)
+        ApplicationContext ctx = watchingContext([
+                'consul.client.discovery.watch.wait'        : '1s',
+                'consul.client.discovery.watch.idle-timeout': '2s'
+        ])
+        RequestRecorder recorder = ctx.getBean(RequestRecorder)
+        ConsulServiceInstanceWatcher watcher = ctx.getBean(ConsulServiceInstanceWatcher)
+
+        expect:
+        ports(ctx, 'pricing') == [5081]
+        watcher.watchedServiceIds == ['pricing'] as Set
+
+        when: 'the service is not looked up'
+        conditions.eventually {
+            assert watcher.watchedServiceIds.isEmpty()
+        }
+        int requests = recorder.requests.size()
+        sleep(1500)
+
+        then: 'its blocking queries stop'
+        recorder.requests.size() == requests
+
+        when: 'the service is looked up again'
+        register('pricing', 'pricing-2', 5082)
+        List<Integer> ports = ports(ctx, 'pricing')
+
+        then: 'a new watch starts'
+        ports == [5081, 5082]
+        watcher.watchedServiceIds == ['pricing'] as Set
+        conditions.eventually {
+            assert watcher.isWatching('pricing')
+        }
+
+        cleanup:
+        ctx.close()
+    }
+
+    void 'idle eviction is disabled by default'() {
+        given:
+        ApplicationContext ctx = watchingContext()
+
+        expect:
+        !ctx.getBean(ConsulServiceWatchConfiguration).idleTimeout.present
+
+        cleanup:
+        ctx.close()
+    }
+
     @Singleton
     @Requires(property = 'spec.name', value = SPEC_NAME)
     static class ChangeListener implements ApplicationEventListener<ServiceInstancesChangedEvent> {
@@ -278,6 +360,7 @@ class ConsulServiceWatchSpec extends Specification {
     static class RequestRecorder implements HttpClientFilter {
         final List<MutableHttpRequest<?>> requests = new CopyOnWriteArrayList<>()
         final AtomicBoolean failBlocking = new AtomicBoolean()
+        final AtomicInteger hangNonBlocking = new AtomicInteger()
 
         List<MutableHttpRequest<?>> blocking(String service) {
             requests.findAll { it.path.endsWith('/' + service) && it.parameters.contains('index') }
@@ -290,6 +373,9 @@ class ConsulServiceWatchSpec extends Specification {
         @Override
         Publisher<? extends HttpResponse<?>> doFilter(MutableHttpRequest<?> request, ClientFilterChain chain) {
             requests.add(request)
+            if (!request.parameters.contains('index') && hangNonBlocking.getAndUpdate { it > 0 ? it - 1 : 0 } > 0) {
+                return Mono.never()
+            }
             if (failBlocking.get() && request.parameters.contains('index')) {
                 return Publishers.just(new IllegalStateException('Simulated blocking query failure'))
             }

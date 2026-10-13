@@ -72,6 +72,7 @@ public class ConsulServiceWatchConfiguration extends HttpClientConfiguration imp
     private Duration delay = DEFAULT_DELAY;
     private Duration retryDelay = DEFAULT_RETRY_DELAY;
     private Duration maxRetryDelay = DEFAULT_MAX_RETRY_DELAY;
+    private Duration idleTimeout;
 
     /**
      * @param consulConfiguration The Consul configuration whose HTTP client settings are copied
@@ -160,6 +161,23 @@ public class ConsulServiceWatchConfiguration extends HttpClientConfiguration imp
      */
     public void setMaxRetryDelay(Duration maxRetryDelay) {
         this.maxRetryDelay = maxRetryDelay != null && !maxRetryDelay.isNegative() ? maxRetryDelay : DEFAULT_MAX_RETRY_DELAY;
+    }
+
+    /**
+     * @return The time after which a service that has not been looked up stops being watched, if eviction is enabled
+     */
+    public Optional<Duration> getIdleTimeout() {
+        return Optional.ofNullable(idleTimeout);
+    }
+
+    /**
+     * The time after which a service that has not been looked up stops being watched. The next lookup of the service
+     * starts a new watch. A zero, negative or absent value disables eviction, which is the default.
+     *
+     * @param idleTimeout The idle timeout
+     */
+    public void setIdleTimeout(Duration idleTimeout) {
+        this.idleTimeout = idleTimeout != null && !idleTimeout.isNegative() && !idleTimeout.isZero() ? idleTimeout : null;
     }
 
     /**
