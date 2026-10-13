@@ -41,14 +41,15 @@ import java.util.Optional;
 public final class VaultPropertySourceImporter extends RetryablePropertySourceImporter<VaultPropertySourceImporter.VaultImport> {
 
     private static final int DEFAULT_PORT = 8200;
-    private static final Map<String, String> AUTHENTICATION_OPTIONS = Map.of(
+    private static final Map<String, String> CLIENT_OPTIONS = Map.of(
         "authentication", VaultClientConfiguration.PREFIX + ".authentication",
         "role-id", VaultClientConfiguration.VaultClientAppRoleConfiguration.PREFIX + ".role-id",
         "secret-id", VaultClientConfiguration.VaultClientAppRoleConfiguration.PREFIX + ".secret-id",
         "app-role-path", VaultClientConfiguration.VaultClientAppRoleConfiguration.PREFIX + ".path",
         "kubernetes-role", VaultClientConfiguration.VaultClientKubernetesConfiguration.PREFIX + ".role",
         "kubernetes-path", VaultClientConfiguration.VaultClientKubernetesConfiguration.PREFIX + ".path",
-        "service-account-token-file", VaultClientConfiguration.VaultClientKubernetesConfiguration.PREFIX + ".service-account-token-file"
+        "service-account-token-file", VaultClientConfiguration.VaultClientKubernetesConfiguration.PREFIX + ".service-account-token-file",
+        "namespace", VaultClientConfiguration.PREFIX + ".namespace"
     );
 
     private final RemoteConfigImportOptionBinder optionBinder = new RemoteConfigImportOptionBinder();
@@ -91,7 +92,7 @@ public final class VaultPropertySourceImporter extends RetryablePropertySourceIm
         values.get("fail-fast", Boolean.class).ifPresent(v -> properties.put("vault.client.fail-fast", v));
         values.get("read-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.vault.read-timeout", v));
         values.get("connect-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.vault.connect-timeout", v));
-        AUTHENTICATION_OPTIONS.forEach((option, property) ->
+        CLIENT_OPTIONS.forEach((option, property) ->
             values.get(option, String.class).ifPresent(v -> properties.put(property, v)));
 
         return new VaultImport(null, properties, secretPath, values.get("optional", Boolean.class).orElse(false), retryPolicy);

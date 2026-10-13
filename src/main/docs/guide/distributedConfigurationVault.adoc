@@ -120,6 +120,10 @@ Treat import URIs with embedded credentials as sensitive values and store them a
 |`?service-account-token-file=/var/run/secrets/kubernetes.io/serviceaccount/token`
 |File containing the Kubernetes service account token.
 
+|`namespace`
+|`?namespace=team-a`
+|Vault Enterprise namespace. See <<vaultNamespace, Vault namespaces>>.
+
 |`retry-attempts`
 |`?retry-attempts=3`
 |Number of config import retry attempts handled by Micronaut's retryable importer support.
@@ -245,6 +249,22 @@ snippet::io.micronaut.discovery.docs.GcpVaultTokenSupplier[tags="imports,class",
 <1> Required when the legacy bootstrap configuration client is used.
 <2> Reads the signed JWT on every login, for example from a file kept up to date by the platform.
 <3> Logs in to the auth method mounted at `auth/gcp`; the client token of the response is the Vault token.
+
+[[vaultNamespace]]
+== Vault namespaces
+
+To read configuration from a https://developer.hashicorp.com/vault/docs/enterprise/namespaces[Vault Enterprise namespace], set `vault.client.namespace` (or the `namespace` import URI option). The namespace is sent as the `X-Vault-Namespace` header on every request, including logins.
+
+.Reading configuration from a Vault namespace
+[configuration]
+----
+vault:
+  client:
+    uri: https://vault.example.com:8200
+    namespace: team-a
+----
+
+The header is added by a client filter that applies to clients annotated with api:discovery.vault.config.VaultClientFilterMatcher[]. Add the annotation to custom declarative clients that call Vault, such as one used by a custom `VaultTokenSupplier`, to send the header from them too.
 
 During migration, the older bootstrap configuration is still available:
 

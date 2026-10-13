@@ -96,6 +96,13 @@ class RemoteConfigImportOptionsSpec extends Specification {
         ]
     }
 
+    void 'binds vault namespace option'() {
+        expect:
+        binder.bind(ConnectionString.parse('vault://localhost:8200/application?namespace=team-a')) == [
+            'vault.client.namespace': 'team-a'
+        ]
+    }
+
     void 'binds provider credentials from connection string user info'() {
         expect:
         binder.bind(ConnectionString.parse('vault://testtoken@localhost:8200/application')) == [
