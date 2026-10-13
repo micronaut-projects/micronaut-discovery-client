@@ -24,7 +24,7 @@
         }
     </script>
     <style type="text/css">
-        .lang-java { display: block }; .lang-python { display: block }; .lang-kotlin { display: block }; .lang-groovy { display: block }; 
+        .lang-java { display: block }; .lang-python { display: block }; .lang-kotlin { display: block }; .lang-groovy { display: block }; .lang-scala { display: block }; 
     </style>
 </head>
 
@@ -147,13 +147,13 @@
         <h1>Micronaut Discovery Client</h1>
         <p></p>
         <p>Adds Service Discovery Features for Eureka and Consul</p>
-        <p><strong>Version:</strong> 5.1.0 </p>
+        <p><strong>Version:</strong> 5.2.0 </p>
     </div>
     
 <h1 id="introduction"><a class="anchor" href="#introduction"></a>1 Introduction</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/introduction.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/introduction.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -229,6 +229,15 @@
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
+<div class="listingblock multi-language-sample">
+<div class="title"></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="pyronaut">[tool.pyronaut.dependencies]
+runtime = [
+    <span class="hljs-string">"io.micronaut.discovery:micronaut-discovery-client"</span>,
+]</code></pre>
+</div>
+</div>
 </p>
 </div>
 <div class="paragraph">
@@ -277,7 +286,8 @@
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {caches = {discovery-client = {enabled = false}}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.caches.discovery-client]
+enabled = false</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -340,7 +350,8 @@
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {caches = {discovery-client = {expire-after-access = "60s"}}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.caches.discovery-client]
+expire-after-access = "60s"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -389,7 +400,7 @@
 <h1 id="releaseHistory"><a class="anchor" href="#releaseHistory"></a>2 Release History</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/releaseHistory.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/releaseHistory.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -405,7 +416,7 @@
 <h1 id="distributedConfiguration"><a class="anchor" href="#distributedConfiguration"></a>3 Distributed Configuration</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/distributedConfiguration.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/distributedConfiguration.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -442,7 +453,7 @@ The bootstrap context is still supported for legacy scenarios, but it is no long
 <h1 id="serviceDiscoveryConsul"><a class="anchor" href="#serviceDiscoveryConsul"></a>4 Consul Support</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/serviceDiscoveryConsul.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/serviceDiscoveryConsul.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -455,7 +466,7 @@ The bootstrap context is still supported for legacy scenarios, but it is no long
 <h2 id="serviceDiscoveryConsulStartingConsul"><a class="anchor" href="#serviceDiscoveryConsulStartingConsul"></a>4.1 Starting Consul</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/serviceDiscoveryConsulStartingConsul.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/serviceDiscoveryConsulStartingConsul.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -483,7 +494,7 @@ The bootstrap context is still supported for legacy scenarios, but it is no long
 <h2 id="serviceDiscoveryConsulAutoRegisteringWithConsul"><a class="anchor" href="#serviceDiscoveryConsulAutoRegisteringWithConsul"></a>4.2 Auto Registering with Consul</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/serviceDiscoveryConsulAutoRegisteringWithConsul.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/serviceDiscoveryConsulAutoRegisteringWithConsul.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -516,8 +527,14 @@ consul:
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {application = {name = "hello-world"}}
-consul = {client = {registration = {enabled = true}, defaultZone = "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.application]
+name = "hello-world"
+
+[consul.client]
+defaultZone = "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+
+[consul.client.registration]
+enabled = true</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -641,7 +658,11 @@ micronaut.application.instance.id=${random.shortuuid}</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {application = {name = "hello-world", instance = {id = "${random.shortuuid}"}}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.application]
+name = "hello-world"
+
+[micronaut.application.instance]
+id = "${random.shortuuid}"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -690,7 +711,7 @@ micronaut.application.instance.id=${random.shortuuid}</code></pre>
 <h2 id="serviceDiscoveryConsulCustomizingConsulServiceRegistration"><a class="anchor" href="#serviceDiscoveryConsulCustomizingConsulServiceRegistration"></a>4.3 Customizing Consul Service Registration</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/serviceDiscoveryConsulCustomizingConsulServiceRegistration.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/serviceDiscoveryConsulCustomizingConsulServiceRegistration.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -743,8 +764,21 @@ consul:
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {application = {name = "hello-world"}}
-consul = {client = {registration = {enabled = true, tags = ["hello", "world"], meta = {some = "value", instance_type = "t2.medium"}, retry-count = 5, fail-fast = false}, defaultZone = "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.application]
+name = "hello-world"
+
+[consul.client]
+defaultZone = "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+
+[consul.client.registration]
+enabled = true
+tags = ["hello", "world"]
+retry-count = 5
+fail-fast = false
+
+[consul.client.registration.meta]
+some = "value"
+instance_type = "t2.medium"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -845,7 +879,7 @@ consul {
 <h2 id="serviceDiscoveryConsulDiscoveryServicesFromConsul"><a class="anchor" href="#serviceDiscoveryConsulDiscoveryServicesFromConsul"></a>4.4 Discovery Services from Consul</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/serviceDiscoveryConsulDiscoveryServicesFromConsul.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/serviceDiscoveryConsulDiscoveryServicesFromConsul.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -860,31 +894,152 @@ consul {
 <div class="paragraph">
 <p>Other services can discovery instances of the <code>hello-world</code> service simply by declaring a client as follows:</p>
 </div>
-<div class="listingblock">
+<div class="listingblock multi-language-sample">
 <div class="title">Using @Client to Discover Services</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Client(id = "hello-world")
-interface HelloClient{
-    ...
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import io.micronaut.http.annotation.Get;
+import io.micronaut.http.client.annotation.Client;
+
+@Client(id = "hello-world")
+public interface HelloClient {
+
+    @Get("/hello")
+    String hello();
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title">Using @Client to Discover Services</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from abc import ABC, abstractmethod
+
+from micronaut.http.annotation import Get
+from micronaut.http.client.annotation import Client
+
+@Client(id="hello-world")
+class HelloClient(ABC):
+
+    @Get("/hello")
+    @abstractmethod
+    def hello(self) -&gt; str:
+        ...</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title">Using @Client to Discover Services</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">import io.micronaut.http.annotation.Get
+import io.micronaut.http.client.annotation.Client
+
+@Client(id = "hello-world")
+interface HelloClient {
+
+    @Get("/hello")
+    fun hello(): String
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title">Using @Client to Discover Services</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">import io.micronaut.http.annotation.Get
+import io.micronaut.http.client.annotation.Client
+
+@Client(id = "hello-world")
+interface HelloClient {
+
+    @Get("/hello")
+    String hello()
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Alternatively you can also use <a href="https://docs.micronaut.io/latest/api/io/micronaut/http/client/annotation/Client">@Client</a> as a qualifier to <code>@Inject</code> an instance of <a href="https://docs.micronaut.io/latest/api/io/micronaut/http/client/HttpClient">HttpClient</a>:</p>
 </div>
-<div class="listingblock">
+<div class="listingblock multi-language-sample">
 <div class="title">Using @Client to Discover Services</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Client(id = "hello-world")
-@Inject
-RxHttpClient httpClient;</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import io.micronaut.http.client.HttpClient;
+import io.micronaut.http.client.annotation.Client;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+
+@Singleton
+public class HelloService {
+
+    @Client(id = "hello-world")
+    @Inject
+    HttpClient httpClient;
+
+    public String hello() {
+        return httpClient.toBlocking().retrieve("/hello");
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title">Using @Client to Discover Services</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from typing import Annotated
+
+from jakarta.inject import Inject, Singleton
+from micronaut.http.client import HttpClient
+from micronaut.http.client.annotation import Client
+
+@Singleton
+class HelloService:
+
+    http_client: Annotated[HttpClient, Inject, Client(id="hello-world")]
+
+    def hello(self) -&gt; str:
+        return self.http_client.toBlocking().retrieve("/hello")</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title">Using @Client to Discover Services</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.annotation.Client
+import jakarta.inject.Inject
+import jakarta.inject.Singleton
+
+@Singleton
+class HelloService {
+
+    @field:Client(id = "hello-world")
+    @Inject
+    lateinit var httpClient: HttpClient
+
+    fun hello(): String = httpClient.toBlocking().retrieve("/hello")
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="title">Using @Client to Discover Services</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.annotation.Client
+import jakarta.inject.Inject
+import jakarta.inject.Singleton
+
+@Singleton
+class HelloService {
+
+    @Client(id = "hello-world")
+    @Inject
+    HttpClient httpClient
+
+    String hello() {
+        httpClient.toBlocking().retrieve("/hello")
+    }
+}</code></pre>
 </div>
 </div>
 
 <h2 id="serviceDiscoveryConsulConsulHealthChecks"><a class="anchor" href="#serviceDiscoveryConsulConsulHealthChecks"></a>4.5 Consul Health Checks</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/serviceDiscoveryConsulConsulHealthChecks.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/serviceDiscoveryConsulConsulHealthChecks.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -924,7 +1079,8 @@ RxHttpClient httpClient;</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">consul = {client = {registration = {check = {http = true}}}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[consul.client.registration.check]
+http = true</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -979,7 +1135,7 @@ RxHttpClient httpClient;</code></pre>
 <h2 id="serviceDiscoveryConsulControllingIpHostRegistration"><a class="anchor" href="#serviceDiscoveryConsulControllingIpHostRegistration"></a>4.6 Controlling IP/Host Registration</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/serviceDiscoveryConsulControllingIpHostRegistration.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/serviceDiscoveryConsulControllingIpHostRegistration.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1014,7 +1170,9 @@ consul.client.registration.prefer-ip-address=true</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">consul = {client = {registration = {ip-addr = "&lt;your base container ip&gt;", prefer-ip-address = true}}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[consul.client.registration]
+ip-addr = "&lt;your base container ip&gt;"
+prefer-ip-address = true</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1088,7 +1246,12 @@ consul.client.registration.check.http=true</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">consul = {client = {registration = {ip-addr = "&lt;your base container ip&gt;", prefer-ip-address = true, check = {http = true}}}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[consul.client.registration]
+ip-addr = "&lt;your base container ip&gt;"
+prefer-ip-address = true
+
+[consul.client.registration.check]
+http = true</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1146,7 +1309,7 @@ consul.client.registration.check.http=true</code></pre>
 <h2 id="distributedConfigurationConsul"><a class="anchor" href="#distributedConfigurationConsul"></a>4.7 Distributed Configuration with Consul</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/distributedConfigurationConsul.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/distributedConfigurationConsul.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1179,7 +1342,7 @@ consul.client.registration.check.http=true</code></pre>
 <h2 id="distributedConfigurationConsulImportingConsulConfiguration"><a class="anchor" href="#distributedConfigurationConsulImportingConsulConfiguration"></a>4.7.1 Importing Consul Configuration</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/distributedConfigurationConsulImportingConsulConfiguration.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/distributedConfigurationConsulImportingConsulConfiguration.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1205,7 +1368,8 @@ consul.client.registration.check.http=true</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "consul://localhost:8500/config/application"}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.config]
+import = "consul://localhost:8500/config/application"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1261,7 +1425,8 @@ consul.client.registration.check.http=true</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "consul://localhost:8500/config/application?format=json"}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.config]
+import = "consul://localhost:8500/config/application?format=json"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1317,7 +1482,8 @@ consul.client.registration.check.http=true</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "consul://token@localhost:8500/config/application"}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.config]
+import = "consul://token@localhost:8500/config/application"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1373,7 +1539,8 @@ consul.client.registration.check.http=true</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "consul://localhost:8500/config/application?acl-token=token"}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.config]
+import = "consul://localhost:8500/config/application?acl-token=token"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1429,7 +1596,8 @@ consul.client.registration.check.http=true</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "consul://localhost:8500/config/application?watch=true"}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.config]
+import = "consul://localhost:8500/config/application?watch=true"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1475,7 +1643,7 @@ consul.client.registration.check.http=true</code></pre>
 <h2 id="distributedConfigurationConsulConsulImportUriReference"><a class="anchor" href="#distributedConfigurationConsulConsulImportUriReference"></a>4.7.2 Consul Import URI Reference</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/distributedConfigurationConsulConsulImportUriReference.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/distributedConfigurationConsulConsulImportUriReference.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1610,7 +1778,7 @@ consul.client.registration.check.http=true</code></pre>
 <h2 id="distributedConfigurationConsulLegacyBootstrapConfiguration"><a class="anchor" href="#distributedConfigurationConsulLegacyBootstrapConfiguration"></a>4.7.3 Legacy Bootstrap Configuration</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/distributedConfigurationConsulLegacyBootstrapConfiguration.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/distributedConfigurationConsulLegacyBootstrapConfiguration.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1642,8 +1810,14 @@ consul:
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {application = {name = "hello-world"}, config-client = {enabled = true}}
-consul = {client = {defaultZone = "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.application]
+name = "hello-world"
+
+[micronaut.config-client]
+enabled = true
+
+[consul.client]
+defaultZone = "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1710,7 +1884,7 @@ consul {
 <h2 id="distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsKeyValuePairs"><a class="anchor" href="#distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsKeyValuePairs"></a>4.7.3.1 Storing Configuration as Key/Value Pairs</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsKeyValuePairs.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsKeyValuePairs.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1784,7 +1958,7 @@ You can alter the path by setting <code>consul.client.config.path</code>.
 <h2 id="distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationInYamlJsonOrPropertiesFormat"><a class="anchor" href="#distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationInYamlJsonOrPropertiesFormat"></a>4.7.3.2 Storing Configuration in YAML, JSON, or Properties Format</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationInYamlJsonOrPropertiesFormat.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationInYamlJsonOrPropertiesFormat.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1813,7 +1987,8 @@ You can alter the path by setting <code>consul.client.config.path</code>.
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">consul = {client = {config = {format = "JSON"}}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[consul.client.config]
+format = "JSON"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1871,7 +2046,7 @@ EOF</code></pre>
 <h2 id="distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsFileReferences"><a class="anchor" href="#distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsFileReferences"></a>4.7.3.3 Storing Configuration as File References</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsFileReferences.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsFileReferences.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1900,7 +2075,8 @@ EOF</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">consul = {client = {config = {format = "FILE"}}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[consul.client.config]
+format = "FILE"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -1946,7 +2122,7 @@ EOF</code></pre>
 <h2 id="serviceDiscoveryConsulConsulWatch"><a class="anchor" href="#serviceDiscoveryConsulConsulWatch"></a>4.8 Consul Watch</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/serviceDiscoveryConsulConsulWatch.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/serviceDiscoveryConsulConsulWatch.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -2004,8 +2180,25 @@ consul:
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {application = {name = "hello-world"}, config-client = {enabled = true}}
-consul = {client = {defaultZone = "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}", config = {format = "YAML", path = "/config"}, watch = {enabled = true}, blocking-queries = {max-wait-duration = "10m", delay-duration = "50ms"}}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.application]
+name = "hello-world"
+
+[micronaut.config-client]
+enabled = true
+
+[consul.client]
+defaultZone = "${CONSUL_HOST:localhost}:${CONSUL_PORT:8500}"
+
+[consul.client.config]
+format = "YAML"
+path = "/config"
+
+[consul.client.watch]
+enabled = true
+
+[consul.client.blocking-queries]
+max-wait-duration = "10m"
+delay-duration = "50ms"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -2121,7 +2314,7 @@ consul {
 <h1 id="serviceDiscoveryEureka"><a class="anchor" href="#serviceDiscoveryEureka"></a>5 Eureka Support</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/serviceDiscoveryEureka.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/serviceDiscoveryEureka.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -2183,8 +2376,14 @@ eureka:
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {application = {name = "hello-world"}}
-eureka = {client = {registration = {enabled = true}, defaultZone = "${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}"}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.application]
+name = "hello-world"
+
+[eureka.client]
+defaultZone = "${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}"
+
+[eureka.client.registration]
+enabled = true</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -2294,7 +2493,25 @@ eureka.client.registration.port=9090</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">eureka = {client = {readTimeout = "5s", registration = {asgName = "myAsg", countryId = 10, vipAddress = "myapp", leaseInfo = {durationInSecs = 60}, metadata = {foo = "bar"}, retry-count = 10, retry-delay = "5s", appname = "some-app-name", hostname = "foo.example.com", ip-addr = "1.2.3.4", port = 9090}}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[eureka.client]
+readTimeout = "5s"
+
+[eureka.client.registration]
+asgName = "myAsg"
+countryId = 10
+vipAddress = "myapp"
+retry-count = 10
+retry-delay = "5s"
+appname = "some-app-name"
+hostname = "foo.example.com"
+ip-addr = "1.2.3.4"
+port = 9090
+
+[eureka.client.registration.leaseInfo]
+durationInSecs = 60
+
+[eureka.client.registration.metadata]
+foo = "bar"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -2446,7 +2663,8 @@ eureka.client.registration.port=9090</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">eureka = {client = {defaultZone = "https://${EUREKA_USERNAME}:${EUREKA_PASSWORD}@localhost:8761"}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[eureka.client]
+defaultZone = "https://${EUREKA_USERNAME}:${EUREKA_PASSWORD}@localhost:8761"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -2510,7 +2728,7 @@ eureka.client.registration.port=9090</code></pre>
 <h1 id="springCloudConfigServer"><a class="anchor" href="#springCloudConfigServer"></a>6 Spring Cloud Config Server Support</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/springCloudConfigServer.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/springCloudConfigServer.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -2556,7 +2774,8 @@ eureka.client.registration.port=9090</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "springcloud://configserver:9000/hello-world/default"}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.config]
+import = "springcloud://configserver:9000/hello-world/default"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -2612,7 +2831,8 @@ eureka.client.registration.port=9090</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "springcloud://configserver:9000/hello-world/first,second?label=main"}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.config]
+import = "springcloud://configserver:9000/hello-world/first,second?label=main"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -2668,7 +2888,8 @@ eureka.client.registration.port=9090</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "springcloud://user:password@configserver:9000/hello-world/default"}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.config]
+import = "springcloud://user:password@configserver:9000/hello-world/default"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -2724,7 +2945,8 @@ eureka.client.registration.port=9090</code></pre>
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "springcloud://configserver:9000/hello-world/default?username=user&amp;password=secret"}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.config]
+import = "springcloud://configserver:9000/hello-world/default?username=user&amp;password=secret"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -2914,8 +3136,16 @@ spring:
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {application = {name = "hello-world"}, config-client = {enabled = true}}
-spring = {cloud = {config = {enabled = true, uri = "http://configserver:9000", name = "filename1,filename2"}}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.application]
+name = "hello-world"
+
+[micronaut.config-client]
+enabled = true
+
+[spring.cloud.config]
+enabled = true
+uri = "http://configserver:9000"
+name = "filename1,filename2"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -3013,7 +3243,7 @@ spring {
 <h1 id="distributedConfigurationVault"><a class="anchor" href="#distributedConfigurationVault"></a>7 HashiCorp Vault Support</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/distributedConfigurationVault.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/distributedConfigurationVault.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -3045,7 +3275,8 @@ spring {
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "vault://testtoken@localhost:8200/application"}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.config]
+import = "vault://testtoken@localhost:8200/application"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -3098,7 +3329,8 @@ spring {
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "vault://testtoken@localhost:8200/application/prod"}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.config]
+import = "vault://testtoken@localhost:8200/application/prod"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -3151,7 +3383,8 @@ spring {
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "vault://testtoken@localhost:8200/application?kv-version=V2&amp;secret-engine-name=backendv2-prefixed&amp;path-prefix=mock/v2/path/prefix"}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.config]
+import = "vault://testtoken@localhost:8200/application?kv-version=V2&amp;secret-engine-name=backendv2-prefixed&amp;path-prefix=mock/v2/path/prefix"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -3207,7 +3440,8 @@ spring {
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {config = {import = "vault://localhost:8200/application?token=testtoken"}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.config]
+import = "vault://localhost:8200/application?token=testtoken"</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -3401,8 +3635,17 @@ vault:
 </div>
 <div class="listingblock multi-language-sample">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">micronaut = {application = {name = "hello-world"}, config-client = {enabled = true}}
-vault = {client = {uri = "http://localhost:8200", config = {enabled = true}}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-toml hljs" data-lang="toml">[micronaut.application]
+name = "hello-world"
+
+[micronaut.config-client]
+enabled = true
+
+[vault.client]
+uri = "http://localhost:8200"
+
+[vault.client.config]
+enabled = true</code></pre>
 </div>
 </div>
 <div class="listingblock multi-language-sample">
@@ -3518,7 +3761,7 @@ vault {
 <h1 id="breaks"><a class="anchor" href="#breaks"></a>8 Breaking Changes</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/breaks.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/breaks.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -3526,6 +3769,31 @@ vault {
 
 <div class="paragraph">
 <p>This section documents breaking changes between Micronaut Discovery Client versions:</p>
+</div>
+<div class="sect2">
+<h3 id="_micronaut_discovery_client_5_2_0">Micronaut Discovery Client 5.2.0</h3>
+<div class="paragraph">
+<p>Consul may report a node, member or service address as a host name or as an IP address. The Consul client models used to map these addresses to <code>java.net.InetAddress</code>, which left the JSON library to resolve host names. Jackson 3.2, managed by Micronaut Framework 5.2, reads an <code>InetAddress</code> from IP literals only and no longer performs DNS lookups during deserialization, so responses with host names failed to decode.</p>
+</div>
+<div class="paragraph">
+<p>The addresses are now kept as the strings Consul sends, and are read and written unchanged by both Jackson Databind and Micronaut Serialization:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../api/io/micronaut/discovery/consul/client/v1/ConsulCatalogEntry.html">ConsulCatalogEntry</a>: the <code>address</code> component is now a <code>String</code>. The constructor taking an <code>InetAddress</code> is deprecated.</p>
+</li>
+<li>
+<p><a href="../api/io/micronaut/discovery/consul/client/v1/NodeEntry.html">NodeEntry</a>, <a href="../api/io/micronaut/discovery/consul/client/v1/MemberEntry.html">MemberEntry</a> and <a href="../api/io/micronaut/discovery/consul/client/v1/AbstractServiceEntry.html">AbstractServiceEntry</a>: use the new <code>getHostString()</code> accessors. The <code>getAddress()</code> methods that return an <code>InetAddress</code> are deprecated. They resolve the address on each call, which may need a DNS lookup, and throw <code>UncheckedIOException</code> when it fails.</p>
+</li>
+<li>
+<p><code>AbstractServiceEntry.address(String)</code> no longer resolves the address, so it no longer throws for a host name that cannot be resolved.</p>
+</li>
+<li>
+<p>A Consul service instance without a service address now uses the node address as Consul reports it, instead of the IP address its host name resolved to.</p>
+</li>
+</ul>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_distributed_configuration_migration_note">Distributed configuration migration note</h3>
@@ -3713,7 +3981,7 @@ vault {
 <h1 id="repository"><a class="anchor" href="#repository"></a>9 Repository</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.1.x/src/main/docs/guide/repository.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/micronaut-projects/micronaut-discovery-client/edit/5.2.x/src/main/docs/guide/repository.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
