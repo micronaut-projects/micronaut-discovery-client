@@ -2,6 +2,16 @@ This section documents breaking changes between Micronaut Discovery Client versi
 
 === Micronaut Discovery Client 5.3.0
 
+==== Disabling Consul in tests
+
+`micronaut.config-client.enabled: false` only disables the legacy bootstrap configuration client. If Consul is configured, other beans still contact it: the service is registered on startup, the `consul` health indicator reads the Consul leader, and the discovery client health indicator and `@Client(id = "...")` lookups query the catalog. Applications that used `micronaut.config-client.enabled: false` to keep tests away from Consul should set `consul.client.enabled: false` instead, which disables the whole Consul integration. See <<serviceDiscoveryConsulDisablingConsul, Disabling Consul>> for the individual switches.
+
+==== Vault KV version default
+
+Vault configuration now uses the KV version 2 engine when `kv-version` (or `vault.client.kv-version`) is not set, as documented. Previously, no Vault client was created unless the KV version was set explicitly.
+
+==== Eureka and Micronaut Serialization
+
 The Eureka client now works with Micronaut Serialization as well as Jackson Databind, and in GraalVM native images. The Eureka model classes are introspected, and the JSON the client sends and reads matches the Eureka REST API with both libraries:
 
 * The client adds and removes the `instance`, `application` and `applications` members that wrap Eureka request and response bodies. It no longer relies on the Jackson Databind root value wrapping features, which Micronaut Serialization does not support.
@@ -29,14 +39,6 @@ Distributed configuration via the legacy bootstrap `ConfigurationClient` path is
 * `springcloud://configserver:9000/hello-world/default`
 
 Applications can continue using the legacy bootstrap path during migration, but startup will log deprecation warnings that point to the importer-based alternative.
-
-=== Disabling Consul in tests
-
-`micronaut.config-client.enabled: false` only disables the legacy bootstrap configuration client. If Consul is configured, other beans still contact it: the service is registered on startup, the `consul` health indicator reads the Consul leader, and the discovery client health indicator and `@Client(id = "...")` lookups query the catalog. Applications that used `micronaut.config-client.enabled: false` to keep tests away from Consul should set `consul.client.enabled: false` instead, which disables the whole Consul integration. See <<serviceDiscoveryConsulDisablingConsul, Disabling Consul>> for the individual switches.
-
-=== Vault KV version default
-
-Vault configuration now uses the KV version 2 engine when `kv-version` (or `vault.client.kv-version`) is not set, as documented. Previously, no Vault client was created unless the KV version was set explicitly.
 
 === Micronaut Discovery Client 5.0.0
 

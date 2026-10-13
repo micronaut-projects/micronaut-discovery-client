@@ -48,7 +48,7 @@ public class VaultClientConfiguration extends HttpClientConfiguration {
     @SuppressWarnings("WeakerAccess")
     public static final boolean DEFAULT_FAIL_FAST = false;
 
-    private static final String DEFAULT_URI = "http://locahost:8200";
+    private static final String DEFAULT_URI = "http://localhost:8200";
     private static final String DEFAULT_SECRET_ENGINE = "secret";
     private static final String DEFAULT_PATH_PREFIX = "";
     private static final VaultKvVersion DEFAULT_KV_VERSION = VaultKvVersion.V2;
