@@ -42,3 +42,43 @@ Formats supported are
 - `JSON`
 - `PROPERTIES`
 - `YAML`
+
+The following `consul.client.watch` properties control the watcher:
+
+|===
+|Property |Default |Description
+
+|`enabled`
+|`false`
+|Whether the watcher is enabled.
+
+|`max-retry-attempts`
+|`3`
+|The maximum number of consecutive retries of a failed watch of a KV path before the watch of that path is stopped. The counter is reset each time the watch succeeds.
+
+|`retry-delay-ms`
+|`500`
+|The base delay in milliseconds before retrying a failed watch. The delay doubles with each consecutive failure, is capped at 30 seconds and has a random jitter of up to 25% applied.
+
+|`kv-not-found-log-level`
+|`INFO`
+|The log level (`TRACE`, `DEBUG`, `INFO`, `WARN` or `ERROR`) used when a watched KV path does not exist in Consul.
+|===
+
+==== Failure Handling
+
+If a watch request fails, for example because the Consul agent is restarted or temporarily unreachable, the watcher logs a warning and retries the watch of that KV path using exponential backoff, starting from `retry-delay-ms`. Once the watch succeeds again the retry counter is reset. If the watch keeps failing after `max-retry-attempts` retries, an error is logged and the watch of that KV path is stopped.
+
+Read timeouts of a blocking query are expected and the query is simply re-executed after the `delay-duration`; they do not count as failures.
+
+If a watched KV path does not exist in Consul, the watch of that path is stopped and a message is logged at the level set with `kv-not-found-log-level`. Set it to `WARN` or `ERROR` to make a misconfigured path visible:
+
+.Logging Missing KV Paths as Errors
+[configuration]
+----
+consul:
+  client:
+    watch:
+      enabled: true
+      kv-not-found-log-level: ERROR
+----

@@ -112,6 +112,7 @@ abstract sealed class AbstractWatcher<V> implements Watcher permits Configuratio
             }
         });
         listeners.clear();
+        retryCounts.clear();
         kvHolder.clear();
         started = false;
         isInit = false;
@@ -181,7 +182,7 @@ abstract sealed class AbstractWatcher<V> implements Watcher permits Configuratio
         }
     }
 
-        /**
+    /**
      * Calculates retry delay using exponential backoff with jitter.
      * <p>
      * This implementation prevents thundering herd problems by:

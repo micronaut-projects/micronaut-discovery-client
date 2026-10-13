@@ -136,7 +136,8 @@ public class WatchConfiguration implements Toggleable {
     }
 
     /**
-     * @return Maximum number of retry attempts. Default to {@value DEFAULT_MAX_RETRIES}
+     * @return The maximum number of consecutive times a failed watch of a KV path is retried before the
+     * watch of that path is stopped. Defaults to {@code 3}.
      * @since 4.7.2
      */
     public @NonNull Integer getMaxRetryAttempts() {
@@ -144,7 +145,11 @@ public class WatchConfiguration implements Toggleable {
     }
 
     /**
-     * @param maxRetryAttempts Maximum number of retry attempts.
+     * Sets the maximum number of consecutive times a failed watch of a KV path is retried before the watch of
+     * that path is stopped. The retry counter is reset each time the watch succeeds. Read timeouts and
+     * missing KV paths do not count as failures. Defaults to {@code 3}.
+     *
+     * @param maxRetryAttempts The maximum number of retry attempts
      * @since 4.7.2
      */
     public void setMaxRetryAttempts(@NonNull final Integer maxRetryAttempts) {
@@ -152,7 +157,7 @@ public class WatchConfiguration implements Toggleable {
     }
 
     /**
-     * @return Delay in milliseconds between retry attempts. Default to {@value DEFAULT_RETRY_DELAY}
+     * @return The base delay in milliseconds before retrying a failed watch. Defaults to {@code 500}.
      * @since 4.7.2
      */
     public @NonNull Integer getRetryDelayMs() {
@@ -160,7 +165,11 @@ public class WatchConfiguration implements Toggleable {
     }
 
     /**
-     * @param retryDelayMs Delay in milliseconds between retry attempts
+     * Sets the base delay in milliseconds before retrying a failed watch. The delay grows exponentially with each
+     * consecutive failure ({@code retryDelayMs * 2^(attempt - 1)}), is capped at 30 seconds and has a random
+     * jitter of up to 25% applied. Defaults to {@code 500}.
+     *
+     * @param retryDelayMs The base retry delay in milliseconds
      * @since 4.7.2
      */
     public void setRetryDelayMs(@NonNull final Integer retryDelayMs) {
@@ -168,7 +177,7 @@ public class WatchConfiguration implements Toggleable {
     }
 
     /**
-     * @return Level to use to log NOT_FOUND KeyValue. Default to {@link Level#INFO}
+     * @return The log level used when a watched KV path does not exist in Consul. Defaults to {@link Level#INFO}.
      * @since 4.7.2
      */
     public @NonNull Level getKvNotFoundLogLevel() {
@@ -176,7 +185,12 @@ public class WatchConfiguration implements Toggleable {
     }
 
     /**
-     * @param kvNotFoundLogLevel Level to use to log NOT_FOUND KeyValue
+     * Sets the log level used when a watched KV path does not exist in Consul (HTTP 404). The watch of a missing
+     * path is not retried, so use {@code WARN} or {@code ERROR} to make a misconfigured path visible.
+     * Valid values are {@code TRACE}, {@code DEBUG}, {@code INFO}, {@code WARN} and {@code ERROR}.
+     * Defaults to {@link Level#INFO}.
+     *
+     * @param kvNotFoundLogLevel The log level
      * @since 4.7.2
      */
     public void setKvNotFoundLogLevel(@NonNull final Level kvNotFoundLogLevel) {
