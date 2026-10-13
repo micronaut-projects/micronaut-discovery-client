@@ -45,6 +45,8 @@ public final class RemoteConfigImportOptionBinder {
     private static final String VAULT_TOKEN = "vault.client.token";
     private static final String SPRING_CLOUD_CONFIG_USERNAME = "spring.cloud.config.username";
     private static final String SPRING_CLOUD_CONFIG_PASSWORD = "spring.cloud.config.password";
+    private static final String SPRING_CLOUD_HEADER_OPTION_PREFIX = "header.";
+    private static final String SPRING_CLOUD_CONFIG_HEADERS_PREFIX = "spring.cloud.config.headers.";
 
     private static final Map<String, String> COMMON_OPTIONS = Map.of(
         RETRY_ATTEMPTS, RETRY_ATTEMPTS,
@@ -85,6 +87,8 @@ public final class RemoteConfigImportOptionBinder {
             "label", "spring.cloud.config.label",
             "username", SPRING_CLOUD_CONFIG_USERNAME,
             "password", SPRING_CLOUD_CONFIG_PASSWORD,
+            "token", "spring.cloud.config.token",
+            "bearer-token", "spring.cloud.config.bearer-token",
             FAIL_FAST, "spring.cloud.config.fail-fast"
         )
     );
@@ -107,6 +111,11 @@ public final class RemoteConfigImportOptionBinder {
                 } else {
                     bound.computeIfAbsent(normalizedCommon, ignored -> option.getValue());
                 }
+                continue;
+            }
+
+            if (PROVIDER_SPRING_CLOUD.equals(protocol) && isSpringCloudHeaderOption(key)) {
+                bound.put(SPRING_CLOUD_CONFIG_HEADERS_PREFIX + key.substring(SPRING_CLOUD_HEADER_OPTION_PREFIX.length()), option.getValue());
                 continue;
             }
 
@@ -146,6 +155,10 @@ public final class RemoteConfigImportOptionBinder {
                 // No user-info binding for other protocols.
             }
         }
+    }
+
+    private static boolean isSpringCloudHeaderOption(String key) {
+        return key.startsWith(SPRING_CLOUD_HEADER_OPTION_PREFIX) && key.length() > SPRING_CLOUD_HEADER_OPTION_PREFIX.length();
     }
 
     private static ConfigurationException unsupportedOption(ConnectionString connectionString, String option, Set<String> supportedOptions) {
