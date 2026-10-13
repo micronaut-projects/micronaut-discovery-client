@@ -19,7 +19,7 @@
  *  @author thiagolocatelli
  *  @since 1.2.0
  */
-@Requires(property = VaultClientConfiguration.PREFIX + ".kv-version", value = "V2")
+@Requires(property = VaultClientConfiguration.PREFIX + ".kv-version", value = "V2", defaultValue = "V2")
 @Configuration
 package io.micronaut.discovery.vault.config.v2;
 
