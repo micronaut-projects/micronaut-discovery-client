@@ -88,16 +88,24 @@ public class EurekaAutoRegistration extends DiscoveryServiceAutoRegistration {
             InstanceInfo instanceInfo = registration.getInstanceInfo();
             if (status.equals(HealthStatus.UP)) {
                 Mono<HttpStatus> heartbeatPublisher = Mono.from(eurekaClient.heartbeat(instanceInfo.getApp(), instanceInfo.getId()));
-                heartbeatPublisher.subscribe(httpStatus -> {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Successfully reported passing state to Eureka");
+                heartbeatPublisher.hasElement().subscribe(reported -> {
+                    if (reported) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Successfully reported passing state to Eureka");
+                        }
+                    } else {
+                        // the Micronaut Reactor HTTP client turns the 404 response for an unknown instance into an empty result
+                        if (LOG.isWarnEnabled()) {
+                            LOG.warn("Eureka did not acknowledge the heartbeat of instance [{}]. Attempting re-registration.", instance.getId());
+                        }
+                        register(instance);
                     }
                 }, throwable -> {
                     if (throwable instanceof HttpClientResponseException hcre) {
                         HttpStatus httpStatus = hcre.getStatus();
                         if (httpStatus == HttpStatus.NOT_FOUND) {
-                            if (LOG.isInfoEnabled()) {
-                                LOG.info("Instance [{}] no longer registered with Eureka. Attempting re-registration.", instance.getId());
+                            if (LOG.isWarnEnabled()) {
+                                LOG.warn("Instance [{}] no longer registered with Eureka. Attempting re-registration.", instance.getId());
                             }
                             register(instance);
                             return;

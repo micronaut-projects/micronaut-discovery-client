@@ -18,6 +18,7 @@ package io.micronaut.discovery.consul
 import io.micronaut.context.ApplicationContext
 import io.micronaut.discovery.consul.client.v1.ConsulClient
 import io.micronaut.discovery.consul.client.v1.ConsulServiceEntry
+import io.micronaut.discovery.consul.registration.ConsulAutoRegistration
 import io.micronaut.health.CurrentHealthStatus
 import io.micronaut.health.HealthStatus
 import io.micronaut.health.HeartbeatTask
@@ -34,14 +35,19 @@ import spock.util.concurrent.PollingConditions
 
 /**
  * Verifies that a service re-registers with Consul after Consul lost the registration,
- * for example because the Consul agent was restarted, with the Micronaut Reactor HTTP client on the
- * classpath. Its result transformer turns a 404 response into an empty publisher. Consul 1.9 answers
- * a heartbeat for an unknown check with a 500, newer versions answer with a 404.
+ * for example because the Consul agent was restarted. Consul 1.9 answers a heartbeat for an
+ * unknown check with a 500, newer versions answer with a 404. The Micronaut Reactor HTTP
+ * client turns a 404 response into an empty publisher, so subclasses run with and without it.
  */
 @Requires({ DockerClientFactory.instance().isDockerAvailable() })
-class ConsulReactorClientReRegistrationSpec extends Specification {
+abstract class AbstractConsulReRegistrationSpec extends Specification {
 
     private static final String SERVICE_NAME = 'test-re-registration'
+
+    /**
+     * @return The number of {@link ReactiveClientResultTransformer} beans expected on the test classpath
+     */
+    abstract int expectedResultTransformers()
 
     void 'the expected HTTP client result transformers are present'() {
         given:
@@ -77,6 +83,8 @@ class ConsulReactorClientReRegistrationSpec extends Specification {
         expect: 'the service is registered'
         conditions.eventually {
             assert registeredServices(consulClient).containsKey(serviceId)
+            // the application has processed the registration response, so it reports heartbeats
+            assert server.applicationContext.getBean(ConsulAutoRegistration).@registered.get()
         }
 
         when: 'Consul loses the registration'
@@ -103,13 +111,6 @@ class ConsulReactorClientReRegistrationSpec extends Specification {
 
         where:
         [status, image] << [[HealthStatus.UP, HealthStatus.DOWN], ['consul:1.9.0', 'hashicorp/consul:1.20']].combinations()
-    }
-
-    /**
-     * @return The number of {@link ReactiveClientResultTransformer} beans expected on the test classpath
-     */
-    protected int expectedResultTransformers() {
-        1
     }
 
     private static Map<String, ConsulServiceEntry> registeredServices(ConsulClient consulClient) {

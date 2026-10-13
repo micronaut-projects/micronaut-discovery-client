@@ -40,3 +40,41 @@ spotless {
                 '**/io/micronaut/discovery/eureka/client/v2/LeaseInfo.java'
     }
 }
+
+// The re-registration specs under src/testShared run in the test task with the default HTTP client and
+// in the reactorClientTest task with the Micronaut Reactor HTTP client, whose result transformer turns
+// 404 responses into empty publishers.
+sourceSets {
+    test {
+        groovy.srcDir("src/testShared/groovy")
+    }
+    reactorClientTest {
+        resources.srcDir("src/test/resources")
+        groovy.srcDir("src/testShared/groovy")
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+configurations {
+    reactorClientTestImplementation.extendsFrom(testImplementation)
+    reactorClientTestCompileOnly.extendsFrom(testCompileOnly)
+    reactorClientTestRuntimeOnly.extendsFrom(testRuntimeOnly)
+}
+
+dependencies {
+    reactorClientTestImplementation(mnReactor.micronaut.reactor.http.client)
+}
+
+def reactorClientTest = tasks.register("reactorClientTest", Test) {
+    description = "Runs the re-registration specs with the Micronaut Reactor HTTP client."
+    group = "verification"
+    testClassesDirs = sourceSets.reactorClientTest.output.classesDirs
+    classpath = sourceSets.reactorClientTest.runtimeClasspath
+    useJUnitPlatform()
+    shouldRunAfter(tasks.named("test"))
+}
+
+tasks.named("check") {
+    dependsOn(reactorClientTest)
+}
