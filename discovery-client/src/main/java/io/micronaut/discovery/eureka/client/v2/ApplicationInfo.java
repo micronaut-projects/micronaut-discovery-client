@@ -16,18 +16,24 @@
 package io.micronaut.discovery.eureka.client.v2;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
+import io.micronaut.serde.annotation.Serdeable;
 
 import java.util.List;
 
 /**
  * Models application info exposed by Eureka.
+ * <p>
+ * The Eureka REST API wraps a single application in an {@code application} member. The {@link EurekaClient} adds
+ * and removes that wrapper, so this type maps the application itself.
  *
  * @author Graeme Rocher
  * @since 1.0
  */
-@JsonRootName("application")
+@Serdeable
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ApplicationInfo {
 
     private String name;
@@ -39,7 +45,9 @@ public class ApplicationInfo {
      * @param instances The instances
      */
     @JsonCreator
-    ApplicationInfo(@JsonProperty("name") String name, @JsonProperty("instance") List<InstanceInfo> instances) {
+    ApplicationInfo(@JsonProperty("name") String name,
+                    @JsonProperty("instance") @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+                    List<InstanceInfo> instances) {
         this.name = name;
         this.instances = instances;
     }
@@ -54,6 +62,7 @@ public class ApplicationInfo {
     /**
      * @return The instances of this application
      */
+    @JsonProperty("instance")
     public List<InstanceInfo> getInstances() {
         return instances;
     }
