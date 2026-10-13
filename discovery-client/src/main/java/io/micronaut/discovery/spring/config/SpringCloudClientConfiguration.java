@@ -29,6 +29,7 @@ import jakarta.inject.Inject;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.time.Duration;
 import java.util.Optional;
 
 /**
@@ -51,6 +52,20 @@ public class SpringCloudClientConfiguration extends HttpClientConfiguration {
     @SuppressWarnings("WeakerAccess")
     public static final boolean DEFAULT_FAIL_FAST = false;
 
+    /**
+     * Default value for whether the config server is considered for health checks.
+     * @since 5.3.0
+     */
+    @SuppressWarnings("WeakerAccess")
+    public static final boolean DEFAULT_HEALTH_CHECK = true;
+
+    /**
+     * Default time-to-live of a cached config server health check result (5 minutes).
+     * @since 5.3.0
+     */
+    @SuppressWarnings("WeakerAccess")
+    public static final Duration DEFAULT_HEALTH_CHECK_TIME_TO_LIVE = Duration.ofMinutes(5);
+
     private static final String DEFAULT_URI = "http://localhost:8888";
     public static final String SPRING_CLOUD_CONFIG_ENDPOINT = "${" + SpringCloudClientConfiguration.PREFIX + ".uri:`" + DEFAULT_URI + "`}";
 
@@ -63,6 +78,8 @@ public class SpringCloudClientConfiguration extends HttpClientConfiguration {
     private @Nullable String token;
     private @Nullable String bearerToken;
     private Map<String, String> headers = Collections.emptyMap();
+    private boolean healthCheck = DEFAULT_HEALTH_CHECK;
+    private Duration healthCheckTimeToLive = DEFAULT_HEALTH_CHECK_TIME_TO_LIVE;
 
     private final SpringCloudConnectionPoolConfiguration springCloudConnectionPoolConfiguration;
     private final SpringConfigDiscoveryConfiguration springConfigDiscoveryConfiguration = new SpringConfigDiscoveryConfiguration();
@@ -249,6 +266,48 @@ public class SpringCloudClientConfiguration extends HttpClientConfiguration {
      */
     public void setHeaders(@Nullable Map<String, String> headers) {
         this.headers = headers == null ? Collections.emptyMap() : Collections.unmodifiableMap(new LinkedHashMap<>(headers));
+    }
+
+    /**
+     * @return Whether the config server should be considered for health checks.
+     * @see io.micronaut.discovery.spring.health.SpringCloudConfigHealthIndicator
+     * @since 5.3.0
+     */
+    public boolean isHealthCheck() {
+        return healthCheck;
+    }
+
+    /**
+     * Sets whether the config server should be considered for health checks. When enabled and
+     * {@code micronaut-management} is on the classpath, the health endpoint reports whether the
+     * environment of the application can be fetched from the config server.
+     * Default value ({@value #DEFAULT_HEALTH_CHECK}).
+     *
+     * @param healthCheck True if it should
+     * @see io.micronaut.discovery.spring.health.SpringCloudConfigHealthIndicator
+     * @since 5.3.0
+     */
+    public void setHealthCheck(boolean healthCheck) {
+        this.healthCheck = healthCheck;
+    }
+
+    /**
+     * @return How long a config server health check result is cached.
+     * @since 5.3.0
+     */
+    public @NonNull Duration getHealthCheckTimeToLive() {
+        return healthCheckTimeToLive;
+    }
+
+    /**
+     * Sets how long a config server health check result is cached before the config server is
+     * queried again. A zero or negative duration disables caching. Default value (5 minutes).
+     *
+     * @param healthCheckTimeToLive The time-to-live of the cached result
+     * @since 5.3.0
+     */
+    public void setHealthCheckTimeToLive(@Nullable Duration healthCheckTimeToLive) {
+        this.healthCheckTimeToLive = healthCheckTimeToLive != null ? healthCheckTimeToLive : Duration.ZERO;
     }
 
     /**
