@@ -122,12 +122,26 @@ public abstract class DiscoveryServiceAutoRegistration extends AutoRegistration 
      * @param applicationName     The application name to de-register
      */
     protected void performDeregistration(String discoveryService, RegistrationConfiguration registration, Publisher<HttpStatus> deregisterPublisher, String applicationName) {
+        performDeregistration(discoveryService, registration, deregisterPublisher, applicationName, registration.isFailFast());
+    }
+
+    /**
+     * De-register a service from the discovery client.
+     *
+     * @param discoveryService    The discovery service
+     * @param registration        The registration configuration
+     * @param deregisterPublisher The registration publisher
+     * @param applicationName     The application name to de-register
+     * @param block               Whether to wait for the de-registration to complete
+     * @since 5.3.0
+     */
+    protected void performDeregistration(String discoveryService, RegistrationConfiguration registration, Publisher<HttpStatus> deregisterPublisher, String applicationName, boolean block) {
         Flux<HttpStatus> deregisterFlowable = Flux.from(deregisterPublisher);
         final Duration timeout = registration.getTimeout().orElse(null);
         if (timeout != null) {
             deregisterFlowable = deregisterFlowable.timeout(Duration.ofMillis(timeout.toMillis()));
         }
-        if (registration.isFailFast()) {
+        if (block) {
 
             try {
                 deregisterFlowable.blockFirst();
