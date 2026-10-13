@@ -18,8 +18,10 @@ package io.micronaut.discovery.eureka.client.v2;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.discovery.eureka.EurekaConfiguration;
+import io.micronaut.serde.annotation.Serdeable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +48,8 @@ import java.util.regex.Pattern;
  *
  * @author Karthik Ranganathan, Greg Kim
  */
+@Serdeable
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AmazonInfo implements DataCenterInfo {
 
     private static final String AWS_API_VERSION = "latest";

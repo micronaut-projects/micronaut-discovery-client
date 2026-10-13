@@ -17,8 +17,9 @@
 package io.micronaut.discovery.eureka.client.v2;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
+import io.micronaut.serde.annotation.Serdeable;
 
 /**
  * Forked from https://github.com/Netflix/eureka/blob/master/eureka-client/src/main/java/com/netflix/appinfo/LeaseInfo.java.
@@ -34,7 +35,8 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  *
  * @author Karthik Ranganathan, Greg Kim
  */
-@JsonRootName("leaseInfo")
+@Serdeable
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LeaseInfo {
 
     /**
