@@ -33,6 +33,7 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -155,6 +156,37 @@ class EurekaRegistrationTest {
 
             assertEquals(HttpStatus.OK, Mono.from(client.deregister("explicit-app", "explicit-1")).block(TIMEOUT));
             assertTrue(stub.getInstances("explicit-app").isEmpty());
+        }
+    }
+
+    @Test
+    void registerZoneInMetadata() throws Exception {
+        try (EmbeddedServer eurekaServer = ApplicationContext.run(EmbeddedServer.class, Map.of(EurekaStubServer.ENABLED, true))) {
+            EurekaStubServer stub = eurekaServer.getApplicationContext().getBean(EurekaStubServer.class);
+            try (EmbeddedServer application = ApplicationContext.run(EmbeddedServer.class, Map.of(
+                "micronaut.application.name", APP_ID,
+                "micronaut.application.instance.zone", "zone-a",
+                "eureka.client.registration.metadata.foo", "bar",
+                "eureka.client.host", eurekaServer.getHost(),
+                "eureka.client.port", eurekaServer.getPort(),
+                "eureka.client.registration.retry-delay", "100ms",
+                "eureka.client.registration.retry-count", 2,
+                "micronaut.caches.discovery-client.enabled", false
+            ))) {
+                await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
+                    assertEquals(List.of(), stub.getErrors());
+                    assertEquals(1, stub.getInstances(APP_ID).size());
+                });
+                JSONAssert.assertEquals("""
+                    {"instance": {"metadata": {"foo": "bar", "zone": "zone-a"}}}
+                    """, stub.getRegistrations().get(0), JSONCompareMode.LENIENT);
+
+                EurekaClient client = application.getApplicationContext().getBean(EurekaClient.class);
+                List<ServiceInstance> instances = Mono.from(client.getInstances(APP_ID)).block(TIMEOUT);
+                assertNotNull(instances);
+                assertEquals(1, instances.size());
+                assertEquals(Optional.of("zone-a"), instances.get(0).getZone());
+            }
         }
     }
 

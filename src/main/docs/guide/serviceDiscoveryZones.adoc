@@ -1,0 +1,43 @@
+Instances of a service can run in different zones, for example the availability zones of a cloud provider, and a client can prefer the instances in its own zone.
+
+== Registering the Zone of an Instance
+
+Set the zone of the application with `micronaut.application.instance.zone`:
+
+.Configuring the Zone of an Instance
+[configuration]
+----
+micronaut:
+  application:
+    name: hello-world
+    instance:
+      zone: zone-a
+----
+
+When registering with Consul, the zone is added to the service metadata (`Meta`) under the `zone` key, as well as to a `zone=zone-a` tag. When registering with Eureka, the zone is added to the instance metadata under the `zone` key. This is where Spring Cloud Consul and Spring Cloud Netflix (`eureka.instance.metadata-map.zone`) register and look for the zone, so Micronaut and Spring applications see the zones of each other.
+
+== Reading the Zone of an Instance
+
+The zone of a discovered link:{micronautapi}discovery/ServiceInstance[ServiceInstance] is returned by `getZone()`:
+
+- For Consul, it is the `zone` key of the service metadata, or else of a `zone=...` tag.
+- For Eureka, it is the availability zone of an instance running on AWS (`AmazonInfo`), or else the `zone` key of the instance metadata.
+
+== Preferring Instances in the Same Zone
+
+The load balancer of a service picks an instance with the strategy set with `micronaut.http.services.<id>.load-balancer-strategy`. The `zone-preference` strategy, api:discovery.client.ZonePreferenceLoadBalancerStrategy[], picks in turn among the instances in the zone of the application, and among all the available instances when none is in that zone or when the application has no zone:
+
+.Preferring Instances in the Same Zone
+[configuration]
+----
+micronaut:
+  application:
+    instance:
+      zone: zone-a
+  http:
+    services:
+      hello-world:
+        load-balancer-strategy: zone-preference
+----
+
+NOTE: The `zone-preference` strategy picks round robin among the instances of the zone; it cannot be combined with another strategy such as `p2c` or `weighted`.
