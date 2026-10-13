@@ -328,3 +328,52 @@ Secrets are read from the KV version 2 engine named `secret` unless configured o
 A `vault://host:port/...` import always connects to Vault over plain HTTP.
 
 The legacy integration takes the Vault address from `vault.client.uri`, which must be a full URL including the scheme, for example `http://localhost:8200`. A value without a scheme, such as `localhost:8200`, is treated as the ID of a service to look up with service discovery, and startup fails with an error such as `No bean of type [io.micronaut.http.client.loadbalance.DiscoveryClientLoadBalancerFactory] exists`.
+
+== Vault health indicator
+
+When `micronaut-management` is on the classpath and the Vault client is configured (`vault.client.uri` with `vault.client.config.enabled: true`), the api:discovery.vault.health.VaultHealthIndicator[] contributes a `vault` entry to the https://docs.micronaut.io/latest/guide/index.html#healthEndpoint[Health Endpoint]. It calls Vault's unauthenticated https://developer.hashicorp.com/vault/api-docs/system/health[`GET /v1/sys/health`] endpoint and maps the documented status codes as follows:
+
+.Vault health status mapping
+|===
+|Status code|Vault state|Health status
+
+|`200`
+|Initialized, unsealed and active
+|`UP`
+
+|`429`
+|Unsealed standby
+|`UP`
+
+|`472`
+|Disaster recovery replication secondary
+|`UP`
+
+|`473`
+|Performance standby
+|`UP`
+
+|`501`
+|Not initialized
+|`DOWN`
+
+|`503`
+|Sealed
+|`DOWN`
+
+|`530` and any other code, or no response
+|Removed from the cluster, unknown or unreachable
+|`DOWN`
+|===
+
+The node `state` (`active`, `standby`, `dr-secondary`, `performance-standby`, `uninitialized`, `sealed`, ...) is reported as a detail together with the `version`, `initialized`, `sealed`, `standby` and `performance-standby` flags, the replication modes and the cluster name and ID returned by Vault.
+
+The indicator is enabled by default. Disable it with `vault.client.health-check`:
+
+.Disabling the Vault health indicator
+[configuration]
+----
+vault:
+  client:
+    health-check: false
+----
