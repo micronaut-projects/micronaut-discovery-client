@@ -19,6 +19,7 @@ import io.micronaut.context.env.PropertySource;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.convert.value.ConvertibleValues;
+import io.micronaut.core.naming.conventions.StringConvention;
 import io.micronaut.core.util.ConnectionString;
 import io.micronaut.discovery.consul.ConsulConfiguration;
 import io.micronaut.discovery.imports.RemoteConfigImporterContextFactory;
@@ -32,6 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 
 import io.micronaut.context.ApplicationContext;
+import io.micronaut.context.env.Environment;
 import io.micronaut.context.env.EnvironmentPropertySource;
 import org.jspecify.annotations.Nullable;
 
@@ -50,6 +52,7 @@ public final class ConsulPropertySourceImporter extends RetryablePropertySourceI
     private static final String CONSUL_SECURE = ConsulConfiguration.PREFIX + ".secure";
     private static final String CONSUL_ACL_TOKEN = ConsulConfiguration.PREFIX + ".acl-token";
     private static final String CONSUL_CONFIG_FAIL_FAST = ConsulConfiguration.PREFIX + ".config.fail-fast";
+    private static final String CONSUL_SSL = ConsulConfiguration.ConsulSslConfiguration.PREFIX;
 
     private final RemoteConfigImportOptionBinder optionBinder = new RemoteConfigImportOptionBinder();
     private final RemoteConfigImporterContextFactory contextFactory = new RemoteConfigImporterContextFactory();
@@ -108,7 +111,7 @@ public final class ConsulPropertySourceImporter extends RetryablePropertySourceI
         String format = declaration.format();
         String datacenter = declaration.datacenter();
 
-        ApplicationContext importerContext = getOrCreateContext(properties);
+        ApplicationContext importerContext = getOrCreateContext(withClientSsl(properties, context.environment()));
         String importPath = declaration.path();
         Map<String, Object> imported = importSupport.load(importerContext, importPath, format, datacenter);
         if (imported.isEmpty()) {
@@ -157,6 +160,25 @@ public final class ConsulPropertySourceImporter extends RetryablePropertySourceI
         }
         properties.putAll(optionBinder.bind(connectionString));
         return properties;
+    }
+
+    /**
+     * The importer context only sees the import declaration, so reuse the {@code consul.client.ssl.*} settings of the
+     * importing configuration for the Consul HTTP client.
+     */
+    private static Map<String, Object> withClientSsl(Map<String, Object> properties, Environment environment) {
+        Map<String, Object> ssl = environment.getProperties(CONSUL_SSL, StringConvention.RAW);
+        if (ssl.isEmpty()) {
+            return properties;
+        }
+        Map<String, Object> merged = new LinkedHashMap<>();
+        ssl.forEach((key, value) -> {
+            if (value != null) {
+                merged.put(CONSUL_SSL + '.' + key, value);
+            }
+        });
+        merged.putAll(properties);
+        return merged;
     }
 
     private ApplicationContext getOrCreateContext(Map<String, Object> properties) {

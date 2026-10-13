@@ -26,9 +26,12 @@ import io.micronaut.discovery.consul.client.v1.ConsulClient;
 import io.micronaut.discovery.consul.condition.RequiresConsul;
 import io.micronaut.discovery.registration.RegistrationConfiguration;
 import io.micronaut.http.HttpMethod;
+import io.micronaut.http.ssl.AbstractClientSslConfiguration;
+import io.micronaut.http.ssl.SslConfiguration;
 import io.micronaut.runtime.ApplicationConfiguration;
 
 import jakarta.inject.Inject;
+import org.jspecify.annotations.Nullable;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
@@ -101,6 +104,20 @@ public class ConsulConfiguration extends DiscoveryClientConfiguration {
     @Override
     public ConnectionPoolConfiguration getConnectionPoolConfiguration() {
         return consulConnectionPoolConfiguration;
+    }
+
+    /**
+     * Applies the SSL configuration bound from {@code consul.client.ssl} to the Consul HTTP client.
+     * When no {@code consul.client.ssl} settings are present the default client SSL configuration is retained.
+     *
+     * @param sslConfiguration The Consul SSL configuration
+     * @since 5.3.0
+     */
+    @Inject
+    public void setConsulSslConfiguration(@Nullable ConsulSslConfiguration sslConfiguration) {
+        if (sslConfiguration != null) {
+            super.setSslConfiguration(sslConfiguration);
+        }
     }
 
     /**
@@ -334,6 +351,93 @@ public class ConsulConfiguration extends DiscoveryClientConfiguration {
     @ConfigurationProperties(ConnectionPoolConfiguration.PREFIX)
     @BootstrapContextCompatible
     public static class ConsulConnectionPoolConfiguration extends ConnectionPoolConfiguration {
+    }
+
+    /**
+     * The SSL configuration used by the Consul HTTP client, bound from {@code consul.client.ssl}.
+     *
+     * @since 5.3.0
+     */
+    @ConfigurationProperties("ssl")
+    @BootstrapContextCompatible
+    @Requires(property = ConsulSslConfiguration.PREFIX)
+    public static class ConsulSslConfiguration extends AbstractClientSslConfiguration {
+
+        /**
+         * The prefix to use for all Consul client SSL settings.
+         */
+        public static final String PREFIX = ConsulConfiguration.PREFIX + ".ssl";
+
+        /**
+         * Creates the Consul client SSL configuration. SSL is enabled by default, like the default HTTP client
+         * SSL configuration.
+         */
+        public ConsulSslConfiguration() {
+            setEnabled(true);
+        }
+
+        /**
+         * Sets the key configuration.
+         *
+         * @param keyConfiguration The key configuration
+         */
+        @Inject
+        void setKey(@Nullable ConsulKeyConfiguration keyConfiguration) {
+            if (keyConfiguration != null) {
+                super.setKey(keyConfiguration);
+            }
+        }
+
+        /**
+         * Sets the key store configuration.
+         *
+         * @param keyStoreConfiguration The key store configuration
+         */
+        @Inject
+        void setKeyStore(@Nullable ConsulKeyStoreConfiguration keyStoreConfiguration) {
+            if (keyStoreConfiguration != null) {
+                super.setKeyStore(keyStoreConfiguration);
+            }
+        }
+
+        /**
+         * Sets the trust store configuration.
+         *
+         * @param trustStoreConfiguration The trust store configuration
+         */
+        @Inject
+        void setTrustStore(@Nullable ConsulTrustStoreConfiguration trustStoreConfiguration) {
+            if (trustStoreConfiguration != null) {
+                super.setTrustStore(trustStoreConfiguration);
+            }
+        }
+
+        /**
+         * The Consul client {@link SslConfiguration.KeyConfiguration}, bound from {@code consul.client.ssl.key}.
+         */
+        @ConfigurationProperties(SslConfiguration.KeyConfiguration.PREFIX)
+        @BootstrapContextCompatible
+        @Requires(property = ConsulSslConfiguration.PREFIX + "." + SslConfiguration.KeyConfiguration.PREFIX)
+        public static class ConsulKeyConfiguration extends SslConfiguration.KeyConfiguration {
+        }
+
+        /**
+         * The Consul client {@link SslConfiguration.KeyStoreConfiguration}, bound from {@code consul.client.ssl.key-store}.
+         */
+        @ConfigurationProperties(SslConfiguration.KeyStoreConfiguration.PREFIX)
+        @BootstrapContextCompatible
+        @Requires(property = ConsulSslConfiguration.PREFIX + "." + SslConfiguration.KeyStoreConfiguration.PREFIX)
+        public static class ConsulKeyStoreConfiguration extends SslConfiguration.KeyStoreConfiguration {
+        }
+
+        /**
+         * The Consul client {@link SslConfiguration.TrustStoreConfiguration}, bound from {@code consul.client.ssl.trust-store}.
+         */
+        @ConfigurationProperties(SslConfiguration.TrustStoreConfiguration.PREFIX)
+        @BootstrapContextCompatible
+        @Requires(property = ConsulSslConfiguration.PREFIX + "." + SslConfiguration.TrustStoreConfiguration.PREFIX)
+        public static class ConsulTrustStoreConfiguration extends SslConfiguration.TrustStoreConfiguration {
+        }
     }
 
     /**
