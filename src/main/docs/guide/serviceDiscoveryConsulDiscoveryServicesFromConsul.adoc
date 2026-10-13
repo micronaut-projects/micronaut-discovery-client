@@ -89,6 +89,7 @@ consul:
         delay: 50ms
         retry-delay: 1s
         max-retry-delay: 30s
+        idle-timeout: 30m
 ----
 
 [cols="1,3"]
@@ -109,9 +110,12 @@ consul:
 
 |`max-retry-delay`
 |The maximum delay between retries (default `30s`).
+
+|`idle-timeout`
+|When set, a service that has not been looked up for this long stops being watched; its next lookup starts a new watch. Eviction happens when the current blocking query returns, so within `wait` of the timeout. Not set by default: services stay watched until the application context closes.
 |===
 
-A service is watched from its first lookup until the application context is closed. The first lookup waits for the initial query; later lookups are answered from the cache without contacting Consul. The watch keeps a blocking query on `/v1/health/service/{service}` open, built from the same `passing`, `query-tags`, `filters`, `consistency-mode` and `datacenters` settings as a direct lookup, and follows the `X-Consul-Index` header of each response. While the watch of a service is failing, lookups of that service query Consul directly until the watch recovers. Closing the application context cancels every watch.
+A service is watched from its first lookup until the application context is closed, or until `idle-timeout` elapses without a lookup. The first lookup waits for the initial, non-blocking query of the watch for at most the read timeout of the Consul client (`consul.client.read-timeout`, `10s` by default) and otherwise falls back to a direct query; later lookups are answered from the cache without contacting Consul. The watch keeps a blocking query on `/v1/health/service/{service}` open, built from the same `passing`, `query-tags`, `filters`, `consistency-mode` and `datacenters` settings as a direct lookup, and follows the `X-Consul-Index` header of each response. While the watch of a service is failing, lookups of that service query Consul directly until the watch recovers. Closing the application context cancels every watch.
 
 When the watch observes that the instances of a service changed (an instance was registered or deregistered, or its address, tags, metadata or check status changed) it updates the cache and then publishes a api:discovery.consul.discovery.ServiceInstancesChangedEvent[] carrying the service ID, the previous instances and the current instances. The event is published on the `blocking` executor:
 
