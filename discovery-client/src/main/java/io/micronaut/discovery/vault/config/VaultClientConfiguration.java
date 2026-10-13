@@ -58,6 +58,26 @@ public class VaultClientConfiguration extends HttpClientConfiguration {
      */
     public enum VaultKvVersion { V1, V2 }
 
+    /**
+     * Vault authentication methods.
+     *
+     * @since 5.3.0
+     */
+    public enum VaultAuthentication {
+        /**
+         * Use the static token configured with {@code vault.client.token}.
+         */
+        TOKEN,
+        /**
+         * Log in with the AppRole auth method configured under {@code vault.client.app-role}.
+         */
+        APPROLE,
+        /**
+         * Log in with the Kubernetes auth method configured under {@code vault.client.kubernetes}.
+         */
+        KUBERNETES
+    }
+
     private final VaultClientConnectionPoolConfiguration vaultClientConnectionPoolConfiguration;
     private final VaultClientDiscoveryConfiguration vaultClientDiscoveryConfiguration = new VaultClientDiscoveryConfiguration();
 
@@ -67,6 +87,7 @@ public class VaultClientConfiguration extends HttpClientConfiguration {
     private String secretEngineName = DEFAULT_SECRET_ENGINE;
     private String pathPrefix = DEFAULT_PATH_PREFIX;
     private boolean failFast = DEFAULT_FAIL_FAST;
+    private VaultAuthentication authentication = VaultAuthentication.TOKEN;
 
     /**
      * @param vaultClientConnectionPoolConfiguration Vault Client Connection Pool Configuration
@@ -188,6 +209,25 @@ public class VaultClientConfiguration extends HttpClientConfiguration {
     }
 
     /**
+     * @return The authentication method used to obtain the Vault token
+     * @since 5.3.0
+     */
+    public VaultAuthentication getAuthentication() {
+        return authentication;
+    }
+
+    /**
+     * Set the authentication method used to obtain the Vault token. Default value (TOKEN).
+     * A user-defined {@link io.micronaut.discovery.vault.config.auth.VaultTokenSupplier} bean takes precedence.
+     *
+     * @param authentication The authentication method
+     * @since 5.3.0
+     */
+    public void setAuthentication(VaultAuthentication authentication) {
+        this.authentication = authentication != null ? authentication : VaultAuthentication.TOKEN;
+    }
+
+    /**
      * The Http Pool Connection Configuration class for Vault.
      */
     @ConfigurationProperties(ConnectionPoolConfiguration.PREFIX)
@@ -206,4 +246,151 @@ public class VaultClientConfiguration extends HttpClientConfiguration {
         public static final String PREFIX = VaultClientConfiguration.PREFIX + "." + ConfigDiscoveryConfiguration.PREFIX;
     }
 
+    /**
+     * Configuration for the Vault AppRole auth method, used when {@code vault.client.authentication} is APPROLE.
+     *
+     * @since 5.3.0
+     */
+    @ConfigurationProperties(VaultClientAppRoleConfiguration.NAME)
+    @BootstrapContextCompatible
+    @Requires(property = VaultClientConfiguration.PREFIX)
+    public static class VaultClientAppRoleConfiguration {
+
+        public static final String NAME = "app-role";
+        public static final String PREFIX = VaultClientConfiguration.PREFIX + "." + NAME;
+
+        /**
+         * Default AppRole mount path.
+         */
+        public static final String DEFAULT_PATH = "approle";
+
+        private String roleId;
+        private String secretId;
+        private String path = DEFAULT_PATH;
+
+        /**
+         * @return The AppRole role ID
+         */
+        public String getRoleId() {
+            return roleId;
+        }
+
+        /**
+         * Set the AppRole role ID.
+         *
+         * @param roleId The role ID
+         */
+        public void setRoleId(String roleId) {
+            this.roleId = roleId;
+        }
+
+        /**
+         * @return The AppRole secret ID
+         */
+        public String getSecretId() {
+            return secretId;
+        }
+
+        /**
+         * Set the AppRole secret ID. Optional when the role does not require a secret ID.
+         *
+         * @param secretId The secret ID
+         */
+        public void setSecretId(String secretId) {
+            this.secretId = secretId;
+        }
+
+        /**
+         * @return The path the AppRole auth method is mounted at
+         */
+        public String getPath() {
+            return path;
+        }
+
+        /**
+         * Set the path the AppRole auth method is mounted at. Default value ({@value #DEFAULT_PATH}).
+         *
+         * @param path The mount path
+         */
+        public void setPath(String path) {
+            this.path = path;
+        }
+    }
+
+    /**
+     * Configuration for the Vault Kubernetes auth method, used when {@code vault.client.authentication} is KUBERNETES.
+     *
+     * @since 5.3.0
+     */
+    @ConfigurationProperties(VaultClientKubernetesConfiguration.NAME)
+    @BootstrapContextCompatible
+    @Requires(property = VaultClientConfiguration.PREFIX)
+    public static class VaultClientKubernetesConfiguration {
+
+        public static final String NAME = "kubernetes";
+        public static final String PREFIX = VaultClientConfiguration.PREFIX + "." + NAME;
+
+        /**
+         * Default Kubernetes auth mount path.
+         */
+        public static final String DEFAULT_PATH = "kubernetes";
+
+        /**
+         * Default location of the Kubernetes service account token.
+         */
+        public static final String DEFAULT_SERVICE_ACCOUNT_TOKEN_FILE = "/var/run/secrets/kubernetes.io/serviceaccount/token";
+
+        private String role;
+        private String path = DEFAULT_PATH;
+        private String serviceAccountTokenFile = DEFAULT_SERVICE_ACCOUNT_TOKEN_FILE;
+
+        /**
+         * @return The Vault role to log in with
+         */
+        public String getRole() {
+            return role;
+        }
+
+        /**
+         * Set the Vault role to log in with.
+         *
+         * @param role The role
+         */
+        public void setRole(String role) {
+            this.role = role;
+        }
+
+        /**
+         * @return The path the Kubernetes auth method is mounted at
+         */
+        public String getPath() {
+            return path;
+        }
+
+        /**
+         * Set the path the Kubernetes auth method is mounted at. Default value ({@value #DEFAULT_PATH}).
+         *
+         * @param path The mount path
+         */
+        public void setPath(String path) {
+            this.path = path;
+        }
+
+        /**
+         * @return The file containing the service account token sent as the login JWT
+         */
+        public String getServiceAccountTokenFile() {
+            return serviceAccountTokenFile;
+        }
+
+        /**
+         * Set the file containing the service account token sent as the login JWT.
+         * Default value ({@value #DEFAULT_SERVICE_ACCOUNT_TOKEN_FILE}).
+         *
+         * @param serviceAccountTokenFile The token file
+         */
+        public void setServiceAccountTokenFile(String serviceAccountTokenFile) {
+            this.serviceAccountTokenFile = serviceAccountTokenFile;
+        }
+    }
 }

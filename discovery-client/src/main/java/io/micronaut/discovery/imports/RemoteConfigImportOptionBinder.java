@@ -66,12 +66,19 @@ public final class RemoteConfigImportOptionBinder {
             FAIL_FAST, "consul.client.config.fail-fast",
             "watch", "micronaut.discovery.consul.import.watch"
         ),
-        PROVIDER_VAULT, Map.of(
-            "token", VAULT_TOKEN,
-            "kv-version", "vault.client.kv-version",
-            "secret-engine-name", "vault.client.secret-engine-name",
-            "path-prefix", "vault.client.path-prefix",
-            FAIL_FAST, "vault.client.fail-fast"
+        PROVIDER_VAULT, Map.ofEntries(
+            Map.entry("token", VAULT_TOKEN),
+            Map.entry("kv-version", "vault.client.kv-version"),
+            Map.entry("secret-engine-name", "vault.client.secret-engine-name"),
+            Map.entry("path-prefix", "vault.client.path-prefix"),
+            Map.entry(FAIL_FAST, "vault.client.fail-fast"),
+            Map.entry("authentication", "vault.client.authentication"),
+            Map.entry("role-id", "vault.client.app-role.role-id"),
+            Map.entry("secret-id", "vault.client.app-role.secret-id"),
+            Map.entry("app-role-path", "vault.client.app-role.path"),
+            Map.entry("kubernetes-role", "vault.client.kubernetes.role"),
+            Map.entry("kubernetes-path", "vault.client.kubernetes.path"),
+            Map.entry("service-account-token-file", "vault.client.kubernetes.service-account-token-file")
         ),
         PROVIDER_SPRING_CLOUD, Map.of(
             "label", "spring.cloud.config.label",

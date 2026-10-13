@@ -20,9 +20,12 @@ import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.discovery.vault.config.AbstractVaultResponse;
 import io.micronaut.discovery.vault.config.VaultClientConfiguration;
 import io.micronaut.discovery.vault.config.VaultConfigHttpClient;
+import io.micronaut.discovery.vault.config.auth.VaultTokenSupplier;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import org.jspecify.annotations.Nullable;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
@@ -35,10 +38,11 @@ final class VaultImportSupport {
         VaultClientConfiguration configuration = context.getBean(VaultClientConfiguration.class);
         VaultConfigHttpClient<?> client = context.getBean(VaultConfigHttpClient.class);
         String vaultKey = buildVaultKey(configuration, secretPath);
+        String token = resolveToken(context.getBean(VaultTokenSupplier.class));
 
         try {
             AbstractVaultResponse<?> response = Flux.from(client.readConfigurationValues(
-                configuration.getToken(),
+                token,
                 configuration.getSecretEngineName(),
                 vaultKey
             )).blockFirst();
@@ -49,6 +53,16 @@ final class VaultImportSupport {
                 return Map.of();
             }
             throw new ConfigurationException("Error reading distributed configuration from Vault: " + cause.getMessage(), cause);
+        }
+    }
+
+    private @Nullable String resolveToken(VaultTokenSupplier tokenSupplier) {
+        try {
+            return Mono.from(tokenSupplier.getToken()).block();
+        } catch (ConfigurationException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw new ConfigurationException("Error obtaining Vault token: " + e.getMessage(), e);
         }
     }
 

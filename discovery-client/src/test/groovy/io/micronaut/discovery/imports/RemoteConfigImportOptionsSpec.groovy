@@ -79,6 +79,23 @@ class RemoteConfigImportOptionsSpec extends Specification {
         ]
     }
 
+    void 'binds vault authentication options'() {
+        expect:
+        binder.bind(ConnectionString.parse('vault://localhost:8200/application?authentication=approle&role-id=role&secret-id=secret&app-role-path=custom')) == [
+            'vault.client.authentication': 'approle',
+            'vault.client.app-role.role-id': 'role',
+            'vault.client.app-role.secret-id': 'secret',
+            'vault.client.app-role.path': 'custom'
+        ]
+
+        binder.bind(ConnectionString.parse('vault://localhost:8200/application?authentication=kubernetes&kubernetes-role=app&kubernetes-path=k8s&service-account-token-file=/tmp/token')) == [
+            'vault.client.authentication': 'kubernetes',
+            'vault.client.kubernetes.role': 'app',
+            'vault.client.kubernetes.path': 'k8s',
+            'vault.client.kubernetes.service-account-token-file': '/tmp/token'
+        ]
+    }
+
     void 'binds provider credentials from connection string user info'() {
         expect:
         binder.bind(ConnectionString.parse('vault://testtoken@localhost:8200/application')) == [
