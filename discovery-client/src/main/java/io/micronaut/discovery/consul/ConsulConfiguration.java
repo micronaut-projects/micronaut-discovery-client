@@ -61,6 +61,7 @@ public class ConsulConfiguration extends DiscoveryClientConfiguration {
 
     private String aclToken;
     private boolean healthCheck = true;
+    private boolean healthCheckServices;
     private ConsulRegistrationConfiguration registration = new ConsulRegistrationConfiguration();
     private ConsulDiscoveryConfiguration discovery = new ConsulDiscoveryConfiguration();
     private ConsulConfigDiscoveryConfiguration configuration = new ConsulConfigDiscoveryConfiguration();
@@ -100,6 +101,29 @@ public class ConsulConfiguration extends DiscoveryClientConfiguration {
      */
     public void setHealthCheck(boolean healthCheck) {
         this.healthCheck = healthCheck;
+    }
+
+    /**
+     * @return Whether the Consul health indicator also reports the catalog services and the checks of
+     * the service registered for this application.
+     * @see io.micronaut.discovery.consul.health.ConsulHealthIndicator
+     * @since 5.3.0
+     */
+    public boolean isHealthCheckServices() {
+        return healthCheckServices;
+    }
+
+    /**
+     * Sets whether the Consul health indicator also reports the catalog services and the checks of the
+     * service registered for this application (looked up by {@code micronaut.application.name}). The
+     * service checks are reported as details only and never change the reported status. Default value (false).
+     *
+     * @param healthCheckServices True if it should
+     * @see io.micronaut.discovery.consul.health.ConsulHealthIndicator
+     * @since 5.3.0
+     */
+    public void setHealthCheckServices(boolean healthCheckServices) {
+        this.healthCheckServices = healthCheckServices;
     }
 
     @Override
