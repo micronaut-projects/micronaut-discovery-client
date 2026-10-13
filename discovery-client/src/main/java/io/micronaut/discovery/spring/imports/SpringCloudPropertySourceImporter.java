@@ -103,7 +103,10 @@ public final class SpringCloudPropertySourceImporter extends RetryablePropertySo
         if (imported.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(PropertySource.of(context.getCanonicalLocation(), imported, EnvironmentPropertySource.POSITION + 100));
+        String propertySourceName = context.connectionString() != null
+            ? context.getCanonicalLocation()
+            : PROVIDER + "://" + applicationName + '/' + profiles;
+        return Optional.of(PropertySource.of(propertySourceName, imported, EnvironmentPropertySource.POSITION + 100));
     }
 
     @Override
