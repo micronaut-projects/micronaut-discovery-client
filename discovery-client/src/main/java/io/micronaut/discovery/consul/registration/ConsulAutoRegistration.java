@@ -35,6 +35,7 @@ import io.micronaut.discovery.registration.RegistrationException;
 import io.micronaut.health.HealthStatus;
 import io.micronaut.health.HeartbeatConfiguration;
 import io.micronaut.http.HttpStatus;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.runtime.ApplicationConfiguration;
 import io.micronaut.runtime.server.EmbeddedServer;
 import jakarta.inject.Singleton;
@@ -50,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -96,49 +98,94 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
         ConsulConfiguration.ConsulRegistrationConfiguration registration = consulConfiguration.getRegistration();
         if (registration != null && !registration.getCheck().isHttp() && registration.getCheck().isEnabled() && registered.get()) {
 
-            String checkId = "service:" + idGenerator.generateId(environment, instance);
+            String serviceId = idGenerator.generateId(environment, instance);
+            String checkId = "service:" + serviceId;
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Reporting status for Check ID [{}]: {}", checkId, status);
             }
 
-            if (status.equals(HealthStatus.UP)) {
-                // send a request to /agent/check/pass/:check_id
-                Mono<HttpStatus> passPublisher = Mono.from(consulClient.pass(checkId));
-                passPublisher.subscribe(httpStatus -> {
+            boolean passing = status.equals(HealthStatus.UP);
+            String state = passing ? "passing" : "failure";
+            // send a request to /agent/check/pass/:check_id or /agent/check/fail/:check_id
+            Publisher<HttpStatus> reportPublisher = passing
+                ? consulClient.pass(checkId)
+                : consulClient.fail(checkId, status.getDescription().orElse(null));
+            Mono.from(reportPublisher).hasElement().subscribe(reported -> {
+                if (reported) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Successfully reported passing state to Consul");
+                        LOG.debug("Successfully reported {} state to Consul", state);
                     }
-                }, throwable -> {
-
-                        // check if the service is still registered with Consul
-                        Mono.from(consulClient.getServiceIds()).subscribe(serviceIds -> {
-                            String serviceId = idGenerator.generateId(environment, instance);
-                            if (!serviceIds.contains(serviceId)) {
-                                if (LOG.isInfoEnabled()) {
-                                    LOG.info("Instance [{}] no longer registered with Consul. Attempting re-registration.", instance.getId());
-                                }
-                                register(instance);
-                            }
-                        });
-
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error(getErrorMessage(throwable, "Error reporting passing state to Consul: "), throwable);
-                        }
-                    });
-            } else {
-                // send a request to /agent/check/fail/:check_id
-                Mono<HttpStatus> failPublisher = Mono.from(consulClient.fail(checkId, status.getDescription().orElse(null)));
-                failPublisher.subscribe(httpStatus -> {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Successfully reported failure state to Consul");
+                } else {
+                    // the Micronaut Reactor HTTP client turns the 404 response for an unknown check into an empty result
+                    if (LOG.isWarnEnabled()) {
+                        LOG.warn("Consul did not acknowledge the {} state of check [{}]. Attempting re-registration of instance [{}].", state, checkId, instance.getId());
                     }
-                }, throwable -> {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error(getErrorMessage(throwable, "Error reporting failure state to Consul: "), throwable);
-                    }
-                });
-            }
+                    register(instance);
+                }
+            }, throwable -> onReportError(instance, serviceId, checkId, state, throwable));
         }
+    }
+
+    private void onReportError(ServiceInstance instance, String serviceId, String checkId, String state, Throwable throwable) {
+        if (isUnknownCheck(throwable)) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("Check [{}] is unknown to Consul. Attempting re-registration of instance [{}].", checkId, instance.getId());
+            }
+            register(instance);
+            return;
+        }
+
+        if (LOG.isErrorEnabled()) {
+            LOG.error(getErrorMessage(throwable, "Error reporting " + state + " state to Consul: "), throwable);
+        }
+
+        // check if the service is still registered with the Consul agent
+        Mono.from(consulClient.findServices()).subscribe(services -> {
+            if (!services.containsKey(serviceId)) {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Instance [{}] no longer registered with Consul. Attempting re-registration.", instance.getId());
+                }
+                register(instance);
+            }
+        }, lookupError -> {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Unable to verify the registration of instance [{}] with Consul: {}", instance.getId(), lookupError.getMessage(), lookupError);
+            }
+        });
+    }
+
+    /**
+     * Whether Consul rejected a TTL check update because it does not know the check. Recent Consul
+     * versions respond with a 404, older ones with a 500 that names the check.
+     *
+     * @param throwable The error
+     * @return True if the check is unknown to Consul
+     */
+    private static boolean isUnknownCheck(Throwable throwable) {
+        Throwable current = throwable;
+        for (int depth = 0; current != null && depth < 10; depth++) {
+            if (current instanceof HttpClientResponseException e) {
+                HttpStatus httpStatus = e.getStatus();
+                if (httpStatus == HttpStatus.NOT_FOUND) {
+                    return true;
+                }
+                if (httpStatus == HttpStatus.INTERNAL_SERVER_ERROR) {
+                    String body = e.getResponse().getBody(String.class).orElse(null);
+                    return isUnknownCheckMessage(body) || isUnknownCheckMessage(e.getMessage());
+                }
+                return false;
+            }
+            current = current.getCause();
+        }
+        return false;
+    }
+
+    private static boolean isUnknownCheckMessage(@Nullable String message) {
+        if (message == null) {
+            return false;
+        }
+        String lowerCase = message.toLowerCase(Locale.ENGLISH);
+        return lowerCase.contains("unknown check") || lowerCase.contains("does not have associated ttl");
     }
 
     @Override
