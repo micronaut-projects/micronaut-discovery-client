@@ -18,6 +18,9 @@ package io.micronaut.discovery.consul
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.env.Environment
 import io.micronaut.core.convert.value.ConvertibleValues
+import io.micronaut.core.util.ConnectionString
+import io.micronaut.discovery.ServiceInstanceList
+import io.micronaut.discovery.imports.RemoteConfigImporterContextFactory
 import io.micronaut.discovery.consul.watch.Watcher
 import io.micronaut.discovery.consul.client.v1.ConsulClient
 import io.micronaut.discovery.consul.imports.ConsulPropertySourceImporter
@@ -171,7 +174,7 @@ class ConsulPropertySourceImporterSpec extends Specification {
     void 'consul importer connection string binds secure for HTTPS'() {
         given:
         def importer = new ConsulPropertySourceImporter()
-        def connectionString = io.micronaut.core.util.ConnectionString.parse(
+        def connectionString = ConnectionString.parse(
             'consul://localhost:8501/config/micronaut/application?format=yaml&watch=true&secure=true'
         )
 
@@ -185,6 +188,63 @@ class ConsulPropertySourceImporterSpec extends Specification {
         declaration.properties()['consul.client.config.format'] == 'yaml'
         declaration.watchEnabled()
         declaration.path() == 'config/micronaut/application'
+    }
+
+    void 'consul importer context resolves the consul server over #scheme for #uri'() {
+        given:
+        def importer = new ConsulPropertySourceImporter()
+        def declaration = importer.newImportDeclaration(ConnectionString.parse(uri), null)
+        ApplicationContext importerContext = new RemoteConfigImporterContextFactory().build(declaration.properties())
+
+        when:
+        ServiceInstanceList consulInstances = importerContext.getBeansOfType(ServiceInstanceList)
+            .find { it.ID == ConsulClient.SERVICE_ID }
+
+        then:
+        importerContext.getBean(ConsulConfiguration).secure == secure
+        consulInstances.instances*.URI*.toString() == ["${scheme}://consul.example.com:8501".toString()]
+
+        cleanup:
+        importerContext?.close()
+
+        where:
+        uri                                                                  | secure | scheme
+        'consul://consul.example.com:8501/config/application?secure=true'   | true   | 'https'
+        'consul://consul.example.com:8501/config/application?secure=false'  | false  | 'http'
+        'consul://consul.example.com:8501/config/application'               | false  | 'http'
+    }
+
+    void 'consul importer with secure true connects using TLS'() {
+        given:
+        writeValue('/config/application/message', 'hello')
+
+        when: 'importing from a plain HTTP Consul agent with secure=true'
+        ApplicationContext.run([
+            'micronaut.config.import': "consul://localhost:${consulServer.port}/config/application?secure=true&retry-attempts=1"
+        ])
+
+        then: 'the client attempts a TLS handshake against the plain HTTP listener'
+        Throwable e = thrown()
+        causes(e).any { it instanceof javax.net.ssl.SSLException || it.class.simpleName == 'NotSslRecordException' }
+    }
+
+    void 'consul importer propagates secure to the watch client properties'() {
+        given:
+        writeValue('/config/application/message', 'hello')
+
+        when:
+        ApplicationContext context = ApplicationContext.run([
+            'micronaut.application.name': 'test',
+            'micronaut.config.import': "consul://localhost:${consulServer.port}/config/application?watch=true&secure=false"
+        ], Environment.TEST)
+
+        then:
+        context.getRequiredProperty('message', String) == 'hello'
+        context.getProperty('consul.client.secure', Boolean) == Optional.of(false)
+        !context.getBean(ConsulConfiguration).secure
+
+        cleanup:
+        context?.close()
     }
 
     void 'consul importer normalizes yml watch format to YAML'() {
@@ -222,6 +282,16 @@ class ConsulPropertySourceImporterSpec extends Specification {
         context?.close()
         authenticatedWriterContext.close()
         authenticatedConsulServer.close()
+    }
+
+    private static List<Throwable> causes(Throwable throwable) {
+        List<Throwable> causes = []
+        Throwable current = throwable
+        while (current != null && !causes.contains(current)) {
+            causes << current
+            current = current.cause
+        }
+        causes
     }
 
     private void writeValue(String key, String value) {
