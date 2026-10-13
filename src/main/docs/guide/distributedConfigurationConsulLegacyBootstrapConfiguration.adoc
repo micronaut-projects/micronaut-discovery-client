@@ -15,3 +15,5 @@ consul:
 ----
 
 After enabling distributed configuration, store the configuration to share in Consul's key/value store.
+
+NOTE: The legacy bootstrap client does not retry a failed read from Consul. If Consul may be unavailable while the application starts, see <<distributedConfigurationConsulRetryingConsulImports, Retrying Consul Imports>> for how to migrate to a configuration import with retries.

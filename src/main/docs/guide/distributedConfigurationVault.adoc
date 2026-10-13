@@ -165,3 +165,25 @@ The legacy bootstrap integration uses the configured `micronaut.application.name
 |===
 
 With `micronaut.config.import`, the secret path is explicit in the import URI, so those default lookup paths are no longer implied. See the https://developer.hashicorp.com/vault/api-docs/secret/kv[HashiCorp Vault KV documentation] for server setup and secret storage details.
+
+== Storing secrets in Vault
+
+Micronaut reads each configured path as a single secret of the Vault KV secrets engine, and every key/value pair of that secret becomes a configuration property. Store all the properties of a path together in one secret rather than creating a secret for each property.
+
+For example, to provide `datasources.default.username` and `datasources.default.password` to an application that imports `vault://localhost:8200/application/prod`, write both keys to the `application/prod` secret of the `secret` engine:
+
+.Writing a secret with the Vault CLI
+[source,bash]
+----
+vault kv put secret/application/prod datasources.default.username=postgres datasources.default.password=root
+----
+
+Writing `secret/application/prod/datasources.default.username` instead creates a separate secret below `application/prod`, which Micronaut does not read.
+
+Secrets are read from the KV version 2 engine named `secret` unless configured otherwise, using `GET /v1/{secret-engine-name}/data/[{path-prefix}/]{path}`. For a KV version 1 engine set `kv-version` to `V1` (or `vault.client.kv-version` for the legacy integration), which reads `GET /v1/{secret-engine-name}/[{path-prefix}/]{path}` instead. The same layout applies to the paths the legacy integration derives from the application name and the active environments.
+
+== Vault server URI
+
+A `vault://host:port/...` import always connects to Vault over plain HTTP.
+
+The legacy integration takes the Vault address from `vault.client.uri`, which must be a full URL including the scheme, for example `http://localhost:8200`. A value without a scheme, such as `localhost:8200`, is treated as the ID of a service to look up with service discovery, and startup fails with an error such as `No bean of type [io.micronaut.http.client.loadbalance.DiscoveryClientLoadBalancerFactory] exists`.
