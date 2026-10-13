@@ -47,7 +47,8 @@ class WatcherSpec extends Specification {
             listAppender = null
         }
 
-        if (watcher != null && watcher.isWatching()) {
+        if (watcher != null) {
+            // stop pending retries and polls, a WARN is logged if the watcher was not started
             watcher.stop()
         }
     }
@@ -238,21 +239,23 @@ class WatcherSpec extends Specification {
         watcher = new ConfigurationsWatcher(List.of("path/to/NOT_FOUND"), consulClient, blockingQueriesConfiguration, propertiesChangeHandler, propertySourceReader, watchConfiguration)
 
         def exception = Mock(HttpClientResponseException)
-        1 * exception.getStatus() >> HttpStatus.NOT_FOUND
-        1 * consulClient.watchValues("path/to/NOT_FOUND", false, null) >> Mono.error(exception)
+        _ * exception.getStatus() >> HttpStatus.NOT_FOUND
+        (2.._) * consulClient.watchValues("path/to/NOT_FOUND", false, null) >> Mono.error(exception)
         blockingQueriesConfiguration.getDelayDuration() >> Duration.ZERO
+        watchConfiguration.getMaxRetryDelay() >> Duration.ofMillis(50)
         watchConfiguration.getKvNotFoundLogLevel() >> org.slf4j.event.Level.WARN
 
         when:
         watcher.start()
 
-        then:
+        then: "the missing path keeps being polled, but is logged only once"
+        Thread.sleep(500)
         def logs = listAppender.list.stream()
                 .filter(event -> Level.WARN == event.getLevel())
                 .toList()
         logs.size() == 1
         def loggingEvent = logs.get(0)
-        loggingEvent.getFormattedMessage() == "No KV found with kvPath=path/to/NOT_FOUND"
+        loggingEvent.getFormattedMessage() == "No KV found with kvPath=path/to/NOT_FOUND, checking again every 50ms"
         ((ThrowableProxy) loggingEvent.getThrowableProxy()) == null
 
         and:
@@ -476,6 +479,7 @@ class WatcherSpec extends Specification {
         blockingQueriesConfiguration.getDelayDuration() >> Duration.ZERO
         watchConfiguration.getMaxRetryAttempts() >> 2
         watchConfiguration.getRetryDelayMs() >> 200
+        watchConfiguration.getMaxRetryDelay() >> Duration.ofSeconds(30)
 
         1 * propertiesChangeHandler.handleChanges(
                 "path/to/yaml",
@@ -520,12 +524,15 @@ class WatcherSpec extends Specification {
         blockingQueriesConfiguration.getDelayDuration() >> Duration.ZERO
         watchConfiguration.getMaxRetryAttempts() >> 3
         watchConfiguration.getRetryDelayMs() >> 50
+        watchConfiguration.getMaxRetryDelay() >> Duration.ofSeconds(30)
 
         when:
         watcher.start()
 
         then:
-        Thread.sleep(500)
+        new PollingConditions(timeout: 5).eventually {
+            assert listAppender.list.stream().filter(event -> Level.ERROR == event.getLevel()).count() == 1
+        }
 
         def retryLogs = listAppender.list.stream()
                 .filter(event -> Level.WARN == event.getLevel())
@@ -535,12 +542,13 @@ class WatcherSpec extends Specification {
         final def delays = new ArrayList<Long>()
         for (int i = 0; i < 3; i++) {
             def iLoggingEvent = retryLogs.get(i)
-            iLoggingEvent.getMessage() == "Error detected, retrying watch ({}/{}) after delay={}ms"
+            assert iLoggingEvent.getMessage() == "Error watching kvPath={}, retrying watch ({}/{}) after delay={}ms: {}"
             def array = iLoggingEvent.getArgumentArray()
-            array.size() == 3
-            array[0] == i + 1
-            array[1] == 3
-            delays.add(array[2] as Long)
+            assert array.size() == 5
+            assert array[0] == "path/to/too_much_error"
+            assert array[1] == i + 1
+            assert array[2] == 3
+            delays.add(array[3] as Long)
         }
         delays[0] < delays[1]
         delays[1] < delays[2]
@@ -556,5 +564,85 @@ class WatcherSpec extends Specification {
 
         and:
         0 * propertiesChangeHandler._
+    }
+
+    void "test that watch keeps retrying by default and resumes once Consul is back"() {
+        given:
+        def conditions = new AsyncConditions()
+
+        watcher = new ConfigurationsWatcher(List.of("path/to/outage"), consulClient, blockingQueriesConfiguration, propertiesChangeHandler, propertySourceReader, watchConfiguration)
+
+        def exception = new RuntimeException("Connection refused")
+        def keyValue = new KeyValue(1234, "path/to/outage", base64Encoder.encodeToString("foo.bar: value".getBytes()))
+        def newKeyValue = new KeyValue(12, "path/to/outage", base64Encoder.encodeToString("foo.bar: value_2".getBytes()))
+
+        // Consul goes down while blocking on the known index
+        1 * consulClient.watchValues("path/to/outage", false, 1234) >> Mono.error(exception)
+        // more failures than the 4.7.x default of 3 retries, the index is reset as Consul may have been recreated
+        8 * consulClient.watchValues("path/to/outage", false, null) >>> [
+                Mono.just(List.of(keyValue)), // init
+                Mono.error(exception),
+                Mono.error(exception),
+                Mono.error(exception),
+                Mono.error(exception),
+                Mono.error(exception),
+                Mono.error(exception),
+                Mono.just(List.of(newKeyValue)) // Consul is back, with a lower index
+        ]
+        _ * consulClient.watchValues("path/to/outage", false, 12) >> Mono.never()
+
+        blockingQueriesConfiguration.getDelayDuration() >> Duration.ZERO
+        watchConfiguration.getMaxRetryAttempts() >> WatchConfiguration.DEFAULT_MAX_RETRIES
+        watchConfiguration.getRetryDelayMs() >> 5
+        watchConfiguration.getMaxRetryDelay() >> Duration.ofMillis(20)
+
+        1 * propertiesChangeHandler.handleChanges(
+                "path/to/outage",
+                { Map<String, Object> previous -> conditions.evaluate { assert previous == ["foo.bar": "value"] } },
+                { Map<String, Object> next -> conditions.evaluate { assert next == ["foo.bar": "value_2"] } })
+
+        when:
+        watcher.start()
+
+        then:
+        conditions.await(5)
+    }
+
+    void "test that a missing KV path keeps being watched once created"() {
+        given:
+        def conditions = new AsyncConditions()
+
+        watcher = new ConfigurationsWatcher(List.of("path/to/created_later"), consulClient, blockingQueriesConfiguration, propertiesChangeHandler, propertySourceReader, watchConfiguration)
+
+        def exception = Mock(HttpClientResponseException)
+        _ * exception.getStatus() >> HttpStatus.NOT_FOUND
+        def keyValue = new KeyValue(1234, "path/to/created_later", base64Encoder.encodeToString("foo.bar: value".getBytes()))
+        def newKeyValue = new KeyValue(4567, "path/to/created_later", base64Encoder.encodeToString("foo.bar: value_2".getBytes()))
+
+        // the path does not exist yet, then is created
+        3 * consulClient.watchValues("path/to/created_later", false, null) >>> [
+                Mono.error(exception),
+                Mono.error(exception),
+                Mono.just(List.of(keyValue))
+        ]
+        1 * consulClient.watchValues("path/to/created_later", false, 1234) >> Mono.just(List.of(newKeyValue))
+        _ * consulClient.watchValues("path/to/created_later", false, 4567) >> Mono.never()
+
+        blockingQueriesConfiguration.getDelayDuration() >> Duration.ZERO
+        watchConfiguration.getMaxRetryDelay() >> Duration.ofMillis(20)
+        watchConfiguration.getKvNotFoundLogLevel() >> org.slf4j.event.Level.INFO
+
+        // the creation itself is not published as no PropertySource has been loaded at startup, but later changes are
+        1 * propertiesChangeHandler.handleChanges(
+                "path/to/created_later",
+                { Map<String, Object> previous -> conditions.evaluate { assert previous == ["foo.bar": "value"] } },
+                { Map<String, Object> next -> conditions.evaluate { assert next == ["foo.bar": "value_2"] } })
+
+        when:
+        watcher.start()
+
+        then:
+        conditions.await(5)
+        watcher.isWatching()
     }
 }

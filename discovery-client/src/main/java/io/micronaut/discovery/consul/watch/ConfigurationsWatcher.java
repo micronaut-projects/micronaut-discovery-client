@@ -62,7 +62,7 @@ final class ConfigurationsWatcher extends AbstractWatcher<KeyValue> {
 
     @Override
     protected Mono<KeyValue> watchValue(final String kvPath) {
-        final var modifiedIndex = Optional.ofNullable(kvHolder.get(kvPath))
+        final var modifiedIndex = Optional.ofNullable(indexedValue(kvPath))
             .map(KeyValue::getModifyIndex)
             .orElse(NO_INDEX);
         LOG.debug("Watching kvPath={} with index={}", kvPath, modifiedIndex);

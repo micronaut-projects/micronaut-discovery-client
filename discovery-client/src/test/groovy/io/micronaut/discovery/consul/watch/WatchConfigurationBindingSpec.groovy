@@ -5,6 +5,8 @@ import io.micronaut.core.io.socket.SocketUtils
 import org.slf4j.event.Level
 import spock.lang.Specification
 
+import java.time.Duration
+
 class WatchConfigurationBindingSpec extends Specification {
 
     void "test watch configuration defaults"() {
@@ -13,8 +15,9 @@ class WatchConfigurationBindingSpec extends Specification {
 
         then:
         !configuration.isEnabled()
-        configuration.getMaxRetryAttempts() == WatchConfiguration.DEFAULT_MAX_RETRIES
+        configuration.getMaxRetryAttempts() == -1
         configuration.getRetryDelayMs() == WatchConfiguration.DEFAULT_RETRY_DELAY
+        configuration.getMaxRetryDelay() == Duration.ofSeconds(30)
         configuration.getKvNotFoundLogLevel() == Level.INFO
     }
 
@@ -27,6 +30,7 @@ class WatchConfigurationBindingSpec extends Specification {
                 'consul.client.watch.enabled': true,
                 'consul.client.watch.max-retry-attempts': 7,
                 'consul.client.watch.retry-delay-ms': 1500,
+                'consul.client.watch.max-retry-delay': '2m',
                 'consul.client.watch.kv-not-found-log-level': 'error'
         )
 
@@ -37,6 +41,7 @@ class WatchConfigurationBindingSpec extends Specification {
         configuration.isEnabled()
         configuration.getMaxRetryAttempts() == 7
         configuration.getRetryDelayMs() == 1500
+        configuration.getMaxRetryDelay() == Duration.ofMinutes(2)
         configuration.getKvNotFoundLogLevel() == Level.ERROR
 
         cleanup:

@@ -22,6 +22,7 @@ import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.util.Toggleable;
 import io.micronaut.discovery.consul.ConsulConfiguration;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -45,15 +46,27 @@ public class WatchConfiguration implements Toggleable {
      */
     public static final boolean DEFAULT_ENABLED = false;
     /**
-     * The default maxRetryAttempts value.
+     * The default maxRetryAttempts value. A negative value means that failed watches are retried indefinitely.
+     *
+     * @since 5.3.0
      */
-    public static final Integer DEFAULT_MAX_RETRIES = 3;
+    public static final Integer DEFAULT_MAX_RETRIES = -1;
     /**
      * The default retryDelayMs value.
+     *
+     * @since 5.3.0
      */
     public static final Integer DEFAULT_RETRY_DELAY = 500;
     /**
+     * The default maxRetryDelay value.
+     *
+     * @since 5.3.0
+     */
+    public static final Duration DEFAULT_MAX_RETRY_DELAY = Duration.ofSeconds(30);
+    /**
      * The default kvNotFoundLogLevel value.
+     *
+     * @since 5.3.0
      */
     public static final Level DEFAULT_KV_NOT_FOUND_LOG_LEVEL = Level.INFO;
 
@@ -78,6 +91,8 @@ public class WatchConfiguration implements Toggleable {
     private Integer maxRetryAttempts = DEFAULT_MAX_RETRIES;
 
     private Integer retryDelayMs = DEFAULT_RETRY_DELAY;
+
+    private Duration maxRetryDelay = DEFAULT_MAX_RETRY_DELAY;
 
     private Level kvNotFoundLogLevel = DEFAULT_KV_NOT_FOUND_LOG_LEVEL;
 
@@ -137,8 +152,8 @@ public class WatchConfiguration implements Toggleable {
 
     /**
      * @return The maximum number of consecutive times a failed watch of a KV path is retried before the
-     * watch of that path is stopped. Defaults to {@code 3}.
-     * @since 4.7.2
+     * watch of that path is stopped. A negative value means unlimited retries. Defaults to {@code -1}.
+     * @since 5.3.0
      */
     public @NonNull Integer getMaxRetryAttempts() {
         return maxRetryAttempts;
@@ -146,11 +161,13 @@ public class WatchConfiguration implements Toggleable {
 
     /**
      * Sets the maximum number of consecutive times a failed watch of a KV path is retried before the watch of
-     * that path is stopped. The retry counter is reset each time the watch succeeds. Read timeouts and
-     * missing KV paths do not count as failures. Defaults to {@code 3}.
+     * that path is stopped. A negative value (the default, {@code -1}) retries indefinitely, so the watcher
+     * recovers once Consul is reachable again. The retry counter is reset each time the watch succeeds. Read
+     * timeouts and missing KV paths do not count as failures. Micronaut Discovery Client 4.7.2 introduced this
+     * setting with a default of {@code 3}.
      *
-     * @param maxRetryAttempts The maximum number of retry attempts
-     * @since 4.7.2
+     * @param maxRetryAttempts The maximum number of retry attempts, or a negative value for unlimited retries
+     * @since 5.3.0
      */
     public void setMaxRetryAttempts(@NonNull final Integer maxRetryAttempts) {
         this.maxRetryAttempts = maxRetryAttempts;
@@ -158,7 +175,7 @@ public class WatchConfiguration implements Toggleable {
 
     /**
      * @return The base delay in milliseconds before retrying a failed watch. Defaults to {@code 500}.
-     * @since 4.7.2
+     * @since 5.3.0
      */
     public @NonNull Integer getRetryDelayMs() {
         return retryDelayMs;
@@ -166,32 +183,53 @@ public class WatchConfiguration implements Toggleable {
 
     /**
      * Sets the base delay in milliseconds before retrying a failed watch. The delay grows exponentially with each
-     * consecutive failure ({@code retryDelayMs * 2^(attempt - 1)}), is capped at 30 seconds and has a random
-     * jitter of up to 25% applied. Defaults to {@code 500}.
+     * consecutive failure ({@code retryDelayMs * 2^(attempt - 1)}), is capped at {@link #getMaxRetryDelay()} and
+     * has a random jitter of up to 25% applied. Defaults to {@code 500}.
      *
      * @param retryDelayMs The base retry delay in milliseconds
-     * @since 4.7.2
+     * @since 5.3.0
      */
     public void setRetryDelayMs(@NonNull final Integer retryDelayMs) {
         this.retryDelayMs = retryDelayMs;
     }
 
     /**
+     * @return The maximum delay between two retries of a failed watch. Defaults to 30 seconds.
+     * @since 5.3.0
+     */
+    public @NonNull Duration getMaxRetryDelay() {
+        return maxRetryDelay;
+    }
+
+    /**
+     * Sets the maximum delay between two retries of a failed watch. The exponential backoff computed from
+     * {@link #getRetryDelayMs()} is capped at this value. It is also the interval at which a KV path that does
+     * not exist in Consul is polled until it is created. Defaults to 30 seconds.
+     *
+     * @param maxRetryDelay The maximum retry delay
+     * @since 5.3.0
+     */
+    public void setMaxRetryDelay(@NonNull final Duration maxRetryDelay) {
+        this.maxRetryDelay = maxRetryDelay;
+    }
+
+    /**
      * @return The log level used when a watched KV path does not exist in Consul. Defaults to {@link Level#INFO}.
-     * @since 4.7.2
+     * @since 5.3.0
      */
     public @NonNull Level getKvNotFoundLogLevel() {
         return kvNotFoundLogLevel;
     }
 
     /**
-     * Sets the log level used when a watched KV path does not exist in Consul (HTTP 404). The watch of a missing
-     * path is not retried, so use {@code WARN} or {@code ERROR} to make a misconfigured path visible.
-     * Valid values are {@code TRACE}, {@code DEBUG}, {@code INFO}, {@code WARN} and {@code ERROR}.
-     * Defaults to {@link Level#INFO}.
+     * Sets the log level used when a watched KV path does not exist in Consul (HTTP 404). The message is logged
+     * once each time the path goes missing, and the path is checked again every {@link #getMaxRetryDelay()}
+     * until it exists. Use {@code WARN} or {@code ERROR} to make a misconfigured path visible. Valid
+     * values are {@code TRACE}, {@code DEBUG}, {@code INFO}, {@code WARN} and {@code ERROR}. Defaults to
+     * {@link Level#INFO}.
      *
      * @param kvNotFoundLogLevel The log level
-     * @since 4.7.2
+     * @since 5.3.0
      */
     public void setKvNotFoundLogLevel(@NonNull final Level kvNotFoundLogLevel) {
         this.kvNotFoundLogLevel = kvNotFoundLogLevel;
