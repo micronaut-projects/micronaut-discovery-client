@@ -264,9 +264,10 @@ public final class ConsulServiceInstanceWatcher {
         if (watch.disposed) {
             return;
         }
-        if (e instanceof ReadTimeoutException && watch.instances != null) {
+        // the read timeout exceeds the blocking query wait plus the jitter Consul adds, so an unchanged query
+        // returns before it: a timeout means Consul is unresponsive and the cache can no longer be trusted
+        if (e instanceof ReadTimeoutException) {
             LOG.debug("Blocking query of service {} timed out", watch.serviceId);
-            return;
         }
         watch.errors++;
         if (!watch.failing) {
@@ -274,6 +275,9 @@ public final class ConsulServiceInstanceWatcher {
             LOG.debug("Watch failure of service {}", watch.serviceId, e);
         }
         watch.failing = true;
+        // query without an index next, which returns at once, so the cache is trusted again as soon as Consul answers
+        // instead of after a blocking query that may wait for a change
+        watch.index = null;
         watch.firstResult.completeExceptionally(e);
     }
 
