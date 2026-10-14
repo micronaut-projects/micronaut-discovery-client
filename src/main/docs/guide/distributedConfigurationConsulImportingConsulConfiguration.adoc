@@ -52,4 +52,18 @@ micronaut:
 
 When `watch=true` is used, Consul change notifications trigger an environment refresh so the imported configuration is reloaded and a `RefreshEvent` is published.
 
+For Consul agents that expose the HTTP API only over TLS, set `secure=true` so the importer uses HTTPS:
+
+.Importing Consul configuration over HTTPS
+[configuration]
+----
+micronaut:
+  config:
+    import: "consul://localhost:8501/config/application?format=yaml&secure=true"
+----
+
+When `secure=true` is combined with `watch=true`, `consul.client.secure` is also applied to the application's Consul client so that the watcher uses HTTPS as well.
+
+NOTE: The `secure` option only selects the `https` scheme. The importer uses its own HTTP client, so the Consul server certificate must be trusted by the JVM default trust store (for example configured with the `javax.net.ssl.trustStore` system property).
+
 Treat import URIs with embedded credentials as sensitive values and store them accordingly.
