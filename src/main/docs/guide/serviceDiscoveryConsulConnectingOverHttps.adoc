@@ -1,0 +1,27 @@
+= Connecting to Consul over HTTPS
+
+To connect to a Consul agent that is exposed over HTTPS, set `consul.client.secure` to `true` and configure the TLS settings of the Consul HTTP client under `consul.client.ssl`. These settings apply to every Consul request: service registration, health checks, service discovery and distributed configuration.
+
+.Connecting to Consul over HTTPS
+[configuration]
+----
+consul:
+  client:
+    host: consul.example.com
+    port: 8501
+    secure: true
+    ssl:
+      protocol: TLSv1.3
+      trust-store:
+        path: classpath:consul-truststore.p12
+        password: changeit
+        type: PKCS12
+----
+
+The `consul.client.ssl` settings accept the same options as `micronaut.http.client.ssl`, including `key-store`, `key`, `trust-store`, `protocol`, `protocols`, `ciphers` and `handshake-timeout`. For example, use `key-store` and `key` to present a client certificate when the Consul agent has `verify_incoming` enabled.
+
+NOTE: The Consul client uses its own SSL configuration. It does not read `micronaut.http.client.ssl` or `micronaut.http.services.consul.ssl`. When no `consul.client.ssl` settings are present, the client verifies the Consul agent certificate against the default JDK trust store.
+
+To trust a self-signed certificate during development only, you can set `consul.client.ssl.insecure-trust-all-certificates` to `true`. This disables certificate verification, so configure a trust store instead in production.
+
+The `consul://` <<distributedConfigurationConsulImportingConsulConfiguration, config import>> builds a separate Consul client from the import declaration. That client reuses the `consul.client.ssl` settings defined in the configuration that declares the import, so imports trust the same certificates as the rest of the application.

@@ -9,6 +9,7 @@ serviceDiscoveryConsul:
   serviceDiscoveryConsulDiscoveryServicesFromConsul: Discovery Services from Consul
   serviceDiscoveryConsulConsulHealthChecks: Consul Health Checks
   serviceDiscoveryConsulControllingIpHostRegistration: Controlling IP/Host Registration
+  serviceDiscoveryConsulConnectingOverHttps: Connecting to Consul over HTTPS
   distributedConfigurationConsul:
     title: Distributed Configuration with Consul
     distributedConfigurationConsulImportingConsulConfiguration: Importing Consul Configuration
