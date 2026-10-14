@@ -22,6 +22,7 @@ import io.micronaut.discovery.consul.registration.ConsulAutoRegistration
 import io.micronaut.health.CurrentHealthStatus
 import io.micronaut.health.HealthStatus
 import io.micronaut.health.HeartbeatTask
+import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.ReactiveClientResultTransformer
 import io.micronaut.runtime.server.EmbeddedServer
 import org.testcontainers.DockerClientFactory
@@ -102,6 +103,11 @@ abstract class AbstractConsulReRegistrationSpec extends Specification {
             assert registeredServices(consulClient).containsKey(serviceId)
         }
 
+        and: 'the recreated check is in the reported state'
+        conditions.eventually {
+            assert checkStatus(consul, "service:$serviceId") == expectedCheckStatus
+        }
+
         and: 'the check of the new registration accepts heartbeats'
         Mono.from(consulClient.pass("service:$serviceId")).block() != null
 
@@ -111,9 +117,20 @@ abstract class AbstractConsulReRegistrationSpec extends Specification {
 
         where:
         [status, image] << [[HealthStatus.UP, HealthStatus.DOWN], ['consul:1.9.0', 'hashicorp/consul:1.20']].combinations()
+        expectedCheckStatus = status == HealthStatus.UP ? 'passing' : 'critical'
     }
 
     private static Map<String, ConsulServiceEntry> registeredServices(ConsulClient consulClient) {
         Mono.from(consulClient.findServices()).block()
+    }
+
+    private static String checkStatus(GenericContainer consul, String checkId) {
+        HttpClient client = HttpClient.create(new URL("http://${consul.host}:${consul.getMappedPort(8500)}"))
+        try {
+            Map<String, Map<String, Object>> checks = client.toBlocking().retrieve('/v1/agent/checks', Map)
+            return checks[checkId]?.Status
+        } finally {
+            client.close()
+        }
     }
 }

@@ -106,6 +106,8 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
 
             boolean passing = status.equals(HealthStatus.UP);
             String state = passing ? "passing" : "failure";
+            // a check recreated by re-registration starts in the state this heartbeat reports
+            String checkStatus = passing ? DEFAULT_CHECK_STATUS : ConsulCheckStatus.CRITICAL.toString();
             // send a request to /agent/check/pass/:check_id or /agent/check/fail/:check_id
             Publisher<HttpStatus> reportPublisher = passing
                 ? consulClient.pass(checkId)
@@ -120,18 +122,18 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
                     if (LOG.isWarnEnabled()) {
                         LOG.warn("Consul did not acknowledge the {} state of check [{}]. Attempting re-registration of instance [{}].", state, checkId, instance.getId());
                     }
-                    register(instance);
+                    register(instance, checkStatus);
                 }
-            }, throwable -> onReportError(instance, serviceId, checkId, state, throwable));
+            }, throwable -> onReportError(instance, serviceId, checkId, state, checkStatus, throwable));
         }
     }
 
-    private void onReportError(ServiceInstance instance, String serviceId, String checkId, String state, Throwable throwable) {
+    private void onReportError(ServiceInstance instance, String serviceId, String checkId, String state, String checkStatus, Throwable throwable) {
         if (isUnknownCheck(throwable)) {
             if (LOG.isWarnEnabled()) {
                 LOG.warn("Check [{}] is unknown to Consul. Attempting re-registration of instance [{}].", checkId, instance.getId());
             }
-            register(instance);
+            register(instance, checkStatus);
             return;
         }
 
@@ -145,7 +147,7 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
                 if (LOG.isInfoEnabled()) {
                     LOG.info("Instance [{}] no longer registered with Consul. Attempting re-registration.", instance.getId());
                 }
-                register(instance);
+                register(instance, checkStatus);
             }
         }, lookupError -> {
             if (LOG.isDebugEnabled()) {
@@ -202,6 +204,16 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
 
     @Override
     protected void register(ServiceInstance instance) {
+        register(instance, DEFAULT_CHECK_STATUS);
+    }
+
+    /**
+     * Registers the instance with its check in the given initial status.
+     *
+     * @param instance    The instance
+     * @param checkStatus The initial status of the check
+     */
+    private void register(ServiceInstance instance, String checkStatus) {
         ConsulConfiguration.ConsulRegistrationConfiguration registration = consulConfiguration.getRegistration();
         if (registration != null) {
             String applicationName = instance.getId();
@@ -217,7 +229,7 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
                     tags(instance, registration),
                     serviceId,
                     meta,
-                    createChecks(instance, registration, address));
+                    createChecks(instance, registration, address, checkStatus));
                 Publisher<HttpStatus> registerFlowable = consulClient.register(serviceEntry);
                 performRegistration("Consul", registration, instance, registerFlowable);
             }
@@ -255,10 +267,11 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
     @NonNull
     private List<ConsulCheck> createChecks(@NonNull ServiceInstance instance,
                                            ConsulConfiguration.@NonNull ConsulRegistrationConfiguration registration,
-                                           String address) {
+                                           String address,
+                                           String checkStatus) {
         ConsulConfiguration.ConsulRegistrationConfiguration.CheckConfiguration checkConfig = registration.getCheck();
         if (checkConfig.isEnabled()) {
-            return Collections.singletonList(createCheck(checkConfig, instance, registration, address));
+            return Collections.singletonList(createCheck(checkConfig, instance, registration, address, checkStatus));
         }
         return Collections.emptyList();
     }
@@ -286,12 +299,13 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
     private ConsulCheck createCheck(ConsulConfiguration.ConsulRegistrationConfiguration.@NonNull CheckConfiguration checkConfig,
                                     @NonNull ServiceInstance instance,
                                     ConsulConfiguration.@NonNull ConsulRegistrationConfiguration registration,
-                                    @Nullable String address) {
+                                    @Nullable String address,
+                                    String checkStatus) {
 
         ConsulCheck check = new ConsulCheck();
         check.setDeregisterCriticalServiceAfter(deregisterCriticalServiceAfterCheck(checkConfig));
         checkConfig.getId().ifPresent(check::setId);
-        check.setStatus(DEFAULT_CHECK_STATUS);
+        check.setStatus(checkStatus);
         checkConfig.getNotes().ifPresent(check::setNotes);
         if (heartbeatConfiguration.isEnabled() && !checkConfig.isHttp()) {
             check.setTtl(heartbeatConfiguration.getInterval().plus(Duration.ofSeconds(10)).toSeconds() + "s");
