@@ -23,12 +23,13 @@ import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Base class for token suppliers that log in to a Vault auth method with {@code POST /v1/auth/{path}/login}.
  *
- * <p>The client token returned by the first successful login is cached and reused. Leases are not renewed: the
- * token is intended for reading configuration at startup.</p>
+ * <p>The client token returned by the first successful login is cached and reused, and concurrent callers share a
+ * login in progress. Leases are not renewed: the token is intended for reading configuration at startup.</p>
  *
  * @author graemerocher
  * @since 5.3.0
@@ -38,6 +39,7 @@ public abstract class AbstractVaultLoginTokenSupplier implements VaultTokenSuppl
     private static final Logger LOG = LoggerFactory.getLogger(AbstractVaultLoginTokenSupplier.class);
 
     private final VaultAuthHttpClient authClient;
+    private final AtomicReference<@Nullable Mono<String>> pendingLogin = new AtomicReference<>();
     private volatile @Nullable String token;
 
     /**
@@ -53,7 +55,20 @@ public abstract class AbstractVaultLoginTokenSupplier implements VaultTokenSuppl
         if (cached != null) {
             return Mono.just(cached);
         }
-        return Mono.defer(this::login).doOnNext(t -> token = t);
+        return Mono.defer(() -> {
+            String current = token;
+            if (current != null) {
+                return Mono.just(current);
+            }
+            // callers share a login in progress: a second login could consume single-use credentials such as an
+            // AppRole secret ID. The pending login is cleared once it ends, so a failed login is retried.
+            Mono<String> login = Mono.defer(this::login)
+                .doOnNext(t -> token = t)
+                .doFinally(signal -> pendingLogin.set(null))
+                .cache();
+            Mono<String> pending = pendingLogin.compareAndExchange(null, login);
+            return pending != null ? pending : login;
+        });
     }
 
     /**
