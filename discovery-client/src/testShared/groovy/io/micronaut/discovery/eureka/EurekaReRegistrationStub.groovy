@@ -43,12 +43,15 @@ class EurekaReRegistrationStub {
     final AtomicInteger heartbeats = new AtomicInteger()
     final AtomicInteger statusUpdates = new AtomicInteger()
     final AtomicReference<String> status = new AtomicReference<>()
+    final AtomicReference<String> registeredStatus = new AtomicReference<>()
     final AtomicBoolean registered = new AtomicBoolean()
     final AtomicBoolean failRegistrations = new AtomicBoolean()
 
     @Post
     HttpResponse<?> register(String appId, @Body String instance) {
         registrations.incrementAndGet()
+        def matcher = instance =~ /"status"\s*:\s*"(\w+)"/
+        registeredStatus.set(matcher.find() ? matcher.group(1) : null)
         if (failRegistrations.get()) {
             return HttpResponse.serverError()
         }
