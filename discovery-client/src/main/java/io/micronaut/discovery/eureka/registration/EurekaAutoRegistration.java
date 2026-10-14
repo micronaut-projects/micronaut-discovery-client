@@ -32,6 +32,7 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.runtime.ApplicationConfiguration;
 import io.micronaut.runtime.server.EmbeddedServer;
 import jakarta.inject.Singleton;
+import org.jspecify.annotations.Nullable;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -98,7 +99,7 @@ public class EurekaAutoRegistration extends DiscoveryServiceAutoRegistration {
                         if (LOG.isWarnEnabled()) {
                             LOG.warn("Eureka did not acknowledge the heartbeat of instance [{}]. Attempting re-registration.", instance.getId());
                         }
-                        register(instance);
+                        register(instance, InstanceInfo.Status.UP);
                     }
                 }, throwable -> {
                     if (throwable instanceof HttpClientResponseException hcre) {
@@ -107,7 +108,7 @@ public class EurekaAutoRegistration extends DiscoveryServiceAutoRegistration {
                             if (LOG.isWarnEnabled()) {
                                 LOG.warn("Instance [{}] no longer registered with Eureka. Attempting re-registration.", instance.getId());
                             }
-                            register(instance);
+                            register(instance, InstanceInfo.Status.UP);
                             return;
                         }
                     }
@@ -154,9 +155,10 @@ public class EurekaAutoRegistration extends DiscoveryServiceAutoRegistration {
     }
 
     private void reRegisterForStatus(ServiceInstance instance, HealthStatus status) {
-        // the status was not recorded, so report it again with the next heartbeat
+        // register with the status being reported so an unhealthy instance is not advertised as UP,
+        // and report the status again with the next heartbeat in case the registration lost it
         this.lastStatus.compareAndSet(status, null);
-        register(instance);
+        register(instance, translateState(status));
     }
 
     /**
@@ -188,9 +190,22 @@ public class EurekaAutoRegistration extends DiscoveryServiceAutoRegistration {
 
     @Override
     protected void register(ServiceInstance instance) {
+        register(instance, null);
+    }
+
+    /**
+     * Registers the instance, with the given status when it is re-registered after Eureka lost it.
+     *
+     * @param instance The instance
+     * @param status   The status to register the instance with, or {@code null} to keep the configured one
+     */
+    private void register(ServiceInstance instance, InstanceInfo.@Nullable Status status) {
         EurekaConfiguration.EurekaRegistrationConfiguration registration = eurekaConfiguration.getRegistration();
         if (registration != null) {
             InstanceInfo instanceInfo = registration.getInstanceInfo();
+            if (status != null) {
+                instanceInfo.setStatus(status);
+            }
 
             if (!registration.isExplicitInstanceId()) {
                 instanceInfo.setInstanceId(idGenerator.generateId(environment, instance));

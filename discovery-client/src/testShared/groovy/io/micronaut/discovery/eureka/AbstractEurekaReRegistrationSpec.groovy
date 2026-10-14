@@ -115,6 +115,9 @@ abstract class AbstractEurekaReRegistrationSpec extends Specification {
             assert stub.registrations.get() == 2
             assert stub.registered.get()
         }
+
+        and: 'it is registered with the status being reported, not as UP'
+        stub.registeredStatus.get() == 'DOWN'
         // a DOWN heartbeat does not renew the lease
         stub.heartbeats.get() == 1
 
