@@ -82,6 +82,8 @@ public class VaultHealthIndicator implements HealthIndicator {
     public Publisher<HealthResult> getResult() {
         return Mono.from(client.health())
             .map(response -> toResult(response.code(), response.getBody().orElse(null)))
+            // the Micronaut Reactor HTTP client turns a 404 response into an empty result
+            .switchIfEmpty(Mono.fromSupplier(VaultHealthIndicator::noResponse))
             .onErrorResume(HttpClientResponseException.class, e -> {
                 HttpResponse<?> response = e.getResponse();
                 return Mono.just(toResult(response.code(), response.getBody(VaultHealthResponse.class).orElse(null)));
@@ -89,6 +91,13 @@ public class VaultHealthIndicator implements HealthIndicator {
             .onErrorResume(throwable -> Mono.just(HealthResult.builder(NAME, HealthStatus.DOWN)
                 .exception(throwable)
                 .build()));
+    }
+
+    private static HealthResult noResponse() {
+        Map<String, Object> details = new LinkedHashMap<>();
+        details.put("state", "unknown");
+        details.put("error", "Vault returned no health response");
+        return HealthResult.builder(NAME, HealthStatus.DOWN).details(details).build();
     }
 
     private static HealthResult toResult(int code, @Nullable VaultHealthResponse body) {
