@@ -15,16 +15,21 @@
  */
 package io.micronaut.discovery.consul
 
+import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.core.AppenderBase
 import io.micronaut.context.ApplicationContext
 import io.micronaut.discovery.consul.client.v1.ConsulClient
 import io.micronaut.discovery.consul.client.v1.ConsulServiceEntry
 import io.micronaut.discovery.consul.registration.ConsulAutoRegistration
+import io.micronaut.discovery.registration.AutoRegistration
 import io.micronaut.health.CurrentHealthStatus
 import io.micronaut.health.HealthStatus
 import io.micronaut.health.HeartbeatTask
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.ReactiveClientResultTransformer
 import io.micronaut.runtime.server.EmbeddedServer
+import org.slf4j.LoggerFactory
 import org.testcontainers.DockerClientFactory
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.Wait
@@ -34,11 +39,14 @@ import spock.lang.Requires
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
+import java.util.concurrent.CopyOnWriteArrayList
+
 /**
  * Verifies that a service re-registers with Consul after Consul lost the registration,
  * for example because the Consul agent was restarted. Consul 1.9 answers a heartbeat for an
  * unknown check with a 500, newer versions answer with a 404. The Micronaut Reactor HTTP
  * client turns a 404 response into an empty publisher, so subclasses run with and without it.
+ * Also verifies the de-registration that follows a failed fail-fast registration.
  */
 @Requires({ DockerClientFactory.instance().isDockerAvailable() })
 abstract class AbstractConsulReRegistrationSpec extends Specification {
@@ -118,6 +126,53 @@ abstract class AbstractConsulReRegistrationSpec extends Specification {
         where:
         [status, image] << [[HealthStatus.UP, HealthStatus.DOWN], ['consul:1.9.0', 'hashicorp/consul:1.20']].combinations()
         expectedCheckStatus = status == HealthStatus.UP ? 'passing' : 'critical'
+    }
+
+    void 'the service de-registers without blocking the event loop when a fail-fast registration fails'() {
+        given:
+        GenericContainer consul = new GenericContainer('hashicorp/consul:1.20')
+                .withExposedPorts(8500)
+                .waitingFor(Wait.forHttp('/v1/status/leader').forPort(8500).forStatusCode(200))
+        consul.start()
+        List<ILoggingEvent> events = new CopyOnWriteArrayList<>()
+        AppenderBase<ILoggingEvent> appender = new AppenderBase<ILoggingEvent>() {
+            @Override
+            protected void append(ILoggingEvent event) {
+                events << event
+            }
+        }
+        appender.start()
+        Logger logger = (Logger) LoggerFactory.getLogger(AutoRegistration)
+        logger.addAppender(appender)
+        PollingConditions conditions = new PollingConditions(timeout: 30, delay: 0.2)
+
+        when: 'Consul rejects the registration because a metadata key exceeds its length limit'
+        EmbeddedServer server = ApplicationContext.run(EmbeddedServer, [
+                'micronaut.application.name'            : SERVICE_NAME,
+                'consul.client.host'                    : consul.host,
+                'consul.client.port'                    : consul.getMappedPort(8500),
+                'consul.client.registration.fail-fast'  : true,
+                'consul.client.registration.retry-count': 1,
+                'consul.client.registration.retry-delay': '100ms',
+                'consul.client.registration.meta'       : [('k' * 129): 'value'],
+                'micronaut.heartbeat.initial-delay'     : '1h',
+                'micronaut.heartbeat.interval'          : '1h',
+                'micronaut.health.monitor.enabled'      : false,
+        ])
+
+        then: 'the failed registration stops the server, which de-registers the service'
+        conditions.eventually {
+            assert !server.running
+            // the context stops right after the server, so the de-registration may not reach Consul
+            assert events.any { it.formattedMessage.contains('De-registered service') || it.formattedMessage.contains('Error occurred de-registering service') }
+        }
+        events.any { it.formattedMessage.contains('Error occurred during service registration with Consul') }
+        !events.any { it.formattedMessage.contains('blocking') }
+
+        cleanup:
+        logger.detachAppender(appender)
+        server?.close()
+        consul?.stop()
     }
 
     private static Map<String, ConsulServiceEntry> registeredServices(ConsulClient consulClient) {
