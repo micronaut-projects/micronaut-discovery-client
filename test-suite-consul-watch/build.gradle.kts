@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     annotationProcessor(mn.micronaut.inject.java)
+    testAnnotationProcessor(mn.micronaut.inject.java)
 
     implementation(projects.micronautDiscoveryClient)
     implementation(mnTest.micronaut.test.junit5)

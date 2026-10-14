@@ -245,7 +245,7 @@ abstract sealed class AbstractWatcher<V> implements Watcher permits Configuratio
         final long maxDelayMs = watchConfiguration.getMaxRetryDelay().toMillis();
 
         // Exponential backoff: baseDelay * 2^(retryAttempt - 1), the exponent is bounded to avoid overflows
-        final long exponentialDelay = (long) (baseDelayMs * Math.pow(2, Math.min(retryAttempt - 1, 32)));
+        final long exponentialDelay = (long) ((double) baseDelayMs * Math.pow(2, Math.min(retryAttempt - 1, 32)));
         final long cappedDelay = Math.min(exponentialDelay, maxDelayMs);
 
         // Add jitter (±25%) to prevent thundering herd

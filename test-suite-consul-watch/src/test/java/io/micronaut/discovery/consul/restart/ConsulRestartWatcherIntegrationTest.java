@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.micronaut.discovery.consul.watch.watcher;
+package io.micronaut.discovery.consul.restart;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,6 +59,7 @@ class ConsulRestartWatcherIntegrationTest implements TestPropertyProvider {
     private static final Logger LOG = LoggerFactory.getLogger(ConsulRestartWatcherIntegrationTest.class);
     private static final String KV_PATH = "restart/application";
     private static final String RESTART_PATH = "restart";
+    private static final String CONSUL_CLI = "consul";
 
     private final int hostPort = findFreePort();
     private ConsulContainer consul;
@@ -99,7 +100,7 @@ class ConsulRestartWatcherIntegrationTest implements TestPropertyProvider {
     }
 
     @Test
-    void should_resume_watching_after_consul_restart() throws Exception {
+    void shouldResumeWatchingAfterConsulRestart() throws Exception {
         Awaitility.await()
             .atMost(10, SECONDS)
             .untilAsserted(() -> {
@@ -143,19 +144,22 @@ class ConsulRestartWatcherIntegrationTest implements TestPropertyProvider {
         Awaitility.await()
             .atMost(30, SECONDS)
             .ignoreExceptions()
-            .until(() -> consul.execInContainer("consul", "kv", "get", "-recurse").getExitCode() == 0);
+            .until(() -> consul.execInContainer(CONSUL_CLI, "kv", "get", "-recurse").getExitCode() == 0);
     }
 
-    private void putValue(final String value) throws Exception {
-        final var result = consul.execInContainer("consul", "kv", "put", KV_PATH, "restart.value: " + value);
+    private void putValue(final String value) throws IOException, InterruptedException {
+        final var result = consul.execInContainer(CONSUL_CLI, "kv", "put", KV_PATH, "restart.value: " + value);
         assertThat(result.getExitCode()).as(result.getStderr()).isZero();
     }
 
     private static void putValue(final ConsulContainer container, final String value) {
         try {
-            container.execInContainer("consul", "kv", "put", KV_PATH, "restart.value: " + value);
-        } catch (final Exception e) {
+            container.execInContainer(CONSUL_CLI, "kv", "put", KV_PATH, "restart.value: " + value);
+        } catch (final InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new IllegalStateException(e);
+        } catch (final IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 
