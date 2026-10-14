@@ -117,25 +117,9 @@ consul:
 
 A service is watched from its first lookup until the application context is closed, or until `idle-timeout` elapses without a lookup. The first lookup waits for the initial, non-blocking query of the watch for at most the read timeout of the Consul client (`consul.client.read-timeout`, `10s` by default) and otherwise falls back to a direct query; later lookups are answered from the cache without contacting Consul. The watch keeps a blocking query on `/v1/health/service/{service}` open, built from the same `passing`, `query-tags`, `filters`, `consistency-mode` and `datacenters` settings as a direct lookup, and follows the `X-Consul-Index` header of each response. While the watch of a service is failing, including when a blocking query times out, lookups of that service query Consul directly. After a failure the watch retries with a non-blocking query, so the cache is used again as soon as Consul answers. Closing the application context cancels every watch.
 
-When the watch observes that the instances of a service changed (an instance was registered or deregistered, or its address, tags, metadata or check status changed) it updates the cache and then publishes a api:discovery.consul.discovery.ServiceInstancesChangedEvent[] carrying the service ID, the previous instances and the current instances. The event is published on the `blocking` executor:
+When the watch observes that the instances of a service changed (an instance was registered or deregistered, or its address, tags, metadata or check status changed) it updates the cache and then publishes a api:discovery.consul.discovery.ServiceInstancesChangedEvent[] carrying the service ID, the previous instances and the current instances. The event is published on the `blocking` executor, so a listener that keeps the instances must make them safe to read from other threads:
 
-[source,java]
-----
-import io.micronaut.discovery.consul.discovery.ServiceInstancesChangedEvent;
-import io.micronaut.runtime.event.annotation.EventListener;
-import jakarta.inject.Singleton;
-
-@Singleton
-public class InventoryInstancesListener {
-
-    @EventListener
-    void onChange(ServiceInstancesChangedEvent event) {
-        if ("inventory".equals(event.getServiceId())) {
-            System.out.println("Inventory now has " + event.getInstances().size() + " instances");
-        }
-    }
-}
-----
+snippet::io.micronaut.discovery.docs.InventoryInstancesListener[tags="imports,class", project-base="test-suite-docs", title="Listening for Changes to the Instances of a Service"]
 
 The load balancers of `@Client` beans look instances up on each request, so they pick up changes as soon as the cache is updated. The watch plays the role of the catalog watch of Spring Cloud Consul and of the `refresh-period` cache of the SmallRye Stork Consul provider. Unlike the latter it learns of changes through blocking queries rather than periodic refreshes.
 
