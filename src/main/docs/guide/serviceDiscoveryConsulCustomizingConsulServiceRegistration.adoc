@@ -76,29 +76,6 @@ Keep in mind that the checks run on the Consul agent, so hosts such as `localhos
 
 To add, modify or remove checks in code, register a bean of type api:discovery.consul.registration.ConsulCheckCustomizer[]. Customizers are invoked every time the service registers, after the default check and the configured checks were created:
 
-.Adding a Consul Check Programmatically
-[source,java]
-----
-import io.micronaut.discovery.ServiceInstance;
-import io.micronaut.discovery.consul.client.v1.ConsulCheck;
-import io.micronaut.discovery.consul.registration.ConsulCheckCustomizer;
-import jakarta.inject.Singleton;
-
-import java.util.List;
-
-@Singleton
-class RedisCheckCustomizer implements ConsulCheckCustomizer {
-
-    @Override
-    public void customize(ServiceInstance instance, String serviceId, List<ConsulCheck> checks) {
-        ConsulCheck check = new ConsulCheck();
-        check.setId("service:" + serviceId + ":redis");
-        check.setName("redis");
-        check.setTcp("localhost:6379");
-        check.setInterval("10s");
-        checks.add(check);
-    }
-}
-----
+snippet::io.micronaut.discovery.docs.RedisCheckCustomizer[tags="imports,class", project-base="test-suite-docs", title="Adding a Consul Check Programmatically"]
 
 NOTE: The TTL heartbeat reports the health of the application to the default check, whose ID is the configured `consul.client.registration.check.id` or `service:<service id>`. Customizers must not change the ID of that check or remove it.
