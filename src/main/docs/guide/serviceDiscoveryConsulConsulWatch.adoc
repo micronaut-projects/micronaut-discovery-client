@@ -69,7 +69,7 @@ The following `consul.client.watch` properties control the watcher:
 |The log level (`TRACE`, `DEBUG`, `INFO`, `WARN` or `ERROR`) used when a watched KV path does not exist in Consul.
 |===
 
-==== Failure Handling
+== Failure Handling
 
 If a watch request fails, for example because the Consul agent is restarted or temporarily unreachable, the watcher logs a warning and retries the watch of that KV path using exponential backoff, starting from `retry-delay-ms` and capped at `max-retry-delay`. By default the watcher retries indefinitely, so it resumes watching once Consul is available again; the first query after a failure does not block, so changes made while Consul was unavailable are detected and a `RefreshEvent` is published. To give up after a number of attempts, as Micronaut Discovery Client 4.7.x did by default, set `max-retry-attempts` to a positive value: once the retries are exhausted, an error is logged and the watch of that KV path is stopped until the application restarts.
 
