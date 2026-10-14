@@ -241,26 +241,10 @@ micronaut:
 
 To obtain the token in another way, for example with an auth method that is not supported out of the box, register a bean that implements api:discovery.vault.config.auth.VaultTokenSupplier[]. A user-defined bean takes precedence over the built-in one. The api:discovery.vault.config.auth.VaultAuthHttpClient[] can be used to call any `auth/{path}/login` endpoint, and api:discovery.vault.config.auth.AbstractVaultLoginTokenSupplier[] provides a base class that logs in once and caches the client token.
 
-[source,java]
-----
-@Singleton
-@BootstrapContextCompatible // <1>
-public class GcpVaultTokenSupplier implements VaultTokenSupplier {
-
-    private final VaultAuthHttpClient authClient;
-
-    public GcpVaultTokenSupplier(VaultAuthHttpClient authClient) {
-        this.authClient = authClient;
-    }
-
-    @Override
-    public Publisher<String> getToken() {
-        return Mono.from(authClient.login("gcp", Map.of("role", "my-app", "jwt", signedJwt())))
-            .map(response -> response.auth().clientToken());
-    }
-}
-----
+snippet::io.micronaut.discovery.docs.GcpVaultTokenSupplier[tags="imports,class", project-base="test-suite-docs", title="A token supplier for the Vault GCP auth method"]
 <1> Required when the legacy bootstrap configuration client is used.
+<2> Reads the signed JWT on every login, for example from a file kept up to date by the platform.
+<3> Logs in to the auth method mounted at `auth/gcp`; the client token of the response is the Vault token.
 
 During migration, the older bootstrap configuration is still available:
 

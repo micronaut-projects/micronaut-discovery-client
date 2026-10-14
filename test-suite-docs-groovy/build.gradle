@@ -12,6 +12,7 @@ dependencies {
     testImplementation mn.micronaut.http.server.netty
     testImplementation mn.micronaut.http.client
     testImplementation mnTest.micronaut.test.spock
+    testImplementation mnReactor.micronaut.reactor
 
     testRuntimeOnly mnSerde.micronaut.serde.jackson
     testRuntimeOnly mnTest.junit.platform.launcher
