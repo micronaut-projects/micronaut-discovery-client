@@ -28,7 +28,8 @@ import org.reactivestreams.Publisher;
 
 /**
  * Sends the configured Vault Enterprise namespace as the {@code X-Vault-Namespace} header on requests made by
- * clients annotated with {@link VaultClientFilterMatcher}.
+ * clients annotated with {@link VaultClientFilterMatcher}. It matches every path, because the Vault URI may include a
+ * context path, for example behind a reverse proxy.
  *
  * <p>Implemented as an {@link HttpClientFilter} bean rather than an annotated {@code @ClientFilter} so that it is
  * also applied in the importer child context, which does not process executable methods at startup.</p>
@@ -37,7 +38,7 @@ import org.reactivestreams.Publisher;
  * @since 5.3.0
  */
 @VaultClientFilterMatcher
-@Filter(patterns = "/v1/**")
+@Filter(patterns = "/**")
 @BootstrapContextCompatible
 @Requires(property = VaultClientConfiguration.PREFIX + ".namespace")
 @Internal
