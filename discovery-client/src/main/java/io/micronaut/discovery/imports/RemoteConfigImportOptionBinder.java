@@ -103,30 +103,34 @@ public final class RemoteConfigImportOptionBinder {
         Map<String, Object> bound = new LinkedHashMap<>();
         bindUserInfo(connectionString, protocol, bound);
         for (Map.Entry<String, String> option : connectionString.options().entrySet()) {
-            String key = option.getKey();
-            String normalizedCommon = COMMON_OPTIONS.get(key);
-            if (normalizedCommon != null) {
-                if (RETRY_ATTEMPTS.equals(key)) {
-                    bound.put(normalizedCommon, option.getValue());
-                } else {
-                    bound.computeIfAbsent(normalizedCommon, ignored -> option.getValue());
-                }
-                continue;
-            }
+            bindOption(connectionString, protocol, providerOptions, option.getKey(), option.getValue(), bound);
+        }
 
-            if (PROVIDER_SPRING_CLOUD.equals(protocol) && isSpringCloudHeaderOption(key)) {
-                bound.put(SPRING_CLOUD_CONFIG_HEADERS_PREFIX + key.substring(SPRING_CLOUD_HEADER_OPTION_PREFIX.length()), option.getValue());
-                continue;
-            }
+        return bound;
+    }
 
+    private void bindOption(ConnectionString connectionString,
+                            String protocol,
+                            Map<String, String> providerOptions,
+                            String key,
+                            String value,
+                            Map<String, Object> bound) {
+        String normalizedCommon = COMMON_OPTIONS.get(key);
+        if (normalizedCommon != null) {
+            if (RETRY_ATTEMPTS.equals(key)) {
+                bound.put(normalizedCommon, value);
+            } else {
+                bound.computeIfAbsent(normalizedCommon, ignored -> value);
+            }
+        } else if (PROVIDER_SPRING_CLOUD.equals(protocol) && isSpringCloudHeaderOption(key)) {
+            bound.put(SPRING_CLOUD_CONFIG_HEADERS_PREFIX + key.substring(SPRING_CLOUD_HEADER_OPTION_PREFIX.length()), value);
+        } else {
             String propertyName = providerOptions.get(key);
             if (propertyName == null) {
                 throw unsupportedOption(connectionString, key, providerOptions.keySet());
             }
-            bound.put(propertyName, option.getValue());
+            bound.put(propertyName, value);
         }
-
-        return bound;
     }
 
     private void bindUserInfo(ConnectionString connectionString, String protocol, Map<String, Object> bound) {
