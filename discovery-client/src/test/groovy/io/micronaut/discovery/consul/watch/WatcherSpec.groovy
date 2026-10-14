@@ -8,8 +8,8 @@ import ch.qos.logback.core.read.ListAppender
 import io.micronaut.context.env.PropertySourceReader
 import io.micronaut.context.env.yaml.YamlPropertySourceLoader
 import io.micronaut.discovery.consul.client.v1.KeyValue
-import io.micronaut.discovery.consul.client.v1.blockingqueries.BlockingQueriesConfiguration
 import io.micronaut.discovery.consul.client.v1.blockingqueries.BlockedQueriesConsulClient
+import io.micronaut.discovery.consul.client.v1.blockingqueries.BlockingQueriesConfiguration
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.http.client.exceptions.ReadTimeoutException
@@ -26,8 +26,9 @@ class WatcherSpec extends Specification {
     private static Logger CLASS_LOGGER = (Logger) LoggerFactory.getLogger(AbstractWatcher.class)
 
     BlockedQueriesConsulClient consulClient = Mock()
-    BlockingQueriesConfiguration watchConfiguration = Mock()
+    BlockingQueriesConfiguration blockingQueriesConfiguration = Mock()
     PropertiesChangeHandler propertiesChangeHandler = Mock()
+    WatchConfiguration watchConfiguration = Mock()
 
     PropertySourceReader propertySourceReader = new YamlPropertySourceLoader()
     Base64.Encoder base64Encoder = Base64.getEncoder()
@@ -46,7 +47,8 @@ class WatcherSpec extends Specification {
             listAppender = null
         }
 
-        if (watcher != null && watcher.isWatching()) {
+        if (watcher != null) {
+            // stop pending retries and polls, a WARN is logged if the watcher was not started
             watcher.stop()
         }
     }
@@ -55,7 +57,7 @@ class WatcherSpec extends Specification {
         given:
         def conditions = new AsyncConditions()
 
-        watcher = new ConfigurationsWatcher(List.of("path/to/yaml"), consulClient, watchConfiguration, propertiesChangeHandler, propertySourceReader)
+        watcher = new ConfigurationsWatcher(List.of("path/to/yaml"), consulClient, blockingQueriesConfiguration, propertiesChangeHandler, propertySourceReader, watchConfiguration)
 
         def keyValue = new KeyValue(1234, "path/to/yaml", base64Encoder.encodeToString("foo.bar: value".getBytes()))
         def newKeyValue = new KeyValue(4567, "path/to/yaml", base64Encoder.encodeToString("foo.bar: value_2".getBytes()))
@@ -68,7 +70,7 @@ class WatcherSpec extends Specification {
                         .thenReturn(List.of(newKeyValue)) // change
         ]
 
-        watchConfiguration.getDelayDuration() >> Duration.ZERO
+        blockingQueriesConfiguration.getDelayDuration() >> Duration.ZERO
 
         1 * propertiesChangeHandler.handleChanges(
                 "path/to/yaml",
@@ -100,7 +102,7 @@ class WatcherSpec extends Specification {
 
     void "test that Configuration handle null KV"() {
         given:
-        watcher = new ConfigurationsWatcher(List.of("path/to/yaml"), consulClient, watchConfiguration, propertiesChangeHandler, propertySourceReader)
+        watcher = new ConfigurationsWatcher(List.of("path/to/yaml"), consulClient, blockingQueriesConfiguration, propertiesChangeHandler, propertySourceReader, watchConfiguration)
 
         when:
         def value = watcher.readValue(null)
@@ -113,7 +115,7 @@ class WatcherSpec extends Specification {
         given:
         def conditions = new AsyncConditions()
 
-        watcher = new NativeWatcher(List.of("path/to/"), consulClient, watchConfiguration, propertiesChangeHandler)
+        watcher = new NativeWatcher(List.of("path/to/"), consulClient, blockingQueriesConfiguration, propertiesChangeHandler, watchConfiguration)
 
         def previousKeyValue1 = new KeyValue(12, "path/to/foo.bar", base64Encoder.encodeToString("value_a".getBytes()))
         def previousKeyValue2 = new KeyValue(34, "path/to/other.key", base64Encoder.encodeToString("value_b".getBytes()))
@@ -134,7 +136,7 @@ class WatcherSpec extends Specification {
         _ * consulClient.watchValues("path/to/", true, 78) >> Mono.delay(Duration.ofSeconds(10))
                 .thenReturn(nextKvs) // no change
 
-        watchConfiguration.getDelayDuration() >> Duration.ZERO
+        blockingQueriesConfiguration.getDelayDuration() >> Duration.ZERO
 
         1 * propertiesChangeHandler.handleChanges(
                 "path/to/",
@@ -166,11 +168,11 @@ class WatcherSpec extends Specification {
 
     void "test that Native watcher uses delimited recursive path for namespace watch"() {
         given:
-        watcher = new NativeWatcher(List.of("path/to/application"), consulClient, watchConfiguration, propertiesChangeHandler)
+        watcher = new NativeWatcher(List.of("path/to/application"), consulClient, blockingQueriesConfiguration, propertiesChangeHandler, watchConfiguration)
         def keyValue = new KeyValue(1234, "path/to/application/message", base64Encoder.encodeToString("value".getBytes()))
 
         1 * consulClient.watchValues("path/to/application/", true, null) >> Mono.just(List.of(keyValue))
-        _ * watchConfiguration.getDelayDuration() >> Duration.ofSeconds(5)
+        _ * blockingQueriesConfiguration.getDelayDuration() >> Duration.ofSeconds(5)
 
         when:
         watcher.start()
@@ -181,7 +183,7 @@ class WatcherSpec extends Specification {
 
     void "test that Native handle null KV"() {
         given:
-        watcher = new NativeWatcher(List.of("path/to/yaml"), consulClient, watchConfiguration, propertiesChangeHandler)
+        watcher = new NativeWatcher(List.of("path/to/yaml"), consulClient, blockingQueriesConfiguration, propertiesChangeHandler, watchConfiguration)
 
         when:
         def value = watcher.readValue(null)
@@ -198,14 +200,15 @@ class WatcherSpec extends Specification {
         CLASS_LOGGER.addAppender(listAppender)
         CLASS_LOGGER.setLevel(Level.ERROR)
 
-        watcher = new ConfigurationsWatcher(List.of("path/to/global_error"), consulClient, watchConfiguration, propertiesChangeHandler, propertySourceReader)
+        watcher = new ConfigurationsWatcher(List.of("path/to/global_error"), consulClient, blockingQueriesConfiguration, propertiesChangeHandler, propertySourceReader, watchConfiguration)
 
         def keyValue = new KeyValue(0, "path/to/global_error", "")
         def newKeyValue = new KeyValue(1, "path/to/global_error", "incorrect data")
         1 * consulClient.watchValues("path/to/global_error", false, null) >> Mono.just(List.of(keyValue)) // init
         1 * consulClient.watchValues("path/to/global_error", false, 0) >> Mono.just(List.of(newKeyValue)) // change
 
-        watchConfiguration.getDelayDuration() >> Duration.ZERO
+        blockingQueriesConfiguration.getDelayDuration() >> Duration.ZERO
+        watchConfiguration.getMaxRetryAttempts() >> 0
 
         when:
         watcher.start()
@@ -214,7 +217,7 @@ class WatcherSpec extends Specification {
         conditions.eventually {
             assert listAppender.list.size() == 1
             def loggingEvent = listAppender.list.get(0)
-            assert loggingEvent.getFormattedMessage() == "Watching kvPath=path/to/global_error failed"
+            assert loggingEvent.getFormattedMessage() == "Max retry attempts 0 reached, stopping watching path=path/to/global_error"
             with((ThrowableProxy) loggingEvent.getThrowableProxy()) {
                 def throwable = it.getThrowable()
                 assert throwable instanceof IllegalArgumentException
@@ -223,32 +226,36 @@ class WatcherSpec extends Specification {
         }
 
         0 * propertiesChangeHandler._
+        0 * watchConfiguration.getRetryDelayMs()
     }
 
-    void "test that client NOT_FOUND errors are handled"() {
+    void "test that client NOT_FOUND errors are handled with configured Log Level"() {
         given:
         listAppender = new ListAppender<ILoggingEvent>()
         listAppender.start()
         CLASS_LOGGER.addAppender(listAppender)
-        CLASS_LOGGER.setLevel(Level.TRACE)
+        CLASS_LOGGER.setLevel(Level.WARN)
 
-        watcher = new ConfigurationsWatcher(List.of("path/to/NOT_FOUND"), consulClient, watchConfiguration, propertiesChangeHandler, propertySourceReader)
+        watcher = new ConfigurationsWatcher(List.of("path/to/NOT_FOUND"), consulClient, blockingQueriesConfiguration, propertiesChangeHandler, propertySourceReader, watchConfiguration)
 
         def exception = Mock(HttpClientResponseException)
-        1 * exception.getStatus() >> HttpStatus.NOT_FOUND
-        1 * consulClient.watchValues("path/to/NOT_FOUND", false, null) >> Mono.error(exception)
-        watchConfiguration.getDelayDuration() >> Duration.ZERO
+        _ * exception.getStatus() >> HttpStatus.NOT_FOUND
+        (2.._) * consulClient.watchValues("path/to/NOT_FOUND", false, null) >> Mono.error(exception)
+        blockingQueriesConfiguration.getDelayDuration() >> Duration.ZERO
+        watchConfiguration.getMaxRetryDelay() >> Duration.ofMillis(50)
+        watchConfiguration.getKvNotFoundLogLevel() >> org.slf4j.event.Level.WARN
 
         when:
         watcher.start()
 
-        then:
+        then: "the missing path keeps being polled, but is logged only once"
+        Thread.sleep(500)
         def logs = listAppender.list.stream()
-                .filter(event -> Level.TRACE == event.getLevel())
+                .filter(event -> Level.WARN == event.getLevel())
                 .toList()
         logs.size() == 1
         def loggingEvent = logs.get(0)
-        loggingEvent.getFormattedMessage() == "No KV found with kvPath=path/to/NOT_FOUND"
+        loggingEvent.getFormattedMessage() == "No KV found with kvPath=path/to/NOT_FOUND, checking again every 50ms"
         ((ThrowableProxy) loggingEvent.getThrowableProxy()) == null
 
         and:
@@ -263,12 +270,13 @@ class WatcherSpec extends Specification {
         CLASS_LOGGER.addAppender(listAppender)
         CLASS_LOGGER.setLevel(Level.ERROR)
 
-        watcher = new ConfigurationsWatcher(List.of("path/to/http_error"), consulClient, watchConfiguration, propertiesChangeHandler, propertySourceReader)
+        watcher = new ConfigurationsWatcher(List.of("path/to/http_error"), consulClient, blockingQueriesConfiguration, propertiesChangeHandler, propertySourceReader, watchConfiguration)
 
         def exception = Mock(HttpClientResponseException)
         1 * exception.getStatus() >> HttpStatus.INTERNAL_SERVER_ERROR
         1 * consulClient.watchValues("path/to/http_error", false, null) >> Mono.error(exception)
-        watchConfiguration.getDelayDuration() >> Duration.ZERO
+        blockingQueriesConfiguration.getDelayDuration() >> Duration.ZERO
+        watchConfiguration.getMaxRetryAttempts() >> 0
 
         when:
         watcher.start()
@@ -280,13 +288,14 @@ class WatcherSpec extends Specification {
                     .toList()
             assert logs.size() == 1
             def loggingEvent = logs.get(0)
-            assert loggingEvent.getFormattedMessage() == "Watching kvPath=path/to/http_error failed"
+            assert loggingEvent.getFormattedMessage() == "Max retry attempts 0 reached, stopping watching path=path/to/http_error"
             assert ((ThrowableProxy) loggingEvent.getThrowableProxy()) != null
             assert ((ThrowableProxy) loggingEvent.getThrowableProxy()).getThrowable() == exception
         }
 
         and:
         0 * propertiesChangeHandler._
+        0 * watchConfiguration.getRetryDelayMs()
     }
 
     void "test that client timeout errors are handled"() {
@@ -296,11 +305,11 @@ class WatcherSpec extends Specification {
         CLASS_LOGGER.addAppender(listAppender)
         CLASS_LOGGER.setLevel(Level.WARN)
 
-        watcher = new ConfigurationsWatcher(List.of("path/to/timeout"), consulClient, watchConfiguration, propertiesChangeHandler, propertySourceReader)
+        watcher = new ConfigurationsWatcher(List.of("path/to/timeout"), consulClient, blockingQueriesConfiguration, propertiesChangeHandler, propertySourceReader, watchConfiguration)
 
         def exception = ReadTimeoutException.TIMEOUT_EXCEPTION
         2 * consulClient.watchValues("path/to/timeout", false, null) >> Mono.error(exception)
-        _ * watchConfiguration.getDelayDuration() >>> [Duration.ZERO, Duration.ofSeconds(5), Duration.ofSeconds(5)]
+        _ * blockingQueriesConfiguration.getDelayDuration() >>> [Duration.ZERO, Duration.ofSeconds(5), Duration.ofSeconds(5)]
 
         when:
         watcher.start()
@@ -327,11 +336,12 @@ class WatcherSpec extends Specification {
         CLASS_LOGGER.addAppender(listAppender)
         CLASS_LOGGER.setLevel(Level.ERROR)
 
-        watcher = new ConfigurationsWatcher(List.of("path/to/error_other"), consulClient, watchConfiguration, propertiesChangeHandler, propertySourceReader)
+        watcher = new ConfigurationsWatcher(List.of("path/to/error_other"), consulClient, blockingQueriesConfiguration, propertiesChangeHandler, propertySourceReader, watchConfiguration)
 
         def exception = new RuntimeException("boom")
         1 * consulClient.watchValues("path/to/error_other", false, null) >> Mono.error(exception)
-        watchConfiguration.getDelayDuration() >> Duration.ZERO
+        blockingQueriesConfiguration.getDelayDuration() >> Duration.ZERO
+        watchConfiguration.getMaxRetryAttempts() >> 0
 
         when:
         watcher.start()
@@ -343,17 +353,18 @@ class WatcherSpec extends Specification {
                 .toList()
         logs.size() == 1
         def loggingEvent = logs.get(0)
-        loggingEvent.getFormattedMessage() == "Watching kvPath=path/to/error_other failed"
+        loggingEvent.getFormattedMessage() == "Max retry attempts 0 reached, stopping watching path=path/to/error_other"
         ((ThrowableProxy) loggingEvent.getThrowableProxy()) != null
         ((ThrowableProxy) loggingEvent.getThrowableProxy()).getThrowable() == exception
 
         and:
         0 * propertiesChangeHandler._
+        0 * watchConfiguration.getRetryDelayMs()
     }
 
     void "test that an Exception is thrown when Watcher is already started"() {
         given:
-        watcher = new ConfigurationsWatcher(List.of(), consulClient, watchConfiguration, propertiesChangeHandler, propertySourceReader)
+        watcher = new ConfigurationsWatcher(List.of(), consulClient, blockingQueriesConfiguration, propertiesChangeHandler, propertySourceReader, watchConfiguration)
 
         when:
         watcher.start()
@@ -365,7 +376,7 @@ class WatcherSpec extends Specification {
 
         and:
         0 * consulClient._
-        0 * watchConfiguration._
+        0 * blockingQueriesConfiguration._
         0 * propertiesChangeHandler._
     }
 
@@ -375,11 +386,11 @@ class WatcherSpec extends Specification {
         listAppender.start()
         CLASS_LOGGER.addAppender(listAppender)
 
-        watcher = new ConfigurationsWatcher(List.of("path/to/yaml"), consulClient, watchConfiguration, propertiesChangeHandler, propertySourceReader)
+        watcher = new ConfigurationsWatcher(List.of("path/to/yaml"), consulClient, blockingQueriesConfiguration, propertiesChangeHandler, propertySourceReader, watchConfiguration)
 
         def exception = new RuntimeException("boom")
         1 * consulClient.watchValues("path/to/yaml", false, null) >> { throw exception }
-        watchConfiguration.getDelayDuration() >> Duration.ZERO
+        blockingQueriesConfiguration.getDelayDuration() >> Duration.ZERO
 
         when:
         watcher.start()
@@ -406,7 +417,7 @@ class WatcherSpec extends Specification {
         CLASS_LOGGER.addAppender(listAppender)
         CLASS_LOGGER.setLevel(Level.WARN)
 
-        watcher = new ConfigurationsWatcher(List.of(), consulClient, watchConfiguration, propertiesChangeHandler, propertySourceReader)
+        watcher = new ConfigurationsWatcher(List.of(), consulClient, blockingQueriesConfiguration, propertiesChangeHandler, propertySourceReader, watchConfiguration)
 
         when:
         watcher.stop()
@@ -421,20 +432,20 @@ class WatcherSpec extends Specification {
 
         and:
         0 * consulClient._
-        0 * watchConfiguration._
+        0 * blockingQueriesConfiguration._
         0 * propertiesChangeHandler._
     }
 
     void "test that stopping Watcher dispose all subscriptions"() {
         given:
-        watcher = new ConfigurationsWatcher(List.of("path/to/yaml"), consulClient, watchConfiguration, propertiesChangeHandler, propertySourceReader)
+        watcher = new ConfigurationsWatcher(List.of("path/to/yaml"), consulClient, blockingQueriesConfiguration, propertiesChangeHandler, propertySourceReader, watchConfiguration)
         def keyValue = new KeyValue(1234, "path/to/yaml", base64Encoder.encodeToString("foo.bar: value".getBytes()))
 
         // fixme mock result to check the dispose call ?
         1 * consulClient.watchValues("path/to/yaml", false, null) >> Mono.delay(Duration.ofMillis(200))
                 .thenReturn(List.of(keyValue))
 
-        watchConfiguration.getDelayDuration() >> Duration.ZERO
+        blockingQueriesConfiguration.getDelayDuration() >> Duration.ZERO
 
         when:
         watcher.start()
@@ -443,5 +454,195 @@ class WatcherSpec extends Specification {
         then:
         0 * propertiesChangeHandler._
         // fixme check that Disposable#dispose() is called
+    }
+
+    void "test that watch is retry when an error occurs"() {
+        given:
+        def conditions = new AsyncConditions()
+
+        watcher = new ConfigurationsWatcher(List.of("path/to/yaml"), consulClient, blockingQueriesConfiguration, propertiesChangeHandler, propertySourceReader, watchConfiguration)
+
+        def exception = Mock(HttpClientResponseException)
+        2 * exception.getStatus() >> HttpStatus.INTERNAL_SERVER_ERROR
+        def keyValue = new KeyValue(1234, "path/to/yaml", base64Encoder.encodeToString("foo.bar: value".getBytes()))
+        def newKeyValue = new KeyValue(4567, "path/to/yaml", base64Encoder.encodeToString("foo.bar: value_2".getBytes()))
+
+        2 * consulClient.watchValues("path/to/yaml", false, null) >> Mono.error(exception)
+        1 * consulClient.watchValues("path/to/yaml", false, null) >> Mono.just(List.of(keyValue)) // init
+        2 * consulClient.watchValues("path/to/yaml", false, 1234) >>> [
+                Mono.delay(Duration.ofMillis(200))
+                        .thenReturn(List.of(keyValue)), // no change
+                Mono.delay(Duration.ofMillis(200))
+                        .thenReturn(List.of(newKeyValue)) // change
+        ]
+
+        blockingQueriesConfiguration.getDelayDuration() >> Duration.ZERO
+        watchConfiguration.getMaxRetryAttempts() >> 2
+        watchConfiguration.getRetryDelayMs() >> 200
+        watchConfiguration.getMaxRetryDelay() >> Duration.ofSeconds(30)
+
+        1 * propertiesChangeHandler.handleChanges(
+                "path/to/yaml",
+                {
+                    Map<String, Object> previous ->
+                        conditions.evaluate {
+                            verifyAll {
+                                previous.size() == 1
+                                previous.get("foo.bar") == "value"
+                            }
+                        }
+                },
+                {
+                    Map<String, Object> next ->
+                        conditions.evaluate {
+                            verifyAll {
+                                next.size() == 1
+                                next.get("foo.bar") == "value_2"
+                            }
+                        }
+                })
+
+        when:
+        watcher.start()
+
+        then:
+        conditions.await(5)
+    }
+
+    void "test that error is handled when max retries is reached"() {
+        given:
+        listAppender = new ListAppender<ILoggingEvent>()
+        listAppender.start()
+        CLASS_LOGGER.addAppender(listAppender)
+        CLASS_LOGGER.setLevel(Level.WARN)
+
+        watcher = new ConfigurationsWatcher(List.of("path/to/too_much_error"), consulClient, blockingQueriesConfiguration, propertiesChangeHandler, propertySourceReader, watchConfiguration)
+
+        def exception = Mock(HttpClientResponseException)
+        4 * exception.getStatus() >> HttpStatus.INTERNAL_SERVER_ERROR
+        4 * consulClient.watchValues("path/to/too_much_error", false, null) >> Mono.error(exception)
+        blockingQueriesConfiguration.getDelayDuration() >> Duration.ZERO
+        watchConfiguration.getMaxRetryAttempts() >> 3
+        watchConfiguration.getRetryDelayMs() >> 50
+        watchConfiguration.getMaxRetryDelay() >> Duration.ofSeconds(30)
+
+        when:
+        watcher.start()
+
+        then:
+        new PollingConditions(timeout: 5).eventually {
+            assert listAppender.list.stream().filter(event -> Level.ERROR == event.getLevel()).count() == 1
+        }
+
+        def retryLogs = listAppender.list.stream()
+                .filter(event -> Level.WARN == event.getLevel())
+                .toList()
+        retryLogs.size() == 3
+
+        final def delays = new ArrayList<Long>()
+        for (int i = 0; i < 3; i++) {
+            def iLoggingEvent = retryLogs.get(i)
+            assert iLoggingEvent.getMessage() == "Error watching kvPath={}, retrying watch ({}/{}) after delay={}ms: {}"
+            def array = iLoggingEvent.getArgumentArray()
+            assert array.size() == 5
+            assert array[0] == "path/to/too_much_error"
+            assert array[1] == i + 1
+            assert array[2] == 3
+            delays.add(array[3] as Long)
+        }
+        delays[0] < delays[1]
+        delays[1] < delays[2]
+
+        def errorLogs = listAppender.list.stream()
+                .filter(event -> Level.ERROR == event.getLevel())
+                .toList()
+        errorLogs.size() == 1
+        def loggingEvent = errorLogs.get(0)
+        loggingEvent.getFormattedMessage() == "Max retry attempts 3 reached, stopping watching path=path/to/too_much_error"
+        ((ThrowableProxy) loggingEvent.getThrowableProxy()) != null
+        ((ThrowableProxy) loggingEvent.getThrowableProxy()).getThrowable() == exception
+
+        and:
+        0 * propertiesChangeHandler._
+    }
+
+    void "test that watch keeps retrying by default and resumes once Consul is back"() {
+        given:
+        def conditions = new AsyncConditions()
+
+        watcher = new ConfigurationsWatcher(List.of("path/to/outage"), consulClient, blockingQueriesConfiguration, propertiesChangeHandler, propertySourceReader, watchConfiguration)
+
+        def exception = new RuntimeException("Connection refused")
+        def keyValue = new KeyValue(1234, "path/to/outage", base64Encoder.encodeToString("foo.bar: value".getBytes()))
+        def newKeyValue = new KeyValue(12, "path/to/outage", base64Encoder.encodeToString("foo.bar: value_2".getBytes()))
+
+        // Consul goes down while blocking on the known index
+        1 * consulClient.watchValues("path/to/outage", false, 1234) >> Mono.error(exception)
+        // more failures than the 4.7.x default of 3 retries, the index is reset as Consul may have been recreated
+        8 * consulClient.watchValues("path/to/outage", false, null) >>> [
+                Mono.just(List.of(keyValue)), // init
+                Mono.error(exception),
+                Mono.error(exception),
+                Mono.error(exception),
+                Mono.error(exception),
+                Mono.error(exception),
+                Mono.error(exception),
+                Mono.just(List.of(newKeyValue)) // Consul is back, with a lower index
+        ]
+        _ * consulClient.watchValues("path/to/outage", false, 12) >> Mono.never()
+
+        blockingQueriesConfiguration.getDelayDuration() >> Duration.ZERO
+        watchConfiguration.getMaxRetryAttempts() >> WatchConfiguration.DEFAULT_MAX_RETRIES
+        watchConfiguration.getRetryDelayMs() >> 5
+        watchConfiguration.getMaxRetryDelay() >> Duration.ofMillis(20)
+
+        1 * propertiesChangeHandler.handleChanges(
+                "path/to/outage",
+                { Map<String, Object> previous -> conditions.evaluate { assert previous == ["foo.bar": "value"] } },
+                { Map<String, Object> next -> conditions.evaluate { assert next == ["foo.bar": "value_2"] } })
+
+        when:
+        watcher.start()
+
+        then:
+        conditions.await(5)
+    }
+
+    void "test that a missing KV path keeps being watched once created"() {
+        given:
+        def conditions = new AsyncConditions()
+
+        watcher = new ConfigurationsWatcher(List.of("path/to/created_later"), consulClient, blockingQueriesConfiguration, propertiesChangeHandler, propertySourceReader, watchConfiguration)
+
+        def exception = Mock(HttpClientResponseException)
+        _ * exception.getStatus() >> HttpStatus.NOT_FOUND
+        def keyValue = new KeyValue(1234, "path/to/created_later", base64Encoder.encodeToString("foo.bar: value".getBytes()))
+        def newKeyValue = new KeyValue(4567, "path/to/created_later", base64Encoder.encodeToString("foo.bar: value_2".getBytes()))
+
+        // the path does not exist yet, then is created
+        3 * consulClient.watchValues("path/to/created_later", false, null) >>> [
+                Mono.error(exception),
+                Mono.error(exception),
+                Mono.just(List.of(keyValue))
+        ]
+        1 * consulClient.watchValues("path/to/created_later", false, 1234) >> Mono.just(List.of(newKeyValue))
+        _ * consulClient.watchValues("path/to/created_later", false, 4567) >> Mono.never()
+
+        blockingQueriesConfiguration.getDelayDuration() >> Duration.ZERO
+        watchConfiguration.getMaxRetryDelay() >> Duration.ofMillis(20)
+        watchConfiguration.getKvNotFoundLogLevel() >> org.slf4j.event.Level.INFO
+
+        // the creation itself is not published as no PropertySource has been loaded at startup, but later changes are
+        1 * propertiesChangeHandler.handleChanges(
+                "path/to/created_later",
+                { Map<String, Object> previous -> conditions.evaluate { assert previous == ["foo.bar": "value"] } },
+                { Map<String, Object> next -> conditions.evaluate { assert next == ["foo.bar": "value_2"] } })
+
+        when:
+        watcher.start()
+
+        then:
+        conditions.await(5)
+        watcher.isWatching()
     }
 }

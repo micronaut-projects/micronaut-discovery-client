@@ -15,10 +15,11 @@ class WatchFactorySpec extends Specification {
 
     Environment environment = Mock()
     BlockedQueriesConsulClient consulClient = Mock()
-    BlockingQueriesConfiguration watchConfiguration = Mock()
+    BlockingQueriesConfiguration blockingQueriesConfiguration = Mock()
     PropertiesChangeHandler propertiesChangeHandler = Mock()
+    WatchConfiguration watchConfiguration = Mock()
 
-    WatchFactory watchFactory = new WatchFactory(environment, consulClient, watchConfiguration, propertiesChangeHandler)
+    WatchFactory watchFactory = new WatchFactory(environment, consulClient, blockingQueriesConfiguration, propertiesChangeHandler, watchConfiguration)
 
     void "test that all required KV paths are watched"() {
         given:

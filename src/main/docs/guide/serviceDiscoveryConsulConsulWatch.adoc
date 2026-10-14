@@ -28,6 +28,9 @@ consul:
       path: /config
     watch:
       enabled: true
+      retry-delay-ms: 500
+      max-retry-delay: 30s
+      kv-not-found-log-level: WARN
     blocking-queries:
       max-wait-duration: 10m
       delay-duration: 50ms
@@ -39,3 +42,49 @@ Formats supported are
 - `JSON`
 - `PROPERTIES`
 - `YAML`
+
+The following `consul.client.watch` properties control the watcher:
+
+|===
+|Property |Default |Description
+
+|`enabled`
+|`false`
+|Whether the watcher is enabled.
+
+|`max-retry-attempts`
+|`-1`
+|The maximum number of consecutive retries of a failed watch of a KV path before the watch of that path is stopped. A negative value retries indefinitely. The counter is reset each time the watch succeeds.
+
+|`retry-delay-ms`
+|`500`
+|The base delay in milliseconds before retrying a failed watch. The delay doubles with each consecutive failure, is capped at `max-retry-delay` and has a random jitter of up to 25% applied.
+
+|`max-retry-delay`
+|`30s`
+|The maximum delay between two retries of a failed watch. It is also the interval at which a missing KV path is checked again.
+
+|`kv-not-found-log-level`
+|`INFO`
+|The log level (`TRACE`, `DEBUG`, `INFO`, `WARN` or `ERROR`) used when a watched KV path does not exist in Consul.
+|===
+
+== Failure Handling
+
+If a watch request fails, for example because the Consul agent is restarted or temporarily unreachable, the watcher logs a warning and retries the watch of that KV path using exponential backoff, starting from `retry-delay-ms` and capped at `max-retry-delay`. By default the watcher retries indefinitely, so it resumes watching once Consul is available again; the first query after a failure does not block, so changes made while Consul was unavailable are detected and a `RefreshEvent` is published. To give up after a number of attempts, as Micronaut Discovery Client 4.7.x did by default, set `max-retry-attempts` to a positive value: once the retries are exhausted, an error is logged and the watch of that KV path is stopped until the application restarts.
+
+Read timeouts of a blocking query are expected and the query is simply re-executed after the `delay-duration`; they do not count as failures.
+
+If a watched KV path does not exist in Consul, a message is logged at the level set with `kv-not-found-log-level`, and the path is checked again every `max-retry-delay` until it exists. Set the level to `WARN` or `ERROR` to make a misconfigured path visible:
+
+.Logging Missing KV Paths as Errors
+[configuration]
+----
+consul:
+  client:
+    watch:
+      enabled: true
+      kv-not-found-log-level: ERROR
+----
+
+NOTE: Only property sources loaded when the application started are refreshed. If a KV path that did not exist at startup is created later, the watcher logs it and keeps watching it, but its properties are only loaded once the application is restarted. Deleting a KV path does not remove its properties from the application.
