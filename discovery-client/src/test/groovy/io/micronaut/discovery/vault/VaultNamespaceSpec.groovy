@@ -84,6 +84,31 @@ class VaultNamespaceSpec extends Specification {
         context?.close()
     }
 
+    void 'the namespace header is sent when the Vault URI has a context path'() {
+        given: 'a Vault behind a reverse proxy context path'
+        EmbeddedServer proxiedVault = ApplicationContext.run(EmbeddedServer, [
+            (MockingVaultAuthController.ENABLED): true,
+            'micronaut.server.context-path'     : '/vault'
+        ])
+        MockingVaultAuthController proxiedController = proxiedVault.applicationContext.getBean(MockingVaultAuthController)
+
+        when:
+        ApplicationContext context = ApplicationContext.run(legacyConfig() + [
+            'vault.client.uri'      : "${proxiedVault.URL}/vault".toString(),
+            'vault.client.token'    : MockingVaultAuthController.STATIC_TOKEN,
+            'vault.client.namespace': 'team-c'
+        ])
+
+        then:
+        context.getRequiredProperty('auth-secret', String) == 'loaded-with-static-token'
+        !proxiedController.namespaces.isEmpty()
+        proxiedController.namespaces.every { it == 'team-c' }
+
+        cleanup:
+        context?.close()
+        proxiedVault?.close()
+    }
+
     void 'vault import sends the namespace from the import URI'() {
         when:
         ApplicationContext context = ApplicationContext.run([
