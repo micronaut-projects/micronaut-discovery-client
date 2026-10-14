@@ -26,6 +26,7 @@ import io.micronaut.discovery.consul.client.v1.ConsulNewServiceEntry
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.MutableHttpRequest
 import io.micronaut.http.annotation.Filter
+import io.micronaut.http.client.exceptions.ReadTimeoutException
 import io.micronaut.http.filter.ClientFilterChain
 import io.micronaut.http.filter.HttpClientFilter
 import jakarta.inject.Singleton
@@ -264,6 +265,43 @@ class ConsulServiceWatchSpec extends Specification {
         ctx.close()
     }
 
+    void 'lookups fall back to direct queries when blocking queries time out'() {
+        given:
+        register('ledger', 'ledger-1', 4081)
+        ApplicationContext ctx = watchingContext()
+        RequestRecorder recorder = ctx.getBean(RequestRecorder)
+        ConsulServiceInstanceWatcher watcher = ctx.getBean(ConsulServiceInstanceWatcher)
+
+        expect: 'the cache is warm'
+        ports(ctx, 'ledger') == [4081]
+        conditions.eventually {
+            assert recorder.blocking('ledger').size() >= 1
+            assert watcher.isWatching('ledger')
+        }
+
+        when: 'blocking queries keep timing out'
+        recorder.timeoutBlocking.set(true)
+        register('ledger', 'ledger-2', 4082)
+
+        then: 'the cached instances are no longer served'
+        conditions.eventually {
+            assert !watcher.isWatching('ledger')
+        }
+        ports(ctx, 'ledger') == [4081, 4082]
+
+        when: 'blocking queries recover'
+        recorder.timeoutBlocking.set(false)
+
+        then: 'the cache is warm again'
+        conditions.eventually {
+            assert watcher.isWatching('ledger')
+        }
+        ports(ctx, 'ledger') == [4081, 4082]
+
+        cleanup:
+        ctx.close()
+    }
+
     void 'the first lookup is bounded by the Consul client read timeout when Consul hangs'() {
         given:
         register('shipping', 'shipping-1', 6081)
@@ -360,6 +398,7 @@ class ConsulServiceWatchSpec extends Specification {
     static class RequestRecorder implements HttpClientFilter {
         final List<MutableHttpRequest<?>> requests = new CopyOnWriteArrayList<>()
         final AtomicBoolean failBlocking = new AtomicBoolean()
+        final AtomicBoolean timeoutBlocking = new AtomicBoolean()
         final AtomicInteger hangNonBlocking = new AtomicInteger()
 
         List<MutableHttpRequest<?>> blocking(String service) {
@@ -375,6 +414,9 @@ class ConsulServiceWatchSpec extends Specification {
             requests.add(request)
             if (!request.parameters.contains('index') && hangNonBlocking.getAndUpdate { it > 0 ? it - 1 : 0 } > 0) {
                 return Mono.never()
+            }
+            if (timeoutBlocking.get() && request.parameters.contains('index')) {
+                return Publishers.just(ReadTimeoutException.TIMEOUT_EXCEPTION)
             }
             if (failBlocking.get() && request.parameters.contains('index')) {
                 return Publishers.just(new IllegalStateException('Simulated blocking query failure'))
