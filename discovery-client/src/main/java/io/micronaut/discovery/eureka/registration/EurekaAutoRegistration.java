@@ -32,10 +32,10 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.runtime.ApplicationConfiguration;
 import io.micronaut.runtime.server.EmbeddedServer;
 import jakarta.inject.Singleton;
+import org.jspecify.annotations.Nullable;
 import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.Map;
 import java.util.Properties;
@@ -90,7 +90,7 @@ public class EurekaAutoRegistration extends DiscoveryServiceAutoRegistration {
             if (status.equals(HealthStatus.UP)) {
                 Mono<HttpStatus> heartbeatPublisher = Mono.from(eurekaClient.heartbeat(instanceInfo.getApp(), instanceInfo.getId()));
                 heartbeatPublisher.hasElement().subscribe(reported -> {
-                    if (reported) {
+                    if (Boolean.TRUE.equals(reported)) {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Successfully reported passing state to Eureka");
                         }
@@ -99,7 +99,7 @@ public class EurekaAutoRegistration extends DiscoveryServiceAutoRegistration {
                         if (LOG.isWarnEnabled()) {
                             LOG.warn("Eureka did not acknowledge the heartbeat of instance [{}]. Attempting re-registration.", instance.getId());
                         }
-                        register(instance);
+                        register(instance, InstanceInfo.Status.UP);
                     }
                 }, throwable -> {
                     if (throwable instanceof HttpClientResponseException hcre) {
@@ -108,7 +108,7 @@ public class EurekaAutoRegistration extends DiscoveryServiceAutoRegistration {
                             if (LOG.isWarnEnabled()) {
                                 LOG.warn("Instance [{}] no longer registered with Eureka. Attempting re-registration.", instance.getId());
                             }
-                            register(instance);
+                            register(instance, InstanceInfo.Status.UP);
                             return;
                         }
                     }
@@ -123,36 +123,42 @@ public class EurekaAutoRegistration extends DiscoveryServiceAutoRegistration {
             if (lastStatus == null || !lastStatus.equals(status)) {
 
                 InstanceInfo.Status s = translateState(status);
-                eurekaClient.updateStatus(instanceInfo.getApp(), instanceInfo.getId(), s)
-                        .subscribe(new Subscriber<>() {
-                            @Override
-                            public void onSubscribe(Subscription s) {
-                                s.request(1);
-                            }
-
-                            @Override
-                            public void onNext(HttpStatus httpStatus) {
-                                if (LOG.isDebugEnabled()) {
-                                    LOG.debug("Successfully reported status {} to Eureka", s);
-                                }
-                            }
-
-                            @Override
-                            public void onError(Throwable t) {
-                                String errorMessage = getErrorMessage(t, "Error reporting state to Eureka: ");
-                                if (LOG.isErrorEnabled()) {
-                                    LOG.error(errorMessage, t);
-                                }
-                            }
-
-                            @Override
-                            public void onComplete() {
-                                // no-op
-                            }
-                        });
+                Mono<HttpStatus> statusPublisher = Mono.from(eurekaClient.updateStatus(instanceInfo.getApp(), instanceInfo.getId(), s));
+                statusPublisher.hasElement().subscribe(reported -> {
+                    if (Boolean.TRUE.equals(reported)) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Successfully reported status {} to Eureka", s);
+                        }
+                    } else {
+                        // the Micronaut Reactor HTTP client turns the 404 response for an unknown instance into an empty result
+                        if (LOG.isWarnEnabled()) {
+                            LOG.warn("Eureka did not acknowledge the status {} of instance [{}]. Attempting re-registration.", s, instance.getId());
+                        }
+                        reRegisterForStatus(instance, status);
+                    }
+                }, throwable -> {
+                    if (throwable instanceof HttpClientResponseException hcre && hcre.getStatus() == HttpStatus.NOT_FOUND) {
+                        if (LOG.isWarnEnabled()) {
+                            LOG.warn("Instance [{}] no longer registered with Eureka. Attempting re-registration.", instance.getId());
+                        }
+                        reRegisterForStatus(instance, status);
+                        return;
+                    }
+                    String errorMessage = getErrorMessage(throwable, "Error reporting state to Eureka: ");
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error(errorMessage, throwable);
+                    }
+                });
             }
 
         }
+    }
+
+    private void reRegisterForStatus(ServiceInstance instance, HealthStatus status) {
+        // register with the status being reported so an unhealthy instance is not advertised as UP,
+        // and report the status again with the next heartbeat in case the registration lost it
+        this.lastStatus.compareAndSet(status, null);
+        register(instance, translateState(status));
     }
 
     /**
@@ -175,15 +181,31 @@ public class EurekaAutoRegistration extends DiscoveryServiceAutoRegistration {
             InstanceInfo instanceInfo = registration.getInstanceInfo();
 
             Publisher<HttpStatus> deregisterPublisher = eurekaClient.deregister(instanceInfo.getApp(), instanceInfo.getId());
-            performDeregistration(EUREKA_SERVICE_NAME, registration, deregisterPublisher, instanceInfo.getApp());
+            // a failed fail-fast registration stops the server on the event loop, which must not block,
+            // so the de-registration is then sent without waiting for it
+            boolean block = registration.isFailFast() && !Schedulers.isInNonBlockingThread();
+            performDeregistration(EUREKA_SERVICE_NAME, registration, deregisterPublisher, instanceInfo.getApp(), block);
         }
     }
 
     @Override
     protected void register(ServiceInstance instance) {
+        register(instance, null);
+    }
+
+    /**
+     * Registers the instance, with the given status when it is re-registered after Eureka lost it.
+     *
+     * @param instance The instance
+     * @param status   The status to register the instance with, or {@code null} to keep the configured one
+     */
+    private void register(ServiceInstance instance, InstanceInfo.@Nullable Status status) {
         EurekaConfiguration.EurekaRegistrationConfiguration registration = eurekaConfiguration.getRegistration();
         if (registration != null) {
             InstanceInfo instanceInfo = registration.getInstanceInfo();
+            if (status != null) {
+                instanceInfo.setStatus(status);
+            }
 
             if (!registration.isExplicitInstanceId()) {
                 instanceInfo.setInstanceId(idGenerator.generateId(environment, instance));

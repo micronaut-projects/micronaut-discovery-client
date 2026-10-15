@@ -122,52 +122,77 @@ public abstract class DiscoveryServiceAutoRegistration extends AutoRegistration 
      * @param applicationName     The application name to de-register
      */
     protected void performDeregistration(String discoveryService, RegistrationConfiguration registration, Publisher<HttpStatus> deregisterPublisher, String applicationName) {
+        performDeregistration(discoveryService, registration, deregisterPublisher, applicationName, registration.isFailFast());
+    }
+
+    /**
+     * De-register a service from the discovery client.
+     *
+     * @param discoveryService    The discovery service
+     * @param registration        The registration configuration
+     * @param deregisterPublisher The registration publisher
+     * @param applicationName     The application name to de-register
+     * @param block               Whether to wait for the de-registration to complete
+     * @since 5.3.0
+     */
+    protected void performDeregistration(String discoveryService, RegistrationConfiguration registration, Publisher<HttpStatus> deregisterPublisher, String applicationName, boolean block) {
         Flux<HttpStatus> deregisterFlowable = Flux.from(deregisterPublisher);
         final Duration timeout = registration.getTimeout().orElse(null);
         if (timeout != null) {
             deregisterFlowable = deregisterFlowable.timeout(Duration.ofMillis(timeout.toMillis()));
         }
-        if (registration.isFailFast()) {
+        if (block) {
+            deregisterBlocking(discoveryService, deregisterFlowable, applicationName);
+        } else {
+            deregisterNonBlocking(discoveryService, deregisterFlowable, applicationName);
+        }
+    }
 
-            try {
-                deregisterFlowable.blockFirst();
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("De-registered service [{}] with {}", applicationName, discoveryService);
-                }
-            } catch (Throwable t) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Error occurred de-registering service [" + applicationName + "] with " + discoveryService + ": " + t.getMessage(), t);
-                }
-            } finally {
+    private void deregisterBlocking(String discoveryService, Flux<HttpStatus> deregisterFlowable, String applicationName) {
+        try {
+            deregisterFlowable.blockFirst();
+            logDeregistered(discoveryService, applicationName);
+        } catch (Throwable t) {
+            logDeregistrationError(discoveryService, applicationName, t);
+        } finally {
+            registered.set(false);
+        }
+    }
+
+    private void deregisterNonBlocking(String discoveryService, Flux<HttpStatus> deregisterFlowable, String applicationName) {
+        deregisterFlowable.subscribe(new Subscriber<>() {
+            @Override
+            public void onSubscribe(Subscription subscription) {
+                subscription.request(1);
+            }
+
+            @Override
+            public void onNext(HttpStatus httpStatus) {
+                logDeregistered(discoveryService, applicationName);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                logDeregistrationError(discoveryService, applicationName, t);
                 registered.set(false);
             }
-        } else {
-            deregisterFlowable.subscribe(new Subscriber<>() {
-                @Override
-                public void onSubscribe(Subscription subscription) {
-                    subscription.request(1);
-                }
 
-                @Override
-                public void onNext(HttpStatus httpStatus) {
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("De-registered service [{}] with {}", applicationName, discoveryService);
-                    }
-                }
+            @Override
+            public void onComplete() {
+                registered.set(false);
+            }
+        });
+    }
 
-                @Override
-                public void onError(Throwable t) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Error occurred de-registering service [" + applicationName + "] with " + discoveryService + ": " + t.getMessage(), t);
-                    }
-                    registered.set(false);
-                }
+    private static void logDeregistered(String discoveryService, String applicationName) {
+        if (LOG.isInfoEnabled()) {
+            LOG.info("De-registered service [{}] with {}", applicationName, discoveryService);
+        }
+    }
 
-                @Override
-                public void onComplete() {
-                    registered.set(false);
-                }
-            });
+    private static void logDeregistrationError(String discoveryService, String applicationName, Throwable t) {
+        if (LOG.isErrorEnabled()) {
+            LOG.error("Error occurred de-registering service [" + applicationName + "] with " + discoveryService + ": " + t.getMessage(), t);
         }
     }
 
