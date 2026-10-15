@@ -37,6 +37,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public abstract class AbstractVaultLoginTokenSupplier implements VaultTokenSupplier {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractVaultLoginTokenSupplier.class);
+    private static final String AUTH_PREFIX = "auth/";
 
     private final VaultAuthHttpClient authClient;
     private final AtomicReference<@Nullable Mono<String>> pendingLogin = new AtomicReference<>();
@@ -91,7 +92,7 @@ public abstract class AbstractVaultLoginTokenSupplier implements VaultTokenSuppl
 
     private Mono<String> login() {
         String mountPath = normalizeMountPath(getMountPath());
-        String endpoint = "auth/" + mountPath + "/login";
+        String endpoint = AUTH_PREFIX + mountPath + "/login";
         Map<String, Object> body = getLoginBody();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Logging in to Vault using {} authentication at [{}]", getMethodName(), endpoint);
@@ -121,8 +122,8 @@ public abstract class AbstractVaultLoginTokenSupplier implements VaultTokenSuppl
         while (normalized.endsWith("/")) {
             normalized = normalized.substring(0, normalized.length() - 1);
         }
-        if (normalized.startsWith("auth/")) {
-            normalized = normalized.substring("auth/".length());
+        if (normalized.startsWith(AUTH_PREFIX)) {
+            normalized = normalized.substring(AUTH_PREFIX.length());
         }
         return normalized;
     }
