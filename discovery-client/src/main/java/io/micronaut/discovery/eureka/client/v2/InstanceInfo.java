@@ -17,8 +17,8 @@ package io.micronaut.discovery.eureka.client.v2;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.serde.annotation.Serdeable;
 import jakarta.validation.constraints.Min;
@@ -38,11 +38,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * Based on https://github.com/Netflix/eureka/blob/master/eureka-client/src/main/java/com/netflix/appinfo/InstanceInfo.java
  *
+ * <p>
+ * The Eureka REST API wraps a single instance in an {@code instance} member. The {@link EurekaClient} adds and
+ * removes that wrapper, so this type maps the instance itself and can also be used inside an {@link ApplicationInfo}.
+ *
  * @author graemerocher
  * @since 1.0
  */
-@JsonRootName("instance")
 @Serdeable
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class InstanceInfo implements ConfigurableInstanceInfo {
 
     /**
@@ -76,7 +80,7 @@ public class InstanceInfo implements ConfigurableInstanceInfo {
     private String statusPageUrl;
     private String healthCheckUrl;
     private String secureHealthCheckUrl;
-    private DataCenterInfo dataCenterInfo = () -> DataCenterInfo.Name.MyOwn;
+    private DataCenterInfo dataCenterInfo = new MyDataCenterInfo(DataCenterInfo.Name.MyOwn);
     private LeaseInfo leaseInfo;
     private Map<String, String> metadata = new ConcurrentHashMap<>();
 
@@ -140,7 +144,7 @@ public class InstanceInfo implements ConfigurableInstanceInfo {
         this.vipAddress = vipAddress;
         this.secureVipAddress = secureVipAddress;
         this.countryId = countryId;
-        this.dataCenterInfo = dataCenterInfo;
+        this.dataCenterInfo = dataCenterInfo != null ? dataCenterInfo : new MyDataCenterInfo(DataCenterInfo.Name.MyOwn);
         this.hostName = hostName;
         this.status = status;
         this.leaseInfo = leaseInfo;
@@ -579,6 +583,8 @@ public class InstanceInfo implements ConfigurableInstanceInfo {
      * {@link InstanceInfo} JSON and XML format for port information does not follow the usual conventions, which
      * makes its mapping complicated. This class represents the wire format for port information.
      */
+    @Serdeable
+    @JsonIgnoreProperties(ignoreUnknown = true)
     static class PortWrapper {
 
         private final boolean enabled;

@@ -77,5 +77,156 @@
       { "name": "id" },
       { "name": "meta" }
     ]
+  },
+  {
+    "name": "io.micronaut.discovery.eureka.client.v2.AmazonInfo",
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true
+  },
+  {
+    "name": "io.micronaut.discovery.eureka.client.v2.AmazonInfo$MetaDataKey",
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true
+  },
+  {
+    "name": "io.micronaut.discovery.eureka.client.v2.ApplicationInfo",
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true
+  },
+  {
+    "name": "io.micronaut.discovery.eureka.client.v2.DataCenterInfo",
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true
+  },
+  {
+    "name": "io.micronaut.discovery.eureka.client.v2.DataCenterInfo$Name",
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true
+  },
+  {
+    "name": "io.micronaut.discovery.eureka.client.v2.DataCenterTypeInfoResolver",
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true
+  },
+  {
+    "name": "io.micronaut.discovery.eureka.client.v2.InstanceInfo",
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true
+  },
+  {
+    "name": "io.micronaut.discovery.eureka.client.v2.InstanceInfo$PortWrapper",
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true
+  },
+  {
+    "name": "io.micronaut.discovery.eureka.client.v2.InstanceInfo$Status",
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true
+  },
+  {
+    "name": "io.micronaut.discovery.eureka.client.v2.LeaseInfo",
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true
+  },
+  {
+    "name": "io.micronaut.discovery.eureka.client.v2.MyDataCenterInfo",
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true
+  },
+  {
+    "name": "io.micronaut.discovery.eureka.client.v2.AbstractEurekaClient$ApplicationInfos",
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "allRecordComponents": true,
+    "methods": [
+      { "name": "applications" }
+    ]
+  },
+  {
+    "name": "io.micronaut.discovery.eureka.client.v2.AbstractEurekaClient$Applications",
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "allRecordComponents": true,
+    "methods": [
+      { "name": "applications" }
+    ]
+  },
+  {
+    "name": "io.micronaut.discovery.eureka.client.v2.AbstractEurekaClient$ApplicationInfoWrapper",
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "allRecordComponents": true,
+    "methods": [
+      { "name": "application" }
+    ]
+  },
+  {
+    "name": "io.micronaut.discovery.eureka.client.v2.AbstractEurekaClient$InstanceInfoWrapper",
+    "allDeclaredConstructors": true,
+    "queryAllDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "allRecordComponents": true,
+    "methods": [
+      { "name": "instance" }
+    ]
   }
 ]

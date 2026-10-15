@@ -15,13 +15,10 @@
  */
 package io.micronaut.discovery.eureka.client.v2
 
-import com.fasterxml.jackson.annotation.JsonRootName
-
 /**
  * @author graemerocher
  * @since 1.0
  */
-@JsonRootName("application")
 class MockApplicationInfo extends ApplicationInfo {
     def MockApplicationInfo(String name, List<InstanceInfo> instances) {
         super(name, instances)

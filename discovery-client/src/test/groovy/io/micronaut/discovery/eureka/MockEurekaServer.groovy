@@ -16,118 +16,88 @@
 package io.micronaut.discovery.eureka
 
 import io.micronaut.context.annotation.Requires
-import io.micronaut.core.async.publisher.Publishers
-import io.micronaut.discovery.eureka.client.v2.ApplicationInfo
-import io.micronaut.discovery.eureka.client.v2.EurekaOperations
 import io.micronaut.discovery.eureka.client.v2.InstanceInfo
 import io.micronaut.discovery.eureka.client.v2.MockApplicationInfo
-import io.micronaut.discovery.eureka.client.v2.MockApplicationInfos
+import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Delete
 import io.micronaut.http.annotation.Get
-import io.micronaut.http.annotation.Produces
+import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Put
 import io.micronaut.http.annotation.QueryValue
-import jakarta.validation.Valid
-import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
-import org.reactivestreams.Publisher
 
 import java.util.concurrent.ConcurrentHashMap
 
 /**
+ * A mock Eureka server. Like the Eureka REST API, the bodies are wrapped in a member named after their type.
+ *
  * @author graemerocher
  * @since 1.0
  */
 @Controller(EurekaConfiguration.CONTEXT_PATH_PLACEHOLDER)
 @Requires(property = MockEurekaServer.ENABLED)
-class MockEurekaServer implements EurekaOperations{
+class MockEurekaServer {
     public static Map<String, Map<String, Boolean>> heartbeats = new ConcurrentHashMap<>()
     public static Map<String, Map<String, InstanceInfo>> instances = new ConcurrentHashMap<>()
     public static final String ENABLED = 'enable.mock.eureka'
 
-    @Override
-    Publisher<HttpStatus> register(@NotBlank String appId, @Valid @NotNull @Body InstanceInfo instance) {
+    @Post("/apps/{appId}")
+    HttpStatus register(String appId, @Body("instance") InstanceInfo instance) {
         instances.computeIfAbsent(appId, { String id -> new ConcurrentHashMap<>()})
                  .put(instance.instanceId, instance)
-        return Publishers.just(HttpStatus.NO_CONTENT)
+        return HttpStatus.NO_CONTENT
     }
 
-    @Override
-    Publisher<HttpStatus> deregister(@NotBlank String appId, @NotBlank String instanceId) {
+    @Delete("/apps/{appId}/{instanceId}")
+    HttpStatus deregister(String appId, String instanceId) {
         def instances = instances.computeIfAbsent(appId, { String id -> new ConcurrentHashMap<>() })
         instances.remove(instanceId)
-        if(instances.isEmpty()) {
-            instances.remove(appId)
-        }
-        return Publishers.just(HttpStatus.OK)
+        return HttpStatus.OK
     }
 
-    @Override
-    Publisher<ApplicationInfo> getApplicationInfo(@NotBlank String appId) {
+    @Get("/apps/{appId}")
+    Map<String, Object> getApplicationInfo(String appId) {
         List<InstanceInfo> infos = instances.computeIfAbsent(appId, { String id -> new ConcurrentHashMap<>()})
                  .values() as List<InstanceInfo>
-        return Publishers.just(
-                new MockApplicationInfo(appId, infos)
-        )
+        return [application: new MockApplicationInfo(appId, infos)]
     }
 
-    @Override
-    Publisher<InstanceInfo> getInstanceInfo(@NotBlank String appId, @NotBlank String instanceId) {
-        return Publishers.just(
-                instances.computeIfAbsent(appId, { String id -> new ConcurrentHashMap<>()})
-                        .get(instanceId)
-        )
+    @Get("/apps/{appId}/{instanceId}")
+    HttpResponse<Map<String, Object>> getInstanceInfo(String appId, String instanceId) {
+        InstanceInfo instance = instances.computeIfAbsent(appId, { String id -> new ConcurrentHashMap<>()}).get(instanceId)
+        return instance == null ? HttpResponse.notFound() : HttpResponse.ok([instance: instance] as Map<String, Object>)
     }
 
     @Get('/apps')
-    @Produces(single = true)
-    Publisher<MockApplicationInfos> getApplicationInfosInternal() {
-        return Publishers.just(new MockApplicationInfos(instances.findAll { !it.value.isEmpty() }.collect { it ->
-            new MockApplicationInfo(it.key, it.value.values() as List<InstanceInfo>)
-        } as List<ApplicationInfo>))
-    }
-
-    @Override
-    Publisher<List<ApplicationInfo>> getApplicationInfos() {
-        // no-op... never called
-    }
-
-    @Override
-    Publisher<List<ApplicationInfo>> getApplicationVips(String vipAddress) {
-        // no-op... never called
+    Map<String, Object> getApplicationInfos() {
+        return applications()
     }
 
     @Get('/vips/{vipAddress}')
-    @Produces(single = true)
-    Publisher<MockApplicationInfos> getApplicationVipsInternal(String vipAddress) {
+    Map<String, Object> getApplicationVips(String vipAddress) {
         // this logic is wrong, i know.. we just test the call
-        return Publishers.just(new MockApplicationInfos(instances.findAll { !it.value.isEmpty() }.collect { it ->
-            new MockApplicationInfo(it.key, it.value.values() as List<InstanceInfo>)
-        } as List<ApplicationInfo>))
+        return applications()
     }
 
-    @Override
-    Publisher<HttpStatus> heartbeat(@NotBlank String appId, @NotBlank String instanceId) {
+    @Put("/apps/{appId}/{instanceId}")
+    HttpStatus heartbeat(String appId, String instanceId) {
         heartbeats.computeIfAbsent(appId, { String id -> [:]}).put(instanceId, true)
-        return Publishers.just(HttpStatus.OK)
+        return HttpStatus.OK
     }
 
-    @Override
     @Put("/apps/{appId}/{instanceId}/status")
-    Publisher<HttpStatus> updateStatus(
-            @NotBlank String appId, @NotBlank String instanceId, @NotNull @QueryValue("value") InstanceInfo.Status status) {
+    HttpStatus updateStatus(String appId, String instanceId, @QueryValue("value") InstanceInfo.Status status) {
         instances.computeIfAbsent(appId, { String id -> new ConcurrentHashMap<>()})
                 .get(instanceId)?.status = status
-        return Publishers.just(HttpStatus.OK)
+        return HttpStatus.OK
     }
 
-    @Override
-    Publisher<HttpStatus> updateMetadata(
-            @NotBlank String appId, @NotBlank String instanceId, @NotBlank String key, @NotBlank String value) {
-        instances.computeIfAbsent(appId, { String id -> new ConcurrentHashMap<>()})
-                .get(instanceId)?.metadata?.put(key, value)
-        return Publishers.just(HttpStatus.OK)
+    private static Map<String, Object> applications() {
+        List<MockApplicationInfo> applications = instances.findAll { !it.value.isEmpty() }.collect { it ->
+            new MockApplicationInfo(it.key, it.value.values() as List<InstanceInfo>)
+        }
+        return [applications: [versions__delta: '1', application: applications]] as Map<String, Object>
     }
 }
