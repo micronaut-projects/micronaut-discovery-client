@@ -23,6 +23,7 @@ import io.micronaut.core.naming.NameUtils;
 import io.micronaut.discovery.ServiceInstance;
 import io.micronaut.discovery.consul.ConsulConfiguration;
 import io.micronaut.discovery.consul.ConsulServiceInstance;
+import io.micronaut.discovery.consul.discovery.ConsulServiceInstanceWatcher;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.retry.annotation.Retryable;
@@ -55,6 +56,7 @@ public abstract class AbstractConsulClient implements ConsulClient {
     static final String EXPR_CONSUL_CONFIG_RETRY_DELAY = "${" + ConsulConfiguration.ConsulConfigDiscoveryConfiguration.PREFIX + ".retry-delay:1s}";
 
     private ConsulConfiguration consulConfiguration = new ConsulConfiguration();
+    private @Nullable ConsulServiceInstanceWatcher serviceInstanceWatcher;
 
     /**
      * @param consulConfiguration The Consul configuration
@@ -64,6 +66,14 @@ public abstract class AbstractConsulClient implements ConsulClient {
         if (consulConfiguration != null) {
             this.consulConfiguration = consulConfiguration;
         }
+    }
+
+    /**
+     * @param serviceInstanceWatcher The watcher serving instances when {@code consul.client.discovery.watch.enabled} is set
+     */
+    @Inject
+    void setServiceInstanceWatcher(@Nullable ConsulServiceInstanceWatcher serviceInstanceWatcher) {
+        this.serviceInstanceWatcher = serviceInstanceWatcher;
     }
 
     @Override
@@ -90,24 +100,32 @@ public abstract class AbstractConsulClient implements ConsulClient {
             return Publishers.just(
                 Collections.singletonList(ServiceInstance.of(SERVICE_ID, consulConfiguration.getHost(), consulConfiguration.getPort()))
             );
-        } else {
-            ConsulConfiguration.ConsulDiscoveryConfiguration discovery = consulConfiguration.getDiscovery();
-            boolean passing = discovery.isPassing();
-            String datacenter = discovery.getDatacenters().get(serviceId);
-            List<String> tags = discovery.resolveQueryTags(serviceId);
-            String filter = discovery.resolveFilter(serviceId).orElse(null);
-            Optional<String> scheme = Optional.ofNullable(discovery.getSchemes().get(serviceId));
-
-            Publisher<List<ConsulHealthEntry>> healthyServicesPublisher = findHealthyServices(
-                serviceId, passing, tags, datacenter, filter, discovery.getConsistencyMode());
-            return Publishers.map(healthyServicesPublisher, healthEntries -> {
-                List<ServiceInstance> serviceInstances = new ArrayList<>();
-                for (ConsulHealthEntry healthEntry : healthEntries) {
-                    serviceInstances.add(new ConsulServiceInstance(healthEntry, scheme.orElse("http")));
-                }
-                return serviceInstances;
-            });
         }
+        ConsulServiceInstanceWatcher watcher = serviceInstanceWatcher;
+        if (watcher != null) {
+            String id = serviceId;
+            return watcher.getInstances(id, () -> queryInstances(id));
+        }
+        return queryInstances(serviceId);
+    }
+
+    private Publisher<List<ServiceInstance>> queryInstances(String serviceId) {
+        ConsulConfiguration.ConsulDiscoveryConfiguration discovery = consulConfiguration.getDiscovery();
+        boolean passing = discovery.isPassing();
+        String datacenter = discovery.getDatacenters().get(serviceId);
+        List<String> tags = discovery.resolveQueryTags(serviceId);
+        String filter = discovery.resolveFilter(serviceId).orElse(null);
+        Optional<String> scheme = Optional.ofNullable(discovery.getSchemes().get(serviceId));
+
+        Publisher<List<ConsulHealthEntry>> healthyServicesPublisher = findHealthyServices(
+            serviceId, passing, tags, datacenter, filter, discovery.getConsistencyMode());
+        return Publishers.map(healthyServicesPublisher, healthEntries -> {
+            List<ServiceInstance> serviceInstances = new ArrayList<>();
+            for (ConsulHealthEntry healthEntry : healthEntries) {
+                serviceInstances.add(new ConsulServiceInstance(healthEntry, scheme.orElse("http")));
+            }
+            return serviceInstances;
+        });
     }
 
     @Override
