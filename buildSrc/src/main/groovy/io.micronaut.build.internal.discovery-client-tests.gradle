@@ -8,8 +8,11 @@ configurations.all {
 }
 
 // The test suites keep their tests in their main sources, which Sonar would otherwise analyse as production code.
-// Their coverage of the library is still reported through the aggregated JaCoCo report.
-def sonarExtension = extensions.findByName("sonar")
-if (sonarExtension != null) {
-    sonarExtension.skipProject = true
+// Their coverage of the library is still reported through the aggregated JaCoCo report. The sonar extension is
+// only added to the projects once they are all evaluated.
+gradle.projectsEvaluated {
+    def sonarExtension = project.extensions.findByName("sonar")
+    if (sonarExtension != null) {
+        sonarExtension.skipProject = true
+    }
 }
