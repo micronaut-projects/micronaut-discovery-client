@@ -17,6 +17,7 @@ package io.micronaut.discovery.vault.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micronaut.core.annotation.ReflectiveAccess;
 import io.micronaut.serde.annotation.Serdeable;
 
 import java.util.List;
@@ -31,6 +32,7 @@ import java.util.Map;
  *  @since 1.2.0
  */
 @Serdeable
+@ReflectiveAccess
 public abstract class AbstractVaultResponse<T> {
 
     protected T data;

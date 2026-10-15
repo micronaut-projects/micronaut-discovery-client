@@ -1,0 +1,20 @@
+plugins {
+    id("io.micronaut.build.internal.discovery-client-tests-vault")
+    id("org.graalvm.buildtools.native")
+    id("io.micronaut.library") version "5.0.2"
+}
+
+dependencies {
+    testImplementation(mn.micronaut.jackson.databind)
+    testRuntimeOnly(mnTest.junit.platform.suite)
+}
+
+micronaut {
+    version.set(libs.versions.micronaut.platform.get())
+}
+graalvmNative {
+    toolchainDetection.set(false)
+    metadataRepository {
+        enabled.set(true)
+    }
+}
