@@ -51,6 +51,9 @@ import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 /**
@@ -73,6 +76,8 @@ public final class ConsulServiceInstanceWatcher {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConsulServiceInstanceWatcher.class);
     private static final Duration DEFAULT_INITIAL_QUERY_TIMEOUT = Duration.ofSeconds(10);
+    // Consul indexes are always greater than zero, see nextIndex
+    private static final long NO_INDEX = 0;
 
     private final ConsulServiceWatchClient client;
     private final ConsulConfiguration consulConfiguration;
@@ -122,7 +127,7 @@ public final class ConsulServiceInstanceWatcher {
             return directQuery.get();
         }
         if (!watch.failing) {
-            List<ServiceInstance> instances = watch.instances;
+            List<ServiceInstance> instances = watch.instances();
             if (instances != null) {
                 return Mono.just(instances);
             }
@@ -146,7 +151,7 @@ public final class ConsulServiceInstanceWatcher {
      */
     public boolean isWatching(String serviceId) {
         ServiceWatch watch = watches.get(serviceId);
-        return watch != null && watch.instances != null && !watch.failing;
+        return watch != null && watch.instances() != null && !watch.failing;
     }
 
     /**
@@ -178,7 +183,7 @@ public final class ConsulServiceInstanceWatcher {
             }
             Duration delay = watch.nextDelay();
             Mono<HttpResponse<List<ConsulHealthEntry>>> query = Mono.defer(() -> query(watch));
-            if (watch.index == null) {
+            if (watch.index.get() == NO_INDEX) {
                 // an index-less query returns at once, bound it like a regular lookup
                 query = query.timeout(initialQueryTimeout);
             }
@@ -207,7 +212,8 @@ public final class ConsulServiceInstanceWatcher {
         List<String> tags = discovery.resolveQueryTags(serviceId);
         String filter = discovery.resolveFilter(serviceId).orElse(null);
         ConsistencyMode mode = discovery.getConsistencyMode();
-        Long index = watch.index;
+        long current = watch.index.get();
+        Long index = current == NO_INDEX ? null : current;
         LOG.trace("Querying the instances of service {} with index {}", serviceId, index);
         return client.watchHealthService(
             serviceId,
@@ -226,26 +232,27 @@ public final class ConsulServiceInstanceWatcher {
         if (watch.disposed) {
             return;
         }
-        watch.index = nextIndex(watch.index, response.getHeaders().get(ConsulServiceWatchClient.HEADER_CONSUL_INDEX));
+        String header = response.getHeaders().get(ConsulServiceWatchClient.HEADER_CONSUL_INDEX);
+        watch.index.updateAndGet(current -> nextIndex(current, header));
         List<ConsulHealthEntry> entries = response.getBody().orElse(Collections.emptyList());
         String scheme = consulConfiguration.getDiscovery().getSchemes().getOrDefault(watch.serviceId, "http");
-        List<ServiceInstance> instances = new ArrayList<>(entries.size());
-        Set<InstanceState> states = new HashSet<>();
+        List<ServiceInstance> newInstances = new ArrayList<>(entries.size());
+        Set<InstanceState> newStates = new HashSet<>();
         for (ConsulHealthEntry entry : entries) {
-            instances.add(new ConsulServiceInstance(entry, scheme));
-            states.add(InstanceState.of(entry));
+            newInstances.add(new ConsulServiceInstance(entry, scheme));
+            newStates.add(InstanceState.of(entry));
         }
-        instances = Collections.unmodifiableList(instances);
+        Snapshot snapshot = new Snapshot(List.copyOf(newInstances), Set.copyOf(newStates));
+        List<ServiceInstance> instances = snapshot.instances();
 
-        List<ServiceInstance> previous = watch.instances;
-        boolean changed = previous != null && !states.equals(watch.states);
-        watch.states = states;
-        watch.instances = instances;
+        Snapshot previousSnapshot = watch.snapshot.getAndSet(snapshot);
+        List<ServiceInstance> previous = previousSnapshot != null ? previousSnapshot.instances() : null;
+        boolean changed = previousSnapshot != null && !snapshot.states().equals(previousSnapshot.states());
         if (watch.failing) {
             LOG.info("The watch of service {} recovered", watch.serviceId);
         }
         watch.failing = false;
-        watch.errors = 0;
+        watch.errors.set(0);
         watch.firstResult.complete(instances);
 
         if (changed) {
@@ -269,7 +276,7 @@ public final class ConsulServiceInstanceWatcher {
         if (e instanceof ReadTimeoutException) {
             LOG.debug("Blocking query of service {} timed out", watch.serviceId);
         }
-        watch.errors++;
+        watch.errors.incrementAndGet();
         if (!watch.failing) {
             LOG.warn("Watching service {} failed, querying Consul directly until the watch recovers: {}", watch.serviceId, e.getMessage());
             LOG.debug("Watch failure of service {}", watch.serviceId, e);
@@ -277,50 +284,58 @@ public final class ConsulServiceInstanceWatcher {
         watch.failing = true;
         // query without an index next, which returns at once, so the cache is trusted again as soon as Consul answers
         // instead of after a blocking query that may wait for a change
-        watch.index = null;
+        watch.index.set(NO_INDEX);
         watch.firstResult.completeExceptionally(e);
     }
 
     /**
      * Applies the index rules of https://developer.hashicorp.com/consul/api-docs/features/blocking#implementation-details.
+     * The returned index is always greater than zero, or {@link #NO_INDEX} to query without an index.
      */
-    private static @Nullable Long nextIndex(@Nullable Long current, @Nullable String header) {
+    private static long nextIndex(long current, @Nullable String header) {
         if (header == null) {
-            return null;
+            return NO_INDEX;
         }
         long next;
         try {
             next = Long.parseLong(header.trim());
         } catch (NumberFormatException e) {
-            return null;
+            return NO_INDEX;
         }
         if (next <= 0) {
             return 1L;
         }
-        if (current != null && next < current) {
-            return null;
+        if (current != NO_INDEX && next < current) {
+            return NO_INDEX;
         }
         return next;
     }
 
     /**
-     * The state of the watch of a service.
+     * The state of the watch of a service. Query results are handled one at a time on the scheduler, while lookups
+     * read the state from the caller threads: the instances and their states are published together as an immutable
+     * {@link Snapshot}.
      */
     private final class ServiceWatch {
         final String serviceId;
         final CompletableFuture<List<ServiceInstance>> firstResult = new CompletableFuture<>();
-        volatile @Nullable Disposable subscription;
-        volatile @Nullable List<ServiceInstance> instances;
-        volatile Set<InstanceState> states = Collections.emptySet();
-        volatile @Nullable Long index;
+        final AtomicReference<@Nullable Snapshot> snapshot = new AtomicReference<>();
+        final AtomicLong index = new AtomicLong(NO_INDEX);
+        final AtomicInteger errors = new AtomicInteger();
         volatile boolean failing;
         volatile boolean disposed;
-        volatile int errors;
         volatile long lastAccess = System.nanoTime();
+        // guarded by this
+        private @Nullable Disposable subscription;
         private boolean started;
 
         ServiceWatch(String serviceId) {
             this.serviceId = serviceId;
+        }
+
+        @Nullable List<ServiceInstance> instances() {
+            Snapshot current = snapshot.get();
+            return current != null ? current.instances() : null;
         }
 
         synchronized void start() {
@@ -344,14 +359,23 @@ public final class ConsulServiceInstanceWatcher {
             if (failing) {
                 long retry = watchConfiguration.getRetryDelay().toMillis();
                 long max = watchConfiguration.getMaxRetryDelay().toMillis();
-                int shift = Math.min(Math.max(errors - 1, 0), 20);
+                int shift = Math.min(Math.max(errors.get() - 1, 0), 20);
                 return Duration.ofMillis(Math.min(max, retry << shift));
             }
-            if (instances == null && index == null) {
+            if (snapshot.get() == null && index.get() == NO_INDEX) {
                 return Duration.ZERO;
             }
             return watchConfiguration.getDelay();
         }
+    }
+
+    /**
+     * The result of the last query of a service.
+     *
+     * @param instances The instances, immutable
+     * @param states    The parts of the instances whose change triggers an event, immutable
+     */
+    private record Snapshot(List<ServiceInstance> instances, Set<InstanceState> states) {
     }
 
     /**
