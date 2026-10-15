@@ -142,46 +142,57 @@ public abstract class DiscoveryServiceAutoRegistration extends AutoRegistration 
             deregisterFlowable = deregisterFlowable.timeout(Duration.ofMillis(timeout.toMillis()));
         }
         if (block) {
+            deregisterBlocking(discoveryService, deregisterFlowable, applicationName);
+        } else {
+            deregisterNonBlocking(discoveryService, deregisterFlowable, applicationName);
+        }
+    }
 
-            try {
-                deregisterFlowable.blockFirst();
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("De-registered service [{}] with {}", applicationName, discoveryService);
-                }
-            } catch (Throwable t) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Error occurred de-registering service [" + applicationName + "] with " + discoveryService + ": " + t.getMessage(), t);
-                }
-            } finally {
+    private void deregisterBlocking(String discoveryService, Flux<HttpStatus> deregisterFlowable, String applicationName) {
+        try {
+            deregisterFlowable.blockFirst();
+            logDeregistered(discoveryService, applicationName);
+        } catch (Throwable t) {
+            logDeregistrationError(discoveryService, applicationName, t);
+        } finally {
+            registered.set(false);
+        }
+    }
+
+    private void deregisterNonBlocking(String discoveryService, Flux<HttpStatus> deregisterFlowable, String applicationName) {
+        deregisterFlowable.subscribe(new Subscriber<>() {
+            @Override
+            public void onSubscribe(Subscription subscription) {
+                subscription.request(1);
+            }
+
+            @Override
+            public void onNext(HttpStatus httpStatus) {
+                logDeregistered(discoveryService, applicationName);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                logDeregistrationError(discoveryService, applicationName, t);
                 registered.set(false);
             }
-        } else {
-            deregisterFlowable.subscribe(new Subscriber<>() {
-                @Override
-                public void onSubscribe(Subscription subscription) {
-                    subscription.request(1);
-                }
 
-                @Override
-                public void onNext(HttpStatus httpStatus) {
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("De-registered service [{}] with {}", applicationName, discoveryService);
-                    }
-                }
+            @Override
+            public void onComplete() {
+                registered.set(false);
+            }
+        });
+    }
 
-                @Override
-                public void onError(Throwable t) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Error occurred de-registering service [" + applicationName + "] with " + discoveryService + ": " + t.getMessage(), t);
-                    }
-                    registered.set(false);
-                }
+    private static void logDeregistered(String discoveryService, String applicationName) {
+        if (LOG.isInfoEnabled()) {
+            LOG.info("De-registered service [{}] with {}", applicationName, discoveryService);
+        }
+    }
 
-                @Override
-                public void onComplete() {
-                    registered.set(false);
-                }
-            });
+    private static void logDeregistrationError(String discoveryService, String applicationName, Throwable t) {
+        if (LOG.isErrorEnabled()) {
+            LOG.error("Error occurred de-registering service [" + applicationName + "] with " + discoveryService + ": " + t.getMessage(), t);
         }
     }
 
