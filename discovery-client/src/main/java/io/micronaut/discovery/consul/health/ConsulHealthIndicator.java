@@ -58,6 +58,7 @@ import java.util.Map;
 public class ConsulHealthIndicator implements HealthIndicator {
 
     private static final String NOT_REGISTERED = "not-registered";
+    private static final String STATUS = "status";
 
     private final ConsulClient client;
     private final boolean includeServices;
@@ -154,19 +155,19 @@ public class ConsulHealthIndicator implements HealthIndicator {
                     Map<String, Object> checkDetails = new LinkedHashMap<>();
                     putIfNotNull(checkDetails, "id", check.getId());
                     putIfNotNull(checkDetails, "name", check.getName());
-                    putIfNotNull(checkDetails, "status", check.getStatus());
+                    putIfNotNull(checkDetails, STATUS, check.getStatus());
                     checks.add(checkDetails);
                     instanceStatus = worst(instanceStatus, check.getStatus());
                 }
             }
-            instance.put("status", instanceStatus);
+            instance.put(STATUS, instanceStatus);
             instance.put("checks", checks);
             instances.add(instance);
             serviceStatus = worst(serviceStatus, instanceStatus);
         }
         Map<String, Object> details = new LinkedHashMap<>();
         details.put("name", name);
-        details.put("status", serviceStatus);
+        details.put(STATUS, serviceStatus);
         details.put("instances", instances);
         return details;
     }
