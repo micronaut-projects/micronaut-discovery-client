@@ -23,6 +23,7 @@ import io.micronaut.discovery.eureka.client.v2.DataCenterInfo;
 import io.micronaut.discovery.eureka.client.v2.InstanceInfo;
 import io.micronaut.health.HealthStatus;
 import jakarta.validation.constraints.NotNull;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.util.Optional;
@@ -60,24 +61,28 @@ public class EurekaServiceInstance implements ServiceInstance {
         };
     }
 
+    /**
+     * The availability zone of an instance running on AWS, or else the {@code zone} metadata of the
+     * instance, as Spring Cloud Netflix registers it.
+     *
+     * @return The zone
+     */
     @Override
     public Optional<String> getZone() {
-        @NotNull DataCenterInfo dataCenterInfo = instanceInfo.getDataCenterInfo();
-        if (dataCenterInfo instanceof AmazonInfo amazonInfo) {
-            String availabilityZone = amazonInfo.get(AmazonInfo.MetaDataKey.availabilityZone);
-            return Optional.ofNullable(availabilityZone);
+        String availabilityZone = availabilityZone();
+        if (StringUtils.isNotEmpty(availabilityZone)) {
+            return Optional.of(availabilityZone);
         }
         return ServiceInstance.super.getZone();
     }
 
     @Override
     public Optional<String> getRegion() {
-        @NotNull DataCenterInfo dataCenterInfo = instanceInfo.getDataCenterInfo();
-        if (dataCenterInfo instanceof AmazonInfo amazonInfo) {
-            String availabilityZone = amazonInfo.get(AmazonInfo.MetaDataKey.availabilityZone);
-            return Optional.ofNullable(availabilityZone);
+        String availabilityZone = availabilityZone();
+        if (StringUtils.isNotEmpty(availabilityZone)) {
+            return Optional.of(availabilityZone);
         }
-        return ServiceInstance.super.getZone();
+        return ServiceInstance.super.getRegion();
     }
 
     @Override
@@ -86,7 +91,15 @@ public class EurekaServiceInstance implements ServiceInstance {
         if (StringUtils.isNotEmpty(asgName)) {
             return Optional.of(asgName);
         }
-        return ServiceInstance.super.getZone();
+        return ServiceInstance.super.getGroup();
+    }
+
+    private @Nullable String availabilityZone() {
+        @NotNull DataCenterInfo dataCenterInfo = instanceInfo.getDataCenterInfo();
+        if (dataCenterInfo instanceof AmazonInfo amazonInfo) {
+            return amazonInfo.get(AmazonInfo.MetaDataKey.availabilityZone);
+        }
+        return null;
     }
 
     /**
