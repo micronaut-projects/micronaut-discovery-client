@@ -90,7 +90,7 @@ public class EurekaAutoRegistration extends DiscoveryServiceAutoRegistration {
             if (status.equals(HealthStatus.UP)) {
                 Mono<HttpStatus> heartbeatPublisher = Mono.from(eurekaClient.heartbeat(instanceInfo.getApp(), instanceInfo.getId()));
                 heartbeatPublisher.hasElement().subscribe(reported -> {
-                    if (reported) {
+                    if (Boolean.TRUE.equals(reported)) {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Successfully reported passing state to Eureka");
                         }
@@ -125,7 +125,7 @@ public class EurekaAutoRegistration extends DiscoveryServiceAutoRegistration {
                 InstanceInfo.Status s = translateState(status);
                 Mono<HttpStatus> statusPublisher = Mono.from(eurekaClient.updateStatus(instanceInfo.getApp(), instanceInfo.getId(), s));
                 statusPublisher.hasElement().subscribe(reported -> {
-                    if (reported) {
+                    if (Boolean.TRUE.equals(reported)) {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Successfully reported status {} to Eureka", s);
                         }
