@@ -26,6 +26,9 @@ import io.micronaut.http.client.HttpClientConfiguration;
 import io.micronaut.runtime.ApplicationConfiguration;
 
 import jakarta.inject.Inject;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -57,6 +60,9 @@ public class SpringCloudClientConfiguration extends HttpClientConfiguration {
     private String name;
     private String username;
     private String password;
+    private @Nullable String token;
+    private @Nullable String bearerToken;
+    private Map<String, String> headers = Collections.emptyMap();
 
     private final SpringCloudConnectionPoolConfiguration springCloudConnectionPoolConfiguration;
     private final SpringConfigDiscoveryConfiguration springConfigDiscoveryConfiguration = new SpringConfigDiscoveryConfiguration();
@@ -187,6 +193,62 @@ public class SpringCloudClientConfiguration extends HttpClientConfiguration {
      */
     public void setPassword(@Nullable String password) {
         this.password = password;
+    }
+
+    /**
+     * @return The token sent to the Spring Cloud Config Server in the {@code X-Config-Token} header, used for example by the Vault backend.
+     * @since 5.3.0
+     */
+    public Optional<String> getToken() {
+        return Optional.ofNullable(token);
+    }
+
+    /**
+     * Set the token sent to the Spring Cloud Config Server in the {@code X-Config-Token} header.
+     * The Config Server forwards it to backends such as HashiCorp Vault.
+     *
+     * @param token The config token
+     * @since 5.3.0
+     */
+    public void setToken(@Nullable String token) {
+        this.token = token;
+    }
+
+    /**
+     * @return The bearer token sent to the Spring Cloud Config Server in the {@code Authorization} header.
+     * @since 5.3.0
+     */
+    public Optional<String> getBearerToken() {
+        return Optional.ofNullable(bearerToken);
+    }
+
+    /**
+     * Set the bearer token sent to the Spring Cloud Config Server as {@code Authorization: Bearer <token>}.
+     * Cannot be combined with {@code username}/{@code password} or an {@code Authorization} entry in {@code headers}.
+     *
+     * @param bearerToken The bearer token
+     * @since 5.3.0
+     */
+    public void setBearerToken(@Nullable String bearerToken) {
+        this.bearerToken = bearerToken;
+    }
+
+    /**
+     * @return The additional headers sent with every request to the Spring Cloud Config Server
+     * @since 5.3.0
+     */
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    /**
+     * Set additional headers sent with every request to the Spring Cloud Config Server.
+     *
+     * @param headers The headers
+     * @since 5.3.0
+     */
+    public void setHeaders(@Nullable Map<String, String> headers) {
+        this.headers = headers == null ? Collections.emptyMap() : Collections.unmodifiableMap(new LinkedHashMap<>(headers));
     }
 
     /**

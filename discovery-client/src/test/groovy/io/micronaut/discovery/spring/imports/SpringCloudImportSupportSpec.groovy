@@ -34,6 +34,11 @@ class SpringCloudImportSupportSpec extends Specification {
     private final SpringCloudClientConfiguration configuration = Mock()
     private final SpringCloudConfigClient client = Mock()
 
+    void setup() {
+        configuration.getBearerToken() >> Optional.empty()
+        configuration.getHeaders() >> [:]
+    }
+
     void 'load returns empty map for optional not found'() {
         given:
         context.getBean(SpringCloudClientConfiguration) >> configuration
