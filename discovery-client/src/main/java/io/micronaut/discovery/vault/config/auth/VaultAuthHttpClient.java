@@ -19,6 +19,7 @@ import io.micronaut.context.annotation.BootstrapContextCompatible;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.async.annotation.SingleResult;
 import io.micronaut.discovery.vault.config.VaultClientConfiguration;
+import io.micronaut.discovery.vault.config.VaultClientFilterMatcher;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
@@ -37,6 +38,7 @@ import java.util.Map;
 @Client(value = VaultClientConfiguration.VAULT_CLIENT_CONFIG_ENDPOINT, configuration = VaultClientConfiguration.class)
 @BootstrapContextCompatible
 @Requires(beans = VaultClientConfiguration.class)
+@VaultClientFilterMatcher
 public interface VaultAuthHttpClient {
 
     /**
