@@ -112,14 +112,17 @@ class DiscoveryServiceDeregistrationSpec extends Specification {
 
         @Override
         protected void pulsate(ServiceInstance instance, HealthStatus status) {
+            // not used: the spec only exercises performDeregistration
         }
 
         @Override
         protected void deregister(ServiceInstance instance) {
+            // not used: the spec only exercises performDeregistration
         }
 
         @Override
         protected void register(ServiceInstance instance) {
+            // not used: the spec only exercises performDeregistration
         }
     }
 }
