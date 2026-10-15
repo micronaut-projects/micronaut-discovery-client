@@ -23,3 +23,19 @@ consul:
 With this configuration option in place Consul will assume responsibility of invoking the Micronaut applications https://docs.micronaut.io/latest/guide/index.html#healthEndpoint[Health Endpoint].
 
 To let Consul monitor more than the overall health of the application, for example a database or a gRPC endpoint, you can register additional HTTP, TCP, gRPC or TTL checks. See <<serviceDiscoveryConsulCustomizingConsulServiceRegistration, Customizing Consul Service Registration>>.
+
+== Consul health indicator
+
+When `micronaut-management` is on the classpath, the api:discovery.consul.health.ConsulHealthIndicator[] contributes a `consul` entry to the https://docs.micronaut.io/latest/guide/index.html#healthEndpoint[Health Endpoint]. It reports `UP` with the current Consul `leader` when the Consul agent answers and `DOWN` otherwise. Disable it with `consul.client.health-check: false`.
+
+Set `consul.client.health-check-services` to also report the catalog `services` (service names and tags) and the checks of the service registered for this application, looked up by `micronaut.application.name`:
+
+.Reporting Consul services and checks
+[configuration]
+----
+consul:
+  client:
+    health-check-services: true
+----
+
+The `service` detail contains the aggregated check `status` (`passing`, `warning`, `critical`, or `not-registered` when no instance is registered) and, for each instance, its ID, address, port, node and checks. The service checks are informational only and never change the reported status: Consul HTTP checks may call this application's health endpoint, so feeding their result back into it could keep a service failing forever. If the catalog or service queries fail, the error is reported as a `services-error` or `service-error` detail.
