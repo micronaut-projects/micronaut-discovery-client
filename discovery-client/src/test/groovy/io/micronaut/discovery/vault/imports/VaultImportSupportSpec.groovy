@@ -20,6 +20,8 @@ import io.micronaut.context.exceptions.ConfigurationException
 import io.micronaut.discovery.vault.config.AbstractVaultResponse
 import io.micronaut.discovery.vault.config.VaultClientConfiguration
 import io.micronaut.discovery.vault.config.VaultConfigHttpClient
+import io.micronaut.discovery.vault.config.auth.StaticVaultTokenSupplier
+import io.micronaut.discovery.vault.config.auth.VaultTokenSupplier
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.simple.SimpleHttpResponseFactory
 import io.micronaut.http.client.exceptions.HttpClientResponseException
@@ -37,6 +39,7 @@ class VaultImportSupportSpec extends Specification {
         given:
         context.getBean(VaultClientConfiguration) >> configuration
         context.getBean(VaultConfigHttpClient) >> client
+        context.getBean(VaultTokenSupplier) >> new StaticVaultTokenSupplier(configuration)
         configuration.getToken() >> 'token'
         configuration.getSecretEngineName() >> 'secret'
         configuration.getPathPrefix() >> null
@@ -53,6 +56,7 @@ class VaultImportSupportSpec extends Specification {
         given:
         context.getBean(VaultClientConfiguration) >> configuration
         context.getBean(VaultConfigHttpClient) >> client
+        context.getBean(VaultTokenSupplier) >> new StaticVaultTokenSupplier(configuration)
         configuration.getToken() >> 'token'
         configuration.getSecretEngineName() >> 'secret'
         configuration.getPathPrefix() >> 'config/base'
@@ -69,6 +73,7 @@ class VaultImportSupportSpec extends Specification {
         given:
         context.getBean(VaultClientConfiguration) >> configuration
         context.getBean(VaultConfigHttpClient) >> client
+        context.getBean(VaultTokenSupplier) >> new StaticVaultTokenSupplier(configuration)
         configuration.getToken() >> 'token'
         configuration.getSecretEngineName() >> 'secret'
         configuration.getPathPrefix() >> null
@@ -80,6 +85,22 @@ class VaultImportSupportSpec extends Specification {
         then:
         ConfigurationException e = thrown()
         e.message.contains('Error reading distributed configuration from Vault: missing')
+    }
+
+    void 'load reports token supplier failures as configuration errors'() {
+        given:
+        context.getBean(VaultClientConfiguration) >> configuration
+        context.getBean(VaultConfigHttpClient) >> client
+        context.getBean(VaultTokenSupplier) >> ({ Flux.error(new IllegalStateException('no token')) } as VaultTokenSupplier)
+        configuration.getPathPrefix() >> null
+
+        when:
+        support.load(context, 'application', true)
+
+        then:
+        ConfigurationException e = thrown()
+        e.message == 'Error obtaining Vault token: no token'
+        0 * client.readConfigurationValues(_, _, _)
     }
 
     private AbstractVaultResponse<?> response(Map<String, Object> secrets) {

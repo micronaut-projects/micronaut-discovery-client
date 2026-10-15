@@ -26,16 +26,20 @@ import org.jspecify.annotations.Nullable;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.discovery.config.ConfigurationClient;
 import io.micronaut.discovery.imports.LegacyConfigurationClientDeprecationLogger;
+import io.micronaut.discovery.vault.config.auth.StaticVaultTokenSupplier;
+import io.micronaut.discovery.vault.config.auth.VaultTokenSupplier;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.runtime.ApplicationConfiguration;
 import io.micronaut.scheduling.TaskExecutors;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
@@ -43,6 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
@@ -66,6 +71,7 @@ public class VaultConfigurationClient implements ConfigurationClient {
     private final VaultClientConfiguration vaultClientConfiguration;
     private final ApplicationConfiguration applicationConfiguration;
     private final ExecutorService executorService;
+    private final VaultTokenSupplier tokenSupplier;
 
     /**
      * Default Constructor.
@@ -74,15 +80,38 @@ public class VaultConfigurationClient implements ConfigurationClient {
      * @param vaultClientConfiguration  Vault Client Configuration
      * @param applicationConfiguration  The application configuration
      * @param executorService           Executor Service
+     * @param tokenSupplier             The supplier of the Vault token
+     * @since 5.3.0
      */
+    @Inject
     public VaultConfigurationClient(VaultConfigHttpClient<?> configHttpClient,
                                     VaultClientConfiguration vaultClientConfiguration,
                                     ApplicationConfiguration applicationConfiguration,
-                                    @Named(TaskExecutors.IO) @Nullable ExecutorService executorService) {
+                                    @Named(TaskExecutors.IO) @Nullable ExecutorService executorService,
+                                    VaultTokenSupplier tokenSupplier) {
         this.configHttpClient = configHttpClient;
         this.vaultClientConfiguration = vaultClientConfiguration;
         this.applicationConfiguration = applicationConfiguration;
         this.executorService = executorService;
+        this.tokenSupplier = tokenSupplier;
+    }
+
+    /**
+     * Constructor that uses the static token configured with {@code vault.client.token}.
+     *
+     * @param configHttpClient          The http client
+     * @param vaultClientConfiguration  Vault Client Configuration
+     * @param applicationConfiguration  The application configuration
+     * @param executorService           Executor Service
+     * @deprecated Use {@link #VaultConfigurationClient(VaultConfigHttpClient, VaultClientConfiguration, ApplicationConfiguration, ExecutorService, VaultTokenSupplier)}
+     */
+    @Deprecated(since = "5.3.0", forRemoval = true)
+    public VaultConfigurationClient(VaultConfigHttpClient<?> configHttpClient,
+                                    VaultClientConfiguration vaultClientConfiguration,
+                                    ApplicationConfiguration applicationConfiguration,
+                                    @Named(TaskExecutors.IO) @Nullable ExecutorService executorService) {
+        this(configHttpClient, vaultClientConfiguration, applicationConfiguration, executorService,
+            new StaticVaultTokenSupplier(vaultClientConfiguration));
     }
 
     @Override
@@ -107,15 +136,15 @@ public class VaultConfigurationClient implements ConfigurationClient {
 
         List<Flux<PropertySource>> propertySources = new ArrayList<>();
 
-        String token = vaultClientConfiguration.getToken();
+        Mono<Optional<String>> token = resolveToken(tokenSupplier);
         String engine = vaultClientConfiguration.getSecretEngineName();
         String pathPrefix = normalizePathPrefix(vaultClientConfiguration.getPathPrefix());
 
         Scheduler scheduler = executorService != null ? Schedulers.fromExecutor(executorService) : null;
 
         buildVaultKeys(pathPrefix, applicationName, activeNames).forEach((key, value) -> {
-            Flux<PropertySource> propertySourceFlowable = Flux.from(
-                    configHttpClient.readConfigurationValues(token, engine, value))
+            Flux<PropertySource> propertySourceFlowable = token
+                    .flatMapMany(t -> configHttpClient.readConfigurationValues(t.orElse(null), engine, value))
                     .filter(data -> !data.getSecrets().isEmpty())
                     .map(data -> PropertySource.of(value, data.getSecrets(), key))
                     .onErrorResume(t -> {
@@ -137,6 +166,22 @@ public class VaultConfigurationClient implements ConfigurationClient {
         });
 
         return Flux.merge(propertySources);
+    }
+
+    /**
+     * Resolves the token once per configuration read. Failures to obtain a token are reported as
+     * {@link ConfigurationException} so that they are not mistaken for a missing secret.
+     *
+     * @param tokenSupplier The token supplier
+     * @return A cached publisher of the token, empty if no token is sent
+     */
+    private static Mono<Optional<String>> resolveToken(VaultTokenSupplier tokenSupplier) {
+        return Mono.defer(() -> Mono.from(tokenSupplier.getToken()))
+            .map(Optional::of)
+            .defaultIfEmpty(Optional.empty())
+            .onErrorMap(t -> !(t instanceof ConfigurationException),
+                t -> new ConfigurationException("Error obtaining Vault token: " + t.getMessage(), t))
+            .cache();
     }
 
     /**
