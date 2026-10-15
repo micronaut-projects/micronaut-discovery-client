@@ -50,6 +50,9 @@ public final class RemoteConfigImportOptionBinder {
         RETRY_ATTEMPTS, RETRY_ATTEMPTS,
         "retry-count", RETRY_ATTEMPTS,
         "retry-delay", "retry-delay",
+        "retry-max-delay", "retry-max-delay",
+        "retry-multiplier", "retry-multiplier",
+        "retry-jitter", "retry-jitter",
         "read-timeout", "read-timeout",
         "connect-timeout", "connect-timeout"
     );
