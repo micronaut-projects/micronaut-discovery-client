@@ -10,6 +10,10 @@ This section documents breaking changes between Micronaut Discovery Client versi
 
 Vault configuration now uses the KV version 2 engine when `kv-version` (or `vault.client.kv-version`) is not set, as documented. Previously, no Vault client was created unless the KV version was set explicitly.
 
+==== Vault and Spring Cloud Config health indicators
+
+Applications with `micronaut-management` now get a `vault` health indicator when the Vault configuration client is enabled, and a `spring-cloud-config` health indicator when the Spring Cloud Config client is enabled. A sealed or unreachable Vault, or an unreachable config server, reports the application `DOWN`. Disable them with `vault.client.health-check: false` and `spring.cloud.config.health-check: false`.
+
 ==== Eureka and Micronaut Serialization
 
 The Eureka client now works with Micronaut Serialization as well as Jackson Databind, and in GraalVM native images. The Eureka model classes are introspected, and the JSON the client sends and reads matches the Eureka REST API with both libraries:

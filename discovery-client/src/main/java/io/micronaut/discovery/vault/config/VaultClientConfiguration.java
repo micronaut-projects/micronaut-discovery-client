@@ -48,6 +48,13 @@ public class VaultClientConfiguration extends HttpClientConfiguration {
     @SuppressWarnings("WeakerAccess")
     public static final boolean DEFAULT_FAIL_FAST = false;
 
+    /**
+     * Default value for whether Vault is considered for health checks.
+     * @since 5.3.0
+     */
+    @SuppressWarnings("WeakerAccess")
+    public static final boolean DEFAULT_HEALTH_CHECK = true;
+
     private static final String DEFAULT_URI = "http://localhost:8200";
     private static final String DEFAULT_SECRET_ENGINE = "secret";
     private static final String DEFAULT_PATH_PREFIX = "";
@@ -89,6 +96,7 @@ public class VaultClientConfiguration extends HttpClientConfiguration {
     private boolean failFast = DEFAULT_FAIL_FAST;
     private VaultAuthentication authentication = VaultAuthentication.TOKEN;
     private String namespace;
+    private boolean healthCheck = DEFAULT_HEALTH_CHECK;
 
     /**
      * @param vaultClientConnectionPoolConfiguration Vault Client Connection Pool Configuration
@@ -245,6 +253,28 @@ public class VaultClientConfiguration extends HttpClientConfiguration {
      */
     public void setNamespace(String namespace) {
         this.namespace = namespace;
+    }
+
+    /**
+     * @return Whether the Vault server should be considered for health checks.
+     * @see io.micronaut.discovery.vault.health.VaultHealthIndicator
+     * @since 5.3.0
+     */
+    public boolean isHealthCheck() {
+        return healthCheck;
+    }
+
+    /**
+     * Sets whether the Vault server should be considered for health checks. When enabled and
+     * {@code micronaut-management} is on the classpath, the health endpoint reports the result of
+     * Vault's {@code /v1/sys/health} endpoint. Default value ({@value #DEFAULT_HEALTH_CHECK}).
+     *
+     * @param healthCheck True if it should
+     * @see io.micronaut.discovery.vault.health.VaultHealthIndicator
+     * @since 5.3.0
+     */
+    public void setHealthCheck(boolean healthCheck) {
+        this.healthCheck = healthCheck;
     }
 
     /**

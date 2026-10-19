@@ -226,3 +226,23 @@ spring:
 The legacy integration uses the configured `micronaut.application.name` to look up property sources from the server configured via `spring.cloud.config.uri`.
 
 The `name` field is optional in the legacy configuration. With `micronaut.config.import`, the application name and profiles are explicit in the URI path. See the https://spring.io/projects/spring-cloud-config/[Spring Cloud Config documentation] for server setup details.
+
+== Config server health indicator
+
+When `micronaut-management` is on the classpath and the Spring Cloud Config client is enabled (`spring.cloud.config.enabled: true`), the api:discovery.spring.health.SpringCloudConfigHealthIndicator[] contributes a `spring-cloud-config` entry to the https://docs.micronaut.io/latest/guide/index.html#healthEndpoint[Health Endpoint]. Like Spring Cloud Config's client side health indicator, it fetches the environment of the application from the config server, using the configured `name` (or `micronaut.application.name`), the active environments, the `label` and the configured credentials, and reports the names of the located property sources as details. The status is `UP` when the config server answers and `DOWN` otherwise.
+
+To avoid fetching the environment on every health request, the result is cached for 5 minutes by default. Configure the time-to-live with `spring.cloud.config.health-check-time-to-live` (a zero duration disables caching), or disable the indicator with `spring.cloud.config.health-check`:
+
+.Configuring the Spring Cloud Config health indicator
+[configuration]
+----
+spring:
+  cloud:
+    config:
+      enabled: true
+      uri: "http://configserver:9000"
+      health-check: true
+      health-check-time-to-live: 1m
+----
+
+The retry settings of the client (`spring.cloud.config.config.retry-count` and `spring.cloud.config.config.retry-delay`) also apply to the health check.
