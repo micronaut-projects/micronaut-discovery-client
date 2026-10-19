@@ -172,93 +172,6 @@ public final class ConsulServiceInstanceWatcher {
         watch.firstResult.completeExceptionally(new IllegalStateException("The watch of service " + watch.serviceId + " is stopped"));
     }
 
-    private boolean isIdle(ServiceWatch watch) {
-        Duration idleTimeout = watchConfiguration.getIdleTimeout().orElse(null);
-        return idleTimeout != null && System.nanoTime() - watch.lastAccess > idleTimeout.toNanos();
-    }
-
-    private Mono<HttpResponse<List<ConsulHealthEntry>>> query(ServiceWatch watch) {
-        String serviceId = watch.serviceId;
-        ConsulConfiguration.ConsulDiscoveryConfiguration discovery = consulConfiguration.getDiscovery();
-        List<String> tags = discovery.resolveQueryTags(serviceId);
-        String filter = discovery.resolveFilter(serviceId).orElse(null);
-        ConsistencyMode mode = discovery.getConsistencyMode();
-        long current = watch.index.get();
-        Long index = current == NO_INDEX ? null : current;
-        LOG.trace("Querying the instances of service {} with index {}", serviceId, index);
-        return client.watchHealthService(
-            serviceId,
-            discovery.isPassing() ? Boolean.TRUE : null,
-            tags == null || tags.isEmpty() ? null : tags,
-            discovery.getDatacenters().get(serviceId),
-            filter == null || filter.isEmpty() ? null : filter,
-            mode == ConsistencyMode.CONSISTENT ? Boolean.TRUE : null,
-            mode == ConsistencyMode.STALE ? Boolean.TRUE : null,
-            index,
-            index == null ? null : watchConfiguration.getWait().toMillis() + "ms"
-        );
-    }
-
-    private void onResponse(ServiceWatch watch, HttpResponse<List<ConsulHealthEntry>> response) {
-        if (watch.disposed) {
-            return;
-        }
-        String header = response.getHeaders().get(ConsulServiceWatchClient.HEADER_CONSUL_INDEX);
-        watch.index.updateAndGet(current -> nextIndex(current, header));
-        List<ConsulHealthEntry> entries = response.getBody().orElse(Collections.emptyList());
-        String scheme = consulConfiguration.getDiscovery().getSchemes().getOrDefault(watch.serviceId, "http");
-        List<ServiceInstance> newInstances = new ArrayList<>(entries.size());
-        Set<InstanceState> newStates = new HashSet<>();
-        for (ConsulHealthEntry entry : entries) {
-            newInstances.add(new ConsulServiceInstance(entry, scheme));
-            newStates.add(InstanceState.of(entry));
-        }
-        Snapshot snapshot = new Snapshot(List.copyOf(newInstances), Set.copyOf(newStates));
-        List<ServiceInstance> instances = snapshot.instances();
-
-        Snapshot previousSnapshot = watch.snapshot.getAndSet(snapshot);
-        List<ServiceInstance> previous = previousSnapshot != null ? previousSnapshot.instances() : null;
-        boolean changed = previousSnapshot != null && !snapshot.states().equals(previousSnapshot.states());
-        if (watch.failing) {
-            LOG.info("The watch of service {} recovered", watch.serviceId);
-        }
-        watch.failing = false;
-        watch.errors.set(0);
-        watch.firstResult.complete(instances);
-
-        if (changed) {
-            LOG.debug("The instances of service {} changed", watch.serviceId);
-            try {
-                eventPublisher.publishEvent(new ServiceInstancesChangedEvent(watch.serviceId, previous, instances));
-            } catch (Exception e) {
-                LOG.error("Error publishing the change of the instances of service {}", watch.serviceId, e);
-            }
-        } else {
-            LOG.trace("The instances of service {} did not change", watch.serviceId);
-        }
-    }
-
-    private void onError(ServiceWatch watch, Throwable e) {
-        if (watch.disposed) {
-            return;
-        }
-        // the read timeout exceeds the blocking query wait plus the jitter Consul adds, so an unchanged query
-        // returns before it: a timeout means Consul is unresponsive and the cache can no longer be trusted
-        if (e instanceof ReadTimeoutException) {
-            LOG.debug("Blocking query of service {} timed out", watch.serviceId);
-        }
-        watch.errors.incrementAndGet();
-        if (!watch.failing) {
-            LOG.warn("Watching service {} failed, querying Consul directly until the watch recovers: {}", watch.serviceId, e.getMessage());
-            LOG.debug("Watch failure of service {}", watch.serviceId, e);
-        }
-        watch.failing = true;
-        // query without an index next, which returns at once, so the cache is trusted again as soon as Consul answers
-        // instead of after a blocking query that may wait for a change
-        watch.index.set(NO_INDEX);
-        watch.firstResult.completeExceptionally(e);
-    }
-
     /**
      * Applies the index rules of https://developer.hashicorp.com/consul/api-docs/features/blocking#implementation-details.
      * The returned index is always greater than zero, or {@link #NO_INDEX} to query without an index.
@@ -320,7 +233,7 @@ public final class ConsulServiceInstanceWatcher {
 
         private Mono<Void> poll() {
             return Mono.defer(() -> {
-                if (isIdle(this)) {
+                if (isIdle()) {
                     LOG.debug("Service {} has not been looked up for {}, no longer watching it", serviceId,
                         watchConfiguration.getIdleTimeout().orElse(null));
                     watches.remove(serviceId, this);
@@ -328,7 +241,7 @@ public final class ConsulServiceInstanceWatcher {
                     return Mono.empty();
                 }
                 Duration delay = nextDelay();
-                Mono<HttpResponse<List<ConsulHealthEntry>>> query = Mono.defer(() -> query(this));
+                Mono<HttpResponse<List<ConsulHealthEntry>>> query = Mono.defer(this::query);
                 if (index.get() == NO_INDEX) {
                     // an index-less query returns at once, bound it like a regular lookup
                     query = query.timeout(initialQueryTimeout);
@@ -338,13 +251,99 @@ public final class ConsulServiceInstanceWatcher {
                 }
                 return query
                     .publishOn(scheduler)
-                    .doOnNext(response -> onResponse(this, response))
+                    .doOnNext(this::onResponse)
                     .onErrorResume(e -> {
-                        onError(this, e);
+                        onError(e);
                         return Mono.empty();
                     })
                     .then();
             });
+        }
+
+        private boolean isIdle() {
+            Duration idleTimeout = watchConfiguration.getIdleTimeout().orElse(null);
+            return idleTimeout != null && System.nanoTime() - lastAccess > idleTimeout.toNanos();
+        }
+
+        private Mono<HttpResponse<List<ConsulHealthEntry>>> query() {
+            ConsulConfiguration.ConsulDiscoveryConfiguration discovery = consulConfiguration.getDiscovery();
+            List<String> tags = discovery.resolveQueryTags(serviceId);
+            String filter = discovery.resolveFilter(serviceId).orElse(null);
+            ConsistencyMode mode = discovery.getConsistencyMode();
+            long current = index.get();
+            Long queryIndex = current == NO_INDEX ? null : current;
+            LOG.trace("Querying the instances of service {} with index {}", serviceId, queryIndex);
+            return client.watchHealthService(
+                serviceId,
+                discovery.isPassing() ? Boolean.TRUE : null,
+                tags == null || tags.isEmpty() ? null : tags,
+                discovery.getDatacenters().get(serviceId),
+                filter == null || filter.isEmpty() ? null : filter,
+                mode == ConsistencyMode.CONSISTENT ? Boolean.TRUE : null,
+                mode == ConsistencyMode.STALE ? Boolean.TRUE : null,
+                queryIndex,
+                queryIndex == null ? null : watchConfiguration.getWait().toMillis() + "ms"
+            );
+        }
+
+        private void onResponse(HttpResponse<List<ConsulHealthEntry>> response) {
+            if (disposed) {
+                return;
+            }
+            String header = response.getHeaders().get(ConsulServiceWatchClient.HEADER_CONSUL_INDEX);
+            index.updateAndGet(current -> nextIndex(current, header));
+            List<ConsulHealthEntry> entries = response.getBody().orElse(Collections.emptyList());
+            String scheme = consulConfiguration.getDiscovery().getSchemes().getOrDefault(serviceId, "http");
+            List<ServiceInstance> newInstances = new ArrayList<>(entries.size());
+            Set<InstanceState> newStates = new HashSet<>();
+            for (ConsulHealthEntry entry : entries) {
+                newInstances.add(new ConsulServiceInstance(entry, scheme));
+                newStates.add(InstanceState.of(entry));
+            }
+            Snapshot latest = new Snapshot(List.copyOf(newInstances), Set.copyOf(newStates));
+            List<ServiceInstance> instances = latest.instances();
+
+            Snapshot previousSnapshot = snapshot.getAndSet(latest);
+            List<ServiceInstance> previous = previousSnapshot != null ? previousSnapshot.instances() : null;
+            boolean changed = previousSnapshot != null && !latest.states().equals(previousSnapshot.states());
+            if (failing) {
+                LOG.info("The watch of service {} recovered", serviceId);
+            }
+            failing = false;
+            errors.set(0);
+            firstResult.complete(instances);
+
+            if (changed) {
+                LOG.debug("The instances of service {} changed", serviceId);
+                try {
+                    eventPublisher.publishEvent(new ServiceInstancesChangedEvent(serviceId, previous, instances));
+                } catch (Exception e) {
+                    LOG.error("Error publishing the change of the instances of service {}", serviceId, e);
+                }
+            } else {
+                LOG.trace("The instances of service {} did not change", serviceId);
+            }
+        }
+
+        private void onError(Throwable e) {
+            if (disposed) {
+                return;
+            }
+            // the read timeout exceeds the blocking query wait plus the jitter Consul adds, so an unchanged query
+            // returns before it: a timeout means Consul is unresponsive and the cache can no longer be trusted
+            if (e instanceof ReadTimeoutException) {
+                LOG.debug("Blocking query of service {} timed out", serviceId);
+            }
+            errors.incrementAndGet();
+            if (!failing) {
+                LOG.warn("Watching service {} failed, querying Consul directly until the watch recovers: {}", serviceId, e.getMessage());
+                LOG.debug("Watch failure of service {}", serviceId, e);
+            }
+            failing = true;
+            // query without an index next, which returns at once, so the cache is trusted again as soon as Consul answers
+            // instead of after a blocking query that may wait for a change
+            index.set(NO_INDEX);
+            firstResult.completeExceptionally(e);
         }
 
         synchronized void dispose() {
