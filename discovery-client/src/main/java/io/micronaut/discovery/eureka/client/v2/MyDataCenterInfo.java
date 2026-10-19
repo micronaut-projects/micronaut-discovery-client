@@ -16,6 +16,7 @@
 package io.micronaut.discovery.eureka.client.v2;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.serde.annotation.Serdeable;
 
@@ -23,6 +24,7 @@ import io.micronaut.serde.annotation.Serdeable;
  * @author Tomasz Bak
  */
 @Serdeable
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MyDataCenterInfo implements DataCenterInfo {
 
     private final Name name;

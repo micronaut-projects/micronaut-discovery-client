@@ -40,6 +40,11 @@ class DataCenterTypeInfoResolver extends ClassNameIdResolver {
     public static final String MY_DATA_CENTER_INFO_TYPE_MARKER = "com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo";
 
     /**
+     * The type name used by Eureka for {@link AmazonInfo}.
+     */
+    public static final String AMAZON_INFO_TYPE = "com.netflix.appinfo.AmazonInfo";
+
+    /**
      * Default constructor.
      */
     public DataCenterTypeInfoResolver() {
@@ -53,13 +58,16 @@ class DataCenterTypeInfoResolver extends ClassNameIdResolver {
         if (MY_DATA_CENTER_INFO_TYPE_MARKER.equals(id)) {
             return context.getTypeFactory().constructType(MyDataCenterInfo.class);
         }
+        if (AMAZON_INFO_TYPE.equals(id) || AmazonInfo.class.getName().equals(id)) {
+            return context.getTypeFactory().constructType(AmazonInfo.class);
+        }
         return super.typeFromId(context, id);
     }
 
     @Override
     public String idFromValue(DatabindContext context, Object value) {
-        if (value.getClass().getSimpleName().equals(AmazonInfo.class.getSimpleName())) {
-            return AmazonInfo.class.getName();
+        if (value instanceof AmazonInfo) {
+            return AMAZON_INFO_TYPE;
         }
         return MY_DATA_CENTER_INFO_TYPE_MARKER;
     }
