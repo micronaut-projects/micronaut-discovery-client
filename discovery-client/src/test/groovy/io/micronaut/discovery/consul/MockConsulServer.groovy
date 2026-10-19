@@ -249,9 +249,11 @@ class MockConsulServer implements ConsulOperations {
 
     @Override
     Publisher<Map<String, List<String>>> getServiceNames() {
-        return Publishers.just(consulServices.collectEntries { String key, ConsulServiceEntry entry ->
-              return [(key): entry.tags()]
-        })
+        Map<String, List<String>> serviceNames = new LinkedHashMap<>()
+        consulServices.each { String key, ConsulServiceEntry entry ->
+            serviceNames.put(key, entry.tags() ?: Collections.<String>emptyList())
+        }
+        return Publishers.just(serviceNames)
     }
 
     @Override
