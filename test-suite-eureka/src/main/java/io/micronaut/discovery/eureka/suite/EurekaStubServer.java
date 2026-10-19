@@ -53,6 +53,12 @@ public class EurekaStubServer {
     public static final String DEFAULT_DATA_CENTER_INFO_CLASS = "com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo";
     public static final String AMAZON_INFO_CLASS = "com.netflix.appinfo.AmazonInfo";
 
+    private static final String INSTANCE = "instance";
+    private static final String SECURE_PORT = "securePort";
+    private static final String LEASE_INFO = "leaseInfo";
+    private static final String RENEWAL_INTERVAL = "renewalIntervalInSecs";
+    private static final String ENABLED_ATTRIBUTE = "@enabled";
+
     private final JsonMapper jsonMapper;
     private final Map<String, Map<String, Map<String, JsonNode>>> applications = new ConcurrentHashMap<>();
     private final List<String> registrations = new CopyOnWriteArrayList<>();
@@ -112,7 +118,7 @@ public class EurekaStubServer {
             JsonNode root = jsonMapper.readValue(body, JsonNode.class);
             error = validateRegistration(appId, root);
             if (error == null) {
-                instance = toMap(root.get("instance"));
+                instance = toMap(root.get(INSTANCE));
             }
         } catch (IOException e) {
             error = "Unparseable registration: " + e.getMessage();
@@ -129,7 +135,7 @@ public class EurekaStubServer {
     }
 
     @Delete("/apps/{appId}/{instanceId}")
-    HttpResponse<?> deregister(String appId, String instanceId) {
+    HttpResponse<Void> deregister(String appId, String instanceId) {
         Map<String, Map<String, JsonNode>> instances = applications.get(appId.toUpperCase(Locale.ROOT));
         if (instances == null || instances.remove(instanceId) == null) {
             return HttpResponse.notFound();
@@ -138,7 +144,7 @@ public class EurekaStubServer {
     }
 
     @Put("/apps/{appId}/{instanceId}")
-    HttpResponse<?> heartbeat(String appId, String instanceId) {
+    HttpResponse<Void> heartbeat(String appId, String instanceId) {
         if (!getInstances(appId).containsKey(instanceId)) {
             return HttpResponse.notFound();
         }
@@ -147,7 +153,7 @@ public class EurekaStubServer {
     }
 
     @Put("/apps/{appId}/{instanceId}/status")
-    HttpResponse<?> updateStatus(String appId, String instanceId, @QueryValue("value") String status) {
+    HttpResponse<Void> updateStatus(String appId, String instanceId, @QueryValue("value") String status) {
         Map<String, JsonNode> instance = getInstances(appId).get(instanceId);
         if (instance == null) {
             return HttpResponse.notFound();
@@ -187,7 +193,7 @@ public class EurekaStubServer {
         if (instance == null) {
             return HttpResponse.notFound();
         }
-        return HttpResponse.ok(json(Map.of("instance", instanceNode(instance))));
+        return HttpResponse.ok(json(Map.of(INSTANCE, instanceNode(instance))));
     }
 
     private JsonNode applicationsNode(List<String> apps) {
@@ -211,12 +217,12 @@ public class EurekaStubServer {
         }
         Map<String, JsonNode> node = new LinkedHashMap<>();
         node.put("name", JsonNode.createStringNode(app));
-        node.put("instance", JsonNode.createArrayNode(instances));
+        node.put(INSTANCE, JsonNode.createArrayNode(instances));
         return JsonNode.createObjectNode(node);
     }
 
     /**
-     * Renders an instance like the Eureka server: ports use string "@enabled" values, lease timestamps are
+     * Renders an instance like the Eureka server: ports use string ENABLED_ATTRIBUTE values, lease timestamps are
      * populated and the server-side fields are added.
      */
     private JsonNode instanceNode(Map<String, JsonNode> registered) {
@@ -224,16 +230,16 @@ public class EurekaStubServer {
         Map<String, JsonNode> node = new LinkedHashMap<>(registered);
         node.put("overriddenStatus", JsonNode.createStringNode("UNKNOWN"));
         node.put("port", portNode(registered.get("port")));
-        node.put("securePort", portNode(registered.get("securePort")));
+        node.put(SECURE_PORT, portNode(registered.get(SECURE_PORT)));
         Map<String, JsonNode> leaseInfo = new LinkedHashMap<>();
-        JsonNode registeredLease = registered.get("leaseInfo");
-        leaseInfo.put("renewalIntervalInSecs", number(registeredLease, "renewalIntervalInSecs", 30));
+        JsonNode registeredLease = registered.get(LEASE_INFO);
+        leaseInfo.put(RENEWAL_INTERVAL, number(registeredLease, RENEWAL_INTERVAL, 30));
         leaseInfo.put("durationInSecs", number(registeredLease, "durationInSecs", 90));
         leaseInfo.put("registrationTimestamp", JsonNode.createNumberNode(now));
         leaseInfo.put("lastRenewalTimestamp", JsonNode.createNumberNode(now));
         leaseInfo.put("evictionTimestamp", JsonNode.createNumberNode(0));
         leaseInfo.put("serviceUpTimestamp", JsonNode.createNumberNode(now));
-        node.put("leaseInfo", JsonNode.createObjectNode(leaseInfo));
+        node.put(LEASE_INFO, JsonNode.createObjectNode(leaseInfo));
         node.put("isCoordinatingDiscoveryServer", JsonNode.createStringNode("false"));
         node.put("lastUpdatedTimestamp", JsonNode.createStringNode(Long.toString(now)));
         node.put("lastDirtyTimestamp", JsonNode.createStringNode(Long.toString(now)));
@@ -244,9 +250,9 @@ public class EurekaStubServer {
     private static JsonNode portNode(JsonNode port) {
         Map<String, JsonNode> node = new LinkedHashMap<>();
         int value = port == null ? 0 : port.get("$").getIntValue();
-        boolean enabled = port != null && Boolean.parseBoolean(port.get("@enabled").coerceStringValue());
+        boolean enabled = port != null && Boolean.parseBoolean(port.get(ENABLED_ATTRIBUTE).coerceStringValue());
         node.put("$", JsonNode.createNumberNode(value));
-        node.put("@enabled", JsonNode.createStringNode(Boolean.toString(enabled)));
+        node.put(ENABLED_ATTRIBUTE, JsonNode.createStringNode(Boolean.toString(enabled)));
         return JsonNode.createObjectNode(node);
     }
 
@@ -263,10 +269,30 @@ public class EurekaStubServer {
      * @return The validation error or {@code null} if valid
      */
     static String validateRegistration(String appId, JsonNode root) {
-        if (!root.isObject() || root.size() != 1 || root.get("instance") == null || !root.get("instance").isObject()) {
+        if (!root.isObject() || root.size() != 1 || root.get(INSTANCE) == null || !root.get(INSTANCE).isObject()) {
             return "Registration must be a JSON object with a single 'instance' member";
         }
-        JsonNode instance = root.get("instance");
+        JsonNode instance = root.get(INSTANCE);
+        String error = validateRequiredFields(appId, instance);
+        if (error == null) {
+            error = validatePorts(instance);
+        }
+        if (error == null) {
+            error = validateDataCenterInfo(instance);
+        }
+        if (error == null) {
+            error = validateLeaseInfo(instance);
+        }
+        if (error == null) {
+            JsonNode metadata = instance.get("metadata");
+            if (metadata != null && !metadata.isObject()) {
+                error = "instance.metadata must be an object";
+            }
+        }
+        return error;
+    }
+
+    private static String validateRequiredFields(String appId, JsonNode instance) {
         for (String required : List.of("instanceId", "hostName", "app", "ipAddr", "status", "vipAddress")) {
             JsonNode value = instance.get(required);
             if (value == null || !value.isString() || value.getStringValue().isEmpty()) {
@@ -276,15 +302,21 @@ public class EurekaStubServer {
         if (!appId.equalsIgnoreCase(instance.get("app").getStringValue())) {
             return "Mismatched app id: " + appId + " vs " + instance.get("app").getStringValue();
         }
-        for (String portName : List.of("port", "securePort")) {
+        return null;
+    }
+
+    private static String validatePorts(JsonNode instance) {
+        for (String portName : List.of("port", SECURE_PORT)) {
             JsonNode port = instance.get(portName);
-            if (port == null) {
-                continue;
-            }
-            if (!port.isObject() || port.get("$") == null || !port.get("$").isNumber() || port.get("@enabled") == null) {
+            if (port != null
+                && (!port.isObject() || port.get("$") == null || !port.get("$").isNumber() || port.get(ENABLED_ATTRIBUTE) == null)) {
                 return "instance." + portName + " must be an object with '$' and '@enabled' members";
             }
         }
+        return null;
+    }
+
+    private static String validateDataCenterInfo(JsonNode instance) {
         JsonNode dataCenterInfo = instance.get("dataCenterInfo");
         if (dataCenterInfo == null || !dataCenterInfo.isObject()) {
             return "Missing instance.dataCenterInfo";
@@ -300,19 +332,20 @@ public class EurekaStubServer {
         if (name == null || !name.isString()) {
             return "Missing instance.dataCenterInfo.name";
         }
-        JsonNode leaseInfo = instance.get("leaseInfo");
-        if (leaseInfo != null) {
-            if (!leaseInfo.isObject() || leaseInfo.get("leaseInfo") != null) {
-                return "instance.leaseInfo must be an unwrapped object";
-            }
-            JsonNode interval = leaseInfo.get("renewalIntervalInSecs");
-            if (interval != null && !interval.isNumber()) {
-                return "instance.leaseInfo.renewalIntervalInSecs must be a number";
-            }
+        return null;
+    }
+
+    private static String validateLeaseInfo(JsonNode instance) {
+        JsonNode leaseInfo = instance.get(LEASE_INFO);
+        if (leaseInfo == null) {
+            return null;
         }
-        JsonNode metadata = instance.get("metadata");
-        if (metadata != null && !metadata.isObject()) {
-            return "instance.metadata must be an object";
+        if (!leaseInfo.isObject() || leaseInfo.get(LEASE_INFO) != null) {
+            return "instance.leaseInfo must be an unwrapped object";
+        }
+        JsonNode interval = leaseInfo.get(RENEWAL_INTERVAL);
+        if (interval != null && !interval.isNumber()) {
+            return "instance.leaseInfo.renewalIntervalInSecs must be a number";
         }
         return null;
     }
