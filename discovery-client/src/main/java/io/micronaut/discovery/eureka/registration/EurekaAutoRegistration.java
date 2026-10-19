@@ -18,6 +18,7 @@ package io.micronaut.discovery.eureka.registration;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
 import io.micronaut.core.convert.value.ConvertibleValues;
+import io.micronaut.discovery.EmbeddedServerInstance;
 import io.micronaut.discovery.ServiceInstance;
 import io.micronaut.discovery.ServiceInstanceIdGenerator;
 import io.micronaut.discovery.client.registration.DiscoveryServiceAutoRegistration;
@@ -193,6 +194,11 @@ public class EurekaAutoRegistration extends DiscoveryServiceAutoRegistration {
             Map<String, String> targetMetadata = instanceInfo.getMetadata();
             for (Map.Entry<Object, Object> entry : properties.entrySet()) {
                 targetMetadata.put(entry.getKey().toString(), entry.getValue().toString());
+            }
+            if (instance instanceof EmbeddedServerInstance embeddedServerInstance) {
+                // the zone metadata is where other instances, and Spring Cloud Netflix, look for the zone
+                embeddedServerInstance.getEmbeddedServer().getApplicationConfiguration().getInstance().getZone()
+                    .ifPresent(zone -> targetMetadata.put(ServiceInstance.ZONE, zone));
             }
             customizeInstanceInfo(instanceInfo);
             validateApplicationName(instanceInfo.getApp());
