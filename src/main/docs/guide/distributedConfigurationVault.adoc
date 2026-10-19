@@ -92,6 +92,34 @@ Treat import URIs with embedded credentials as sensitive values and store them a
 |`?fail-fast=false`
 |Whether failures should abort startup immediately.
 
+|`authentication`
+|`?authentication=approle`
+|Authentication method: `token` (default), `approle` or `kubernetes`. See <<vaultAuthentication, Vault authentication>>.
+
+|`role-id`
+|`?role-id=...`
+|AppRole role ID.
+
+|`secret-id`
+|`?secret-id=...`
+|AppRole secret ID.
+
+|`app-role-path`
+|`?app-role-path=approle`
+|Path the AppRole auth method is mounted at.
+
+|`kubernetes-role`
+|`?kubernetes-role=my-app`
+|Vault role used for Kubernetes authentication.
+
+|`kubernetes-path`
+|`?kubernetes-path=kubernetes`
+|Path the Kubernetes auth method is mounted at.
+
+|`service-account-token-file`
+|`?service-account-token-file=/var/run/secrets/kubernetes.io/serviceaccount/token`
+|File containing the Kubernetes service account token.
+
 |`retry-attempts`
 |`?retry-attempts=3`
 |Number of config import retry attempts handled by Micronaut's retryable importer support.
@@ -124,6 +152,99 @@ Treat import URIs with embedded credentials as sensitive values and store them a
 |`?connect-timeout=5s`
 |Connection timeout for remote calls.
 |===
+
+[[vaultAuthentication]]
+== Vault authentication
+
+By default the token configured with `vault.client.token` (or the import URI user-info) is sent with every request. Set `vault.client.authentication` to log in with another auth method when the application starts instead. The client token returned by the login is used to read configuration. Tokens obtained this way are not renewed, so they only need to outlive the configuration reads at startup.
+
+[cols="1,3"]
+|===
+|`vault.client.authentication` |Description
+
+|`TOKEN`
+|Default. Uses the static token from `vault.client.token`.
+
+|`APPROLE`
+|Logs in with the https://developer.hashicorp.com/vault/docs/auth/approle[AppRole] auth method using `POST /v1/auth/{path}/login`.
+
+|`KUBERNETES`
+|Logs in with the https://developer.hashicorp.com/vault/docs/auth/kubernetes[Kubernetes] auth method, sending the pod service account token as the login JWT.
+|===
+
+.AppRole authentication
+[configuration]
+----
+vault:
+  client:
+    uri: https://vault.example.com:8200
+    authentication: APPROLE
+    app-role:
+      role-id: ${VAULT_ROLE_ID}
+      secret-id: ${VAULT_SECRET_ID}
+      path: approle
+----
+
+.Kubernetes authentication
+[configuration]
+----
+vault:
+  client:
+    uri: https://vault.example.com:8200
+    authentication: KUBERNETES
+    kubernetes:
+      role: my-app
+      path: kubernetes
+      service-account-token-file: /var/run/secrets/kubernetes.io/serviceaccount/token
+----
+
+[cols="2,1,3"]
+|===
+|Property |Default |Description
+
+|`vault.client.app-role.role-id`
+|
+|AppRole role ID. Required for `APPROLE`.
+
+|`vault.client.app-role.secret-id`
+|
+|AppRole secret ID. Optional when the role does not require one.
+
+|`vault.client.app-role.path`
+|`approle`
+|Path the AppRole auth method is mounted at.
+
+|`vault.client.kubernetes.role`
+|
+|Vault role to log in with. Required for `KUBERNETES`.
+
+|`vault.client.kubernetes.path`
+|`kubernetes`
+|Path the Kubernetes auth method is mounted at.
+
+|`vault.client.kubernetes.service-account-token-file`
+|`/var/run/secrets/kubernetes.io/serviceaccount/token`
+|File containing the service account token.
+|===
+
+The same options are available on `vault://` import URIs:
+
+.Importing configuration with AppRole authentication
+[configuration]
+----
+micronaut:
+  config:
+    import: "vault://vault.example.com:8200/application?kv-version=V2&authentication=approle&role-id=${VAULT_ROLE_ID}&secret-id=${VAULT_SECRET_ID}"
+----
+
+=== Custom authentication
+
+To obtain the token in another way, for example with an auth method that is not supported out of the box, register a bean that implements api:discovery.vault.config.auth.VaultTokenSupplier[]. A user-defined bean takes precedence over the built-in one. The api:discovery.vault.config.auth.VaultAuthHttpClient[] can be used to call any `auth/{path}/login` endpoint, and api:discovery.vault.config.auth.AbstractVaultLoginTokenSupplier[] provides a base class that logs in once and caches the client token.
+
+snippet::io.micronaut.discovery.docs.GcpVaultTokenSupplier[tags="imports,class", project-base="test-suite-docs", title="A token supplier for the Vault GCP auth method"]
+<1> Required when the legacy bootstrap configuration client is used.
+<2> Reads the signed JWT on every login, for example from a file kept up to date by the platform.
+<3> Logs in to the auth method mounted at `auth/gcp`; the client token of the response is the Vault token.
 
 During migration, the older bootstrap configuration is still available:
 
