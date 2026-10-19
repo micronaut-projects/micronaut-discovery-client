@@ -60,7 +60,7 @@ public class SpringCloudConfigStubServer {
             {"greeting": "hello from first", "first.only": "first"}""",
         "myapp-second", """
             {"greeting": "hello from second", "list[0]": "a", "list[1]": "b"}""",
-        "secured", """
+        SECURED_APPLICATION, """
             {"secured.value": "from secured"}"""
     );
 
