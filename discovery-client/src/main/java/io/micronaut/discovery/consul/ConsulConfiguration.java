@@ -22,6 +22,7 @@ import io.micronaut.core.util.Toggleable;
 import io.micronaut.discovery.DiscoveryConfiguration;
 import io.micronaut.discovery.client.DiscoveryClientConfiguration;
 import io.micronaut.discovery.config.ConfigDiscoveryConfiguration;
+import io.micronaut.discovery.consul.client.v1.ConsistencyMode;
 import io.micronaut.discovery.consul.client.v1.ConsulClient;
 import io.micronaut.discovery.consul.condition.RequiresConsul;
 import io.micronaut.discovery.registration.RegistrationConfiguration;
@@ -236,6 +237,26 @@ public class ConsulConfiguration extends DiscoveryClientConfiguration {
         public static final String PREFIX = ConsulConfiguration.PREFIX + "." + ConfigDiscoveryConfiguration.PREFIX;
 
         private String datacenter;
+        private ConsistencyMode consistencyMode = ConsistencyMode.DEFAULT;
+
+        /**
+         * The consistency mode used to read configuration from the Consul KV store. Defaults to
+         * {@link ConsistencyMode#DEFAULT}, which sends neither the {@code consistent} nor the {@code stale} flag.
+         *
+         * @return The consistency mode
+         * @since 5.3.0
+         */
+        public ConsistencyMode getConsistencyMode() {
+            return consistencyMode;
+        }
+
+        /**
+         * @param consistencyMode The consistency mode used to read configuration from the Consul KV store
+         * @since 5.3.0
+         */
+        public void setConsistencyMode(ConsistencyMode consistencyMode) {
+            this.consistencyMode = consistencyMode != null ? consistencyMode : ConsistencyMode.DEFAULT;
+        }
 
         /**
          * The data center to use to read configuration.
@@ -263,6 +284,11 @@ public class ConsulConfiguration extends DiscoveryClientConfiguration {
     public static class ConsulDiscoveryConfiguration extends DiscoveryConfiguration {
 
         private Map<String, String> tags = Collections.emptyMap();
+        private Map<String, List<String>> queryTags = Collections.emptyMap();
+        private List<String> defaultQueryTags = Collections.emptyList();
+        private Map<String, String> filters = Collections.emptyMap();
+        private String defaultFilter;
+        private ConsistencyMode consistencyMode = ConsistencyMode.DEFAULT;
         private Map<String, String> schemes = Collections.emptyMap();
         private Map<String, String> datacenters = Collections.emptyMap();
         private boolean passing = false;
@@ -284,21 +310,162 @@ public class ConsulConfiguration extends DiscoveryClientConfiguration {
         }
 
         /**
-         * A map of service ID to tags to use for querying.
+         * A map of service ID to a single tag to use for querying.
          *
          * @return The tags
+         * @deprecated Use {@link #getQueryTags()}, which accepts several tags per service
          */
+        @Deprecated(since = "5.3.0")
         public Map<String, String> getTags() {
             return tags;
         }
 
         /**
          * @param tags The tags to use for querying
+         * @deprecated Use {@link #setQueryTags(Map)}, which accepts several tags per service
          */
+        @Deprecated(since = "5.3.0")
         public void setTags(Map<String, String> tags) {
             if (tags != null) {
                 this.tags = tags;
             }
+        }
+
+        /**
+         * A map of service ID to the tags to use for querying. Only instances carrying every tag are returned. Takes
+         * precedence over {@link #getTags()} and {@link #getDefaultQueryTags()}.
+         *
+         * @return The query tags per service ID
+         * @since 5.3.0
+         */
+        public Map<String, List<String>> getQueryTags() {
+            return queryTags;
+        }
+
+        /**
+         * @param queryTags The tags to use for querying per service ID
+         * @since 5.3.0
+         */
+        public void setQueryTags(Map<String, List<String>> queryTags) {
+            if (queryTags != null) {
+                this.queryTags = queryTags;
+            }
+        }
+
+        /**
+         * The tags to use for querying services that have no tags configured in {@link #getQueryTags()} or
+         * {@link #getTags()}.
+         *
+         * @return The default query tags
+         * @since 5.3.0
+         */
+        public List<String> getDefaultQueryTags() {
+            return defaultQueryTags;
+        }
+
+        /**
+         * @param defaultQueryTags The tags to use for querying services without specific tags
+         * @since 5.3.0
+         */
+        public void setDefaultQueryTags(List<String> defaultQueryTags) {
+            if (defaultQueryTags != null) {
+                this.defaultQueryTags = defaultQueryTags;
+            }
+        }
+
+        /**
+         * A map of service ID to a Consul filter expression (see
+         * https://developer.hashicorp.com/consul/api-docs/features/filtering) applied when querying the service.
+         *
+         * @return The filter expressions per service ID
+         * @since 5.3.0
+         */
+        public Map<String, String> getFilters() {
+            return filters;
+        }
+
+        /**
+         * @param filters The filter expressions per service ID
+         * @since 5.3.0
+         */
+        public void setFilters(Map<String, String> filters) {
+            if (filters != null) {
+                this.filters = filters;
+            }
+        }
+
+        /**
+         * The Consul filter expression applied when querying services that have no filter configured in
+         * {@link #getFilters()}.
+         *
+         * @return The default filter expression
+         * @since 5.3.0
+         */
+        public Optional<String> getDefaultFilter() {
+            return Optional.ofNullable(defaultFilter);
+        }
+
+        /**
+         * @param defaultFilter The filter expression applied to services without a specific filter
+         * @since 5.3.0
+         */
+        public void setDefaultFilter(String defaultFilter) {
+            this.defaultFilter = defaultFilter;
+        }
+
+        /**
+         * The consistency mode used to query service instances. Defaults to {@link ConsistencyMode#DEFAULT}, which
+         * sends neither the {@code consistent} nor the {@code stale} flag.
+         *
+         * @return The consistency mode
+         * @since 5.3.0
+         */
+        public ConsistencyMode getConsistencyMode() {
+            return consistencyMode;
+        }
+
+        /**
+         * @param consistencyMode The consistency mode used to query service instances
+         * @since 5.3.0
+         */
+        public void setConsistencyMode(ConsistencyMode consistencyMode) {
+            this.consistencyMode = consistencyMode != null ? consistencyMode : ConsistencyMode.DEFAULT;
+        }
+
+        /**
+         * Resolves the tags to query a service with: the entry of {@link #getQueryTags()}, otherwise the single tag of
+         * {@link #getTags()}, otherwise {@link #getDefaultQueryTags()}.
+         *
+         * @param serviceId The service ID
+         * @return The tags, possibly empty
+         * @since 5.3.0
+         */
+        public List<String> resolveQueryTags(String serviceId) {
+            List<String> serviceTags = queryTags.get(serviceId);
+            if (serviceTags != null) {
+                return serviceTags;
+            }
+            String tag = tags.get(serviceId);
+            if (tag != null) {
+                return Collections.singletonList(tag);
+            }
+            return defaultQueryTags;
+        }
+
+        /**
+         * Resolves the filter expression to query a service with: the entry of {@link #getFilters()}, otherwise
+         * {@link #getDefaultFilter()}.
+         *
+         * @param serviceId The service ID
+         * @return The filter expression, if any
+         * @since 5.3.0
+         */
+        public Optional<String> resolveFilter(String serviceId) {
+            String filter = filters.get(serviceId);
+            if (filter != null) {
+                return Optional.of(filter);
+            }
+            return getDefaultFilter();
         }
 
         /**
@@ -339,6 +506,11 @@ public class ConsulConfiguration extends DiscoveryClientConfiguration {
         public String toString() {
             return "ConsulDiscoveryConfiguration{" +
                 "tags=" + tags +
+                ", queryTags=" + queryTags +
+                ", defaultQueryTags=" + defaultQueryTags +
+                ", filters=" + filters +
+                ", defaultFilter=" + defaultFilter +
+                ", consistencyMode=" + consistencyMode +
                 ", datacenters=" + datacenters +
                 ", passing=" + passing +
                 '}';

@@ -31,6 +31,7 @@ import io.micronaut.discovery.client.ClientUtil;
 import io.micronaut.discovery.config.ConfigDiscoveryConfiguration;
 import io.micronaut.discovery.config.ConfigurationClient;
 import io.micronaut.discovery.consul.ConsulConfiguration;
+import io.micronaut.discovery.consul.client.v1.ConsistencyMode;
 import io.micronaut.discovery.consul.client.v1.ConsulClient;
 import io.micronaut.discovery.consul.client.v1.KeyValue;
 import io.micronaut.discovery.consul.condition.RequiresConsul;
@@ -111,6 +112,13 @@ public class ConsulConfigurationClient implements ConfigurationClient {
         }
     }
 
+    private Publisher<List<KeyValue>> readValues(String path, String dc, ConsistencyMode consistencyMode) {
+        if (consistencyMode == null || consistencyMode == ConsistencyMode.DEFAULT) {
+            return consulClient.readValues(path, dc, null, null);
+        }
+        return consulClient.readValues(path, dc, null, null, consistencyMode);
+    }
+
     @Override
     public String getDescription() {
         return consulClient.getDescription();
@@ -149,6 +157,7 @@ public class ConsulConfigurationClient implements ConfigurationClient {
             .orElse(Boolean.TRUE);
 
         String dc = configDiscoveryConfiguration.getDatacenter().orElse(null);
+        ConsistencyMode consistencyMode = configDiscoveryConfiguration.getConsistencyMode();
 
         Scheduler scheduler = null;
         if (executionService != null) {
@@ -164,7 +173,7 @@ public class ConsulConfigurationClient implements ConfigurationClient {
         };
 
         Flux<List<KeyValue>> applicationConfig = Flux.from(
-                consulClient.readValues(commonConfigPath, dc, null, null))
+                readValues(commonConfigPath, dc, consistencyMode))
                 .onErrorResume(errorHandler);
         if (scheduler != null) {
             applicationConfig = applicationConfig.subscribeOn(scheduler);
@@ -173,7 +182,7 @@ public class ConsulConfigurationClient implements ConfigurationClient {
 
         if (hasApplicationSpecificConfig) {
             Flux<List<KeyValue>> appSpecificConfig = Flux.from(
-                    consulClient.readValues(applicationSpecificPath, dc, null, null))
+                    readValues(applicationSpecificPath, dc, consistencyMode))
                     .onErrorResume(errorHandler);
             if (scheduler != null) {
                 appSpecificConfig = appSpecificConfig.subscribeOn(scheduler);

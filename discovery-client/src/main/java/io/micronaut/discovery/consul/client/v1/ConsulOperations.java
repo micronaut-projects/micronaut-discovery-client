@@ -16,6 +16,7 @@
 package io.micronaut.discovery.consul.client.v1;
 
 import org.jspecify.annotations.Nullable;
+import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
@@ -268,5 +269,70 @@ public interface ConsulOperations {
      */
     default Publisher<List<ConsulHealthEntry>> findHealthyServices(@NotNull String service) {
         return findHealthyServices(service, null, null, null);
+    }
+
+    /**
+     * Gets service health information, optionally filtered by several tags and a filter expression and read with the
+     * given consistency mode. See https://developer.hashicorp.com/consul/api-docs/health#list-service-instances-for-service.
+     *
+     * <p>The default implementation exists for compatibility with implementations that predate this method: it
+     * delegates to {@link #findHealthyServices(String, Boolean, String, String)} with the first tag, keeps only the
+     * entries that carry every other tag and ignores the consistency mode. It cannot evaluate filter expressions and
+     * emits an {@link UnsupportedOperationException} when one is given. The HTTP client created from
+     * {@link AbstractConsulClient} sends every argument to Consul.</p>
+     *
+     * @param service         The service
+     * @param passing         Whether only instances passing all health checks should be returned
+     * @param tags            The tags every returned instance must have, sent as repeated {@code tag} parameters
+     * @param dc              The data center
+     * @param filter          A Consul filter expression, sent as the {@code filter} parameter
+     * @param consistencyMode The consistency mode of the read
+     * @return The {@link ConsulHealthEntry} instances
+     * @since 5.3.0
+     */
+    default Publisher<List<ConsulHealthEntry>> findHealthyServices(
+        @NotNull String service,
+        @Nullable Boolean passing,
+        @Nullable List<String> tags,
+        @Nullable String dc,
+        @Nullable String filter,
+        @Nullable ConsistencyMode consistencyMode) {
+        if (filter != null && !filter.isEmpty()) {
+            return Publishers.just(new UnsupportedOperationException("Consul filter expressions are not supported by " + getClass().getName()));
+        }
+        if (tags == null || tags.isEmpty()) {
+            return findHealthyServices(service, passing, null, dc);
+        }
+        Publisher<List<ConsulHealthEntry>> entries = findHealthyServices(service, passing, tags.get(0), dc);
+        if (tags.size() == 1) {
+            return entries;
+        }
+        return Publishers.map(entries, list -> list.stream()
+            .filter(entry -> entry.service() != null && entry.service().tags() != null && entry.service().tags().containsAll(tags))
+            .toList());
+    }
+
+    /**
+     * Reads a Key from Consul with the given consistency mode. See https://developer.hashicorp.com/consul/api-docs/kv.
+     *
+     * <p>The default implementation exists for compatibility with implementations that predate this method: it
+     * ignores the consistency mode and delegates to {@link #readValues(String, String, Boolean, String)}. The HTTP
+     * client created from {@link AbstractConsulClient} sends the {@code consistent} or {@code stale} flag.</p>
+     *
+     * @param key             The key
+     * @param datacenter      The data center
+     * @param raw             Whether the value should be raw without encoding or metadata
+     * @param separator       The separator to use
+     * @param consistencyMode The consistency mode of the read
+     * @return A {@link Publisher} that emits a list of {@link KeyValue}
+     * @since 5.3.0
+     */
+    default Publisher<List<KeyValue>> readValues(
+        String key,
+        @Nullable String datacenter,
+        @Nullable Boolean raw,
+        @Nullable String separator,
+        @Nullable ConsistencyMode consistencyMode) {
+        return readValues(key, datacenter, raw, separator);
     }
 }
