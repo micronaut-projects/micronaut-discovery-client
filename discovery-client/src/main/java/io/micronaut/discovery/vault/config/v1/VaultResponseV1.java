@@ -18,6 +18,7 @@ package io.micronaut.discovery.vault.config.v1;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.core.annotation.ReflectiveAccess;
 import org.jspecify.annotations.Nullable;
 import io.micronaut.discovery.vault.config.AbstractVaultResponse;
 import io.micronaut.serde.annotation.Serdeable;
@@ -32,6 +33,7 @@ import java.util.Map;
  *  @since 1.2.0
  */
 @Serdeable
+@ReflectiveAccess
 public class VaultResponseV1 extends AbstractVaultResponse<Map<String, Object>> {
 
     /**
