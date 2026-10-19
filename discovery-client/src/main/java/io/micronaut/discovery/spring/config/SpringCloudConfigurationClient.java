@@ -30,6 +30,7 @@ import io.micronaut.discovery.imports.LegacyConfigurationClientDeprecationLogger
 import io.micronaut.discovery.spring.config.client.SpringCloudConfigClient;
 import io.micronaut.discovery.spring.config.client.ConfigServerPropertySource;
 import io.micronaut.discovery.spring.config.client.ConfigServerResponse;
+import io.micronaut.discovery.spring.config.client.SpringCloudConfigRequestHeadersFilter;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.runtime.ApplicationConfiguration;
@@ -110,6 +111,7 @@ public class SpringCloudConfigurationClient implements ConfigurationClient {
                          springCloudConfiguration.getLabel());
             }
 
+            SpringCloudConfigRequestHeadersFilter.validateAuthorization(springCloudConfiguration);
             String authorization = getAuthorization(springCloudConfiguration);
             Publisher<ConfigServerResponse> responsePublisher;
 
