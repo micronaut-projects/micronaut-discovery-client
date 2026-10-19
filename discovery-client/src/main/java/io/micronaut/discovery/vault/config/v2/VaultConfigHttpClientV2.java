@@ -19,6 +19,7 @@ import io.micronaut.context.annotation.BootstrapContextCompatible;
 import org.jspecify.annotations.NonNull;
 import io.micronaut.discovery.vault.config.VaultClientConfiguration;
 import io.micronaut.discovery.vault.config.VaultClientConfiguration.VaultClientDiscoveryConfiguration;
+import io.micronaut.discovery.vault.config.VaultClientFilterMatcher;
 import io.micronaut.discovery.vault.config.VaultConfigHttpClient;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
@@ -35,6 +36,7 @@ import org.reactivestreams.Publisher;
  */
 @Client(value = VaultClientConfiguration.VAULT_CLIENT_CONFIG_ENDPOINT, configuration = VaultClientConfiguration.class)
 @BootstrapContextCompatible
+@VaultClientFilterMatcher
 public interface VaultConfigHttpClientV2 extends VaultConfigHttpClient<VaultResponseV2> {
 
     /**

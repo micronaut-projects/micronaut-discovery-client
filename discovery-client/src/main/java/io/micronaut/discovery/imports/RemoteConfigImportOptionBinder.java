@@ -78,7 +78,8 @@ public final class RemoteConfigImportOptionBinder {
             Map.entry("app-role-path", "vault.client.app-role.path"),
             Map.entry("kubernetes-role", "vault.client.kubernetes.role"),
             Map.entry("kubernetes-path", "vault.client.kubernetes.path"),
-            Map.entry("service-account-token-file", "vault.client.kubernetes.service-account-token-file")
+            Map.entry("service-account-token-file", "vault.client.kubernetes.service-account-token-file"),
+            Map.entry("namespace", "vault.client.namespace")
         ),
         PROVIDER_SPRING_CLOUD, Map.of(
             "label", "spring.cloud.config.label",
