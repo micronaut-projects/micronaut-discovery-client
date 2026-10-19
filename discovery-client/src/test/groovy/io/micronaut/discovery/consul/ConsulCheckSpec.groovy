@@ -40,4 +40,35 @@ class ConsulCheckSpec extends Specification {
         json.contains('"Interval":"10s"')
         json.contains('"TLSSkipVerify":true')
     }
+
+    void "TCP and gRPC check payload"() {
+        given:
+        ConsulCheck tcp = new ConsulCheck()
+        tcp.name = "database"
+        tcp.tcp = "localhost:5432"
+        tcp.interval = "10s"
+        tcp.timeout = "1s"
+        ConsulCheck grpc = new ConsulCheck()
+        grpc.name = "grpc"
+        grpc.grpc = "localhost:9090/my.Service"
+        grpc.grpcUseTls = true
+
+        when:
+        String tcpJson = jsonMapper.writeValueAsString(tcp)
+        String grpcJson = jsonMapper.writeValueAsString(grpc)
+
+        then:
+        tcpJson.contains('"TCP":"localhost:5432"')
+        tcpJson.contains('"Timeout":"1s"')
+        tcpJson.contains('"Interval":"10s"')
+        grpcJson.contains('"GRPC":"localhost:9090/my.Service"')
+        grpcJson.contains('"GRPCUseTLS":true')
+
+        when:
+        ConsulCheck read = jsonMapper.readValue(grpcJson, ConsulCheck)
+
+        then:
+        read.grpc == "localhost:9090/my.Service"
+        read.grpcUseTls
+    }
 }
