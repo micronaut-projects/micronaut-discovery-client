@@ -53,6 +53,44 @@ micronaut:
 
 Treat import URIs with embedded credentials as sensitive values and store them accordingly.
 
+=== Tokens and custom request headers
+
+Besides Basic authentication, the Spring Cloud Config client can send the following with every request to the Config Server:
+
+* `token` - sent as the `X-Config-Token` header, which the Config Server forwards to backends such as https://docs.spring.io/spring-cloud-config/reference/server/environment-repository/vault-backend.html[HashiCorp Vault].
+* `bearer-token` - sent as `Authorization: Bearer <token>`, for example for a Config Server protected by OAuth2.
+* `header.<name>` (import URI) or `headers` (configuration) - arbitrary request headers, matching Spring Cloud Config's `spring.cloud.config.headers.*`.
+
+.Importing with a config token, bearer token and a custom header
+[configuration]
+----
+micronaut:
+  config:
+    import: "springcloud://configserver:9000/hello-world/default?token=s.vaulttoken&bearer-token=oauth-access-token&header.X-Tenant=acme"
+----
+
+Structured import declarations accept the same options, with `headers` as a map:
+
+.Structured import with tokens and headers
+[configuration]
+----
+micronaut:
+  config:
+    import:
+      - provider: springcloud
+        uri: "http://configserver:9000"
+        application: hello-world
+        profiles: default
+        token: s.vaulttoken
+        bearer-token: oauth-access-token
+        headers:
+          X-Tenant: acme
+----
+
+Only one source of the `Authorization` header may be configured: Basic credentials (`username`/`password` or URI user-info), `bearer-token`, or an `Authorization` entry in the headers. Combining them fails with a `ConfigurationException`. The `X-Config-Token` header and other custom headers can be combined with any of them.
+
+NOTE: Query parameter values are used as written in the import URI and are not URL-decoded.
+
 === Spring Cloud Config import URI reference
 
 [cols="1,1,3"]
@@ -99,6 +137,18 @@ Treat import URIs with embedded credentials as sensitive values and store them a
 |`password`
 |`?password=secret`
 |Optional Basic-auth password. Prefer URI user-info instead.
+
+|`token`
+|`?token=s.vaulttoken`
+|Optional token sent as the `X-Config-Token` header, for example for the Config Server's Vault backend.
+
+|`bearer-token`
+|`?bearer-token=abc`
+|Optional token sent as `Authorization: Bearer <token>`. Cannot be combined with Basic-auth credentials.
+
+|`header.<name>`
+|`?header.X-Tenant=acme`
+|Optional request header sent with every Config Server request. Repeat for multiple headers.
 
 |`retry-attempts`
 |`?retry-attempts=3`
@@ -156,6 +206,22 @@ Optional legacy retry settings are also supported:
 
 - `retry-attempts` specifies the number of retries
 - `retry-delay` specifies the delay between retries
+
+The legacy configuration also supports `spring.cloud.config.token`, `spring.cloud.config.bearer-token` and `spring.cloud.config.headers.*`, with the same semantics as the import options described above:
+
+.Legacy configuration with tokens and headers
+[configuration]
+----
+spring:
+  cloud:
+    config:
+      enabled: true
+      uri: "http://configserver:9000"
+      token: s.vaulttoken
+      bearer-token: oauth-access-token
+      headers:
+        X-Tenant: acme
+----
 
 The legacy integration uses the configured `micronaut.application.name` to look up property sources from the server configured via `spring.cloud.config.uri`.
 

@@ -35,6 +35,7 @@ import org.reactivestreams.Publisher;
  */
 @Client(value = SpringCloudClientConfiguration.SPRING_CLOUD_CONFIG_ENDPOINT, configuration = SpringCloudClientConfiguration.class)
 @BootstrapContextCompatible
+@SpringCloudConfigFilterMatcher
 @Requires(beans = SpringCloudClientConfiguration.class)
 public interface SpringCloudConfigClient {
 

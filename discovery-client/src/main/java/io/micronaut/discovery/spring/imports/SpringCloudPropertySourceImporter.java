@@ -43,6 +43,7 @@ public final class SpringCloudPropertySourceImporter extends RetryablePropertySo
 
     private static final String PROVIDER = "springcloud";
     private static final String LABEL = "spring.cloud.config.label";
+    private static final String HEADERS_PREFIX = SpringCloudClientConfiguration.PREFIX + ".headers.";
     private static final int DEFAULT_PORT = 8888;
 
     private final RemoteConfigImportOptionBinder optionBinder = new RemoteConfigImportOptionBinder();
@@ -84,6 +85,13 @@ public final class SpringCloudPropertySourceImporter extends RetryablePropertySo
         values.get("label", String.class).ifPresent(v -> properties.put(LABEL, v));
         values.get("username", String.class).ifPresent(v -> properties.put("spring.cloud.config.username", v));
         values.get("password", String.class).ifPresent(v -> properties.put("spring.cloud.config.password", v));
+        values.get("token", String.class).ifPresent(v -> properties.put(SpringCloudClientConfiguration.PREFIX + ".token", v));
+        values.get("bearer-token", String.class).ifPresent(v -> properties.put(SpringCloudClientConfiguration.PREFIX + ".bearer-token", v));
+        values.get("headers", Map.class).ifPresent(headers -> headers.forEach((name, value) -> {
+            if (name != null && value != null) {
+                properties.put(HEADERS_PREFIX + name, value.toString());
+            }
+        }));
         values.get("fail-fast", Boolean.class).ifPresent(v -> properties.put("spring.cloud.config.fail-fast", v));
         values.get("read-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.springcloudconfig.read-timeout", v));
         values.get("connect-timeout", String.class).ifPresent(v -> properties.put("micronaut.http.services.springcloudconfig.connect-timeout", v));
@@ -103,7 +111,10 @@ public final class SpringCloudPropertySourceImporter extends RetryablePropertySo
         if (imported.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(PropertySource.of(context.getCanonicalLocation(), imported, EnvironmentPropertySource.POSITION + 100));
+        String propertySourceName = context.connectionString() != null
+            ? context.getCanonicalLocation()
+            : PROVIDER + "://" + applicationName + '/' + profiles;
+        return Optional.of(PropertySource.of(propertySourceName, imported, EnvironmentPropertySource.POSITION + 100));
     }
 
     @Override

@@ -86,6 +86,28 @@ class SpringCloudPropertySourceImporterSpec extends Specification {
         context.close()
     }
 
+    void 'springcloud importer resolves structured import declarations'() {
+        given:
+        System.setProperty(Environment.BOOTSTRAP_CONTEXT_PROPERTY, 'true')
+
+        when:
+        ApplicationContext context = ApplicationContext.run([
+            'micronaut.config.import': [[
+                provider   : 'springcloud',
+                uri        : configServer.URL.toString(),
+                application: 'myapp',
+                profiles   : 'first,second'
+            ]]
+        ])
+
+        then:
+        context.getRequiredProperty('config-secret-1', Integer) == 1
+        context.getRequiredProperty('config-secret-6', Integer) == 1
+
+        cleanup:
+        context?.close()
+    }
+
     void 'springcloud importer fails for secured server without credentials'() {
         given:
         System.setProperty(Environment.BOOTSTRAP_CONTEXT_PROPERTY, 'true')

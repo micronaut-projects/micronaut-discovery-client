@@ -45,6 +45,8 @@ public final class RemoteConfigImportOptionBinder {
     private static final String VAULT_TOKEN = "vault.client.token";
     private static final String SPRING_CLOUD_CONFIG_USERNAME = "spring.cloud.config.username";
     private static final String SPRING_CLOUD_CONFIG_PASSWORD = "spring.cloud.config.password";
+    private static final String SPRING_CLOUD_HEADER_OPTION_PREFIX = "header.";
+    private static final String SPRING_CLOUD_CONFIG_HEADERS_PREFIX = "spring.cloud.config.headers.";
 
     private static final Map<String, String> COMMON_OPTIONS = Map.of(
         RETRY_ATTEMPTS, RETRY_ATTEMPTS,
@@ -85,6 +87,8 @@ public final class RemoteConfigImportOptionBinder {
             "label", "spring.cloud.config.label",
             "username", SPRING_CLOUD_CONFIG_USERNAME,
             "password", SPRING_CLOUD_CONFIG_PASSWORD,
+            "token", "spring.cloud.config.token",
+            "bearer-token", "spring.cloud.config.bearer-token",
             FAIL_FAST, "spring.cloud.config.fail-fast"
         )
     );
@@ -99,25 +103,34 @@ public final class RemoteConfigImportOptionBinder {
         Map<String, Object> bound = new LinkedHashMap<>();
         bindUserInfo(connectionString, protocol, bound);
         for (Map.Entry<String, String> option : connectionString.options().entrySet()) {
-            String key = option.getKey();
-            String normalizedCommon = COMMON_OPTIONS.get(key);
-            if (normalizedCommon != null) {
-                if (RETRY_ATTEMPTS.equals(key)) {
-                    bound.put(normalizedCommon, option.getValue());
-                } else {
-                    bound.computeIfAbsent(normalizedCommon, ignored -> option.getValue());
-                }
-                continue;
-            }
+            bindOption(connectionString, protocol, providerOptions, option.getKey(), option.getValue(), bound);
+        }
 
+        return bound;
+    }
+
+    private void bindOption(ConnectionString connectionString,
+                            String protocol,
+                            Map<String, String> providerOptions,
+                            String key,
+                            String value,
+                            Map<String, Object> bound) {
+        String normalizedCommon = COMMON_OPTIONS.get(key);
+        if (normalizedCommon != null) {
+            if (RETRY_ATTEMPTS.equals(key)) {
+                bound.put(normalizedCommon, value);
+            } else {
+                bound.computeIfAbsent(normalizedCommon, ignored -> value);
+            }
+        } else if (PROVIDER_SPRING_CLOUD.equals(protocol) && isSpringCloudHeaderOption(key)) {
+            bound.put(SPRING_CLOUD_CONFIG_HEADERS_PREFIX + key.substring(SPRING_CLOUD_HEADER_OPTION_PREFIX.length()), value);
+        } else {
             String propertyName = providerOptions.get(key);
             if (propertyName == null) {
                 throw unsupportedOption(connectionString, key, providerOptions.keySet());
             }
-            bound.put(propertyName, option.getValue());
+            bound.put(propertyName, value);
         }
-
-        return bound;
     }
 
     private void bindUserInfo(ConnectionString connectionString, String protocol, Map<String, Object> bound) {
@@ -146,6 +159,10 @@ public final class RemoteConfigImportOptionBinder {
                 // No user-info binding for other protocols.
             }
         }
+    }
+
+    private static boolean isSpringCloudHeaderOption(String key) {
+        return key.startsWith(SPRING_CLOUD_HEADER_OPTION_PREFIX) && key.length() > SPRING_CLOUD_HEADER_OPTION_PREFIX.length();
     }
 
     private static ConfigurationException unsupportedOption(ConnectionString connectionString, String option, Set<String> supportedOptions) {
