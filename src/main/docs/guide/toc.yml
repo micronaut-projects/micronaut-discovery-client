@@ -10,10 +10,12 @@ serviceDiscoveryConsul:
   serviceDiscoveryConsulConsulHealthChecks: Consul Health Checks
   serviceDiscoveryConsulControllingIpHostRegistration: Controlling IP/Host Registration
   serviceDiscoveryConsulConnectingOverHttps: Connecting to Consul over HTTPS
+  serviceDiscoveryConsulDisablingConsul: Disabling Consul
   distributedConfigurationConsul:
     title: Distributed Configuration with Consul
     distributedConfigurationConsulImportingConsulConfiguration: Importing Consul Configuration
     distributedConfigurationConsulConsulImportUriReference: Consul Import URI Reference
+    distributedConfigurationConsulRetryingConsulImports: Retrying Consul Imports
     distributedConfigurationConsulLegacyBootstrapConfiguration:
       title: Legacy Bootstrap Configuration
       distributedConfigurationConsulLegacyBootstrapConfigurationStoringConfigurationAsKeyValuePairs: Storing Configuration as Key/Value Pairs

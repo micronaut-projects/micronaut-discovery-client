@@ -1,0 +1,75 @@
+= Disabling Consul
+
+The Consul integration is activated as soon as any `consul.client.*` property is configured. Once it is active, several independent beans talk to Consul, and each one has its own switch:
+
+.Beans that contact Consul
+[cols="2,3,2"]
+|===
+|Bean |Consul requests |Property that turns it off
+
+|api:discovery.consul.client.v1.ConsulClient[] and every bean below
+|All of the requests below
+|`consul.client.enabled: false`
+
+|api:discovery.consul.registration.ConsulAutoRegistration[]
+|Registers the service on startup (`PUT /v1/agent/service/register`), sends TTL heartbeats (`/v1/agent/check/pass/...`) and deregisters on shutdown
+|`consul.client.registration.enabled: false`
+
+|api:discovery.consul.health.ConsulHealthIndicator[] (reported as `consul` by the health endpoint)
+|Reads the Consul leader (`GET /v1/status/leader`) each time health is checked
+|`consul.client.health-check: false`
+
+|The discovery client health indicator from `micronaut-management`
+|Lists the services in the catalog (`GET /v1/catalog/services`) each time health is checked
+|`consul.client.discovery.enabled: false` or `endpoints.health.discovery-client.enabled: false`
+
+|Service discovery for clients declared with `@Client(id = "...")`
+|Looks up healthy instances (`GET /v1/health/service/...`)
+|`consul.client.discovery.enabled: false`
+
+|api:discovery.consul.config.ConsulConfigurationClient[] (legacy bootstrap configuration)
+|Reads the configuration key/value paths during startup
+|`micronaut.config-client.enabled: false` or `consul.client.config.enabled: false`
+
+|Consul watch
+|Long-polls the watched key/value paths
+|Disabled unless `consul.client.watch.enabled: true` is set
+|===
+
+Registration is enabled by default. The health indicators run whenever the health endpoint is called and, for applications with a `micronaut.application.name`, on the schedule of the health monitor (`micronaut.health.monitor.enabled`).
+
+NOTE: `micronaut.config-client.enabled` only controls the legacy bootstrap configuration client. Setting it to `false` does not stop registration, the health indicators or service discovery from contacting Consul.
+
+== Disabling Consul completely
+
+To switch off the whole Consul integration, for example in tests, set `consul.client.enabled` to `false`, typically in `src/test/resources/application-test.yml`:
+
+.Disabling every Consul bean
+[configuration]
+----
+consul:
+  client:
+    enabled: false
+----
+
+With this setting there is no api:discovery.consul.client.v1.ConsulClient[] bean, so nothing is registered, no Consul health indicator is created and no services are looked up in Consul.
+
+`consul.client.enabled` does not affect configuration imported with `micronaut.config.import`. If your application imports configuration from `consul://...`, declare that import in a configuration file that the tests do not load, for example `application-prod.yml`, rather than in `application.yml`.
+
+== Keeping the client but not contacting Consul
+
+When you need the api:discovery.consul.client.v1.ConsulClient[] bean but do not want the application to talk to Consul on its own, turn off the individual features instead:
+
+.Keeping the Consul client while disabling registration, discovery and the health check
+[configuration]
+----
+consul:
+  client:
+    registration:
+      enabled: false
+    discovery:
+      enabled: false
+    health-check: false
+----
+
+With registration disabled the health endpoint still includes the `consul` health indicator, which reports `DOWN` when Consul cannot be reached. Set `consul.client.health-check` to `false` if the health of your application should not depend on Consul, for example when Consul is only used for service discovery or configuration.
