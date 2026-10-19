@@ -21,9 +21,15 @@ import io.micronaut.discovery.vault.config.auth.VaultAuthHttpClient
 import io.micronaut.discovery.vault.config.auth.VaultLoginResponse
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 import spock.lang.Specification
 
 import java.time.Duration
+import java.util.concurrent.Callable
+import java.util.concurrent.CyclicBarrier
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicInteger
 
 class VaultLoginTokenSupplierSpec extends Specification {
@@ -44,6 +50,33 @@ class VaultLoginTokenSupplierSpec extends Specification {
         and: 'later callers reuse the token'
         Mono.from(supplier.getToken()).block() == 'token-1'
         client.logins.get() == 1
+    }
+
+    void 'callers racing a login that completes never log in twice'() {
+        given: 'logins that complete at once on another thread, so a caller may read no token just before one completes'
+        int callers = 8
+        ExecutorService executor = Executors.newFixedThreadPool(callers)
+
+        when:
+        List<Integer> loginsPerRound = (1..200).collect {
+            InstantSingleUseAuthClient client = new InstantSingleUseAuthClient()
+            TestTokenSupplier supplier = new TestTokenSupplier(client)
+            CyclicBarrier start = new CyclicBarrier(callers)
+            List<Future<String>> tokens = (1..callers).collect {
+                executor.submit({
+                    start.await()
+                    Mono.from(supplier.getToken()).block(Duration.ofSeconds(10))
+                } as Callable<String>)
+            }
+            assert tokens*.get().every { it == 'token-1' }
+            client.logins.get()
+        }
+
+        then: 'every caller of every round got the token of a single login'
+        loginsPerRound.every { it == 1 }
+
+        cleanup:
+        executor.shutdownNow()
     }
 
     void 'a failed login is retried by the next caller'() {
@@ -97,6 +130,21 @@ class VaultLoginTokenSupplierSpec extends Specification {
                         ? Mono.delay(Duration.ofMillis(300)).map { response("token-$login") }
                         : Mono.error(new IllegalStateException('invalid secret id'))
             }
+        }
+    }
+
+    static class InstantSingleUseAuthClient implements VaultAuthHttpClient {
+        final AtomicInteger logins = new AtomicInteger()
+
+        @Override
+        Publisher<VaultLoginResponse> login(String mountPath, Map<String, Object> body) {
+            Mono.fromCallable {
+                int login = logins.incrementAndGet()
+                if (login != 1) {
+                    throw new IllegalStateException('invalid secret id')
+                }
+                response("token-$login")
+            }.subscribeOn(Schedulers.parallel())
         }
     }
 

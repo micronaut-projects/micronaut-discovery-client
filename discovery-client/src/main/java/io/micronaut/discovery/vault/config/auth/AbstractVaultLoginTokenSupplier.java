@@ -40,8 +40,11 @@ public abstract class AbstractVaultLoginTokenSupplier implements VaultTokenSuppl
     private static final String AUTH_PREFIX = "auth/";
 
     private final VaultAuthHttpClient authClient;
-    private final AtomicReference<@Nullable Mono<String>> pendingLogin = new AtomicReference<>();
-    private volatile @Nullable String token;
+    /**
+     * The login shared by all callers: in progress, or completed and replaying its token. It is only cleared when the
+     * login fails, so that the next caller logs in again.
+     */
+    private final AtomicReference<@Nullable Mono<String>> sharedLogin = new AtomicReference<>();
 
     /**
      * @param authClient The client used to call the Vault login endpoint
@@ -52,23 +55,20 @@ public abstract class AbstractVaultLoginTokenSupplier implements VaultTokenSuppl
 
     @Override
     public final Publisher<String> getToken() {
-        String cached = token;
-        if (cached != null) {
-            return Mono.just(cached);
-        }
         return Mono.defer(() -> {
-            String current = token;
+            Mono<String> current = sharedLogin.get();
             if (current != null) {
-                return Mono.just(current);
+                return current;
             }
-            // callers share a login in progress: a second login could consume single-use credentials such as an
-            // AppRole secret ID. The pending login is cleared once it ends, so a failed login is retried.
+            // callers share one login: a second login could consume single-use credentials such as an AppRole
+            // secret ID. A successful login stays shared and replays its token, so no later caller logs in again.
+            AtomicReference<Mono<String>> self = new AtomicReference<>();
             Mono<String> login = Mono.defer(this::login)
-                .doOnNext(t -> token = t)
-                .doFinally(signal -> pendingLogin.set(null))
+                .doOnError(e -> sharedLogin.compareAndSet(self.get(), null))
                 .cache();
-            Mono<String> pending = pendingLogin.compareAndExchange(null, login);
-            return pending != null ? pending : login;
+            self.set(login);
+            Mono<String> winner = sharedLogin.compareAndExchange(null, login);
+            return winner != null ? winner : login;
         });
     }
 
