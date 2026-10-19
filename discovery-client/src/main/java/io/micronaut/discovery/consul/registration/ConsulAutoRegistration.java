@@ -44,6 +44,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -233,7 +234,10 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
             String serviceId = idGenerator.generateId(environment, instance);
             Publisher<HttpStatus> deregisterPublisher = consulClient.deregister(serviceId);
             final String discoveryService = "Consul";
-            performDeregistration(discoveryService, registration, deregisterPublisher, applicationName);
+            // a failed fail-fast registration stops the server on the event loop, which must not block,
+            // so the de-registration is then sent without waiting for it
+            boolean block = registration.isFailFast() && !Schedulers.isInNonBlockingThread();
+            performDeregistration(discoveryService, registration, deregisterPublisher, applicationName, block);
         }
     }
 
