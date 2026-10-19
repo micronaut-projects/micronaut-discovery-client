@@ -256,6 +256,11 @@ public class ConsulAutoRegistration extends DiscoveryServiceAutoRegistration {
             if (StringUtils.isNotEmpty(applicationName)) {
                 String address = address(instance, registration);
                 Map<String, String> meta = new HashMap<>(registration.getMeta());
+                if (instance instanceof EmbeddedServerInstance embeddedServerInstance) {
+                    // the zone tag predates the service metadata, which is where Spring Cloud Consul looks for it
+                    embeddedServerInstance.getEmbeddedServer().getApplicationConfiguration().getInstance().getZone()
+                        .ifPresent(zone -> meta.put(ServiceInstance.ZONE, zone));
+                }
                 String serviceId = idGenerator.generateId(environment, instance);
                 ConsulNewServiceEntry serviceEntry = new ConsulNewServiceEntry(
                     applicationName,
