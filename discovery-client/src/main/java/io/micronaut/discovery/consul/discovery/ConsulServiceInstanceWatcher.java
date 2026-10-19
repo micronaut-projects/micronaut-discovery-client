@@ -172,35 +172,6 @@ public final class ConsulServiceInstanceWatcher {
         watch.firstResult.completeExceptionally(new IllegalStateException("The watch of service " + watch.serviceId + " is stopped"));
     }
 
-    private Mono<Void> poll(ServiceWatch watch) {
-        return Mono.defer(() -> {
-            if (isIdle(watch)) {
-                LOG.debug("Service {} has not been looked up for {}, no longer watching it", watch.serviceId,
-                    watchConfiguration.getIdleTimeout().orElse(null));
-                watches.remove(watch.serviceId, watch);
-                stop(watch);
-                return Mono.empty();
-            }
-            Duration delay = watch.nextDelay();
-            Mono<HttpResponse<List<ConsulHealthEntry>>> query = Mono.defer(() -> query(watch));
-            if (watch.index.get() == NO_INDEX) {
-                // an index-less query returns at once, bound it like a regular lookup
-                query = query.timeout(initialQueryTimeout);
-            }
-            if (!delay.isZero()) {
-                query = Mono.delay(delay).then(query);
-            }
-            return query
-                .publishOn(scheduler)
-                .doOnNext(response -> onResponse(watch, response))
-                .onErrorResume(e -> {
-                    onError(watch, e);
-                    return Mono.empty();
-                })
-                .then();
-        });
-    }
-
     private boolean isIdle(ServiceWatch watch) {
         Duration idleTimeout = watchConfiguration.getIdleTimeout().orElse(null);
         return idleTimeout != null && System.nanoTime() - watch.lastAccess > idleTimeout.toNanos();
@@ -299,7 +270,7 @@ public final class ConsulServiceInstanceWatcher {
         long next;
         try {
             next = Long.parseLong(header.trim());
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException _) {
             return NO_INDEX;
         }
         if (next <= 0) {
@@ -344,7 +315,36 @@ public final class ConsulServiceInstanceWatcher {
             }
             started = true;
             LOG.debug("Watching the instances of service {}", serviceId);
-            subscription = poll(this).repeat(() -> !disposed).subscribe();
+            subscription = poll().repeat(() -> !disposed).subscribe();
+        }
+
+        private Mono<Void> poll() {
+            return Mono.defer(() -> {
+                if (isIdle(this)) {
+                    LOG.debug("Service {} has not been looked up for {}, no longer watching it", serviceId,
+                        watchConfiguration.getIdleTimeout().orElse(null));
+                    watches.remove(serviceId, this);
+                    stop(this);
+                    return Mono.empty();
+                }
+                Duration delay = nextDelay();
+                Mono<HttpResponse<List<ConsulHealthEntry>>> query = Mono.defer(() -> query(this));
+                if (index.get() == NO_INDEX) {
+                    // an index-less query returns at once, bound it like a regular lookup
+                    query = query.timeout(initialQueryTimeout);
+                }
+                if (!delay.isZero()) {
+                    query = Mono.delay(delay).then(query);
+                }
+                return query
+                    .publishOn(scheduler)
+                    .doOnNext(response -> onResponse(this, response))
+                    .onErrorResume(e -> {
+                        onError(this, e);
+                        return Mono.empty();
+                    })
+                    .then();
+            });
         }
 
         synchronized void dispose() {
@@ -359,7 +359,7 @@ public final class ConsulServiceInstanceWatcher {
             if (failing) {
                 long retry = watchConfiguration.getRetryDelay().toMillis();
                 long max = watchConfiguration.getMaxRetryDelay().toMillis();
-                int shift = Math.min(Math.max(errors.get() - 1, 0), 20);
+                int shift = Math.clamp(errors.get() - 1L, 0, 20);
                 return Duration.ofMillis(Math.min(max, retry << shift));
             }
             if (snapshot.get() == null && index.get() == NO_INDEX) {
@@ -406,10 +406,14 @@ public final class ConsulServiceInstanceWatcher {
                     checks.put(check.getId() + '/' + check.getName(), check.getStatus());
                 }
             }
+            String address = service != null ? service.address() : null;
+            if (address == null && entry.node() != null) {
+                address = entry.node().address();
+            }
             return new InstanceState(
                 service != null ? service.id() : null,
                 entry.node() != null ? entry.node().node() : null,
-                service != null && service.address() != null ? service.address() : entry.node() != null ? entry.node().address() : null,
+                address,
                 service != null ? service.port() : null,
                 service != null ? service.tags() : null,
                 service != null ? service.meta() : null,
