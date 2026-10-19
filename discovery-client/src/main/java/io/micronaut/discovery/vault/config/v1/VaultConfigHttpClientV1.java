@@ -18,6 +18,7 @@ package io.micronaut.discovery.vault.config.v1;
 import io.micronaut.context.annotation.BootstrapContextCompatible;
 import org.jspecify.annotations.NonNull;
 import io.micronaut.discovery.vault.config.VaultClientConfiguration;
+import io.micronaut.discovery.vault.config.VaultClientFilterMatcher;
 import io.micronaut.discovery.vault.config.VaultConfigHttpClient;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
@@ -36,6 +37,7 @@ import static io.micronaut.http.client.HttpClientConfiguration.ConnectionPoolCon
  */
 @Client(value = VaultClientConfiguration.VAULT_CLIENT_CONFIG_ENDPOINT, configuration = VaultClientConfiguration.class)
 @BootstrapContextCompatible
+@VaultClientFilterMatcher
 public interface VaultConfigHttpClientV1 extends VaultConfigHttpClient<VaultResponseV1> {
 
     /**
