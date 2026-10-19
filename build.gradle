@@ -6,3 +6,12 @@ repositories {
     mavenLocal()
     mavenCentral()
 }
+
+// The test modules keep tests and test support code in their main sources, which are not production code
+plugins.withId("org.sonarqube") {
+    sonar {
+        properties {
+            property "sonar.coverage.exclusions", "test-suite-*/**,discovery-client-tests/**"
+        }
+    }
+}
