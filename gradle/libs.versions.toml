@@ -1,8 +1,8 @@
 [versions]
 # Micronaut
-micronaut = "5.2.15"
-micronaut-platform = "5.2.2"
-micronaut-serde = "3.2.4"
+micronaut = "5.2.20"
+micronaut-platform = "5.2.3"
+micronaut-serde = "3.2.6"
 micronaut-test = "5.1.0"
 micronaut-reactor = "4.3.0"
 micronaut-validation = "5.2.1"
