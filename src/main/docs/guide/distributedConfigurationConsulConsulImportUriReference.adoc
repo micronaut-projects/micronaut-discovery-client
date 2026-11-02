@@ -41,6 +41,10 @@
 |`?acl-token=token`
 |Consul ACL token. Prefer URI user-info instead.
 
+|`secure`
+|`?secure=true`
+|Use HTTPS when connecting to Consul (`consul.client.secure`). Required for TLS-only Consul listeners (for example port `8501`).
+
 |`fail-fast`
 |`?fail-fast=false`
 |Whether failures should abort startup immediately.
