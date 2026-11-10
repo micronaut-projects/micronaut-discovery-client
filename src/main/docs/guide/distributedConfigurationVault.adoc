@@ -125,7 +125,86 @@ Treat import URIs with embedded credentials as sensitive values and store them a
 |Connection timeout for remote calls.
 |===
 
-During migration, the older bootstrap configuration is still available:
+== Migrating from bootstrap configuration
+
+The following example targets Micronaut Framework 5.2.x with Micronaut Discovery Client 5.2.x.
+Keep the `io.micronaut.discovery:micronaut-discovery-client` dependency: it provides the Vault importer as well as the legacy client.
+This example uses a local Vault server over HTTP.
+
+=== Move the Vault settings into application configuration
+
+For example, an application named `hello-world` might previously have used these settings in `bootstrap.yml`:
+
+.Before: bootstrap.yml
+[configuration]
+----
+micronaut:
+  application:
+    name: hello-world
+  config-client:
+    enabled: true
+vault:
+  client:
+    uri: http://localhost:8200
+    token: ${VAULT_TOKEN}
+    kv-version: V2
+    secret-engine-name: secret
+    config:
+      enabled: true
+----
+
+Move the application name to `application.yml` and declare the Vault imports there.
+Supply `VAULT_TOKEN` through the application's environment; it must be suitable for the user-info part of the import URI.
+
+.After: application.yml
+[configuration]
+----
+micronaut:
+  application:
+    name: hello-world
+  config:
+    import:
+      - "vault://${VAULT_TOKEN}@localhost:8200/application?kv-version=V2&secret-engine-name=secret"
+      - "vault://${VAULT_TOKEN}@localhost:8200/hello-world?kv-version=V2&secret-engine-name=secret"
+----
+
+Each declaration loads one secret path.
+The example imports the shared `application` secret and the application-specific `hello-world` secret from the `secret` KV v2 engine.
+Use the engine version and mount name from your existing deployment; do not include the KV v2 API's `data/` segment in the secret path.
+If the old configuration sets `vault.client.path-prefix`, set the `path-prefix` query parameter on each import as well.
+The importer does not inherit the old `vault.client.*` settings: put the connection settings and any required timeout or retry options in each declaration.
+
+NOTE: In this version, the `vault://` importer constructs an HTTP endpoint. An existing HTTPS Vault connection cannot be preserved merely by changing its scheme to `vault://`. Keep that integration on the legacy client until an equivalent TLS configuration is supported and verified.
+
+=== Make environment-specific paths explicit
+
+The legacy client also derives paths from the active environments.
+For an application named `hello-world` running with `prod`, it can read `application`, `hello-world`, `application/prod`, and `hello-world/prod`.
+The importer does not derive these paths from `micronaut.application.name` or the active environments.
+
+For an environment that uses all four paths, declare the complete list in `application-prod.yml`, adding import URIs for `/application/prod` and `/hello-world/prod` with the same connection settings.
+Activate `prod` as usual, for example with `MICRONAUT_ENVIRONMENTS=prod`.
+Check values that occur in more than one path, or also occur in local configuration, rather than assuming the legacy bootstrap precedence is unchanged.
+
+Imports are required by default.
+If a path was allowed to be absent under the legacy client, prefix that import URI with `optional:`, for example `optional:vault://...`.
+Keep required application secrets non-optional, and test failure handling as part of the migration.
+
+=== Remove the old bootstrap configuration and verify startup
+
+. Remove the legacy `micronaut.config-client.enabled` and `vault.client.config.enabled` settings when Vault was their only use. The importer does not need these flags.
+. Move any other application settings out of `bootstrap.yml` and its environment-specific variants. Remove those files once no remaining integration needs bootstrap configuration. If another legacy configuration client still uses them, migrate it separately.
+. Remove any explicit bootstrap enablement that was only needed for the legacy Vault client, such as `-Dmicronaut.bootstrap.context=true` or `bootstrapEnvironment(true)`.
+. Start the application with the same Vault endpoint, credentials, engine, and active environments as before. Verify a non-sensitive property from each imported path, including a property with competing values, against the expected result.
+. Verify that a bean consuming a required imported property can be created. If that check must happen during startup, use an eager `@Context` bean; a lazy bean is only checked when it is requested.
+. In a test environment, make a required path unavailable and verify that startup fails. If a path is optional, verify that its absence has the intended fallback behavior.
+
+Configuration imports are resolved while the application's environment is loaded, before application beans consume those properties.
+The endpoint and credentials needed to load an import must therefore be available without relying on that same import.
+
+== Legacy bootstrap configuration
+
+The older bootstrap configuration is still available during migration:
 
 .Legacy bootstrap Vault configuration
 [configuration]
