@@ -1,13 +1,13 @@
 [versions]
 # Micronaut
-micronaut = "5.2.21"
-micronaut-platform = "5.2.4"
+micronaut = "5.2.23"
+micronaut-platform = "5.2.6"
 micronaut-serde = "3.2.6"
 micronaut-test = "5.1.0"
 micronaut-reactor = "4.3.0"
 micronaut-validation = "5.2.1"
 
-commons-lang3 = "3.21.0"
+commons-lang3 = "3.22.0"
 jsonassert = "1.5.3"
 awaitility = "4.3.0"
 
