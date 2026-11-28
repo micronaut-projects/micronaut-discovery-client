@@ -59,6 +59,7 @@ public final class RemoteConfigImportOptionBinder {
             "format", "consul.client.config.format",
             "dc", "consul.client.config.datacenter",
             "acl-token", CONSUL_ACL_TOKEN,
+            "secure", "consul.client.secure",
             FAIL_FAST, "consul.client.config.fail-fast",
             "watch", "micronaut.discovery.consul.import.watch"
         ),
